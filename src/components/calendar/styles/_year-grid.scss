@@ -1,0 +1,147 @@
+@use '../../eui-vars' as *;
+@use 'variables' as *;
+
+.eui-cal-year-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  padding: 0.75rem;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--eui-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--eui-border);
+    border-radius: 3px;
+  }
+}
+
+.eui-cal-year-month {
+  border: 1px solid var(--eui-border-subtle);
+  border-radius: var(--eui-radius-md);
+  overflow: hidden;
+  background: var(--eui-bg);
+}
+
+.eui-cal-year-month-title {
+  padding: 0.375rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--eui-text);
+  text-align: center;
+  border-bottom: 1px solid var(--eui-border-subtle);
+  background: var(--eui-bg-subtle);
+}
+
+.eui-cal-year-month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--eui-border-subtle);
+}
+
+.eui-cal-year-month-daylabel {
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--eui-text-muted);
+  padding: 0.125rem 0;
+}
+
+.eui-cal-year-month-body {
+  padding: 0.125rem;
+}
+
+.eui-cal-year-month-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.eui-cal-year-month-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0.125rem;
+  min-height: 1.5rem;
+  cursor: default;
+
+  &.eui-cal-year-day-other {
+    .eui-cal-year-day-num {
+      color: var(--eui-text-disabled);
+    }
+  }
+
+  &.eui-cal-year-day-today {
+    .eui-cal-year-day-num {
+      background: var(--eui-primary);
+      color: var(--eui-on-primary);
+      border-radius: 50%;
+      width: 1.25rem;
+      height: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &.eui-cal-year-day-clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: var(--eui-bg-hover);
+      border-radius: var(--eui-radius-sm);
+    }
+  }
+}
+
+.eui-cal-year-day-num {
+  font-size: 0.6875rem;
+  color: var(--eui-text);
+  line-height: 1;
+}
+
+.eui-cal-year-day-dot {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--eui-primary);
+
+  &.eui-cal-year-day-dot-multi {
+    width: 6px;
+    height: 4px;
+    border-radius: 2px;
+  }
+}
+
+@media (max-width: $bp-lg) {
+  .eui-cal-year-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: $bp-md) {
+  .eui-cal-year-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: $bp-sm) {
+  .eui-cal-year-grid {
+    grid-template-columns: 1fr;
+  }
+}

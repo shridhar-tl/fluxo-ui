@@ -1,0 +1,18 @@
+/* Blue theme — default primary accent */
+.theme-blue {
+    --eui-primary: #3b82f6;
+    --eui-primary-hover: #2563eb;
+    --eui-primary-subtle: #dbeafe;
+    --eui-primary-border: #bfdbfe;
+    --eui-bg-hover: #eff6ff;
+}
+
+.theme-blue.mode-dark,
+.theme-blue .mode-dark,
+body.mode-dark .theme-blue {
+    --eui-primary: #2563eb;
+    --eui-primary-hover: #3b82f6;
+    --eui-primary-subtle: #1e3a5f;
+    --eui-primary-border: #1d4ed8;
+    --eui-bg-hover: #1e3a5f;
+}

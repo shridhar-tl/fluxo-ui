@@ -1,0 +1,24 @@
+@use '../eui-vars' as *;
+
+.eui-tooltip {
+    position: fixed;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding: 0.375rem 0.5rem;
+    border-radius: var(--eui-radius-sm);
+    max-width: 32rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    pointer-events: auto;
+    z-index: 9999;
+    box-shadow: var(--eui-shadow);
+    background-color: #1f2937;
+    color: #f9fafb;
+    border: 1px solid #374151;
+    transition: opacity 0.2s ease;
+    opacity: 0;
+
+    &.eui-tooltip-visible {
+        opacity: 0.92;
+    }
+}

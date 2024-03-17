@@ -1,0 +1,17 @@
+.theme-emerald {
+    --eui-primary: #10b981;
+    --eui-primary-hover: #059669;
+    --eui-primary-subtle: #d1fae5;
+    --eui-primary-border: #a7f3d0;
+    --eui-bg-hover: #ecfdf5;
+}
+
+.theme-emerald.mode-dark,
+.theme-emerald .mode-dark,
+body.mode-dark .theme-emerald {
+    --eui-primary: #059669;
+    --eui-primary-hover: #10b981;
+    --eui-primary-subtle: #022c22;
+    --eui-primary-border: #065f46;
+    --eui-bg-hover: #022c22;
+}

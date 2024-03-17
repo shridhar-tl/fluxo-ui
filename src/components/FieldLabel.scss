@@ -1,0 +1,101 @@
+@use './eui-vars' as *;
+
+.eui-field-label-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.eui-field-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--eui-text);
+
+    &.eui-field-label-disabled {
+        color: var(--eui-text-disabled);
+    }
+
+    &.eui-field-label-error {
+        color: #dc2626;
+    }
+}
+
+.eui-field-label-required {
+    color: #dc2626;
+    margin-left: 0.25rem;
+}
+
+.eui-field-label-optional {
+    color: var(--eui-text-muted);
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+}
+
+.eui-field-hint {
+    font-size: 0.75rem;
+    color: var(--eui-text-muted);
+}
+
+.eui-field-error {
+    font-size: 0.75rem;
+    color: #dc2626;
+}
+
+.eui-field-label-float {
+    position: relative;
+}
+
+.eui-field-label-floating {
+    position: absolute;
+    left: 0.75rem;
+    pointer-events: none;
+    transition: top 0.15s ease, font-size 0.15s ease, color 0.15s ease, transform 0.15s ease;
+
+    &.eui-field-label-floating-idle {
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1rem;
+        color: var(--eui-text-muted);
+    }
+
+    &.eui-field-label-floating-active {
+        top: 0.5rem;
+        transform: none;
+        font-size: 0.75rem;
+        color: var(--eui-primary);
+    }
+
+    &.eui-field-label-floating-error {
+        top: 0.5rem;
+        transform: none;
+        font-size: 0.75rem;
+        color: #dc2626;
+    }
+
+    &.eui-field-label-floating-disabled {
+        color: var(--eui-text-disabled);
+    }
+}
+
+.eui-field-label-fieldset {
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-sm);
+    padding: 0 0.75rem 0.5rem;
+    background-color: var(--eui-bg);
+}
+
+.eui-field-label-legend {
+    padding: 0 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--eui-text);
+
+    &.eui-field-label-legend-disabled {
+        color: var(--eui-text-disabled);
+    }
+
+    &.eui-field-label-legend-error {
+        color: #dc2626;
+    }
+}

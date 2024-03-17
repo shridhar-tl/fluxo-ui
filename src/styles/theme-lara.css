@@ -1,0 +1,21 @@
+/* Lara theme — sky blue with slightly larger radii */
+.theme-lara {
+    --eui-primary: #0ea5e9;
+    --eui-primary-hover: #0284c7;
+    --eui-primary-subtle: #e0f2fe;
+    --eui-primary-border: #bae6fd;
+    --eui-bg-hover: #f0f9ff;
+
+    --eui-radius-sm: 0.375rem;
+    --eui-radius-md: 0.5rem;
+}
+
+.theme-lara.mode-dark,
+.theme-lara .mode-dark,
+body.mode-dark .theme-lara {
+    --eui-primary: #0284c7;
+    --eui-primary-hover: #0ea5e9;
+    --eui-primary-subtle: #082f49;
+    --eui-primary-border: #0c4a6e;
+    --eui-bg-hover: #082f49;
+}

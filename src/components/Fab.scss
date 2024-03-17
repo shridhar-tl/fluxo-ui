@@ -1,0 +1,129 @@
+@use './_eui-vars' as *;
+
+@mixin btn-reset {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    &:focus { outline: none; }
+    &:disabled { cursor: not-allowed; }
+}
+
+$fab-variants: (
+    default: (bg: var(--eui-bg-subtle), color: var(--eui-text), hover-bg: var(--eui-bg-hover), border: var(--eui-border)),
+    primary: (bg: var(--eui-primary), color: var(--eui-text-on-primary), hover-bg: var(--eui-primary-hover), border: transparent),
+    success: (bg: #22c55e, color: #fff, hover-bg: #16a34a, border: transparent),
+    warning: (bg: #f59e0b, color: #fff, hover-bg: #d97706, border: transparent),
+    danger: (bg: #ef4444, color: #fff, hover-bg: #dc2626, border: transparent),
+    info: (bg: #06b6d4, color: #fff, hover-bg: #0891b2, border: transparent),
+    secondary: (bg: var(--eui-bg), color: var(--eui-text), hover-bg: var(--eui-bg-hover), border: var(--eui-border)),
+);
+
+$fab-sizes: (
+    xs: (size: 2rem, icon: 0.875rem, font: 0.7rem, padding: 0 0.5rem, shadow: 0 2px 6px rgba(0,0,0,0.12)),
+    sm: (size: 2.5rem, icon: 1rem, font: 0.8rem, padding: 0 0.75rem, shadow: 0 2px 8px rgba(0,0,0,0.15)),
+    md: (size: 3rem, icon: 1.25rem, font: 0.875rem, padding: 0 1rem, shadow: 0 3px 10px rgba(0,0,0,0.18)),
+    lg: (size: 3.5rem, icon: 1.5rem, font: 1rem, padding: 0 1.25rem, shadow: 0 4px 12px rgba(0,0,0,0.2)),
+    xl: (size: 4rem, icon: 1.75rem, font: 1.125rem, padding: 0 1.5rem, shadow: 0 4px 16px rgba(0,0,0,0.22)),
+);
+
+.eui-fab {
+    @include btn-reset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-family: var(--eui-font-family);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 10;
+
+    .eui-fab-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .eui-fab-icon-svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .eui-fab-label {
+        white-space: nowrap;
+        line-height: 1;
+    }
+
+    @each $name, $config in $fab-variants {
+        &.eui-fab-variant-#{$name} {
+            background: map-get($config, bg);
+            color: map-get($config, color);
+            border: 1px solid map-get($config, border);
+
+            &:hover:not(.eui-fab-disabled) {
+                background: map-get($config, hover-bg);
+            }
+
+            &:active:not(.eui-fab-disabled) {
+                transform: scale(0.95);
+            }
+        }
+    }
+
+    @each $name, $config in $fab-sizes {
+        &.eui-fab-#{$name} {
+            width: map-get($config, size);
+            height: map-get($config, size);
+            box-shadow: map-get($config, shadow);
+
+            .eui-fab-icon {
+                width: map-get($config, icon);
+                height: map-get($config, icon);
+            }
+
+            .eui-fab-label {
+                font-size: map-get($config, font);
+            }
+
+            &.eui-fab-extended {
+                width: auto;
+                border-radius: calc(map-get($config, size) / 2);
+                padding: map-get($config, padding);
+                gap: 0.5rem;
+                min-width: map-get($config, size);
+            }
+        }
+    }
+
+    &.eui-fab-fixed {
+        position: fixed;
+        z-index: 1000;
+
+        &.eui-fab-bottom-right { bottom: 1.5rem; right: 1.5rem; }
+        &.eui-fab-bottom-left { bottom: 1.5rem; left: 1.5rem; }
+        &.eui-fab-top-right { top: 1.5rem; right: 1.5rem; }
+        &.eui-fab-top-left { top: 1.5rem; left: 1.5rem; }
+        &.eui-fab-bottom-center { bottom: 1.5rem; left: 50%; transform: translateX(-50%); }
+        &.eui-fab-top-center { top: 1.5rem; left: 50%; transform: translateX(-50%); }
+    }
+
+    &.eui-fab-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+    }
+}

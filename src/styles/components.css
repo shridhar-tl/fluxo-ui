@@ -1,0 +1,16 @@
+/* Base tokens and mode-dark overrides */
+@import './base-theme.css';
+
+/* Theme variants — apply via class on body or any ancestor element */
+@import './theme-blue.css';
+@import './theme-lara.css';
+@import './theme-green.css';
+@import './theme-purple.css';
+@import './theme-orange.css';
+@import './theme-indigo.css';
+@import './theme-rose.css';
+@import './theme-amber.css';
+@import './theme-teal.css';
+@import './theme-emerald.css';
+@import './theme-fuchsia.css';
+@import './theme-slate.css';

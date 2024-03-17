@@ -1,0 +1,17 @@
+.theme-rose {
+    --eui-primary: #f43f5e;
+    --eui-primary-hover: #e11d48;
+    --eui-primary-subtle: #ffe4e6;
+    --eui-primary-border: #fecdd3;
+    --eui-bg-hover: #fff1f2;
+}
+
+.theme-rose.mode-dark,
+.theme-rose .mode-dark,
+body.mode-dark .theme-rose {
+    --eui-primary: #e11d48;
+    --eui-primary-hover: #f43f5e;
+    --eui-primary-subtle: #4c0519;
+    --eui-primary-border: #9f1239;
+    --eui-bg-hover: #4c0519;
+}

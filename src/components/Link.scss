@@ -1,0 +1,40 @@
+@use './eui-vars' as *;
+
+.eui-link {
+    --eui-link-color:         var(--eui-primary);
+    --eui-link-color-hover:   var(--eui-primary-hover);
+    --eui-link-color-visited: #7c3aed;
+
+    color: var(--eui-link-color);
+    text-decoration: none;
+    font-family: var(--eui-font-family);
+    cursor: pointer;
+    transition: color 0.15s ease, text-decoration-color 0.15s ease;
+
+    &:hover {
+        color: var(--eui-link-color-hover);
+        text-decoration: underline;
+    }
+
+    &:visited {
+        color: var(--eui-link-color-visited);
+    }
+
+    &:focus {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 2px;
+        border-radius: var(--eui-radius-sm);
+    }
+
+    &.eui-link-disabled {
+        color: var(--eui-text-disabled);
+        cursor: not-allowed;
+        pointer-events: none;
+        text-decoration: none;
+
+        &:hover {
+            color: var(--eui-text-disabled);
+            text-decoration: none;
+        }
+    }
+}

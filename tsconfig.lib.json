@@ -1,0 +1,11 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./dist",
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "declarationMap": true
+    },
+    "include": ["src/library/**/*", "src/hooks.ts", "src/icons.ts"],
+    "exclude": ["src/**/*.stories.*", "src/**/*.test.*", "dist", "node_modules"]
+}

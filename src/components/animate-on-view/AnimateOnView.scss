@@ -1,0 +1,304 @@
+@use '../eui-vars' as *;
+
+.eui-animate-on-view {
+    will-change: opacity, transform;
+}
+
+.eui-aov-hidden {
+    opacity: 0;
+}
+
+.eui-aov-visible {
+    animation-fill-mode: both;
+}
+
+// Fade In
+.eui-aov-fadeIn {
+    animation-name: euiAovFadeIn;
+}
+
+@keyframes euiAovFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+// Fade In Up
+.eui-aov-fadeInUp {
+    animation-name: euiAovFadeInUp;
+}
+
+@keyframes euiAovFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Fade In Down
+.eui-aov-fadeInDown {
+    animation-name: euiAovFadeInDown;
+}
+
+@keyframes euiAovFadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Fade In Left
+.eui-aov-fadeInLeft {
+    animation-name: euiAovFadeInLeft;
+}
+
+@keyframes euiAovFadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// Fade In Right
+.eui-aov-fadeInRight {
+    animation-name: euiAovFadeInRight;
+}
+
+@keyframes euiAovFadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// Zoom In
+.eui-aov-zoomIn {
+    animation-name: euiAovZoomIn;
+}
+
+@keyframes euiAovZoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+// Zoom Out (starts big, shrinks to normal)
+.eui-aov-zoomOut {
+    animation-name: euiAovZoomOut;
+}
+
+@keyframes euiAovZoomOut {
+    from {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+// Slide Up
+.eui-aov-slideUp {
+    animation-name: euiAovSlideUp;
+}
+
+@keyframes euiAovSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Slide Down
+.eui-aov-slideDown {
+    animation-name: euiAovSlideDown;
+}
+
+@keyframes euiAovSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Slide Left
+.eui-aov-slideLeft {
+    animation-name: euiAovSlideLeft;
+}
+
+@keyframes euiAovSlideLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// Slide Right
+.eui-aov-slideRight {
+    animation-name: euiAovSlideRight;
+}
+
+@keyframes euiAovSlideRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// Flip X
+.eui-aov-flipX {
+    animation-name: euiAovFlipX;
+    backface-visibility: visible;
+}
+
+@keyframes euiAovFlipX {
+    from {
+        opacity: 0;
+        transform: perspective(400px) rotateX(90deg);
+    }
+    40% {
+        transform: perspective(400px) rotateX(-20deg);
+    }
+    60% {
+        opacity: 1;
+        transform: perspective(400px) rotateX(10deg);
+    }
+    80% {
+        transform: perspective(400px) rotateX(-5deg);
+    }
+    to {
+        opacity: 1;
+        transform: perspective(400px) rotateX(0deg);
+    }
+}
+
+// Flip Y
+.eui-aov-flipY {
+    animation-name: euiAovFlipY;
+    backface-visibility: visible;
+}
+
+@keyframes euiAovFlipY {
+    from {
+        opacity: 0;
+        transform: perspective(400px) rotateY(90deg);
+    }
+    40% {
+        transform: perspective(400px) rotateY(-20deg);
+    }
+    60% {
+        opacity: 1;
+        transform: perspective(400px) rotateY(10deg);
+    }
+    80% {
+        transform: perspective(400px) rotateY(-5deg);
+    }
+    to {
+        opacity: 1;
+        transform: perspective(400px) rotateY(0deg);
+    }
+}
+
+// Rotate In
+.eui-aov-rotateIn {
+    animation-name: euiAovRotateIn;
+}
+
+@keyframes euiAovRotateIn {
+    from {
+        opacity: 0;
+        transform: rotate(-200deg) scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+// Bounce In
+.eui-aov-bounceIn {
+    animation-name: euiAovBounceIn;
+}
+
+@keyframes euiAovBounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+// Scale Up
+.eui-aov-scaleUp {
+    animation-name: euiAovScaleUp;
+}
+
+@keyframes euiAovScaleUp {
+    from {
+        opacity: 0;
+        transform: scale(0) translateY(20px);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.02) translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-animate-on-view {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

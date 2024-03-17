@@ -1,0 +1,66 @@
+@use '../../eui-vars' as *;
+@use 'variables' as *;
+
+.eui-cal-daygrid {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.eui-cal-daygrid-cell {
+  border-bottom: 1px solid var(--eui-border-subtle);
+  padding: 0.5rem;
+  min-height: 60px;
+  cursor: pointer;
+  transition: background-color $cal-transition;
+
+  &:hover {
+    background: var(--eui-bg-hover);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &.eui-cal-daygrid-cell-today {
+    background: var(--eui-primary-subtle);
+  }
+
+  &.eui-cal-daygrid-cell-nonbusiness {
+    background: var(--eui-bg-subtle);
+  }
+}
+
+.eui-cal-daygrid-cell-header {
+  margin-bottom: 0.375rem;
+}
+
+.eui-cal-daygrid-cell-day {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--eui-text);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--eui-radius-sm);
+  transition: background-color $cal-transition;
+
+  &:hover {
+    background: var(--eui-bg-hover);
+  }
+
+  &.eui-cal-daygrid-cell-day-today {
+    background: var(--eui-primary);
+    color: var(--eui-text-on-primary);
+  }
+}
+
+.eui-cal-daygrid-cell-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}

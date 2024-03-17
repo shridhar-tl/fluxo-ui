@@ -1,0 +1,18 @@
+/* Indigo theme — indigo-to-violet gradient accent */
+.theme-indigo {
+    --eui-primary: #6366f1;
+    --eui-primary-hover: #4f46e5;
+    --eui-primary-subtle: #e0e7ff;
+    --eui-primary-border: #c7d2fe;
+    --eui-bg-hover: #eef2ff;
+}
+
+.theme-indigo.mode-dark,
+.theme-indigo .mode-dark,
+body.mode-dark .theme-indigo {
+    --eui-primary: #6366f1;
+    --eui-primary-hover: #818cf8;
+    --eui-primary-subtle: #1e1b4b;
+    --eui-primary-border: #3730a3;
+    --eui-bg-hover: #1e1b4b;
+}

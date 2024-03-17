@@ -1,0 +1,17 @@
+.theme-slate {
+    --eui-primary: #64748b;
+    --eui-primary-hover: #475569;
+    --eui-primary-subtle: #f1f5f9;
+    --eui-primary-border: #cbd5e1;
+    --eui-bg-hover: #f8fafc;
+}
+
+.theme-slate.mode-dark,
+.theme-slate .mode-dark,
+body.mode-dark .theme-slate {
+    --eui-primary: #475569;
+    --eui-primary-hover: #64748b;
+    --eui-primary-subtle: #1e293b;
+    --eui-primary-border: #334155;
+    --eui-bg-hover: #1e293b;
+}

@@ -1,0 +1,70 @@
+@use '../../eui-vars' as *;
+@use 'variables' as *;
+
+.eui-cal-multi-month {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-content: start;
+  gap: 1rem;
+  padding: 0.75rem;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--eui-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--eui-border);
+    border-radius: 3px;
+  }
+}
+
+.eui-cal-multi-month-item {
+  border: 1px solid var(--eui-border-subtle);
+  border-radius: var(--eui-radius-md);
+  overflow: hidden;
+  background: var(--eui-bg);
+
+  .eui-cal-month-header {
+    border-bottom: 1px solid var(--eui-border-subtle);
+  }
+
+  .eui-cal-month-row {
+    min-height: 60px;
+  }
+
+  .eui-cal-month-cell {
+    min-height: 60px;
+    padding: 2px;
+  }
+
+  .eui-cal-month-weeknum {
+    min-height: 60px;
+    padding-top: 0.25rem;
+  }
+}
+
+.eui-cal-multi-month-title {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--eui-text);
+  border-bottom: 1px solid var(--eui-border-subtle);
+  background: var(--eui-bg-subtle);
+}
+
+@media (max-width: $bp-sm) {
+  .eui-cal-multi-month {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    padding: 0.5rem;
+  }
+}

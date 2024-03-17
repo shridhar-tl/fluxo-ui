@@ -1,0 +1,67 @@
+@use '../eui-vars' as *;
+
+.eui-draggable {
+    &.eui-draggable-enabled {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+
+    &.eui-draggable-dragging {
+        opacity: 0.4;
+    }
+}
+
+.eui-droppable {
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+
+    &.eui-droppable-allowed {
+        &.eui-droppable-hover {
+            background-color: var(--eui-primary-subtle);
+            outline: 2px dashed var(--eui-primary-border);
+            outline-offset: -2px;
+            border-radius: var(--eui-radius-sm);
+        }
+
+        &.eui-droppable-hover-current {
+            background-color: var(--eui-primary-subtle);
+            outline: 2px solid var(--eui-primary);
+            outline-offset: -2px;
+            border-radius: var(--eui-radius-sm);
+        }
+    }
+
+    &.eui-droppable-denied {
+        &.eui-droppable-hover {
+            outline: 2px dashed #dc2626;
+            outline-offset: -2px;
+            border-radius: var(--eui-radius-sm);
+        }
+    }
+}
+
+.eui-sortable {
+    display: flex;
+    flex-direction: column;
+
+    .eui-drop-placeholder {
+        min-height: 2.5rem;
+        border-radius: var(--eui-radius-md);
+        border: 2px dashed var(--eui-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--eui-text-muted);
+        font-size: 0.875rem;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+
+        &.eui-droppable-allowed.eui-droppable-hover,
+        &.eui-droppable-allowed.eui-droppable-hover-current {
+            border-color: var(--eui-primary);
+            background-color: var(--eui-primary-subtle);
+            color: var(--eui-primary);
+        }
+    }
+}

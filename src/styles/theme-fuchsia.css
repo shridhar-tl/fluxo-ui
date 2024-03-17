@@ -1,0 +1,17 @@
+.theme-fuchsia {
+    --eui-primary: #d946ef;
+    --eui-primary-hover: #c026d3;
+    --eui-primary-subtle: #fae8ff;
+    --eui-primary-border: #f0abfc;
+    --eui-bg-hover: #fdf4ff;
+}
+
+.theme-fuchsia.mode-dark,
+.theme-fuchsia .mode-dark,
+body.mode-dark .theme-fuchsia {
+    --eui-primary: #c026d3;
+    --eui-primary-hover: #d946ef;
+    --eui-primary-subtle: #4a044e;
+    --eui-primary-border: #86198f;
+    --eui-bg-hover: #4a044e;
+}

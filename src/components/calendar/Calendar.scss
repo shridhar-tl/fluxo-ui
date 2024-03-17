@@ -1,0 +1,49 @@
+@use '../eui-vars' as *;
+@use './styles/variables' as *;
+@use './styles/toolbar';
+@use './styles/month-grid';
+@use './styles/time-grid';
+@use './styles/entries';
+@use './styles/day-grid';
+@use './styles/list-view';
+@use './styles/overflow-popover';
+@use './styles/multi-month';
+@use './styles/scroll-month';
+@use './styles/year-grid';
+@use './styles/agenda';
+
+.eui-calendar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--eui-bg);
+  border: 1px solid var(--eui-border-subtle);
+  border-radius: var(--eui-radius-md);
+  overflow: hidden;
+  font-family: var(--eui-font-family);
+  color: var(--eui-text);
+  font-size: 0.875rem;
+  position: relative;
+
+  &.eui-calendar-compact {
+    border-radius: var(--eui-radius-sm);
+  }
+}
+
+.eui-calendar-body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.eui-cal-view-missing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2rem;
+  color: var(--eui-text-muted);
+  font-size: 0.875rem;
+}

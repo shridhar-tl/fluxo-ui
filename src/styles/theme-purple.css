@@ -1,0 +1,18 @@
+/* Purple theme */
+.theme-purple {
+    --eui-primary: #a855f7;
+    --eui-primary-hover: #9333ea;
+    --eui-primary-subtle: #f3e8ff;
+    --eui-primary-border: #e9d5ff;
+    --eui-bg-hover: #faf5ff;
+}
+
+.theme-purple.mode-dark,
+.theme-purple .mode-dark,
+body.mode-dark .theme-purple {
+    --eui-primary: #9333ea;
+    --eui-primary-hover: #a855f7;
+    --eui-primary-subtle: #3b0764;
+    --eui-primary-border: #581c87;
+    --eui-bg-hover: #3b0764;
+}

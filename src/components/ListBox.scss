@@ -1,0 +1,263 @@
+@use './eui-vars' as *;
+
+@mixin btn-reset {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+    &:focus {
+        outline: none;
+    }
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+.eui-listbox {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-md);
+    box-shadow: var(--eui-shadow);
+
+    &.eui-listbox-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+}
+
+.eui-listbox-search {
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--eui-border);
+
+    .eui-listbox-search-wrap {
+        position: relative;
+    }
+
+    .eui-listbox-search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1rem;
+        height: 1rem;
+        color: var(--eui-text-muted);
+        pointer-events: none;
+    }
+
+    .eui-listbox-search-input {
+        width: 100%;
+        padding: 0.375rem 0.625rem 0.375rem 2.25rem;
+        font-size: 0.8125rem;
+        background-color: var(--eui-bg);
+        border: 1px solid var(--eui-border);
+        border-radius: var(--eui-radius-sm);
+        color: var(--eui-text);
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+        &::placeholder {
+            color: var(--eui-text-muted);
+        }
+
+        &:focus {
+            outline: none;
+            border-color: transparent;
+            box-shadow: 0 0 0 2px var(--eui-primary);
+        }
+    }
+}
+
+.eui-listbox-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--eui-border);
+    background-color: var(--eui-bg-subtle);
+}
+
+.eui-listbox-select-all {
+    @include btn-reset;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--eui-primary);
+
+    &:hover:not(:disabled) {
+        color: var(--eui-primary-hover);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
+.eui-listbox-clear-all {
+    @include btn-reset;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #dc2626;
+
+    &:hover:not(:disabled) {
+        color: #b91c1c;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+
+    svg {
+        width: 0.75rem;
+        height: 0.75rem;
+    }
+}
+
+.eui-listbox-list {
+    overflow-y: auto;
+}
+
+.eui-listbox-empty {
+    padding: 2rem 0.75rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--eui-text-muted);
+}
+
+.eui-listbox-group-header {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--eui-text-muted);
+    background-color: var(--eui-bg-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.eui-listbox-option {
+    padding: 0.4375rem 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover:not(.eui-listbox-option-disabled) {
+        background-color: var(--eui-bg-hover);
+    }
+
+    &.eui-listbox-option-selected {
+        background-color: var(--eui-primary-subtle);
+        border-left: 2px solid var(--eui-primary);
+        padding-left: calc(0.75rem - 2px);
+    }
+
+    &.eui-listbox-option-disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+}
+
+.eui-listbox-option-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.eui-listbox-option-icon {
+    flex-shrink: 0;
+}
+
+.eui-listbox-option-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.eui-listbox-option-label {
+    font-weight: 500;
+    color: var(--eui-text);
+
+    .eui-listbox-option-disabled & {
+        color: var(--eui-text-disabled);
+    }
+}
+
+.eui-listbox-option-description {
+    font-size: 0.875rem;
+    color: var(--eui-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eui-listbox-footer {
+    padding: 0.5rem 0.75rem;
+    border-top: 1px solid var(--eui-border);
+    background-color: var(--eui-bg-subtle);
+    font-size: 0.75rem;
+    color: var(--eui-text-muted);
+}
+
+.eui-listbox-checkbox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .eui-listbox-checkbox-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .eui-listbox-checkbox-box {
+        width: 1rem;
+        height: 1rem;
+        border-radius: 3px;
+        border: 2px solid var(--eui-border);
+        background-color: var(--eui-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+        cursor: pointer;
+
+        &.eui-listbox-checkbox-checked,
+        &.eui-listbox-checkbox-indeterminate {
+            background-color: var(--eui-primary);
+            border-color: var(--eui-primary);
+        }
+
+        &.eui-listbox-checkbox-disabled {
+            border-color: var(--eui-border-subtle);
+            background-color: var(--eui-bg-subtle);
+            cursor: not-allowed;
+        }
+
+        svg {
+            width: 0.75rem;
+            height: 0.75rem;
+            color: var(--eui-text-on-primary);
+        }
+    }
+}

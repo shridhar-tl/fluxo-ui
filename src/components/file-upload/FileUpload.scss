@@ -1,0 +1,230 @@
+@use '../eui-vars' as *;
+
+.eui-file-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-family: var(--eui-font-family);
+
+    .eui-fu-dropzone {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        min-height: 160px;
+        padding: 2rem;
+        border: 2px dashed var(--eui-border);
+        border-radius: var(--eui-radius-md);
+        background: var(--eui-bg-subtle);
+        color: var(--eui-text-muted);
+        cursor: pointer;
+        transition: border-color 0.2s, background-color 0.2s, box-shadow 0.2s;
+        outline: none;
+
+        &:hover {
+            border-color: var(--eui-primary);
+            background: var(--eui-bg-hover);
+        }
+
+        &:focus-visible {
+            border-color: var(--eui-primary);
+            box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+        }
+
+        &.eui-fu-dragover {
+            border-color: var(--eui-primary);
+            background: var(--eui-primary-subtle);
+            box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+        }
+
+        &.eui-fu-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    }
+
+    .eui-fu-dropzone-icon {
+        font-size: 2rem;
+        color: var(--eui-text-muted);
+        line-height: 1;
+    }
+
+    .eui-fu-dropzone-text {
+        font-size: 0.875rem;
+        color: var(--eui-text-muted);
+        text-align: center;
+
+        .eui-fu-browse-link {
+            color: var(--eui-primary);
+            font-weight: 500;
+            text-decoration: underline;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--eui-primary-hover);
+            }
+        }
+    }
+
+    .eui-fu-dropzone-hint {
+        font-size: 0.75rem;
+        color: var(--eui-text-disabled);
+    }
+
+    .eui-fu-file-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .eui-fu-file-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.625rem 0.75rem;
+        border: 1px solid var(--eui-border-subtle);
+        border-radius: var(--eui-radius-md);
+        background: var(--eui-bg);
+        transition: border-color 0.2s;
+
+        &.eui-fu-file-error {
+            border-color: #ef4444;
+        }
+
+        &.eui-fu-file-success {
+            border-color: #22c55e;
+        }
+    }
+
+    .eui-fu-preview {
+        flex-shrink: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: var(--eui-radius-sm);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--eui-bg-subtle);
+        border: 1px solid var(--eui-border-subtle);
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+
+    .eui-fu-file-icon {
+        font-size: 1.25rem;
+        color: var(--eui-text-muted);
+    }
+
+    .eui-fu-file-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .eui-fu-file-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .eui-fu-file-name {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--eui-text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .eui-fu-file-size {
+        font-size: 0.75rem;
+        color: var(--eui-text-muted);
+        flex-shrink: 0;
+    }
+
+    .eui-fu-progress-track {
+        width: 100%;
+        height: 4px;
+        background: var(--eui-border-subtle);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .eui-fu-progress-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: var(--eui-primary);
+        transition: width 0.3s ease;
+
+        &.eui-fu-progress-success {
+            background: #22c55e;
+        }
+
+        &.eui-fu-progress-error {
+            background: #ef4444;
+        }
+    }
+
+    .eui-fu-file-error-msg {
+        font-size: 0.75rem;
+        color: #ef4444;
+    }
+
+    .eui-fu-file-status {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+
+        &.eui-fu-status-success {
+            color: #22c55e;
+        }
+
+        &.eui-fu-status-error {
+            color: #ef4444;
+        }
+
+        &.eui-fu-status-uploading {
+            color: var(--eui-primary);
+        }
+    }
+
+    .eui-fu-remove-btn {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: none;
+        border-radius: var(--eui-radius-sm);
+        background: transparent;
+        color: var(--eui-text-muted);
+        cursor: pointer;
+        transition: background-color 0.15s, color 0.15s;
+        font-size: 1.125rem;
+        line-height: 1;
+        padding: 0;
+
+        &:hover {
+            background: var(--eui-bg-hover);
+            color: #ef4444;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--eui-primary);
+            outline-offset: -2px;
+        }
+    }
+}

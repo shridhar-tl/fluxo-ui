@@ -1,0 +1,127 @@
+@use '../eui-vars' as *;
+
+@mixin btn-reset {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+    &:focus {
+        outline: none;
+    }
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+.eui-tour-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(2px);
+    pointer-events: auto;
+}
+
+.eui-tour-highlight {
+    position: absolute;
+    pointer-events: none;
+    border-radius: var(--eui-radius-md);
+    border: 4px dashed #eab308;
+    box-shadow: 0 0 8px 2px rgba(253, 224, 71, 0.8);
+    animation: eui-tour-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes eui-tour-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.eui-tour-tooltip {
+    position: absolute;
+    max-width: 20rem;
+    padding: 1rem;
+    background-color: var(--eui-bg);
+    border-radius: var(--eui-radius-md);
+    box-shadow: var(--eui-shadow);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    font-size: 0.875rem;
+    opacity: 0.95;
+
+    @media (min-width: $bp-sm) {
+        max-width: 24rem;
+        font-size: 1rem;
+    }
+
+    .eui-tour-tooltip-inner {
+        position: relative;
+    }
+
+    .eui-tour-tooltip-close {
+        @include btn-reset;
+        position: absolute;
+        top: -0.875rem;
+        right: -0.875rem;
+        padding: 0.25rem;
+
+        svg {
+            display: block;
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    .eui-tour-tooltip-body {
+        margin-bottom: 1rem;
+    }
+
+    .eui-tour-tooltip-title {
+        text-align: center;
+        font-weight: 700;
+        padding-bottom: 0.5rem;
+        margin: 0;
+        color: var(--eui-text);
+    }
+
+    .eui-tour-tooltip-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+
+        @media (min-width: $bp-sm) {
+            font-size: 0.875rem;
+        }
+    }
+
+    .eui-tour-tooltip-counter {
+        color: var(--eui-text-muted);
+    }
+
+    .eui-tour-tooltip-done {
+        @include btn-reset;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--eui-radius-sm);
+        border: 1px solid var(--eui-border);
+        color: var(--eui-text);
+
+        &:hover {
+            background-color: var(--eui-bg-hover);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    }
+}

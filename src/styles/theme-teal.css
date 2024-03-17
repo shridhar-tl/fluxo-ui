@@ -1,0 +1,17 @@
+.theme-teal {
+    --eui-primary: #14b8a6;
+    --eui-primary-hover: #0d9488;
+    --eui-primary-subtle: #ccfbf1;
+    --eui-primary-border: #99f6e4;
+    --eui-bg-hover: #f0fdfa;
+}
+
+.theme-teal.mode-dark,
+.theme-teal .mode-dark,
+body.mode-dark .theme-teal {
+    --eui-primary: #0d9488;
+    --eui-primary-hover: #14b8a6;
+    --eui-primary-subtle: #042f2e;
+    --eui-primary-border: #115e59;
+    --eui-bg-hover: #042f2e;
+}

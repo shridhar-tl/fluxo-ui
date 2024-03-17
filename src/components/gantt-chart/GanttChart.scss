@@ -1,0 +1,726 @@
+@use '../eui-vars' as *;
+
+.eui-gantt {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 200px;
+    border: 1px solid var(--eui-border-subtle);
+    border-radius: var(--eui-radius-md);
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    font-size: 13px;
+    overflow: hidden;
+    position: relative;
+}
+
+// ── Toolbar ─────────────────────────────────────────────
+
+.eui-gantt-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--eui-border-subtle);
+    background-color: var(--eui-bg-subtle);
+    flex-shrink: 0;
+    gap: 8px;
+    min-height: 38px;
+}
+
+.eui-gantt-toolbar-left,
+.eui-gantt-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.eui-gantt-view-switcher {
+    display: flex;
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-sm);
+    overflow: hidden;
+}
+
+.eui-gantt-view-btn {
+    padding: 4px 12px;
+    border: none;
+    background: transparent;
+    color: var(--eui-text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+    white-space: nowrap;
+    font-family: var(--eui-font-family);
+
+    &:not(:last-child) {
+        border-right: 1px solid var(--eui-border);
+    }
+
+    &:hover {
+        background-color: var(--eui-bg-hover);
+        color: var(--eui-text);
+    }
+
+    &.active {
+        background-color: var(--eui-primary);
+        color: var(--eui-text-on-primary);
+    }
+}
+
+.eui-gantt-today-btn {
+    padding: 4px 12px;
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-sm);
+    background: transparent;
+    color: var(--eui-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+    font-family: var(--eui-font-family);
+
+    &:hover {
+        background-color: var(--eui-primary-subtle);
+    }
+}
+
+// ── Body (split panels) ───────────────��────────────────
+
+.eui-gantt-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+
+    > .eui-splitter {
+        flex: 1;
+        min-height: 0;
+        height: 100%;
+    }
+
+    .eui-splitter-panel {
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+// ── Fields Panel (left) ─────────────────────────────────
+
+.eui-gantt-fields {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    border-right: 1px solid var(--eui-border-subtle);
+}
+
+.eui-gantt-fields-header {
+    border-bottom: 1px solid var(--eui-border-subtle);
+    background-color: var(--eui-bg-subtle);
+    overflow: hidden;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+.eui-gantt-fields-header-row {
+    display: flex;
+    align-items: stretch;
+}
+
+.eui-gantt-fields-header-cell {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--eui-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid var(--eui-border-subtle);
+    flex-shrink: 0;
+
+    &:last-child {
+        border-right: none;
+    }
+}
+
+.eui-gantt-fields-body {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.eui-gantt-fields-row {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--eui-border-subtle);
+    box-sizing: border-box;
+    transition: background-color 0.1s;
+
+    &:hover {
+        background-color: var(--eui-bg-hover);
+    }
+}
+
+.eui-gantt-fields-cell {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border-right: 1px solid var(--eui-border-subtle);
+    flex-shrink: 0;
+    height: 100%;
+    box-sizing: border-box;
+
+    &:last-child {
+        border-right: none;
+    }
+}
+
+.eui-gantt-fields-cell-content {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+}
+
+.eui-gantt-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--eui-radius-sm);
+    color: var(--eui-text-muted);
+    padding: 0;
+    margin-right: 4px;
+    flex-shrink: 0;
+    transition: background-color 0.15s, color 0.15s, transform 0.2s;
+
+    &:hover {
+        background-color: var(--eui-bg-hover);
+        color: var(--eui-text);
+    }
+
+    &.collapsed svg {
+        transition: transform 0.2s ease;
+    }
+}
+
+.eui-gantt-toggle-spacer {
+    display: inline-block;
+    width: 22px;
+    flex-shrink: 0;
+}
+
+// ── Timeline Panel (right) ──────────────────────────────
+
+.eui-gantt-timeline {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.eui-gantt-timeline-header {
+    border-bottom: 1px solid var(--eui-border-subtle);
+    background-color: var(--eui-bg-subtle);
+    overflow: hidden;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.eui-gantt-timeline-header-primary {
+    display: flex;
+    border-bottom: 1px solid var(--eui-border-subtle);
+}
+
+.eui-gantt-header-group-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 4px;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--eui-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid var(--eui-border-subtle);
+    flex-shrink: 0;
+
+    &:last-child {
+        border-right: none;
+    }
+}
+
+.eui-gantt-timeline-header-secondary {
+    display: flex;
+}
+
+.eui-gantt-header-day-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 0;
+    font-size: 11px;
+    color: var(--eui-text-muted);
+    border-right: 1px solid var(--eui-border-subtle);
+    flex-shrink: 0;
+
+    &:last-child {
+        border-right: none;
+    }
+
+    &.is-weekend {
+        color: #ef4444;
+    }
+
+    &.is-today {
+        color: var(--eui-primary);
+        font-weight: 700;
+    }
+
+    &.is-holiday {
+        color: #f97316;
+    }
+}
+
+.eui-gantt-day-num {
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.eui-gantt-day-name {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.eui-gantt-header-secondary-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--eui-text-muted);
+    border-right: 1px solid var(--eui-border-subtle);
+    flex-shrink: 0;
+
+    &:last-child {
+        border-right: none;
+    }
+}
+
+.eui-gantt-timeline-body {
+    flex: 1;
+    overflow: auto;
+    position: relative;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--eui-border);
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-corner {
+        background-color: transparent;
+    }
+}
+
+.eui-gantt-timeline-canvas {
+    position: relative;
+    min-height: 100%;
+}
+
+// ── Grid ─────────────────────���──────────────────────────
+
+.eui-gantt-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.eui-gantt-grid-cell {
+    position: absolute;
+    top: 0;
+    border-right: 1px solid var(--eui-border-subtle);
+    box-sizing: border-box;
+}
+
+.eui-gantt-today-line {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background-color: var(--eui-primary);
+    z-index: 5;
+    pointer-events: none;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -4px;
+        width: 10px;
+        height: 10px;
+        background-color: var(--eui-primary);
+        border-radius: 50%;
+    }
+}
+
+.eui-gantt-row-line {
+    position: absolute;
+    left: 0;
+    height: 1px;
+    background-color: var(--eui-border-subtle);
+    pointer-events: none;
+}
+
+// ── Task Bar ────────────────────────────────────────────
+
+.eui-gantt-taskbar {
+    position: absolute;
+    border-radius: var(--eui-radius-sm);
+    background-color: var(--eui-primary);
+    cursor: default;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    z-index: 3;
+    transition: box-shadow 0.15s, filter 0.15s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    &.is-editable {
+        cursor: grab;
+
+        &:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+            filter: brightness(1.05);
+
+            .eui-gantt-taskbar-handle {
+                opacity: 1;
+            }
+        }
+    }
+
+    &.is-dragging {
+        cursor: grabbing;
+        z-index: 10;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        opacity: 0.9;
+    }
+
+    &.is-group {
+        background-color: var(--eui-text-muted);
+        border-radius: 0;
+        height: auto;
+
+        .eui-gantt-taskbar-progress {
+            background-color: var(--eui-text);
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 2px;
+    }
+}
+
+.eui-gantt-taskbar-handle {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 100%;
+    cursor: ew-resize;
+    opacity: 0;
+    transition: opacity 0.15s, background-color 0.15s;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &::after {
+        content: '';
+        width: 2px;
+        height: 60%;
+        border-radius: 1px;
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.12);
+    }
+}
+
+.eui-gantt-taskbar-handle-left {
+    left: 0;
+    border-radius: var(--eui-radius-sm) 0 0 var(--eui-radius-sm);
+}
+
+.eui-gantt-taskbar-handle-right {
+    right: 0;
+    border-radius: 0 var(--eui-radius-sm) var(--eui-radius-sm) 0;
+}
+
+.eui-gantt-taskbar-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: var(--eui-radius-sm) 0 0 var(--eui-radius-sm);
+    pointer-events: none;
+    transition: width 0.2s ease;
+}
+
+.eui-gantt-taskbar-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 10px;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.eui-gantt-taskbar-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--eui-text-on-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// ── Group Caps ──────────────────────────────────────────
+
+.eui-gantt-group-cap {
+    position: absolute;
+    bottom: -4px;
+    width: 8px;
+    height: 4px;
+    background-color: inherit;
+}
+
+.eui-gantt-group-cap-left {
+    left: 0;
+    border-radius: 0 0 0 var(--eui-radius-sm);
+}
+
+.eui-gantt-group-cap-right {
+    right: 0;
+    border-radius: 0 0 var(--eui-radius-sm) 0;
+}
+
+// ── Milestone ───────────────────────────────────────────
+
+.eui-gantt-milestone {
+    position: absolute;
+    background-color: #f59e0b;
+    transform: rotate(45deg);
+    z-index: 3;
+    cursor: pointer;
+    transition: box-shadow 0.15s, filter 0.15s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+
+    &:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        filter: brightness(1.1);
+    }
+
+    &.is-dragging {
+        z-index: 10;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        opacity: 0.9;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 4px;
+    }
+}
+
+// ── Markers ────────────────────────────────���────────────
+
+.eui-gantt-markers {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 6;
+}
+
+.eui-gantt-marker {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-left: 2px dashed #ef4444;
+}
+
+.eui-gantt-marker-label {
+    position: absolute;
+    top: 6px;
+    left: 10px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: 10px;
+    background-color: #fecaca;
+    color: #ef4444;
+    pointer-events: auto;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eui-gantt-marker-arrow {
+    position: absolute;
+    left: -7px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 7px solid #fecaca;
+}
+
+// ── Dependencies ────────────────────────���───────────────
+
+.eui-gantt-dependencies {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 2;
+    overflow: visible;
+}
+
+// ── Tooltip ────────────────────────────────────────────���
+
+.eui-gantt-tooltip {
+    position: fixed;
+    z-index: 9999;
+    background-color: var(--eui-bg);
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-md);
+    padding: 10px 14px;
+    box-shadow: var(--eui-shadow);
+    pointer-events: none;
+    max-width: 280px;
+    font-size: 12px;
+    animation: eui-gantt-tooltip-in 0.15s ease;
+}
+
+.eui-gantt-tooltip-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--eui-text);
+}
+
+.eui-gantt-tooltip-dates {
+    color: var(--eui-text-muted);
+    margin-bottom: 2px;
+}
+
+.eui-gantt-tooltip-progress {
+    color: var(--eui-primary);
+    font-weight: 500;
+}
+
+.eui-gantt-tooltip-assignee {
+    color: var(--eui-text-muted);
+    margin-top: 2px;
+}
+
+@keyframes eui-gantt-tooltip-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ── Create Preview ──────────────────────────��───────────
+
+.eui-gantt-create-preview {
+    position: absolute;
+    background-color: var(--eui-primary-subtle);
+    border: 2px dashed var(--eui-primary);
+    border-radius: var(--eui-radius-sm);
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 8;
+}
+
+// ── Responsive ────────────────────��─────────────────────
+
+@media (max-width: $bp-md) {
+    .eui-gantt-toolbar {
+        flex-wrap: wrap;
+        padding: 4px 8px;
+    }
+
+    .eui-gantt-view-btn {
+        padding: 3px 8px;
+        font-size: 11px;
+    }
+
+    .eui-gantt-fields-header-cell {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+
+    .eui-gantt-taskbar-label {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: $bp-sm) {
+    .eui-gantt-body > .eui-splitter {
+        .eui-splitter-panel:first-child,
+        .eui-splitter-gutter {
+            display: none;
+        }
+
+        .eui-splitter-panel:last-child {
+            flex: 1 !important;
+            width: 100% !important;
+        }
+    }
+}

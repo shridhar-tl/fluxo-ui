@@ -1,0 +1,56 @@
+@use './eui-vars' as *;
+
+.eui-textarea-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.eui-textarea {
+    width: 100%;
+    min-height: 5rem;
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-sm);
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    padding: 0.375rem 0.75rem;
+    resize: none;
+    overflow-y: auto;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &::placeholder {
+        color: var(--eui-text-muted);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: transparent;
+        box-shadow: 0 0 0 2px var(--eui-primary);
+    }
+
+    &.eui-textarea-resizable {
+        resize: vertical;
+    }
+
+    &.eui-textarea-readonly {
+        background-color: var(--eui-bg-subtle);
+    }
+
+    &.eui-textarea-disabled {
+        background-color: var(--eui-bg-subtle);
+        color: var(--eui-text-disabled);
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}
+
+.eui-textarea-count {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--eui-text-muted);
+    pointer-events: none;
+}

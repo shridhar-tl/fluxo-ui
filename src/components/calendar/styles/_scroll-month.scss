@@ -1,0 +1,56 @@
+@use '../../eui-vars' as *;
+@use 'variables' as *;
+
+.eui-cal-scroll-month {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  scroll-behavior: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--eui-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--eui-border);
+    border-radius: 3px;
+  }
+}
+
+.eui-cal-scroll-month-section {
+  border-bottom: 2px solid var(--eui-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .eui-cal-month-row {
+    min-height: 80px;
+  }
+
+  .eui-cal-month-cell {
+    min-height: 80px;
+  }
+
+  .eui-cal-month-weeknum {
+    min-height: 80px;
+  }
+}
+
+.eui-cal-scroll-month-title {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--eui-text);
+  background: var(--eui-bg);
+  border-bottom: 1px solid var(--eui-border-subtle);
+}

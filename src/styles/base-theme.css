@@ -1,0 +1,101 @@
+:root {
+    /* ── EUI semantic tokens (used by all SCSS components) ── */
+    --eui-bg: #ffffff;
+    --eui-bg-subtle: #f9fafb;
+    --eui-bg-hover: #eff6ff;
+
+    --eui-text: #1f2937;
+    --eui-text-muted: #6b7280;
+    --eui-text-disabled: #9ca3af;
+    --eui-text-on-primary: #ffffff;
+
+    --eui-border: #d1d5db;
+    --eui-border-subtle: #e5e7eb;
+
+    --eui-primary: #3b82f6;
+    --eui-primary-hover: #2563eb;
+    --eui-primary-subtle: #dbeafe;
+    --eui-primary-border: #bfdbfe;
+
+    --eui-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+
+    --eui-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+    --eui-radius-sm: 0.25rem;
+    --eui-radius-md: 0.375rem;
+
+    /* ── Gray scale palette ── */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-400: #9ca3af;
+    --color-gray-500: #6b7280;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1f2937;
+    --color-gray-900: #111827;
+
+    /* ── Status colors (fixed, not themed) ── */
+    --color-success-500: #22c55e;
+    --color-success-600: #16a34a;
+    --color-success-700: #15803d;
+
+    --color-warning-500: #f59e0b;
+    --color-warning-600: #d97706;
+    --color-warning-700: #b45309;
+
+    --color-danger-500: #ef4444;
+    --color-danger-600: #dc2626;
+    --color-danger-700: #b91c1c;
+
+    --color-info-500: #06b6d4;
+    --color-info-600: #0891b2;
+    --color-info-700: #0e7490;
+
+    /* ── Shadows ── */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    /* ── Radii ── */
+    --radius-sm: 0.125rem;
+    --radius-default: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-full: 9999px;
+
+    /* ── Transitions ── */
+    --transition-default: all 0.2s ease-out;
+    --transition-fast: all 0.1s ease-out;
+    --transition-slow: all 0.3s ease-out;
+}
+
+/* ── Dark mode ── */
+body.mode-dark,
+.mode-dark {
+    --eui-bg: #1f2937;
+    --eui-bg-subtle: #111827;
+    --eui-bg-hover: #1e3a5f;
+
+    --eui-text: #e5e7eb;
+    --eui-text-muted: #9ca3af;
+    --eui-text-disabled: #6b7280;
+    --eui-text-on-primary: #ffffff;
+
+    --eui-border: #4b5563;
+    --eui-border-subtle: #374151;
+
+    --eui-primary: #2563eb;
+    --eui-primary-hover: #3b82f6;
+    --eui-primary-subtle: #1e3a5f;
+    --eui-primary-border: #1d4ed8;
+
+    --eui-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.4);
+
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+}

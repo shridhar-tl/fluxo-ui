@@ -1,0 +1,489 @@
+@use '../eui-vars' as *;
+
+// ── Root ─────────────────────────────────────────────────────────────────────
+.eui-collapsible-panel {
+    width: 100%;
+    border-radius: var(--eui-radius-md);
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+
+    // ── Header ───────────────────────────────────────────────────────────
+    .eui-cp-header {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        cursor: pointer;
+        user-select: none;
+        outline: none;
+        border-radius: var(--eui-radius-md);
+        transition: background-color 0.2s ease, color 0.2s ease;
+
+        &:focus-visible {
+            box-shadow: 0 0 0 2px var(--eui-primary);
+        }
+
+        &:hover {
+            background-color: var(--eui-bg-hover);
+        }
+    }
+
+    // ── Toggle indicator ─────────────────────────────────────────────────
+    .eui-cp-indicator {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: var(--eui-text-muted);
+
+        .eui-cp-chevron {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    }
+
+    .eui-cp-indicator-open {
+        transform: rotate(180deg);
+    }
+
+    // ── Icon slot ────────────────────────────────────────────────────────
+    .eui-cp-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: var(--eui-primary);
+    }
+
+    // ── Title group ──────────────────────────────────────────────────────
+    .eui-cp-title-group {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+        gap: 0.125rem;
+    }
+
+    .eui-cp-title {
+        font-weight: 600;
+        color: var(--eui-text);
+        line-height: 1.4;
+    }
+
+    .eui-cp-subtitle {
+        font-weight: 400;
+        color: var(--eui-text-muted);
+        line-height: 1.4;
+    }
+
+    // ── Actions ──────────────────────────────────────────────────────────
+    .eui-cp-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        flex-shrink: 0;
+        margin-inline-start: auto;
+    }
+
+    // ── Body — CSS Grid height animation ─────────────────────────────────
+    .eui-cp-body {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        visibility: hidden;
+    }
+
+    .eui-cp-body-open {
+        grid-template-rows: 1fr;
+        visibility: visible;
+    }
+
+    .eui-cp-content {
+        overflow: hidden;
+        color: var(--eui-text);
+        opacity: 0;
+        transition: opacity 0.2s ease 0.05s;
+    }
+
+    .eui-cp-body-open > .eui-cp-content {
+        opacity: 1;
+    }
+
+    // ── Disabled ─────────────────────────────────────────────────────────
+    &.eui-cp-disabled {
+        .eui-cp-header {
+            cursor: not-allowed;
+            opacity: 0.5;
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+    }
+
+    // ── Size: sm ─────────────────────────────────────────────────────────
+    &.eui-cp-size-sm {
+        .eui-cp-header {
+            padding: 0.5rem 0.625rem;
+            font-size: 0.8125rem;
+        }
+
+        .eui-cp-content {
+            padding: 0 0.625rem;
+        }
+
+        .eui-cp-body-open + .eui-cp-body,
+        .eui-cp-body-open {
+            & > .eui-cp-content {
+                padding-bottom: 0.5rem;
+            }
+        }
+
+        .eui-cp-subtitle {
+            font-size: 0.6875rem;
+        }
+
+        .eui-cp-indicator .eui-cp-chevron {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    // ── Size: md ─────────────────────────────────────────────────────────
+    &.eui-cp-size-md {
+        .eui-cp-header {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .eui-cp-content {
+            padding: 0 1rem;
+        }
+
+        .eui-cp-body-open > .eui-cp-content {
+            padding-bottom: 0.75rem;
+        }
+
+        .eui-cp-subtitle {
+            font-size: 0.75rem;
+        }
+    }
+
+    // ── Size: lg ─────────────────────────────────────────────────────────
+    &.eui-cp-size-lg {
+        .eui-cp-header {
+            padding: 1rem 1.25rem;
+            font-size: 1rem;
+        }
+
+        .eui-cp-content {
+            padding: 0 1.25rem;
+        }
+
+        .eui-cp-body-open > .eui-cp-content {
+            padding-bottom: 1rem;
+        }
+
+        .eui-cp-subtitle {
+            font-size: 0.8125rem;
+        }
+
+        .eui-cp-indicator .eui-cp-chevron {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+
+    // ── Variant: default ─────────────────────────────────────────────────
+    &.eui-cp-default {
+        border: 1px solid var(--eui-border-subtle);
+        background-color: var(--eui-bg);
+    }
+
+    // ── Variant: bordered ────────────────────────────────────────────────
+    &.eui-cp-bordered {
+        border: 1px solid var(--eui-border);
+        background-color: var(--eui-bg);
+
+        &.eui-cp-open {
+            border-color: var(--eui-primary-border);
+        }
+    }
+
+    // ── Variant: elevated ────────────────────────────────────────────────
+    &.eui-cp-elevated {
+        background-color: var(--eui-bg);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+
+        &.eui-cp-open {
+            box-shadow: var(--eui-shadow);
+        }
+    }
+
+    // ── Variant: ghost ───────────────────────────────────────────────────
+    &.eui-cp-ghost {
+        background-color: transparent;
+        border-radius: 0;
+
+        .eui-cp-header {
+            border-radius: 0;
+            padding-inline: 0;
+        }
+
+        .eui-cp-content {
+            padding-inline: 0;
+        }
+    }
+
+    // ── Variant: separated ───────────────────────────────────────────────
+    &.eui-cp-separated {
+        background-color: var(--eui-bg);
+        border: 1px solid var(--eui-border-subtle);
+
+        .eui-cp-header {
+            border-radius: var(--eui-radius-md);
+            background-color: var(--eui-bg-subtle);
+        }
+
+        &.eui-cp-open .eui-cp-header {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            border-bottom: 1px solid var(--eui-border-subtle);
+        }
+    }
+}
+
+// ── Group ────────────────────────────────────────────────────────────────────
+.eui-cp-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CollapsibleTabs — horizontal side-by-side layout
+// ═══════════════════════════════════════════════════════════════════════════
+
+.eui-collapsible-tabs {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    font-family: var(--eui-font-family);
+
+    @media (min-width: $bp-lg) {
+        flex-direction: row;
+    }
+
+    // ── Individual tab ───────────────────────────────────────────────────
+    .eui-ct-tab {
+        position: relative;
+        transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+            max-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+            width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.25s ease;
+    }
+
+    .eui-ct-tab-open {
+        flex-grow: 1;
+        background-color: var(--eui-bg);
+        overflow: hidden;
+    }
+
+    .eui-ct-tab-closed {
+        flex: none;
+        width: 100%;
+        border: 1px solid var(--eui-border-subtle);
+        cursor: pointer;
+        padding: 0.5rem;
+
+        @media (min-width: $bp-lg) {
+            width: 2.5rem;
+            padding: 0;
+        }
+
+        &:hover {
+            background-color: var(--eui-bg-hover);
+        }
+    }
+
+    .eui-ct-tab-has-open-sibling {
+        margin-top: 0.75rem;
+        margin-inline-start: 0;
+
+        @media (min-width: $bp-lg) {
+            margin-top: 0;
+            margin-inline-start: 0.75rem;
+        }
+    }
+
+    // Spacing between closed tabs and neighbors
+    .eui-ct-tab-closed + .eui-ct-tab-closed {
+        margin-top: 0.25rem;
+
+        @media (min-width: $bp-lg) {
+            margin-top: 0;
+            margin-inline-start: 0;
+        }
+    }
+
+    .eui-ct-tab-open + .eui-ct-tab-closed,
+    .eui-ct-tab-closed + .eui-ct-tab-open {
+        margin-top: 0.5rem;
+
+        @media (min-width: $bp-lg) {
+            margin-top: 0;
+            margin-inline-start: 0;
+        }
+    }
+
+    // ── Collapsed header ─────────────────────────────────────────────────
+    .eui-ct-collapsed-header {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        padding: 0.5rem;
+        cursor: pointer;
+        outline: none;
+
+        @media (min-width: $bp-lg) {
+            flex-direction: column;
+            padding: 0.5rem 0;
+        }
+
+        &:focus-visible {
+            box-shadow: inset 0 0 0 2px var(--eui-primary);
+        }
+    }
+
+    .eui-ct-expand-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: var(--eui-text-muted);
+        margin-bottom: 0;
+
+        @media (min-width: $bp-lg) {
+            margin-bottom: 0.25rem;
+        }
+    }
+
+    .eui-ct-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .eui-ct-collapsed-label {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        text-align: center;
+        color: var(--eui-text);
+
+        @media (min-width: $bp-lg) {
+            transform: rotate(-90deg);
+            writing-mode: horizontal-tb;
+        }
+    }
+
+    // ── Open content area ────────────────────────────────────────────────
+    .eui-ct-open-content {
+        position: relative;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .eui-ct-collapse-btn {
+        position: absolute;
+        top: -0.125rem;
+        right: 0.5rem;
+        z-index: 10;
+        cursor: pointer;
+        outline: none;
+
+        .eui-ct-collapse-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            background-color: var(--eui-bg-subtle);
+            color: var(--eui-text);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        &:hover .eui-ct-collapse-icon {
+            background-color: var(--eui-bg-hover);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        &:focus-visible .eui-ct-collapse-icon {
+            box-shadow: 0 0 0 2px var(--eui-primary);
+        }
+    }
+
+    .eui-ct-panel-body {
+        height: 100%;
+        overflow: hidden;
+        background-color: var(--eui-bg);
+    }
+
+    // ── Variant: default ─────────────────────────────────────────────────
+    &.eui-ct-default {
+        .eui-ct-tab-open {
+            box-shadow: var(--eui-shadow);
+        }
+    }
+
+    // ── Variant: bordered ────────────────────────────────────────────────
+    &.eui-ct-bordered {
+        .eui-ct-tab-open {
+            border: 1px solid var(--eui-border);
+            border-radius: var(--eui-radius-md);
+        }
+
+        .eui-ct-tab-closed {
+            border-radius: var(--eui-radius-md);
+        }
+    }
+
+    // ── Variant: elevated ────────────────────────────────────────────────
+    &.eui-ct-elevated {
+        .eui-ct-tab-open {
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+            border-radius: var(--eui-radius-md);
+        }
+
+        .eui-ct-tab-closed {
+            border-radius: var(--eui-radius-md);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+    }
+}
+
+// ── Reduced motion ───────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+    .eui-collapsible-panel {
+        .eui-cp-indicator {
+            transition: none;
+        }
+
+        .eui-cp-body {
+            transition: none;
+        }
+    }
+
+    .eui-collapsible-tabs {
+        .eui-ct-tab {
+            transition: none;
+        }
+    }
+}

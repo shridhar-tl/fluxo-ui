@@ -1,0 +1,138 @@
+@use '_eui-vars' as *;
+
+.eui-breadcrumb {
+    font-family: var(--eui-font-family);
+
+    .eui-breadcrumb-list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .eui-breadcrumb-separator {
+        display: flex;
+        align-items: center;
+        padding: 0 0.375rem;
+        color: var(--eui-text-muted);
+        font-size: 0.875rem;
+        user-select: none;
+    }
+
+    .eui-breadcrumb-item {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    .eui-breadcrumb-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.25rem 0.375rem;
+        border: none;
+        border-radius: var(--eui-radius-sm);
+        background: none;
+        color: var(--eui-primary);
+        font-family: inherit;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.15s ease, background-color 0.15s ease;
+        white-space: nowrap;
+
+        &:hover {
+            color: var(--eui-primary-hover);
+            background-color: var(--eui-bg-hover);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--eui-primary);
+            outline-offset: 1px;
+        }
+    }
+
+    .eui-breadcrumb-link-current {
+        color: var(--eui-text);
+        font-weight: 500;
+        cursor: default;
+        pointer-events: none;
+    }
+
+    .eui-breadcrumb-icon {
+        display: inline-flex;
+        align-items: center;
+        font-size: 1rem;
+        line-height: 1;
+
+        svg {
+            width: 1em;
+            height: 1em;
+        }
+    }
+
+    .eui-breadcrumb-ellipsis {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        min-width: 1.5rem;
+        justify-content: center;
+    }
+
+    .eui-breadcrumb-collapsed {
+        position: relative;
+    }
+
+    .eui-breadcrumb-dropdown {
+        position: absolute;
+        top: calc(100% + 0.25rem);
+        left: 0;
+        z-index: 50;
+        min-width: 10rem;
+        max-height: 16rem;
+        overflow-y: auto;
+        margin: 0;
+        padding: 0.25rem;
+        list-style: none;
+        background-color: var(--eui-bg);
+        border: 1px solid var(--eui-border-subtle);
+        border-radius: var(--eui-radius-md);
+        box-shadow: var(--eui-shadow);
+    }
+
+    .eui-breadcrumb-dropdown-item {
+        display: flex;
+    }
+
+    .eui-breadcrumb-dropdown-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: none;
+        border-radius: var(--eui-radius-sm);
+        background: none;
+        color: var(--eui-text);
+        font-family: inherit;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        text-decoration: none;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        white-space: nowrap;
+
+        &:hover {
+            background-color: var(--eui-bg-hover);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--eui-primary);
+            outline-offset: -2px;
+        }
+    }
+}

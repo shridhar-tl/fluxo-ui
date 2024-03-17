@@ -1,0 +1,18 @@
+/* Orange theme */
+.theme-orange {
+    --eui-primary: #f97316;
+    --eui-primary-hover: #ea580c;
+    --eui-primary-subtle: #ffedd5;
+    --eui-primary-border: #fed7aa;
+    --eui-bg-hover: #fff7ed;
+}
+
+.theme-orange.mode-dark,
+.theme-orange .mode-dark,
+body.mode-dark .theme-orange {
+    --eui-primary: #ea580c;
+    --eui-primary-hover: #f97316;
+    --eui-primary-subtle: #431407;
+    --eui-primary-border: #7c2d12;
+    --eui-bg-hover: #431407;
+}

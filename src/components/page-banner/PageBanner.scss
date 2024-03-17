@@ -1,0 +1,322 @@
+@use '../eui-vars' as *;
+
+.eui-page-banner {
+    font-family: var(--eui-font-family);
+    border-radius: var(--eui-radius-md);
+    overflow: hidden;
+    position: relative;
+    animation: euiBannerSlideIn 0.3s ease-out;
+
+    &.eui-page-banner-exiting {
+        animation: euiBannerSlideOut 0.3s ease-in forwards;
+    }
+
+    &.eui-page-banner-page-level {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        border-radius: 0;
+
+        &.eui-page-banner-push {
+            position: relative;
+        }
+    }
+
+    &.eui-page-banner-bordered {
+        border-width: 1px;
+        border-style: solid;
+    }
+
+    &.eui-page-banner-info {
+        background-color: #eff6ff;
+        color: #1e40af;
+
+        .eui-page-banner-icon svg {
+            color: #3b82f6;
+        }
+
+        .eui-page-banner-progress {
+            background-color: #3b82f6;
+        }
+
+        &.eui-page-banner-bordered {
+            border-color: #bfdbfe;
+        }
+    }
+
+    &.eui-page-banner-success {
+        background-color: #f0fdf4;
+        color: #166534;
+
+        .eui-page-banner-icon svg {
+            color: #22c55e;
+        }
+
+        .eui-page-banner-progress {
+            background-color: #22c55e;
+        }
+
+        &.eui-page-banner-bordered {
+            border-color: #bbf7d0;
+        }
+    }
+
+    &.eui-page-banner-warning {
+        background-color: #fffbeb;
+        color: #92400e;
+
+        .eui-page-banner-icon svg {
+            color: #f59e0b;
+        }
+
+        .eui-page-banner-progress {
+            background-color: #f59e0b;
+        }
+
+        &.eui-page-banner-bordered {
+            border-color: #fde68a;
+        }
+    }
+
+    &.eui-page-banner-error {
+        background-color: #fef2f2;
+        color: #991b1b;
+
+        .eui-page-banner-icon svg {
+            color: #ef4444;
+        }
+
+        .eui-page-banner-progress {
+            background-color: #ef4444;
+        }
+
+        &.eui-page-banner-bordered {
+            border-color: #fecaca;
+        }
+    }
+
+    &.eui-page-banner-default {
+        background-color: var(--eui-bg-subtle);
+        color: var(--eui-text);
+
+        .eui-page-banner-icon svg {
+            color: var(--eui-text-muted);
+        }
+
+        .eui-page-banner-progress {
+            background-color: var(--eui-border);
+        }
+
+        &.eui-page-banner-bordered {
+            border-color: var(--eui-border);
+        }
+    }
+}
+
+body.mode-dark {
+    .eui-page-banner-info {
+        background-color: rgba(59, 130, 246, 0.12);
+        color: #93c5fd;
+
+        &.eui-page-banner-bordered {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+    }
+
+    .eui-page-banner-success {
+        background-color: rgba(34, 197, 94, 0.12);
+        color: #86efac;
+
+        &.eui-page-banner-bordered {
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+    }
+
+    .eui-page-banner-warning {
+        background-color: rgba(245, 158, 11, 0.12);
+        color: #fcd34d;
+
+        &.eui-page-banner-bordered {
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+    }
+
+    .eui-page-banner-error {
+        background-color: rgba(239, 68, 68, 0.12);
+        color: #fca5a5;
+
+        &.eui-page-banner-bordered {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+    }
+}
+
+.eui-page-banner-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+}
+
+.eui-page-banner-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    margin-top: 0.0625rem;
+
+    svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+}
+
+.eui-page-banner-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.eui-page-banner-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0.125rem;
+    line-height: 1.4;
+}
+
+.eui-page-banner-message {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.eui-page-banner-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    margin-top: 0.0625rem;
+}
+
+.eui-page-banner-dismiss {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0.25rem;
+    margin: 0;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    border-radius: var(--eui-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.15s ease, background-color 0.15s ease;
+
+    svg {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    &:hover {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.06);
+    }
+
+    &:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 1px;
+    }
+
+    body.mode-dark &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.eui-page-banner-progress {
+    height: 3px;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform-origin: left;
+    animation: euiBannerProgress linear forwards;
+    opacity: 0.6;
+}
+
+@keyframes euiBannerProgress {
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
+}
+
+@keyframes euiBannerSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes euiBannerSlideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 200px;
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-100%);
+        max-height: 0;
+    }
+}
+
+.eui-page-banner:not(.eui-page-banner-page-level) {
+    &.eui-page-banner-entering {
+        animation: euiBannerFadeIn 0.3s ease-out;
+    }
+
+    &.eui-page-banner-exiting {
+        animation: euiBannerFadeOut 0.3s ease-in forwards;
+    }
+}
+
+@keyframes euiBannerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes euiBannerFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+@media (max-width: $bp-sm) {
+    .eui-page-banner-content {
+        padding: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .eui-page-banner-actions {
+        flex-wrap: wrap;
+    }
+}

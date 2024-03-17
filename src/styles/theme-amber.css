@@ -1,0 +1,17 @@
+.theme-amber {
+    --eui-primary: #f59e0b;
+    --eui-primary-hover: #d97706;
+    --eui-primary-subtle: #fef3c7;
+    --eui-primary-border: #fde68a;
+    --eui-bg-hover: #fffbeb;
+}
+
+.theme-amber.mode-dark,
+.theme-amber .mode-dark,
+body.mode-dark .theme-amber {
+    --eui-primary: #d97706;
+    --eui-primary-hover: #f59e0b;
+    --eui-primary-subtle: #451a03;
+    --eui-primary-border: #92400e;
+    --eui-bg-hover: #451a03;
+}

@@ -1,0 +1,60 @@
+// Breakpoints
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+$bp-2xl: 1536px;
+
+:root {
+    // Surface
+    --eui-bg: #ffffff;
+    --eui-bg-subtle: #f9fafb;
+    --eui-bg-hover: #eff6ff;
+
+    // Text
+    --eui-text: #1f2937;
+    --eui-text-muted: #6b7280;
+    --eui-text-disabled: #9ca3af;
+    --eui-text-on-primary: #ffffff;
+
+    // Border
+    --eui-border: #d1d5db;
+    --eui-border-subtle: #e5e7eb;
+
+    // Primary accent
+    --eui-primary: #3b82f6;
+    --eui-primary-hover: #2563eb;
+    --eui-primary-subtle: #dbeafe;
+    --eui-primary-border: #bfdbfe;
+
+    // Shadow
+    --eui-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+
+    // Font
+    --eui-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+    // Radius
+    --eui-radius-sm: 0.25rem;
+    --eui-radius-md: 0.375rem;
+}
+
+body.mode-dark {
+    --eui-bg: #1f2937;
+    --eui-bg-subtle: #111827;
+    --eui-bg-hover: #1e3a5f;
+
+    --eui-text: #e5e7eb;
+    --eui-text-muted: #9ca3af;
+    --eui-text-disabled: #6b7280;
+    --eui-text-on-primary: #ffffff;
+
+    --eui-border: #4b5563;
+    --eui-border-subtle: #374151;
+
+    --eui-primary: #2563eb;
+    --eui-primary-hover: #3b82f6;
+    --eui-primary-subtle: #1e3a5f;
+    --eui-primary-border: #1d4ed8;
+
+    --eui-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.4);
+}

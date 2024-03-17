@@ -1,0 +1,99 @@
+@use '../eui-vars' as *;
+
+.eui-splitter {
+    display: flex;
+    overflow: hidden;
+
+    &.eui-splitter-horizontal {
+        flex-direction: row;
+    }
+
+    &.eui-splitter-vertical {
+        flex-direction: column;
+    }
+
+    .eui-splitter-panel {
+        min-width: 0;
+        min-height: 0;
+        overflow: auto;
+    }
+
+    .eui-splitter-gutter {
+        position: relative;
+        flex-shrink: 0;
+        user-select: none;
+        background-color: var(--eui-border-subtle);
+        transition: background-color 0.15s ease;
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible {
+            box-shadow: 0 0 0 2px var(--eui-primary);
+        }
+
+        &:hover {
+            background-color: var(--eui-border);
+
+            .eui-splitter-gutter-handle {
+                background-color: var(--eui-primary);
+                box-shadow: 0 2px 8px var(--eui-shadow);
+
+                .eui-splitter-grip-dot {
+                    background-color: #ffffff;
+                }
+            }
+        }
+
+        &.eui-splitter-gutter-horizontal {
+            cursor: col-resize;
+        }
+
+        &.eui-splitter-gutter-vertical {
+            cursor: row-resize;
+        }
+
+        .eui-splitter-gutter-handle {
+            position: absolute;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            background-color: var(--eui-border);
+            box-shadow: 0 1px 3px var(--eui-shadow);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition:
+                background-color 0.15s ease,
+                box-shadow 0.15s ease;
+
+            &.eui-splitter-gutter-handle-horizontal {
+                width: 8px;
+                height: 32px;
+                padding: 6px 0;
+                flex-direction: column;
+                gap: 3px;
+            }
+
+            &.eui-splitter-gutter-handle-vertical {
+                width: 32px;
+                height: 8px;
+                padding: 0 6px;
+                flex-direction: row;
+                gap: 3px;
+            }
+
+            .eui-splitter-grip-dot {
+                width: 2px;
+                height: 2px;
+                border-radius: 9999px;
+                flex-shrink: 0;
+                background-color: var(--eui-text-muted);
+                transition: background-color 0.15s ease;
+            }
+        }
+    }
+}

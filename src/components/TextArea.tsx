@@ -1,0 +1,145 @@
+import classNames from 'classnames';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import { BaseComponentProps, ComponentEvent } from '../types';
+import { generateId, getComponentClasses, getComponentStyles } from '../utils';
+import './TextArea.scss';
+
+interface TextAreaProps extends BaseComponentProps, Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange' | 'size'> {
+    value?: string;
+    onChange?: (event: ComponentEvent<string>) => void;
+    placeholder?: string;
+    required?: boolean;
+    readonly?: boolean;
+    maxLength?: number;
+    minLength?: number;
+    rows?: number;
+    autoResize?: boolean;
+    maxHeight?: string;
+    autoFocus?: boolean;
+    id?: string;
+    showCount?: boolean;
+}
+
+export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
+    (
+        {
+            value,
+            onChange,
+            placeholder,
+            required = false,
+            readonly = false,
+            maxLength,
+            minLength,
+            rows = 3,
+            autoResize = false,
+            maxHeight = '200px',
+            autoFocus = false,
+            id,
+            disabled = false,
+            className,
+            name,
+            args,
+            ...baseProps
+        },
+        ref,
+    ) => {
+        const [inputId] = useState(id || generateId());
+        const isControlled = value !== undefined;
+        const [internalValue, setInternalValue] = useState(value ?? '');
+        const displayValue = isControlled ? value : internalValue;
+        const [currentLength, setCurrentLength] = useState((displayValue).length);
+        const textareaRef = useRef<HTMLTextAreaElement>(null);
+        const combinedRef = (ref as React.RefObject<HTMLTextAreaElement>) || textareaRef;
+
+        const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            let newValue = e.target.value;
+
+            // Enforce maxLength if specified
+            if (maxLength && newValue.length > maxLength) {
+                newValue = newValue.slice(0, maxLength);
+                e.target.value = newValue;
+            }
+
+            setCurrentLength(newValue.length);
+
+            if (!isControlled) {
+                setInternalValue(newValue);
+            }
+            if (onChange) {
+                onChange({
+                    event: e,
+                    value: newValue,
+                    name,
+                    args,
+                });
+            }
+        };
+
+        const adjustHeight = () => {
+            if (autoResize && combinedRef.current) {
+                const textarea = combinedRef.current;
+                textarea.style.height = 'auto';
+
+                const maxHeightValue = parseInt(maxHeight.replace('px', ''));
+                const newHeight = Math.min(textarea.scrollHeight, maxHeightValue);
+
+                textarea.style.height = `${newHeight}px`;
+                textarea.style.overflowY = textarea.scrollHeight > maxHeightValue ? 'auto' : 'hidden';
+            }
+        };
+
+        useEffect(() => {
+            adjustHeight();
+        }, [displayValue, autoResize]);
+
+        useEffect(() => {
+            setCurrentLength(displayValue.length);
+        }, [displayValue]);
+
+        const componentClasses = getComponentClasses(
+            { ...baseProps, disabled, className },
+            classNames('eui-textarea', {
+                'eui-textarea-resizable': !autoResize,
+                'eui-textarea-readonly': readonly,
+                'eui-textarea-disabled': disabled,
+            }),
+        );
+
+        const baseStyles = getComponentStyles({ ...baseProps, disabled });
+        delete baseStyles.padding;
+        delete baseStyles.height;
+        delete baseStyles.fontSize;
+        const componentStyles = {
+            ...baseStyles,
+            ...(autoResize && { overflow: 'hidden' }),
+        };
+
+        return (
+            <div className="eui-textarea-wrap">
+                <textarea
+                    ref={combinedRef}
+                    id={inputId}
+                    value={displayValue}
+                    onChange={handleChange}
+                    placeholder={placeholder}
+                    required={required}
+                    readOnly={readonly}
+                    minLength={minLength}
+                    rows={rows}
+                    autoFocus={autoFocus}
+                    disabled={disabled}
+                    className={componentClasses}
+                    style={componentStyles}
+                    aria-invalid={required && !displayValue ? 'true' : 'false'}
+                    aria-required={required}
+                    onInput={adjustHeight}
+                />
+                {maxLength && (
+                    <div className="eui-textarea-count">
+                        {currentLength}/{maxLength}
+                    </div>
+                )}
+            </div>
+        );
+    },
+);

@@ -1,0 +1,18 @@
+/* Green theme */
+.theme-green {
+    --eui-primary: #22c55e;
+    --eui-primary-hover: #16a34a;
+    --eui-primary-subtle: #dcfce7;
+    --eui-primary-border: #bbf7d0;
+    --eui-bg-hover: #f0fdf4;
+}
+
+.theme-green.mode-dark,
+.theme-green .mode-dark,
+body.mode-dark .theme-green {
+    --eui-primary: #16a34a;
+    --eui-primary-hover: #22c55e;
+    --eui-primary-subtle: #14532d;
+    --eui-primary-border: #166534;
+    --eui-bg-hover: #14532d;
+}

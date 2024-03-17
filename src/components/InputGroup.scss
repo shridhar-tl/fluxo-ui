@@ -1,0 +1,95 @@
+@use './eui-vars' as *;
+
+.eui-input-group {
+    display: inline-flex;
+    align-items: stretch;
+    width: 100%;
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-sm);
+    overflow: hidden;
+    background-color: var(--eui-bg);
+
+    &:focus-within {
+        border-color: var(--eui-primary);
+        box-shadow: 0 0 0 1px var(--eui-primary);
+    }
+
+    &.eui-input-group-disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    > .eui-text-input,
+    > .eui-text-input-wrap,
+    > .eui-password-wrap {
+        flex: 1;
+        min-width: 0;
+    }
+
+    > .eui-text-input {
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+
+        &:focus {
+            box-shadow: none !important;
+            outline: none;
+        }
+    }
+
+    > .eui-text-input-wrap {
+        > .eui-text-input {
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            height: 100%;
+
+            &:focus {
+                box-shadow: none !important;
+                outline: none;
+            }
+        }
+    }
+
+    > .eui-password-wrap {
+        > .eui-password {
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            height: 100%;
+
+            &:focus {
+                box-shadow: none !important;
+                outline: none;
+            }
+        }
+    }
+
+    > .eui-button {
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        flex-shrink: 0;
+        white-space: nowrap;
+        align-self: stretch;
+    }
+
+    > .eui-input-group-addon {
+        display: flex;
+        align-items: center;
+        padding: 0 0.75rem;
+        background-color: var(--eui-bg-subtle);
+        color: var(--eui-text-muted);
+        font-size: 0.8125rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+
+        span {
+            color: var(--eui-text);
+        }
+    }
+
+    > * + * {
+        border-left: 1px solid var(--eui-border);
+    }
+}

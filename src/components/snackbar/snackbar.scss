@@ -1,0 +1,325 @@
+@use '../eui-vars' as *;
+
+@mixin btn-reset {
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease,
+        border-color 0.15s ease;
+    &:focus {
+        outline: none;
+    }
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+@keyframes snackbar-fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes snackbar-fadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@keyframes snackbar-slideInDown {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(0); }
+}
+
+@keyframes snackbar-slideOutUp {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-100%); }
+}
+
+@keyframes snackbar-slideInUp {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+@keyframes snackbar-slideOutDown {
+    from { transform: translateY(0); }
+    to   { transform: translateY(100%); }
+}
+
+@keyframes snackbar-zoomIn {
+    from { transform: scale(0.75); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+@keyframes snackbar-zoomOut {
+    from { transform: scale(1); opacity: 1; }
+    to   { transform: scale(0.75); opacity: 0; }
+}
+
+@keyframes snackbar-bounceIn {
+    0%   { transform: translateY(-70%); opacity: 0; }
+    60%  { transform: translateY(10%); opacity: 1; }
+    80%  { transform: translateY(-5%); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes snackbar-bounceOut {
+    0%   { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-70%); opacity: 0; }
+}
+
+.eui-snackbar-container {
+    position: fixed;
+    z-index: 2050;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    &.eui-snackbar-top-left {
+        top: 1rem;
+        left: 1rem;
+        align-items: flex-start;
+        transform-origin: top;
+    }
+
+    &.eui-snackbar-top-center {
+        top: 1rem;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        align-items: center;
+        transform-origin: top;
+    }
+
+    &.eui-snackbar-top-right {
+        top: 1rem;
+        right: 1rem;
+        align-items: flex-end;
+        transform-origin: top;
+    }
+
+    &.eui-snackbar-bottom-left {
+        bottom: 1rem;
+        left: 1rem;
+        align-items: flex-start;
+        transform-origin: bottom;
+    }
+
+    &.eui-snackbar-bottom-center {
+        bottom: 1rem;
+        left: 0;
+        right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        align-items: center;
+        transform-origin: bottom;
+    }
+
+    &.eui-snackbar-bottom-right {
+        bottom: 1rem;
+        right: 1rem;
+        align-items: flex-end;
+        transform-origin: bottom;
+    }
+}
+
+.eui-snackbar {
+    max-width: 24rem;
+    padding: 1rem;
+    border-radius: var(--eui-radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-left-width: 4px;
+    border-left-style: solid;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.3s ease;
+    animation-fill-mode: forwards;
+
+    &.eui-snackbar-info-light {
+        background: linear-gradient(to right, #60a5fa, #93c5fd);
+        border-left-color: #2563eb;
+        border-left-width: 8px;
+        color: #ffffff;
+    }
+
+    &.eui-snackbar-success-light {
+        background: linear-gradient(to right, #86efac, #bbf7d0);
+        border-left-color: #16a34a;
+        border-left-width: 8px;
+        color: #1f2937;
+    }
+
+    &.eui-snackbar-warning-light {
+        background: linear-gradient(to right, #fbbf24, #fde68a);
+        border-left-color: #d97706;
+        border-left-width: 8px;
+        color: #111827;
+    }
+
+    &.eui-snackbar-error-light {
+        background: linear-gradient(to right, #fca5a5, #fecaca);
+        border-left-color: #dc2626;
+        border-left-width: 8px;
+        color: #1f2937;
+    }
+
+    &.eui-snackbar-info-dark {
+        background-color: #3b82f6;
+        border-left-color: #2563eb;
+        color: #ffffff;
+    }
+
+    &.eui-snackbar-success-dark {
+        background-color: #22c55e;
+        border-left-color: #16a34a;
+        color: #ffffff;
+    }
+
+    &.eui-snackbar-warning-dark {
+        background-color: #eab308;
+        border-left-color: #d97706;
+        color: #ffffff;
+    }
+
+    &.eui-snackbar-error-dark {
+        background-color: #ef4444;
+        border-left-color: #dc2626;
+        color: #ffffff;
+    }
+
+    &.eui-snackbar-anim-fade-enter {
+        animation: snackbar-fadeIn 0.3s ease forwards;
+    }
+
+    &.eui-snackbar-anim-fade-exit {
+        animation: snackbar-fadeOut 0.3s ease forwards;
+    }
+
+    &.eui-snackbar-anim-slide-top-enter {
+        animation: snackbar-slideInDown 0.3s ease forwards;
+    }
+
+    &.eui-snackbar-anim-slide-top-exit {
+        animation: snackbar-slideOutUp 0.3s ease forwards;
+    }
+
+    &.eui-snackbar-anim-slide-bottom-enter {
+        animation: snackbar-slideInUp 0.3s ease forwards;
+    }
+
+    &.eui-snackbar-anim-slide-bottom-exit {
+        animation: snackbar-slideOutDown 0.3s ease forwards;
+    }
+
+    &.eui-snackbar-anim-zoom-enter {
+        animation: snackbar-zoomIn 0.3s ease forwards;
+    }
+
+    &.eui-snackbar-anim-zoom-exit {
+        animation: snackbar-zoomOut 0.3s ease forwards;
+    }
+
+    &.eui-snackbar-anim-bounce-enter {
+        animation: snackbar-bounceIn 0.5s ease forwards;
+    }
+
+    &.eui-snackbar-anim-bounce-exit {
+        animation: snackbar-bounceOut 0.3s ease forwards;
+    }
+}
+
+.eui-snackbar-body {
+    display: flex;
+    align-items: flex-start;
+}
+
+.eui-snackbar-icon {
+    margin-right: 0.75rem;
+    margin-top: 0.25rem;
+    flex-shrink: 0;
+
+    svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+}
+
+.eui-snackbar-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.eui-snackbar-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+}
+
+.eui-snackbar-message {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.eui-snackbar-close {
+    @include btn-reset;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+
+    svg {
+        width: 1rem;
+        height: 1rem;
+        fill: currentColor;
+    }
+}
+
+.eui-snackbar-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.eui-snackbar-progress-bar {
+    height: 100%;
+    opacity: 0.5;
+    transition: width 50ms linear;
+
+    .eui-snackbar-info-light &,
+    .eui-snackbar-info-dark & {
+        background-color: #3b82f6;
+    }
+
+    .eui-snackbar-success-light &,
+    .eui-snackbar-success-dark & {
+        background-color: #22c55e;
+    }
+
+    .eui-snackbar-warning-light &,
+    .eui-snackbar-warning-dark & {
+        background-color: #eab308;
+    }
+
+    .eui-snackbar-error-light &,
+    .eui-snackbar-error-dark & {
+        background-color: #ef4444;
+    }
+}
