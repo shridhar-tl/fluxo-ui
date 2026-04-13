@@ -1,0 +1,74 @@
+@import 'tailwindcss';
+
+body,
+.ether-ui {
+    font-family: 'Inter', sans-serif;
+    font-size: 100%;
+    line-height: 1.5;
+}
+
+@theme {
+    --font-sans: InterVariable, sans-serif;
+}
+
+@import './tailwind-custom.css';
+@import './components.css';
+
+/* Light mode */
+body::-webkit-scrollbar {
+    width: 12px;
+    background: #f3f4f6;
+}
+body::-webkit-scrollbar-thumb {
+    background: #a3a3a3;
+}
+
+/* Dark mode */
+body.dark::-webkit-scrollbar {
+    background: #111827;
+}
+body.dark::-webkit-scrollbar-thumb {
+    background: #262626;
+}
+
+body {
+    /* For Firefox */
+    scrollbar-color: #a3a3a3 #f3f4f6;
+
+    &.dark {
+        scrollbar-color: #262626 #111827;
+    }
+}
+
+.eui-story-nav-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+
+    &:hover {
+        scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+    }
+
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: transparent;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+    &:hover::-webkit-scrollbar-thumb {
+        background: rgba(156, 163, 175, 0.3);
+    }
+}
+
+body.mode-dark .eui-story-nav-scroll {
+    &:hover {
+        scrollbar-color: rgba(107, 114, 128, 0.4) transparent;
+    }
+    &:hover::-webkit-scrollbar-thumb {
+        background: rgba(107, 114, 128, 0.4);
+    }
+}
