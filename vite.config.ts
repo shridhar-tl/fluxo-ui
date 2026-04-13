@@ -25,9 +25,9 @@ const htmlPlugin = createHtmlPlugin({
 export default defineConfig({
     build: {
         sourcemap: true,
+        outDir: 'build',
         rollupOptions: {
             output: {
-                dir: 'build',
                 entryFileNames: () => '[name].[hash].js',
                 assetFileNames: 'assets/[name].[ext]',
             },
@@ -56,6 +56,7 @@ export default defineConfig({
         htmlPlugin as any,
         create404(),
         vitePluginPrerender({
+            outDir: 'build',
             timeoutMs: 10000,
             port: 5000,
             maxDepth: 8,
@@ -74,8 +75,8 @@ function create404(): Plugin {
         name: 'create-404',
         apply: 'build',
         closeBundle() {
-            const indexPath = 'dist/index.html';
-            const notFoundPath = 'dist/404.html';
+            const indexPath = 'build/index.html';
+            const notFoundPath = 'build/404.html';
 
             if (fs.existsSync(indexPath)) {
                 fs.copyFileSync(indexPath, notFoundPath);
