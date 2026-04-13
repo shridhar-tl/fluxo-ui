@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const phoneCode = `import { MaskedInput } from 'ether-ui';
+const phoneCode = `import { MaskedInput } from 'fluxo-ui';
 
 const [phone, setPhone] = useState('');
 
@@ -86,12 +86,7 @@ const MaskDemo: React.FC<MaskDemoProps> = ({ title, mask, label, code: codeStr, 
             <ComponentDemo title={title}>
                 <div className={`w-full ${maxWidth} space-y-2`}>
                     <label className={labelClass}>{label}</label>
-                    <MaskedInput
-                        mask={mask}
-                        value={value}
-                        onChange={(e) => setValue(e.value)}
-                        onRawChange={(r) => setRaw(r)}
-                    />
+                    <MaskedInput mask={mask} value={value} onChange={(e) => setValue(e.value)} onRawChange={(r) => setRaw(r)} />
                     <div className={valueDisplay}>
                         value: &quot;{value}&quot; &nbsp;|&nbsp; raw: &quot;{raw}&quot;
                     </div>

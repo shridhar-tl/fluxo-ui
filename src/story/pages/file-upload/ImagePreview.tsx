@@ -10,7 +10,7 @@ const simulateUpload = async (_file: File, onProgress: (percent: number) => void
     }
 };
 
-const code = `import { FileUpload } from 'ether-ui';
+const code = `import { FileUpload } from 'fluxo-ui';
 
 <FileUpload
   accept="image/*"
@@ -30,13 +30,7 @@ const ImagePreview: React.FC = () => (
     <>
         <ComponentDemo title="Image Preview" description="Uploaded images show thumbnail previews with progress bars during upload.">
             <div className="w-full max-w-lg">
-                <FileUpload
-                    accept="image/*"
-                    multiple
-                    maxFiles={4}
-                    showPreview
-                    onUpload={simulateUpload}
-                />
+                <FileUpload accept="image/*" multiple maxFiles={4} showPreview onUpload={simulateUpload} />
             </div>
         </ComponentDemo>
         <div className="mt-4">

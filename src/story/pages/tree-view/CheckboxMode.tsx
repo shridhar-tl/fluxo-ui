@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { TreeView } from '../../../components';
 import type { TreeNode } from '../../../components';
+import { TreeView } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -40,8 +40,8 @@ const nodes: TreeNode[] = [
     },
 ];
 
-const code = `import { TreeView } from 'ether-ui';
-import type { TreeNode } from 'ether-ui';
+const code = `import { TreeView } from 'fluxo-ui';
+import type { TreeNode } from 'fluxo-ui';
 
 <TreeView
   nodes={nodes}
@@ -55,7 +55,10 @@ const CheckboxMode: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Checkbox Tree" description="Tree with tri-state checkboxes for permission management. Parent nodes show indeterminate state when partially checked.">
+            <ComponentDemo
+                title="Checkbox Tree"
+                description="Tree with tri-state checkboxes for permission management. Parent nodes show indeterminate state when partially checked."
+            >
                 <div className="w-full max-w-sm">
                     <TreeView
                         nodes={nodes}

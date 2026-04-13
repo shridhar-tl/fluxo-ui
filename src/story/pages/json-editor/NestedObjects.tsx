@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { JsonEditor } from '../../../components';
 import type { JsonValue } from '../../../components';
+import { JsonEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { nestedObject } from './json-editor-story-data';
 
-const code = `import { JsonEditor } from 'ether-ui';
+const code = `import { JsonEditor } from 'fluxo-ui';
 
 const data = {
   user: {

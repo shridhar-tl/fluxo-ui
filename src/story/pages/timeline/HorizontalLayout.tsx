@@ -1,6 +1,6 @@
 import React from 'react';
-import { Timeline } from '../../../components';
 import type { TimelineEvent } from '../../../components';
+import { Timeline } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -12,7 +12,7 @@ const events: TimelineEvent[] = [
     { id: '5', title: 'Launch', timestamp: 'Week 11', color: 'success' },
 ];
 
-const code = `import { Timeline } from 'ether-ui';
+const code = `import { Timeline } from 'fluxo-ui';
 
 <Timeline
   events={events}
@@ -21,7 +21,11 @@ const code = `import { Timeline } from 'ether-ui';
 
 const HorizontalLayout: React.FC = () => (
     <>
-        <ComponentDemo title="Horizontal Timeline" description="A horizontal layout for project milestones or step-based workflows." centered={false}>
+        <ComponentDemo
+            title="Horizontal Timeline"
+            description="A horizontal layout for project milestones or step-based workflows."
+            centered={false}
+        >
             <div className="w-full overflow-x-auto">
                 <Timeline events={events} layout="horizontal" />
             </div>

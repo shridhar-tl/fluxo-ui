@@ -13,7 +13,7 @@ const ShimmerPieChartDemo: React.FC = () => {
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import { ShimmerPieChart } from 'ether-ui';
+                    code={`import { ShimmerPieChart } from 'fluxo-ui';
 
 {isLoading && <ShimmerPieChart legendsCount={4} legendPosition="right" />}
 {!isLoading && <PieChart data={chartData} />}`}
@@ -27,9 +27,7 @@ const ShimmerPieChartDemo: React.FC = () => {
                     </div>
                 </ComponentDemo>
                 <div className="mt-4">
-                    <CodeBlock
-                        code={`<ShimmerPieChart doughnut legendsCount={3} legendPosition="bottom" />`}
-                    />
+                    <CodeBlock code={`<ShimmerPieChart doughnut legendsCount={3} legendPosition="bottom" />`} />
                 </div>
             </div>
         </>

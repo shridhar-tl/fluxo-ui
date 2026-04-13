@@ -51,7 +51,7 @@ const BasicUsageDemo: React.FC = () => {
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import { DeferredView } from 'ether-ui';
+                    code={`import { DeferredView } from 'fluxo-ui';
 
 <DeferredView>
   <ExpensiveComponent />

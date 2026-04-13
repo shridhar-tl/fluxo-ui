@@ -1,8 +1,8 @@
 import cn from 'classnames';
 import React from 'react';
+import { Button } from '../../../components';
 import { create, createHook } from '../../../store';
 import { broadcastMiddleware } from '../../../store/middlewares';
-import { Button } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -12,16 +12,13 @@ interface SharedState {
     lastUpdatedBy: string;
 }
 
-const sharedStore = create<SharedState>(
-    () => ({ count: 0, lastUpdatedBy: 'none' }),
-    [broadcastMiddleware('ether-ui-demo-counter')]
-);
+const sharedStore = create<SharedState>(() => ({ count: 0, lastUpdatedBy: 'none' }), [broadcastMiddleware('fluxo-ui-demo-counter')]);
 const useSharedStore = createHook(sharedStore);
 
 const tabId = Math.random().toString(36).slice(2, 6).toUpperCase();
 
-const broadcastCode = `import { create, createHook } from 'ether-ui/store';
-import { broadcastMiddleware } from 'ether-ui/store/middlewares';
+const broadcastCode = `import { create, createHook } from 'fluxo-ui/store';
+import { broadcastMiddleware } from 'fluxo-ui/store/middlewares';
 
 const store = create<{ count: number }>(
   () => ({ count: 0 }),
@@ -48,20 +45,27 @@ const BroadcastDemo: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Broadcast (Cross-Tab Sync)" description="Sync state across browser tabs using the BroadcastChannel API. Open this page in another tab and click buttons — both tabs stay in sync.">
+            <ComponentDemo
+                title="Broadcast (Cross-Tab Sync)"
+                description="Sync state across browser tabs using the BroadcastChannel API. Open this page in another tab and click buttons — both tabs stay in sync."
+            >
                 <div className="flex flex-col items-center gap-4 w-full max-w-sm mx-auto">
-                    <div className={cn('text-xs font-mono px-2 py-1 rounded', {
-                        'bg-white/10 text-gray-400': isDark,
-                        'bg-gray-100 text-gray-500': !isDark,
-                    })}>
+                    <div
+                        className={cn('text-xs font-mono px-2 py-1 rounded', {
+                            'bg-white/10 text-gray-400': isDark,
+                            'bg-gray-100 text-gray-500': !isDark,
+                        })}
+                    >
                         Tab ID: {tabId}
                     </div>
                     <div className="text-4xl font-bold tabular-nums text-[var(--eui-primary)]">{state.count}</div>
                     {state.lastUpdatedBy !== 'none' && (
-                        <div className={cn('text-xs', {
-                            'text-gray-400': isDark,
-                            'text-gray-500': !isDark,
-                        })}>
+                        <div
+                            className={cn('text-xs', {
+                                'text-gray-400': isDark,
+                                'text-gray-500': !isDark,
+                            })}
+                        >
                             Last updated by: {state.lastUpdatedBy === tabId ? 'this tab' : `tab ${state.lastUpdatedBy}`}
                         </div>
                     )}

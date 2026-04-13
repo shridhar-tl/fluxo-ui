@@ -6,8 +6,8 @@ import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 import { basicSteps } from './tour-story-data';
 
-const code = `import { StepTour } from 'ether-ui';
-import type { TourStep } from 'ether-ui/types';
+const code = `import { StepTour } from 'fluxo-ui';
+import type { TourStep } from 'fluxo-ui/types';
 
 const steps: TourStep[] = [
   {
@@ -96,9 +96,15 @@ const BasicTour: React.FC = () => {
 
                             <div className="flex items-center gap-2 flex-wrap">
                                 <div id="tour-action-bar" className="flex items-center gap-2">
-                                    <Button variant="primary" size="sm">New Report</Button>
-                                    <Button variant="secondary" layout="outlined" size="sm">Export</Button>
-                                    <Button variant="secondary" layout="outlined" size="sm">Filter</Button>
+                                    <Button variant="primary" size="sm">
+                                        New Report
+                                    </Button>
+                                    <Button variant="secondary" layout="outlined" size="sm">
+                                        Export
+                                    </Button>
+                                    <Button variant="secondary" layout="outlined" size="sm">
+                                        Filter
+                                    </Button>
                                 </div>
                                 <div className="ml-auto">
                                     <Button variant="primary" layout="outlined" size="sm" onClick={() => setBasicOpen(true)}>
@@ -110,9 +116,7 @@ const BasicTour: React.FC = () => {
                     </div>
                 </div>
 
-                {basicOpen && (
-                    <StepTour steps={basicSteps} isOpen={basicOpen} onClose={() => setBasicOpen(false)} />
-                )}
+                {basicOpen && <StepTour steps={basicSteps} isOpen={basicOpen} onClose={() => setBasicOpen(false)} />}
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock code={code} />

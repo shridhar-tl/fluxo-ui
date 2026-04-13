@@ -10,7 +10,7 @@ const customValidator = (file: File): string | undefined => {
     return undefined;
 };
 
-const code = `import { FileUpload } from 'ether-ui';
+const code = `import { FileUpload } from 'fluxo-ui';
 
 <FileUpload
   accept=".pdf,.doc,.docx"
@@ -28,7 +28,10 @@ const code = `import { FileUpload } from 'ether-ui';
 
 const Validation: React.FC = () => (
     <>
-        <ComponentDemo title="File Validation" description="Restrict file types, enforce size limits, and add custom validation rules. Invalid files display inline error messages.">
+        <ComponentDemo
+            title="File Validation"
+            description="Restrict file types, enforce size limits, and add custom validation rules. Invalid files display inline error messages."
+        >
             <div className="w-full max-w-lg">
                 <FileUpload
                     accept=".pdf,.doc,.docx"

@@ -3,7 +3,7 @@ import { ProgressBar } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { ProgressBar } from 'ether-ui';
+const code = `import { ProgressBar } from 'fluxo-ui';
 
 function MyComponent() {
   return (

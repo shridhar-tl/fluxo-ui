@@ -3,7 +3,7 @@ import { PageBanner } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { PageBanner } from 'ether-ui';
+const code = `import { PageBanner } from 'fluxo-ui';
 
 <PageBanner
   type="info"
@@ -44,7 +44,10 @@ const bellIcon = (
 const CustomContent: React.FC = () => {
     return (
         <>
-            <ComponentDemo title="Custom Icons" description="Provide a custom icon via the icon prop to replace the default type-based icon.">
+            <ComponentDemo
+                title="Custom Icons"
+                description="Provide a custom icon via the icon prop to replace the default type-based icon."
+            >
                 <div className="space-y-4">
                     <PageBanner
                         type="info"
@@ -91,8 +94,14 @@ const CustomContent: React.FC = () => {
                         message={
                             <span>
                                 Failed to connect to the database. Please check your{' '}
-                                <a href="#" className="underline font-semibold">connection settings</a>{' '}
-                                or contact <a href="#" className="underline font-semibold">support</a>.
+                                <a href="#" className="underline font-semibold">
+                                    connection settings
+                                </a>{' '}
+                                or contact{' '}
+                                <a href="#" className="underline font-semibold">
+                                    support
+                                </a>
+                                .
                             </span>
                         }
                         dismissible={false}
@@ -102,12 +111,7 @@ const CustomContent: React.FC = () => {
 
             <ComponentDemo title="Without Icon" description="Set showIcon to false to hide the icon entirely.">
                 <div className="space-y-4">
-                    <PageBanner
-                        type="default"
-                        message="A simple text-only banner without any icon."
-                        showIcon={false}
-                        dismissible={false}
-                    />
+                    <PageBanner type="default" message="A simple text-only banner without any icon." showIcon={false} dismissible={false} />
                     <PageBanner
                         type="success"
                         title="Minimal Success"

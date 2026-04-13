@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const code = `import { useClickOutside } from 'ether-ui/hooks';
+const code = `import { useClickOutside } from 'fluxo-ui/hooks';
 
 const ref = useRef<HTMLDivElement>(null);
 const [open, setOpen] = useState(false);
@@ -18,16 +18,23 @@ const UseClickOutsideDemo: React.FC = () => {
     const [clickCount, setClickCount] = useState(0);
     const boxRef = useRef<HTMLDivElement>(null);
 
-    useClickOutside(boxRef, () => {
-        if (open) {
-            setOpen(false);
-            setClickCount((c) => c + 1);
-        }
-    }, open);
+    useClickOutside(
+        boxRef,
+        () => {
+            if (open) {
+                setOpen(false);
+                setClickCount((c) => c + 1);
+            }
+        },
+        open,
+    );
 
     return (
         <>
-            <ComponentDemo title="useClickOutside" description="Detects clicks outside a referenced element. Commonly used for closing dropdowns, modals, and popups.">
+            <ComponentDemo
+                title="useClickOutside"
+                description="Detects clicks outside a referenced element. Commonly used for closing dropdowns, modals, and popups."
+            >
                 <div className="space-y-3">
                     <button
                         onClick={() => setOpen(true)}
@@ -45,13 +52,20 @@ const UseClickOutsideDemo: React.FC = () => {
                                 'bg-white border-[var(--eui-primary)] shadow-lg': !isDark,
                             })}
                         >
-                            <p className="font-semibold mb-1" style={{ color: 'var(--eui-text)' }}>Active Panel</p>
-                            <p className="text-sm" style={{ color: 'var(--eui-text-muted)' }}>Click outside this panel to close it.</p>
+                            <p className="font-semibold mb-1" style={{ color: 'var(--eui-text)' }}>
+                                Active Panel
+                            </p>
+                            <p className="text-sm" style={{ color: 'var(--eui-text-muted)' }}>
+                                Click outside this panel to close it.
+                            </p>
                         </div>
                     )}
 
                     <p className="text-xs" style={{ color: 'var(--eui-text-muted)' }}>
-                        Outside clicks detected: <span className="font-mono" style={{ color: 'var(--eui-primary)' }}>{clickCount}</span>
+                        Outside clicks detected:{' '}
+                        <span className="font-mono" style={{ color: 'var(--eui-primary)' }}>
+                            {clickCount}
+                        </span>
                     </p>
                 </div>
             </ComponentDemo>

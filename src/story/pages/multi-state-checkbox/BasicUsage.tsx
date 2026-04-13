@@ -4,7 +4,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { basicStates } from './multi-state-checkbox-story-data';
 
-const code = `import { MultiStateCheckbox } from 'ether-ui';
+const code = `import { MultiStateCheckbox } from 'fluxo-ui';
 
 const states = [
   { value: null, label: 'No Selection', icon: undefined },
@@ -31,11 +31,7 @@ const BasicUsage: React.FC = () => {
         <>
             <ComponentDemo title="Basic MultiStateCheckbox">
                 <div className="flex flex-col gap-4">
-                    <MultiStateCheckbox
-                        items={basicStates}
-                        value={value}
-                        onChange={(e) => setValue(e.value)}
-                    />
+                    <MultiStateCheckbox items={basicStates} value={value} onChange={(e) => setValue(e.value)} />
                     <p className="text-sm text-gray-500">
                         Current value: <strong>{value === null ? 'null' : String(value)}</strong>
                     </p>

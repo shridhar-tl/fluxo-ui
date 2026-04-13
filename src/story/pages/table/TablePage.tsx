@@ -1,8 +1,8 @@
 import cn from 'classnames';
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
-import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
+import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
@@ -74,14 +74,47 @@ const sectionNavItems: SectionNavItem[] = [
 ];
 
 const features: FeatureItem[] = [
-    { title: 'Style Variants', description: 'Nine composable styles: bordered, striped, compact, comfortable, borderless, hoverable, card, minimal header, sticky header.', icon: 'M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42' },
-    { title: 'Column Sorting', description: 'Click headers to sort — supports client-side and server-side sorting.', icon: 'M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5' },
-    { title: 'Pagination', description: 'Built-in footer with configurable rows-per-page and page navigation.', icon: 'M3 7.5h6m-6 4.5h6m-6 4.5h6M15 6.75l3 2.25-3 2.25m6 0H12' },
-    { title: 'Custom Cell Rendering', description: 'Template functions per column for badges, buttons, or any React element.', icon: 'M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5' },
-    { title: 'Responsive Columns', description: 'Hide columns on smaller screens using hideBelow breakpoints.', icon: 'M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3h3m-3 3h3M6 10.5h.008v.008H6V10.5Zm0 3h.008v.008H6V13.5Zm0 3h.008v.008H6V16.5Z' },
-    { title: 'Loading State', description: 'Animated shimmer skeleton while data is being fetched.', icon: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99' },
-    { title: 'Row Click Handler', description: 'Attach onRowClick callbacks for selection or navigation.', icon: 'M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59' },
-    { title: 'Theming', description: 'Dark/light mode and all brand themes via CSS custom properties.', icon: 'M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z' },
+    {
+        title: 'Style Variants',
+        description:
+            'Nine composable styles: bordered, striped, compact, comfortable, borderless, hoverable, card, minimal header, sticky header.',
+        icon: 'M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42',
+    },
+    {
+        title: 'Column Sorting',
+        description: 'Click headers to sort — supports client-side and server-side sorting.',
+        icon: 'M3 7.5 7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5',
+    },
+    {
+        title: 'Pagination',
+        description: 'Built-in footer with configurable rows-per-page and page navigation.',
+        icon: 'M3 7.5h6m-6 4.5h6m-6 4.5h6M15 6.75l3 2.25-3 2.25m6 0H12',
+    },
+    {
+        title: 'Custom Cell Rendering',
+        description: 'Template functions per column for badges, buttons, or any React element.',
+        icon: 'M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5',
+    },
+    {
+        title: 'Responsive Columns',
+        description: 'Hide columns on smaller screens using hideBelow breakpoints.',
+        icon: 'M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 8.25h3m-3 3h3m-3 3h3M6 10.5h.008v.008H6V10.5Zm0 3h.008v.008H6V13.5Zm0 3h.008v.008H6V16.5Z',
+    },
+    {
+        title: 'Loading State',
+        description: 'Animated shimmer skeleton while data is being fetched.',
+        icon: 'M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99',
+    },
+    {
+        title: 'Row Click Handler',
+        description: 'Attach onRowClick callbacks for selection or navigation.',
+        icon: 'M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59',
+    },
+    {
+        title: 'Theming',
+        description: 'Dark/light mode and all brand themes via CSS custom properties.',
+        icon: 'M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z',
+    },
 ];
 
 const TablePage: React.FC = () => {
@@ -107,17 +140,23 @@ const TablePage: React.FC = () => {
             </section>
 
             <section id="sortable-columns" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Sortable Columns</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Sortable Columns
+                </h2>
                 <SortableColumns />
             </section>
 
             <section id="custom-rendering" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Custom Cell Rendering</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Custom Cell Rendering
+                </h2>
                 <CustomRendering />
             </section>
 
             <section id="with-pagination" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>With Pagination</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    With Pagination
+                </h2>
                 <WithPagination />
             </section>
 
@@ -127,23 +166,29 @@ const TablePage: React.FC = () => {
             </section>
 
             <section id="responsive-columns" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Responsive Columns</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Responsive Columns
+                </h2>
                 <ResponsiveColumns />
             </section>
 
             <section id="with-actions" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>With Action Buttons</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    With Action Buttons
+                </h2>
                 <WithActions />
             </section>
 
             <section id="loading-empty" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Loading & Empty States</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Loading & Empty States
+                </h2>
                 <LoadingAndEmpty />
             </section>
 
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import { Table } from 'ether-ui';\nimport type { Column, OnChangeParams } from 'ether-ui';`} />
+                <CodeBlock code={`import { Table } from 'fluxo-ui';\nimport type { Column, OnChangeParams } from 'fluxo-ui';`} />
             </section>
 
             <section id="table-props" className="scroll-mt-8">
@@ -152,7 +197,9 @@ const TablePage: React.FC = () => {
             </section>
 
             <section id="column-config" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Column Configuration</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Column Configuration
+                </h2>
                 <PropsTable props={columnProps} />
             </section>
 

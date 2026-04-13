@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React, { useRef } from 'react';
-import { create, createHook } from '../../../store';
 import { Button } from '../../../components';
+import { create, createHook } from '../../../store';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -13,7 +13,7 @@ interface BatchState {
 const batchStore = create<BatchState>(() => ({ count: 0 }));
 const useBatchStore = createHook(batchStore);
 
-const code = `import { create, createHook } from 'ether-ui/store';
+const code = `import { create, createHook } from 'fluxo-ui/store';
 
 const store = create<{ count: number }>(() => ({ count: 0 }));
 const useStore = createHook(store);
@@ -71,27 +71,19 @@ const BatchDemo: React.FC = () => {
                     </div>
                 </div>
             </div>
-            <div className={cn('text-xs text-center px-4 py-2 rounded-lg', { 'bg-white/5 text-gray-400': isDark, 'bg-gray-100 text-gray-500': !isDark })}>
-                Three setState calls in one handler produce only one re-render thanks to microtask batching.
-                In React dev mode (StrictMode), render count may increment by 2 — this is expected and does not occur in production builds.
+            <div
+                className={cn('text-xs text-center px-4 py-2 rounded-lg', {
+                    'bg-white/5 text-gray-400': isDark,
+                    'bg-gray-100 text-gray-500': !isDark,
+                })}
+            >
+                Three setState calls in one handler produce only one re-render thanks to microtask batching. In React dev mode (StrictMode),
+                render count may increment by 2 — this is expected and does not occur in production builds.
             </div>
             <div className="flex gap-3">
-                <Button
-                    label="+3 (Batched)"
-                    size="sm"
-                    onClick={handleBatchIncrement}
-                />
-                <Button
-                    label="+1"
-                    size="sm"
-                    onClick={() => batchStore.setState((s) => ({ count: s.count + 1 }))}
-                />
-                <Button
-                    label="Reset"
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => batchStore.reset()}
-                />
+                <Button label="+3 (Batched)" size="sm" onClick={handleBatchIncrement} />
+                <Button label="+1" size="sm" onClick={() => batchStore.setState((s) => ({ count: s.count + 1 }))} />
+                <Button label="Reset" size="sm" variant="secondary" onClick={() => batchStore.reset()} />
             </div>
         </div>
     );
@@ -100,7 +92,10 @@ const BatchDemo: React.FC = () => {
 const BatchedUpdates: React.FC = () => {
     return (
         <>
-            <ComponentDemo title="Batched Updates" description="Multiple setState calls within one synchronous handler are batched into a single re-render">
+            <ComponentDemo
+                title="Batched Updates"
+                description="Multiple setState calls within one synchronous handler are batched into a single re-render"
+            >
                 <BatchDemo />
             </ComponentDemo>
             <div className="mt-4">

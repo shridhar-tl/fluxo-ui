@@ -1,7 +1,7 @@
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
 
-const providerCode = `import { createContainer, ServiceProvider, ServiceScope } from 'ether-ui/services';
+const providerCode = `import { createContainer, ServiceProvider, ServiceScope } from 'fluxo-ui/services';
 
 const services = createContainer();
 
@@ -47,7 +47,7 @@ function App() {
     );
 }`;
 
-const hooksCode = `import { useService, useServiceWithArgs, useContainer } from 'ether-ui/services';
+const hooksCode = `import { useService, useServiceWithArgs, useContainer } from 'fluxo-ui/services';
 
 // useService — resolve by name, get { $shortName: instance }
 function Dashboard() {
@@ -82,7 +82,7 @@ function AdminPanel() {
     return <button onClick={resetAll}>Reset Services</button>;
 }`;
 
-const hocCode = `import { withServices } from 'ether-ui/services';
+const hocCode = `import { withServices } from 'fluxo-ui/services';
 
 function ProfileComponent({ $theme, $api, username }) {
     return (
@@ -100,7 +100,7 @@ const Profile = withServices(ProfileComponent, {
 // Usage — only pass non-injected props
 <Profile username="Jane Doe" />`;
 
-const scopeCode = `import { ServiceScope, useScope } from 'ether-ui/services';
+const scopeCode = `import { ServiceScope, useScope } from 'fluxo-ui/services';
 
 // ServiceScope auto-creates and disposes a scope on mount/unmount
 function RequestHandler() {

@@ -1,18 +1,18 @@
 import cn from 'classnames';
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
-import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
+import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
-import UndoRedoDemo from './UndoRedoDemo';
-import PersistDemo from './PersistDemo';
-import ValidationDemo from './ValidationDemo';
-import LoggingDemo from './LoggingDemo';
-import ThrottleDemo from './ThrottleDemo';
-import DebounceDemo from './DebounceDemo';
 import BroadcastDemo from './BroadcastDemo';
+import DebounceDemo from './DebounceDemo';
+import LoggingDemo from './LoggingDemo';
+import PersistDemo from './PersistDemo';
+import ThrottleDemo from './ThrottleDemo';
+import UndoRedoDemo from './UndoRedoDemo';
+import ValidationDemo from './ValidationDemo';
 
 const sectionNavItems: SectionNavItem[] = [
     { id: 'undo-redo', title: 'Undo / Redo', description: 'History navigation' },
@@ -75,9 +75,12 @@ const StoreMiddlewarePage: React.FC = () => {
     return (
         <PageLayout sectionNavItems={sectionNavItems}>
             <div>
-                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Store Middleware</h1>
+                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Store Middleware
+                </h1>
                 <p className={cn('text-xl leading-relaxed', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                    Composable middleware functions that extend store behavior. Add undo/redo, persistence, validation, logging, and throttling with a single line.
+                    Composable middleware functions that extend store behavior. Add undo/redo, persistence, validation, logging, and
+                    throttling with a single line.
                 </p>
             </div>
 
@@ -118,7 +121,9 @@ const StoreMiddlewarePage: React.FC = () => {
 
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import {\n  persistMiddleware,\n  undoRedoMiddleware,\n  validationMiddleware,\n  loggerMiddleware,\n  throttleMiddleware,\n  debounceMiddleware,\n  broadcastMiddleware,\n  devToolsMiddleware,\n  immerMiddleware,\n} from 'ether-ui/store/middlewares';`} />
+                <CodeBlock
+                    code={`import {\n  persistMiddleware,\n  undoRedoMiddleware,\n  validationMiddleware,\n  loggerMiddleware,\n  throttleMiddleware,\n  debounceMiddleware,\n  broadcastMiddleware,\n  devToolsMiddleware,\n  immerMiddleware,\n} from 'fluxo-ui/store/middlewares';`}
+                />
             </section>
 
             <section id="features" className="scroll-mt-8">

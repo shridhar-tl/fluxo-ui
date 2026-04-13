@@ -1,16 +1,28 @@
 import React, { useState } from 'react';
-import { Button, NotificationCenter } from '../../../components';
 import type { NotificationItem } from '../../../components';
+import { Button, NotificationCenter } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
 const now = Date.now();
 const items: NotificationItem[] = [
-    { id: '1', title: 'Welcome!', description: 'Thanks for trying the custom trigger demo.', timestamp: new Date(now - 10 * 1000), read: false },
-    { id: '2', title: 'Feature released', description: 'Dark mode is now available.', timestamp: new Date(now - 60 * 60 * 1000), read: true },
+    {
+        id: '1',
+        title: 'Welcome!',
+        description: 'Thanks for trying the custom trigger demo.',
+        timestamp: new Date(now - 10 * 1000),
+        read: false,
+    },
+    {
+        id: '2',
+        title: 'Feature released',
+        description: 'Dark mode is now available.',
+        timestamp: new Date(now - 60 * 60 * 1000),
+        read: true,
+    },
 ];
 
-const code = `import { NotificationCenter, Button } from 'ether-ui';
+const code = `import { NotificationCenter, Button } from 'fluxo-ui';
 
 <NotificationCenter
   items={items}
@@ -26,11 +38,16 @@ const CustomTrigger: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Custom Trigger & Layout" description="Replace the default bell icon with any element. Customize header, footer, width, and max height.">
+            <ComponentDemo
+                title="Custom Trigger & Layout"
+                description="Replace the default bell icon with any element. Customize header, footer, width, and max height."
+            >
                 <NotificationCenter
                     items={notifs}
                     triggerElement={
-                        <Button variant="primary" size="sm">Notifications ({notifs.filter((n) => !n.read).length})</Button>
+                        <Button variant="primary" size="sm">
+                            Notifications ({notifs.filter((n) => !n.read).length})
+                        </Button>
                     }
                     header={
                         <div className="p-3 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
@@ -45,7 +62,7 @@ const CustomTrigger: React.FC = () => {
                     width="420px"
                     maxHeight="300px"
                     onItemClick={(item) => console.log('Clicked:', item.title)}
-                    onMarkRead={(id) => setNotifs((prev) => prev.map((n) => n.id === id ? { ...n, read: true } : n))}
+                    onMarkRead={(id) => setNotifs((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)))}
                 />
             </ComponentDemo>
             <div className="mt-4">

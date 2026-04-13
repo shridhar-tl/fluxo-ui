@@ -3,7 +3,7 @@ import { Slider } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Slider } from 'ether-ui';
+const code = `import { Slider } from 'fluxo-ui';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -35,7 +35,10 @@ const StringValues: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="String Labels" description="Use the labels prop to map slider positions to string values like months or sizes.">
+            <ComponentDemo
+                title="String Labels"
+                description="Use the labels prop to map slider positions to string values like months or sizes."
+            >
                 <div className="space-y-10 w-full max-w-lg">
                     <div>
                         <div className="text-sm mb-2 opacity-70">Month selector (selected: {months[monthIndex]})</div>
@@ -61,14 +64,7 @@ const StringValues: React.FC = () => {
                     </div>
                     <div>
                         <div className="text-sm mb-2 opacity-70">Priority level</div>
-                        <Slider
-                            labels={priorities}
-                            defaultValue={1}
-                            marks
-                            showTooltip
-                            variant="warning"
-                            size="lg"
-                        />
+                        <Slider labels={priorities} defaultValue={1} marks showTooltip variant="warning" size="lg" />
                     </div>
                 </div>
             </ComponentDemo>

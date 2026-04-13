@@ -1,6 +1,6 @@
 import React from 'react';
-import { Breadcrumb } from '../../../components';
 import type { BreadcrumbItem } from '../../../components';
+import { Breadcrumb } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -17,7 +17,7 @@ const arrowSeparator = (
     </svg>
 );
 
-const code = `import { Breadcrumb } from 'ether-ui';
+const code = `import { Breadcrumb } from 'fluxo-ui';
 
 const arrowSeparator = (
   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

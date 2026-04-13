@@ -3,7 +3,7 @@ import { Button } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Button } from 'ether-ui';
+const code = `import { Button } from 'fluxo-ui';
 
 <Button onClick={() => console.log('Clicked!')}>Click me</Button>`;
 

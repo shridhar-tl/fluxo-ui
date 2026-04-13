@@ -1,8 +1,8 @@
 import cn from 'classnames';
 import React, { useState } from 'react';
+import { Button } from '../../../components';
 import { create, createHook } from '../../../store';
 import { loggerMiddleware } from '../../../store/middlewares';
-import { Button } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -15,8 +15,8 @@ interface LogState {
 const logStore = create<LogState>(() => ({ count: 0, label: 'Hello' }), [loggerMiddleware()]);
 const useLogStore = createHook(logStore);
 
-const loggingCode = `import { create, createHook } from 'ether-ui/store';
-import { loggerMiddleware } from 'ether-ui/store/middlewares';
+const loggingCode = `import { create, createHook } from 'fluxo-ui/store';
+import { loggerMiddleware } from 'fluxo-ui/store/middlewares';
 
 const store = create<{ count: number; label: string }>(
   () => ({ count: 0, label: 'Hello' }),
@@ -42,10 +42,12 @@ const LoggingDemo: React.FC = () => {
             <ComponentDemo title="Logger" description="Logs state changes to the browser console with loggerMiddleware">
                 <div className="flex flex-col items-center gap-4">
                     {showHint && (
-                        <div className={cn('text-xs px-4 py-2 rounded-lg flex items-center gap-2', {
-                            'bg-blue-500/10 text-blue-400 border border-blue-500/20': isDark,
-                            'bg-blue-50 text-blue-700 border border-blue-200': !isDark,
-                        })}>
+                        <div
+                            className={cn('text-xs px-4 py-2 rounded-lg flex items-center gap-2', {
+                                'bg-blue-500/10 text-blue-400 border border-blue-500/20': isDark,
+                                'bg-blue-50 text-blue-700 border border-blue-200': !isDark,
+                            })}
+                        >
                             Open browser DevTools console to see the logs
                             <Button label="×" size="xs" layout="plain" onClick={() => setShowHint(false)} />
                         </div>

@@ -39,7 +39,7 @@ const PlaceholderDemo: React.FC = () => {
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import { DeferredView, ShimmerDiv } from 'ether-ui';
+                    code={`import { DeferredView, ShimmerDiv } from 'fluxo-ui';
 
 const placeholder = (
   <div className="space-y-3 p-6">

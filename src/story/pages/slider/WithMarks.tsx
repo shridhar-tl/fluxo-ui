@@ -3,7 +3,7 @@ import { Slider } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Slider } from 'ether-ui';
+const code = `import { Slider } from 'fluxo-ui';
 
 // Auto-generated marks based on step
 <Slider defaultValue={50} marks step={10} showTooltip />
@@ -45,16 +45,14 @@ const percentMarks = [
 const WithMarks: React.FC = () => {
     return (
         <>
-            <ComponentDemo title="Slider with Marks" description="Display marks along the track using auto-generated or custom mark definitions.">
+            <ComponentDemo
+                title="Slider with Marks"
+                description="Display marks along the track using auto-generated or custom mark definitions."
+            >
                 <div className="space-y-10 w-full max-w-lg">
                     <div>
                         <div className="text-sm mb-2 opacity-70">Auto marks (step=25)</div>
-                        <Slider
-                            defaultValue={50}
-                            marks
-                            step={25}
-                            showTooltip
-                        />
+                        <Slider defaultValue={50} marks step={25} showTooltip />
                     </div>
                     <div>
                         <div className="text-sm mb-2 opacity-70">Temperature marks</div>
@@ -70,13 +68,7 @@ const WithMarks: React.FC = () => {
                     </div>
                     <div>
                         <div className="text-sm mb-2 opacity-70">Percentage marks with range</div>
-                        <Slider
-                            range
-                            defaultRangeValue={[25, 75]}
-                            marks={percentMarks}
-                            showTooltip
-                            variant="success"
-                        />
+                        <Slider range defaultRangeValue={[25, 75]} marks={percentMarks} showTooltip variant="success" />
                     </div>
                 </div>
             </ComponentDemo>

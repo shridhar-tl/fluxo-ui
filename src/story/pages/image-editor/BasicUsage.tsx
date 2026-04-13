@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { ImageEditor } from '../../../components';
 import type { ExportFormat } from '../../../components';
+import { ImageEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
 const sampleImage = 'https://picsum.photos/seed/ether/800/600';
 
-const code = `import { ImageEditor } from 'ether-ui';
+const code = `import { ImageEditor } from 'fluxo-ui';
 
 const handleSave = (blob: Blob, format: ExportFormat) => {
   const url = URL.createObjectURL(blob);
@@ -42,18 +42,14 @@ const BasicUsage: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Full Editor" description="Image editor with all tools enabled. Edit the image and click Save to download.">
+            <ComponentDemo
+                title="Full Editor"
+                description="Image editor with all tools enabled. Edit the image and click Save to download."
+            >
                 <div className="w-full" style={{ height: 500 }}>
-                    <ImageEditor
-                        src={sampleImage}
-                        alt="Sample landscape"
-                        onSave={handleSave}
-                        onCancel={handleCancel}
-                    />
+                    <ImageEditor src={sampleImage} alt="Sample landscape" onSave={handleSave} onCancel={handleCancel} />
                 </div>
-                {savedUrl && (
-                    <p className="mt-2 text-sm text-green-600">Image saved and downloaded successfully.</p>
-                )}
+                {savedUrl && <p className="mt-2 text-sm text-green-600">Image saved and downloaded successfully.</p>}
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock code={code} language="tsx" />

@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const code = `import { ToggleButton } from 'ether-ui';
+const code = `import { ToggleButton } from 'fluxo-ui';
 
 function MyComponent() {
   const [checked, setChecked] = useState(false);
@@ -27,7 +27,9 @@ const BasicUsage: React.FC = () => {
             <ComponentDemo title="Default Toggle Button">
                 <div className="flex flex-col items-center gap-4">
                     <ToggleButton checked={basicToggle} onChange={(e) => setBasicToggle(e.value)} />
-                    <p className={cn('text-sm', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>Current state: {basicToggle ? 'On' : 'Off'}</p>
+                    <p className={cn('text-sm', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
+                        Current state: {basicToggle ? 'On' : 'Off'}
+                    </p>
                 </div>
             </ComponentDemo>
             <div className="mt-4">

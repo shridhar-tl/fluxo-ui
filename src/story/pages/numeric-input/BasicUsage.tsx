@@ -6,7 +6,7 @@ import { ComponentDemo } from '../../ComponentDemo';
 
 const NumericInput = withFieldLabel(NumericInputRaw);
 
-const code = `import { NumericInput } from 'ether-ui';
+const code = `import { NumericInput } from 'fluxo-ui';
 
 function MyComponent() {
   const [value, setValue] = useState(0);

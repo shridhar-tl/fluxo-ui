@@ -4,8 +4,8 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { groupedMenuItems } from './menu-nav-story-data';
 
-const code = `import { MenuNav } from 'ether-ui';
-import type { MenuNavGroup } from 'ether-ui';
+const code = `import { MenuNav } from 'fluxo-ui';
+import type { MenuNavGroup } from 'fluxo-ui';
 
 const items = [
   { id: 'home', label: 'Home', icon: <HomeIcon /> },
@@ -54,14 +54,14 @@ const GroupedMenus: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Grouped Menu Items" description="Menu items organized into collapsible groups with section headers." centered={false}>
+            <ComponentDemo
+                title="Grouped Menu Items"
+                description="Menu items organized into collapsible groups with section headers."
+                centered={false}
+            >
                 <div className="flex flex-col sm:flex-row gap-6 w-full">
                     <div className="w-full sm:w-64 shrink-0">
-                        <MenuNav
-                            items={groupedMenuItems}
-                            selectedId={selectedId}
-                            onSelect={(id) => setSelectedId(id)}
-                        />
+                        <MenuNav items={groupedMenuItems} selectedId={selectedId} onSelect={(id) => setSelectedId(id)} />
                     </div>
                     <div className="flex-1 flex items-center justify-center text-sm opacity-60">
                         Selected: <strong className="ml-1">{selectedId}</strong>

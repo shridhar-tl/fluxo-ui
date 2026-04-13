@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React from 'react';
-import { create, createHook } from '../../../store';
 import { Button, TextInput } from '../../../components';
+import { create, createHook } from '../../../store';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -17,11 +17,14 @@ const userStore = create<UserState>(() => ({
 }));
 
 userStore.compute('fullName', (state) => `${state.firstName} ${state.lastName}`, ['firstName', 'lastName']);
-userStore.compute('initials', (state) => `${state.firstName.charAt(0)}${state.lastName.charAt(0)}`.toUpperCase(), ['firstName', 'lastName']);
+userStore.compute('initials', (state) => `${state.firstName.charAt(0)}${state.lastName.charAt(0)}`.toUpperCase(), [
+    'firstName',
+    'lastName',
+]);
 
 const useUser = createHook(userStore);
 
-const syncCode = `import { create, createHook } from 'ether-ui/store';
+const syncCode = `import { create, createHook } from 'fluxo-ui/store';
 
 const userStore = create<UserState>(() => ({
   firstName: 'John',
@@ -70,25 +73,15 @@ const SyncUserCard: React.FC = () => {
                     {initials}
                 </div>
                 <div>
-                    <div className={cn('text-lg font-semibold', { 'text-gray-100': isDark, 'text-gray-800': !isDark })}>
-                        {fullName}
-                    </div>
+                    <div className={cn('text-lg font-semibold', { 'text-gray-100': isDark, 'text-gray-800': !isDark })}>{fullName}</div>
                     <div className={cn('text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
                         Computed from firstName + lastName
                     </div>
                 </div>
             </div>
             <div className="flex gap-3 w-full">
-                <TextInput
-                    value={firstName}
-                    onChange={(e) => userStore.setState({ firstName: e.value })}
-                    placeholder="First Name"
-                />
-                <TextInput
-                    value={lastName}
-                    onChange={(e) => userStore.setState({ lastName: e.value })}
-                    placeholder="Last Name"
-                />
+                <TextInput value={firstName} onChange={(e) => userStore.setState({ firstName: e.value })} placeholder="First Name" />
+                <TextInput value={lastName} onChange={(e) => userStore.setState({ lastName: e.value })} placeholder="Last Name" />
             </div>
         </div>
     );
@@ -114,7 +107,7 @@ const asyncStore = create<AsyncDemoState>(() => ({ userId: 1 }));
 asyncStore.compute('profile', (state) => simulateFetch(state.userId), ['userId']);
 const useAsyncDemo = createHook(asyncStore);
 
-const asyncCode = `import { create, createHook } from 'ether-ui/store';
+const asyncCode = `import { create, createHook } from 'fluxo-ui/store';
 
 const asyncStore = create<{ userId: number }>(() => ({ userId: 1 }));
 
@@ -158,13 +151,20 @@ const AsyncComputeDemo: React.FC = () => {
                     />
                 ))}
             </div>
-            <div className={cn('w-full rounded-lg border p-4 text-center min-h-[60px] flex items-center justify-center', {
-                'border-white/10 bg-white/5': isDark,
-                'border-gray-200 bg-gray-50': !isDark,
-            })}>
+            <div
+                className={cn('w-full rounded-lg border p-4 text-center min-h-[60px] flex items-center justify-center', {
+                    'border-white/10 bg-white/5': isDark,
+                    'border-gray-200 bg-gray-50': !isDark,
+                })}
+            >
                 {state.profileLoading ? (
                     <div className="flex items-center gap-2">
-                        <svg className="animate-spin h-4 w-4 text-[var(--eui-primary)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <svg
+                            className="animate-spin h-4 w-4 text-[var(--eui-primary)]"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                         </svg>
@@ -183,7 +183,11 @@ const AsyncComputeDemo: React.FC = () => {
 const ComputedProperties: React.FC = () => {
     return (
         <>
-            <ComponentDemo title="Synchronous Computed Properties" description="Derived state that updates automatically when dependencies change" centered={false}>
+            <ComponentDemo
+                title="Synchronous Computed Properties"
+                description="Derived state that updates automatically when dependencies change"
+                centered={false}
+            >
                 <div className="p-6">
                     <SyncUserCard />
                 </div>
@@ -193,7 +197,11 @@ const ComputedProperties: React.FC = () => {
             </div>
 
             <div className="mt-8">
-                <ComponentDemo title="Async Computed Properties" description="Computed properties that resolve asynchronously with automatic loading state" centered={false}>
+                <ComponentDemo
+                    title="Async Computed Properties"
+                    description="Computed properties that resolve asynchronously with automatic loading state"
+                    centered={false}
+                >
                     <div className="p-6">
                         <AsyncComputeDemo />
                     </div>

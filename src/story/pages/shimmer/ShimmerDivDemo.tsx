@@ -16,7 +16,7 @@ const ShimmerDivDemo: React.FC = () => {
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import { ShimmerDiv } from 'ether-ui';
+                    code={`import { ShimmerDiv } from 'fluxo-ui';
 
 <ShimmerDiv height={20} width="60%" borderRadius={4} />
 <ShimmerDiv height={14} width="90%" borderRadius={4} />

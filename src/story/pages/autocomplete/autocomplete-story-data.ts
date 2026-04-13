@@ -3,7 +3,7 @@ export const suggestions = ['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', '
     value: v,
 }));
 
-export const basicUsageCode = `import { Autocomplete } from 'ether-ui';
+export const basicUsageCode = `import { Autocomplete } from 'fluxo-ui';
 
 const items = ['Apple', 'Banana', 'Cherry', 'Date'].map(v => ({ label: v, value: v }));
 
@@ -23,7 +23,7 @@ function MyComponent() {
   );
 }`;
 
-export const advancedUsageCode = `import { Autocomplete } from 'ether-ui';
+export const advancedUsageCode = `import { Autocomplete } from 'fluxo-ui';
 
 function MyComponent() {
   const [value, setValue] = useState('');

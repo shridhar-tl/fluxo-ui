@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { JsonEditor } from '../../../components';
 import type { JsonValue } from '../../../components';
+import { JsonEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { arrayData } from './json-editor-story-data';
 
-const code = `import { JsonEditor } from 'ether-ui';
+const code = `import { JsonEditor } from 'fluxo-ui';
 
 const data = {
   fruits: ['Apple', 'Banana', 'Cherry'],
@@ -22,7 +22,11 @@ const ArrayEditing: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Arrays & Nested Arrays" description="Full array editing with add, remove, and insert operations" centered={false}>
+            <ComponentDemo
+                title="Arrays & Nested Arrays"
+                description="Full array editing with add, remove, and insert operations"
+                centered={false}
+            >
                 <div className="w-full p-4">
                     <JsonEditor value={data} onChange={setData} expandDepth={2} />
                 </div>

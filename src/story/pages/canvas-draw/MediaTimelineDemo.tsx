@@ -2,11 +2,11 @@ import React, { useCallback, useState } from 'react';
 import MediaTimeline from '../../../components/canvas-draw/MediaTimeline';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
+import type { TimelineGroup, TimelineItem } from './canvas-draw-story-data';
 import { initialTimelineItems } from './canvas-draw-story-data';
-import type { TimelineItem, TimelineGroup } from './canvas-draw-story-data';
 
-const code = `import { MediaTimeline } from 'ether-ui';
-import type { TimelineItem, TimelineGroup } from 'ether-ui';
+const code = `import { MediaTimeline } from 'fluxo-ui';
+import type { TimelineItem, TimelineGroup } from 'fluxo-ui';
 
 const [items, setItems] = useState<TimelineItem[]>([
   { id: '1', label: 'Intro', showAtMs: 0, hideAtMs: 3000,
@@ -41,11 +41,11 @@ const MediaTimelineDemo: React.FC = () => {
     const [currentMs, setCurrentMs] = useState(0);
 
     const handleTimelineUpdateItem = useCallback((id: string, patch: Partial<TimelineItem>) => {
-        setTimelineItems(prev => prev.map(it => it.id === id ? { ...it, ...patch } : it));
+        setTimelineItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
     }, []);
 
     const handleTimelineUpdateGroup = useCallback((id: string, patch: Partial<TimelineGroup>) => {
-        setTimelineGroups(prev => prev.map(g => g.id === id ? { ...g, ...patch } : g));
+        setTimelineGroups((prev) => prev.map((g) => (g.id === id ? { ...g, ...patch } : g)));
     }, []);
 
     const handleTimelineAddGroup = useCallback(() => {
@@ -56,12 +56,12 @@ const MediaTimelineDemo: React.FC = () => {
             hideAtMs: null,
             transition: 'none',
         };
-        setTimelineGroups(prev => [...prev, newGroup]);
+        setTimelineGroups((prev) => [...prev, newGroup]);
     }, [timelineGroups.length]);
 
     const handleTimelineDeleteGroup = useCallback((id: string) => {
-        setTimelineGroups(prev => prev.filter(g => g.id !== id));
-        setTimelineItems(prev => prev.map(it => it.groupId === id ? { ...it, groupId: null } : it));
+        setTimelineGroups((prev) => prev.filter((g) => g.id !== id));
+        setTimelineItems((prev) => prev.map((it) => (it.groupId === id ? { ...it, groupId: null } : it)));
     }, []);
 
     return (

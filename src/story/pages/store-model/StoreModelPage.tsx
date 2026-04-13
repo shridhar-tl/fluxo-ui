@@ -1,31 +1,67 @@
 import cn from 'classnames';
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
-import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
+import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import BasicCRUD from './BasicCRUD';
+import CombinedDemo from './CombinedDemo';
 import ListManagement from './ListManagement';
 import PersistenceDemo from './PersistenceDemo';
 import ValidationDemo from './ValidationDemo';
-import CombinedDemo from './CombinedDemo';
 
 const modelConfigProps = {
-    createWithDefaults: { type: '(id: any) => T', description: 'Factory function returning default state for new model instances', default: '-' },
+    createWithDefaults: {
+        type: '(id: any) => T',
+        description: 'Factory function returning default state for new model instances',
+        default: '-',
+    },
     selectId: { type: '(state: T) => any', description: 'Extract the unique identifier from the model state', default: '-' },
     nextId: { type: '() => any', description: 'Generate a new unique ID when creating models', default: '-' },
-    loadItem: { type: '(id: any) => Promise<T>', description: 'Async function to load a single item by ID from a remote source', default: '-' },
-    loadItems: { type: '(options: PageOptions) => Promise<T[]>', description: 'Async function to load a paginated list of items', default: '-' },
-    onCreate: { type: '(data: T, options: ChangeOptions<T>) => Promise<void>', description: 'Handler called when saving a new model (no existing ID)', default: '-' },
-    onUpdate: { type: '(data: T, options: ChangeOptions<T>) => Promise<void>', description: 'Handler called when saving an existing model', default: '-' },
+    loadItem: {
+        type: '(id: any) => Promise<T>',
+        description: 'Async function to load a single item by ID from a remote source',
+        default: '-',
+    },
+    loadItems: {
+        type: '(options: PageOptions) => Promise<T[]>',
+        description: 'Async function to load a paginated list of items',
+        default: '-',
+    },
+    onCreate: {
+        type: '(data: T, options: ChangeOptions<T>) => Promise<void>',
+        description: 'Handler called when saving a new model (no existing ID)',
+        default: '-',
+    },
+    onUpdate: {
+        type: '(data: T, options: ChangeOptions<T>) => Promise<void>',
+        description: 'Handler called when saving an existing model',
+        default: '-',
+    },
     onDelete: { type: '(data: T) => Promise<void>', description: 'Handler called when deleting a model', default: '-' },
-    validate: { type: '(state: T) => errors | undefined', description: 'Validation function returning field-level errors or undefined if valid', default: '-' },
-    validateBehavior: { type: "'change' | 'save'", description: 'When to run validation: on every state change or only on save', default: '-' },
-    persist: { type: "boolean | 'local' | 'session' | ((store: T) => void)", description: 'Enable state persistence to localStorage, sessionStorage, or a custom function', default: 'false' },
-    loadFromPersist: { type: '() => T | undefined', description: 'Custom function to load persisted state on initialization', default: '-' },
+    validate: {
+        type: '(state: T) => errors | undefined',
+        description: 'Validation function returning field-level errors or undefined if valid',
+        default: '-',
+    },
+    validateBehavior: {
+        type: "'change' | 'save'",
+        description: 'When to run validation: on every state change or only on save',
+        default: '-',
+    },
+    persist: {
+        type: "boolean | 'local' | 'session' | ((store: T) => void)",
+        description: 'Enable state persistence to localStorage, sessionStorage, or a custom function',
+        default: 'false',
+    },
+    loadFromPersist: {
+        type: '() => T | undefined',
+        description: 'Custom function to load persisted state on initialization',
+        default: '-',
+    },
     saveOnChange: { type: 'boolean', description: 'Automatically save (debounced 500ms) whenever state changes', default: 'false' },
 };
 
@@ -58,7 +94,8 @@ const features: FeatureItem[] = [
     },
     {
         title: 'Validation',
-        description: 'Attach a validate function that runs on change or save, returning field-level error maps for form-style error display',
+        description:
+            'Attach a validate function that runs on change or save, returning field-level error maps for form-style error display',
         icon: 'M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z',
     },
     {
@@ -79,9 +116,12 @@ const StoreModelPage: React.FC = () => {
     return (
         <PageLayout sectionNavItems={sectionNavItems}>
             <div>
-                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Model Store</h1>
+                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Model Store
+                </h1>
                 <p className={cn('text-xl leading-relaxed', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                    A domain-model factory built on top of the base store. createModel provides entity-level CRUD, list pagination, validation, persistence, and React hooks for building data-driven UIs.
+                    A domain-model factory built on top of the base store. createModel provides entity-level CRUD, list pagination,
+                    validation, persistence, and React hooks for building data-driven UIs.
                 </p>
             </div>
 
@@ -91,7 +131,9 @@ const StoreModelPage: React.FC = () => {
             </section>
 
             <section id="list-management" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>List Management</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    List Management
+                </h2>
                 <ListManagement />
             </section>
 
@@ -112,7 +154,9 @@ const StoreModelPage: React.FC = () => {
 
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import { createModel, createItemHook, createListHook } from 'ether-ui/store';\nimport type { ModelConfig, ModelFactory, ModelStore, ListState } from 'ether-ui/store';`} />
+                <CodeBlock
+                    code={`import { createModel, createItemHook, createListHook } from 'fluxo-ui/store';\nimport type { ModelConfig, ModelFactory, ModelStore, ListState } from 'fluxo-ui/store';`}
+                />
             </section>
 
             <section id="props" className="scroll-mt-8">

@@ -1,7 +1,7 @@
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
 
-const code = `import { ConfirmPopoverManager } from 'ether-ui';
+const code = `import { ConfirmPopoverManager } from 'fluxo-ui';
 
 function App() {
   return (
@@ -13,9 +13,7 @@ function App() {
 }`;
 
 const SetupSection: React.FC = () => {
-    return (
-        <CodeBlock title="App root" code={code} />
-    );
+    return <CodeBlock title="App root" code={code} />;
 };
 
 export default SetupSection;

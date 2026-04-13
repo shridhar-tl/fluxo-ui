@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
-import { createModel, createItemHook } from '../../../store';
 import { Button, TextInput } from '../../../components';
+import { createItemHook, createModel } from '../../../store';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -24,7 +24,7 @@ const todoFactory = createModel<Todo>({
     selectId: (state) => state.id,
 });
 
-const code = `import { createModel, createItemHook } from 'ether-ui/store';
+const code = `import { createModel, createItemHook } from 'fluxo-ui/store';
 
 interface Todo {
     id: number;
@@ -70,7 +70,9 @@ const TodoItem: React.FC<TodoItemProps> = ({ todoId, onDelete }) => {
     const { isDark } = useStoryTheme();
     const store = todoFactory.get(todoId);
     const useItem = useMemo(() => (store ? createItemHook(store) : null), [store]);
-    const todo = useItem?.() as (Todo & { id: number; isStale: boolean; isLoading: boolean; isSaving: boolean; isDeleting: boolean }) | undefined;
+    const todo = useItem?.() as
+        | (Todo & { id: number; isStale: boolean; isLoading: boolean; isSaving: boolean; isDeleting: boolean })
+        | undefined;
 
     const handleToggle = useCallback(() => {
         store?.setState({ completed: !todo?.completed });
@@ -79,10 +81,12 @@ const TodoItem: React.FC<TodoItemProps> = ({ todoId, onDelete }) => {
     if (!todo) return null;
 
     return (
-        <div className={cn('flex items-center gap-3 px-4 py-3 rounded-lg border transition-all', {
-            'border-white/10 bg-white/5': isDark,
-            'border-gray-200 bg-white': !isDark,
-        })}>
+        <div
+            className={cn('flex items-center gap-3 px-4 py-3 rounded-lg border transition-all', {
+                'border-white/10 bg-white/5': isDark,
+                'border-gray-200 bg-white': !isDark,
+            })}
+        >
             <button
                 onClick={handleToggle}
                 className={cn('w-5 h-5 rounded border-2 flex items-center justify-center transition-colors shrink-0', {
@@ -98,11 +102,13 @@ const TodoItem: React.FC<TodoItemProps> = ({ todoId, onDelete }) => {
                     </svg>
                 )}
             </button>
-            <span className={cn('flex-1 text-sm', {
-                'line-through text-gray-500': todo.completed,
-                'text-gray-200': !todo.completed && isDark,
-                'text-gray-700': !todo.completed && !isDark,
-            })}>
+            <span
+                className={cn('flex-1 text-sm', {
+                    'line-through text-gray-500': todo.completed,
+                    'text-gray-200': !todo.completed && isDark,
+                    'text-gray-700': !todo.completed && !isDark,
+                })}
+            >
                 {todo.title}
             </span>
             <Button
@@ -140,7 +146,11 @@ const BasicCRUD: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Basic CRUD Operations" description="Create, read, update, and delete todos using createModel" centered={false}>
+            <ComponentDemo
+                title="Basic CRUD Operations"
+                description="Create, read, update, and delete todos using createModel"
+                centered={false}
+            >
                 <div className="w-full max-w-lg mx-auto p-4">
                     <div className="flex gap-2 mb-4">
                         <TextInput
@@ -153,11 +163,7 @@ const BasicCRUD: React.FC = () => {
                         <Button label="Add" size="sm" onClick={handleAdd} />
                     </div>
                     <div className="space-y-2">
-                        {todoIds.length === 0 && (
-                            <p className="text-sm text-center py-6 text-gray-400">
-                                No todos yet. Add one above.
-                            </p>
-                        )}
+                        {todoIds.length === 0 && <p className="text-sm text-center py-6 text-gray-400">No todos yet. Add one above.</p>}
                         {todoIds.map((id) => (
                             <TodoItem key={id} todoId={id} onDelete={handleDelete} />
                         ))}

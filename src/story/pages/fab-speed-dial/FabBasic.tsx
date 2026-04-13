@@ -2,9 +2,9 @@ import React from 'react';
 import { Fab } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { PlusIcon, PencilIcon, HeartIcon } from './fab-story-icons';
+import { HeartIcon, PencilIcon, PlusIcon } from './fab-story-icons';
 
-const code = `import { Fab } from 'ether-ui';
+const code = `import { Fab } from 'fluxo-ui';
 
 <Fab icon={PlusIcon} variant="primary" onClick={() => console.log('clicked')} />
 <Fab icon={PencilIcon} variant="success" />

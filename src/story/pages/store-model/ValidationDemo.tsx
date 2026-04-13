@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React, { useMemo, useState } from 'react';
-import { createModel, createItemHook } from '../../../store';
-import { Button, TextInput, TextArea } from '../../../components';
+import { Button, TextArea, TextInput } from '../../../components';
+import { createItemHook, createModel } from '../../../store';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -51,12 +51,14 @@ const contactFactory = createModel<ContactForm>({
             errors.message = 'Message must be at least 10 characters';
         }
 
-        return Object.keys(errors).length > 0 ? errors as Partial<Record<keyof ContactForm, string | object>> & Record<string, object> : undefined;
+        return Object.keys(errors).length > 0
+            ? (errors as Partial<Record<keyof ContactForm, string | object>> & Record<string, object>)
+            : undefined;
     },
     validateBehavior: 'change',
 });
 
-const code = `import { createModel } from 'ether-ui/store';
+const code = `import { createModel } from 'fluxo-ui/store';
 
 interface ContactForm {
     id: string;
@@ -187,29 +189,43 @@ const ValidationDemo: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Validation" description="Built-in validation with real-time error feedback and field-level indicators" centered={false}>
+            <ComponentDemo
+                title="Validation"
+                description="Built-in validation with real-time error feedback and field-level indicators"
+                centered={false}
+            >
                 <div className="w-full max-w-lg mx-auto p-4">
                     {submitted && (
-                        <div className={cn('mb-4 px-4 py-3 rounded-lg text-sm flex items-center gap-2', {
-                            'bg-green-500/10 border border-green-500/30 text-green-400': isDark,
-                            'bg-green-50 border border-green-200 text-green-700': !isDark,
-                        })}>
+                        <div
+                            className={cn('mb-4 px-4 py-3 rounded-lg text-sm flex items-center gap-2', {
+                                'bg-green-500/10 border border-green-500/30 text-green-400': isDark,
+                                'bg-green-50 border border-green-200 text-green-700': !isDark,
+                            })}
+                        >
                             <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
                             </svg>
                             Form submitted successfully!
                         </div>
                     )}
 
-                    <div className={cn('flex items-center gap-3 mb-4 px-3 py-2 rounded-lg text-xs', {
-                        'bg-white/5 border border-white/10': isDark,
-                        'bg-gray-50 border border-gray-200': !isDark,
-                    })}>
+                    <div
+                        className={cn('flex items-center gap-3 mb-4 px-3 py-2 rounded-lg text-xs', {
+                            'bg-white/5 border border-white/10': isDark,
+                            'bg-gray-50 border border-gray-200': !isDark,
+                        })}
+                    >
                         <div className="flex-1">
-                            <div className={cn('h-1.5 rounded-full overflow-hidden', {
-                                'bg-white/10': isDark,
-                                'bg-gray-200': !isDark,
-                            })}>
+                            <div
+                                className={cn('h-1.5 rounded-full overflow-hidden', {
+                                    'bg-white/10': isDark,
+                                    'bg-gray-200': !isDark,
+                                })}
+                            >
                                 <div
                                     className={cn('h-full rounded-full transition-all duration-300', {
                                         'bg-red-400': validCount === 0,
@@ -240,15 +256,35 @@ const ValidationDemo: React.FC = () => {
                                         </label>
                                         {hasError && (
                                             <span className="flex items-center gap-1 text-red-400">
-                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                                                <svg
+                                                    className="w-3.5 h-3.5"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    strokeWidth={2}
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                                                    />
                                                 </svg>
                                             </span>
                                         )}
                                         {valid && (
                                             <span className="flex items-center gap-1 text-green-400">
-                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                <svg
+                                                    className="w-3.5 h-3.5"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                    strokeWidth={2}
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                    />
                                                 </svg>
                                             </span>
                                         )}
@@ -271,29 +307,14 @@ const ValidationDemo: React.FC = () => {
                                             borderColor={hasError ? '#ef4444' : undefined}
                                         />
                                     )}
-                                    {hasError && (
-                                        <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                                            {errors[field]}
-                                        </p>
-                                    )}
+                                    {hasError && <p className="text-red-400 text-xs mt-1 flex items-center gap-1">{errors[field]}</p>}
                                 </div>
                             );
                         })}
 
                         <div className="flex gap-2 pt-2">
-                            <Button
-                                label="Submit"
-                                size="sm"
-                                disabled={hasErrors && touched.size > 0}
-                                onClick={handleSubmit}
-                            />
-                            <Button
-                                label="Reset"
-                                size="sm"
-                                variant="secondary"
-                                layout="outlined"
-                                onClick={handleReset}
-                            />
+                            <Button label="Submit" size="sm" disabled={hasErrors && touched.size > 0} onClick={handleSubmit} />
+                            <Button label="Reset" size="sm" variant="secondary" layout="outlined" onClick={handleReset} />
                             <Button
                                 label="Touch All Fields"
                                 size="sm"

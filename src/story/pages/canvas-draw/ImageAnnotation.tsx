@@ -3,10 +3,10 @@ import CanvasDraw from '../../../components/canvas-draw/CanvasDraw';
 import type { DrawItem } from '../../../components/canvas-draw/canvas-draw-types';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { sampleImageUrl, prebuiltItems } from './canvas-draw-story-data';
+import { prebuiltItems, sampleImageUrl } from './canvas-draw-story-data';
 
-const code = `import { CanvasDraw } from 'ether-ui';
-import type { DrawItem } from 'ether-ui';
+const code = `import { CanvasDraw } from 'fluxo-ui';
+import type { DrawItem } from 'fluxo-ui';
 
 const [items, setItems] = useState<DrawItem[]>([]);
 

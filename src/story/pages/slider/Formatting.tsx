@@ -3,7 +3,7 @@ import { Slider } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Slider } from 'ether-ui';
+const code = `import { Slider } from 'fluxo-ui';
 
 // Currency formatting
 <Slider

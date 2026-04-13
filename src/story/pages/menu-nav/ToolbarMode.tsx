@@ -4,7 +4,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { toolbarMenuItems } from './menu-nav-story-data';
 
-const code = `import { MenuNav } from 'ether-ui';
+const code = `import { MenuNav } from 'fluxo-ui';
 
 const items = [
   { id: 'file', label: 'File', children: [
@@ -39,14 +39,13 @@ const ToolbarMode: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Toolbar Mode" description="A horizontal toolbar-style menu, typical of application menu bars." centered={false}>
+            <ComponentDemo
+                title="Toolbar Mode"
+                description="A horizontal toolbar-style menu, typical of application menu bars."
+                centered={false}
+            >
                 <div className="w-full">
-                    <MenuNav
-                        items={toolbarMenuItems}
-                        toolbar
-                        selectedId={selectedId}
-                        onSelect={(id) => setSelectedId(id)}
-                    />
+                    <MenuNav items={toolbarMenuItems} toolbar selectedId={selectedId} onSelect={(id) => setSelectedId(id)} />
                     {selectedId && (
                         <div className="mt-4 text-sm opacity-60 text-center">
                             Selected: <strong>{selectedId}</strong>

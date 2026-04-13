@@ -13,7 +13,7 @@ const generateItems = (start: number, count: number) =>
         description: `Description for item ${start + i + 1}`,
     }));
 
-const code = `import { InfiniteScroll } from 'ether-ui';
+const code = `import { InfiniteScroll } from 'fluxo-ui';
 
 const [items, setItems] = useState(generateItems(0, 20));
 const [hasMore, setHasMore] = useState(true);
@@ -49,7 +49,11 @@ const BasicUsage: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Scrollable List" description="Scroll down to automatically load more items. Shows a spinner during loading and end message when all items are loaded." centered={false}>
+            <ComponentDemo
+                title="Scrollable List"
+                description="Scroll down to automatically load more items. Shows a spinner during loading and end message when all items are loaded."
+                centered={false}
+            >
                 <div className="h-80 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg" id="scroll-container">
                     <InfiniteScroll loadMore={loadMore} hasMore={hasMore} scrollableTarget="scroll-container">
                         <div className="divide-y divide-gray-100 dark:divide-gray-800">

@@ -1,8 +1,8 @@
 import React from 'react';
-import { create, createHook } from '../../../store';
-import { undoRedoMiddleware } from '../../../store/middlewares';
-import type { UndoRedoStateProps, UndoRedoStore } from '../../../store/middlewares';
 import { Button } from '../../../components';
+import { create, createHook } from '../../../store';
+import type { UndoRedoStateProps, UndoRedoStore } from '../../../store/middlewares';
+import { undoRedoMiddleware } from '../../../store/middlewares';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -14,9 +14,9 @@ const undoStore = create<UndoState>(() => ({ value: 0 }), [undoRedoMiddleware(20
 const useUndoStore = createHook<UndoState, UndoState & UndoRedoStateProps>(undoStore);
 const typedStore = undoStore as UndoRedoStore<UndoState>;
 
-const undoRedoCode = `import { create, createHook } from 'ether-ui/store';
-import { undoRedoMiddleware } from 'ether-ui/store/middlewares';
-import type { UndoRedoStateProps, UndoRedoStore } from 'ether-ui/store/middlewares';
+const undoRedoCode = `import { create, createHook } from 'fluxo-ui/store';
+import { undoRedoMiddleware } from 'fluxo-ui/store/middlewares';
+import type { UndoRedoStateProps, UndoRedoStore } from 'fluxo-ui/store/middlewares';
 
 interface CounterState { value: number; }
 

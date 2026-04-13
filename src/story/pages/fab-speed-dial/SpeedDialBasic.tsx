@@ -2,9 +2,9 @@ import React from 'react';
 import { SpeedDial } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { PencilIcon, ShareIcon, PrintIcon, CopyIcon } from './fab-story-icons';
+import { CopyIcon, PencilIcon, PrintIcon, ShareIcon } from './fab-story-icons';
 
-const code = `import { SpeedDial } from 'ether-ui';
+const code = `import { SpeedDial } from 'fluxo-ui';
 
 const actions = [
   { icon: CopyIcon, label: 'Copy', onClick: () => console.log('copy') },

@@ -3,7 +3,7 @@ import { FileUpload } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { FileUpload } from 'ether-ui';
+const code = `import { FileUpload } from 'fluxo-ui';
 
 <FileUpload
   accept="image/*"

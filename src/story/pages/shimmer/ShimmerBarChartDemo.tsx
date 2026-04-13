@@ -13,7 +13,7 @@ const ShimmerBarChartDemo: React.FC = () => {
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import { ShimmerBarChart } from 'ether-ui';
+                    code={`import { ShimmerBarChart } from 'fluxo-ui';
 
 {isLoading && <ShimmerBarChart bars={7} showXAxis showYAxis />}
 {!isLoading && <BarChart data={chartData} />}`}

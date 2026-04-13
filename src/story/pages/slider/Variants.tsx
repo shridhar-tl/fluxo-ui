@@ -1,11 +1,11 @@
 import React from 'react';
-import { Slider } from '../../../components';
 import type { SliderVariant } from '../../../components';
+import { Slider } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Slider } from 'ether-ui';
-import type { SliderVariant } from 'ether-ui';
+const code = `import { Slider } from 'fluxo-ui';
+import type { SliderVariant } from 'fluxo-ui';
 
 const variants: SliderVariant[] = [
   'default', 'primary', 'success', 'warning', 'danger', 'info'
@@ -32,11 +32,7 @@ const Variants: React.FC = () => {
                     {variants.map(({ variant, label, defaultVal }) => (
                         <div key={variant}>
                             <div className="text-sm mb-2 opacity-70">{label}</div>
-                            <Slider
-                                variant={variant}
-                                defaultValue={defaultVal}
-                                showTooltip
-                            />
+                            <Slider variant={variant} defaultValue={defaultVal} showTooltip />
                         </div>
                     ))}
                 </div>

@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const code = `import { useDebounce } from 'ether-ui/hooks';
+const code = `import { useDebounce } from 'fluxo-ui/hooks';
 
 const [search, setSearch] = useState('');
 const debouncedSearch = useDebounce(search, 500);
@@ -26,7 +26,10 @@ const UseDebounceDemo: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="useDebounce" description="Debounces a value update by a specified delay. Useful for search inputs, API calls, etc.">
+            <ComponentDemo
+                title="useDebounce"
+                description="Debounces a value update by a specified delay. Useful for search inputs, API calls, etc."
+            >
                 <div className="space-y-3 max-w-md">
                     <input
                         type="text"
@@ -41,20 +44,28 @@ const UseDebounceDemo: React.FC = () => {
                     <div className="flex gap-4 text-sm">
                         <div>
                             <span style={{ color: 'var(--eui-text-muted)' }}>Instant: </span>
-                            <span className="font-mono" style={{ color: 'var(--eui-text)' }}>{value || '(empty)'}</span>
+                            <span className="font-mono" style={{ color: 'var(--eui-text)' }}>
+                                {value || '(empty)'}
+                            </span>
                         </div>
                         <div>
                             <span style={{ color: 'var(--eui-text-muted)' }}>Debounced (500ms): </span>
-                            <span className="font-mono" style={{ color: 'var(--eui-primary)' }}>{debouncedValue || '(empty)'}</span>
+                            <span className="font-mono" style={{ color: 'var(--eui-primary)' }}>
+                                {debouncedValue || '(empty)'}
+                            </span>
                         </div>
                     </div>
                     {log.length > 0 && (
-                        <div className={cn('p-3 rounded-md text-xs font-mono space-y-1', {
-                            'bg-white/5': isDark,
-                            'bg-gray-50': !isDark,
-                        })}>
+                        <div
+                            className={cn('p-3 rounded-md text-xs font-mono space-y-1', {
+                                'bg-white/5': isDark,
+                                'bg-gray-50': !isDark,
+                            })}
+                        >
                             {log.map((entry, i) => (
-                                <div key={i} style={{ color: 'var(--eui-text-muted)' }}>{entry}</div>
+                                <div key={i} style={{ color: 'var(--eui-text-muted)' }}>
+                                    {entry}
+                                </div>
                             ))}
                         </div>
                     )}

@@ -3,7 +3,7 @@ import { TabPage, TabView } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { TabView, TabPage } from 'ether-ui';
+const code = `import { TabView, TabPage } from 'fluxo-ui';
 
 function MyComponent() {
   const [activeIndex, setActiveIndex] = useState(0);

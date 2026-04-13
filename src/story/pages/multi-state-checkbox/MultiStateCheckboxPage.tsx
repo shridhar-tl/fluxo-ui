@@ -1,8 +1,8 @@
 import cn from 'classnames';
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
-import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
+import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
@@ -105,22 +105,18 @@ const MultiStateCheckboxPage: React.FC = () => {
                     MultiStateCheckbox
                 </h1>
                 <p className={cn('text-base md:text-xl', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                    A checkbox-style component that cycles through multiple predefined states on each click, with
-                    support for custom icons and labels.
+                    A checkbox-style component that cycles through multiple predefined states on each click, with support for custom icons
+                    and labels.
                 </p>
             </div>
 
             <section className="scroll-mt-8" id="basic-usage">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Basic Usage
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Basic Usage</h2>
                 <BasicUsage />
             </section>
 
             <section className="scroll-mt-8" id="custom-states">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Custom States
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Custom States</h2>
                 <CustomStates />
             </section>
 
@@ -132,23 +128,17 @@ const MultiStateCheckboxPage: React.FC = () => {
             </section>
 
             <section className="scroll-mt-8" id="import">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Import
-                </h2>
-                <CodeBlock code={`import { MultiStateCheckbox } from 'ether-ui';`} />
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
+                <CodeBlock code={`import { MultiStateCheckbox } from 'fluxo-ui';`} />
             </section>
 
             <section className="scroll-mt-8" id="props">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Props
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Props</h2>
                 <PropsTable props={multiStateCheckboxProps} />
             </section>
 
             <section className="scroll-mt-8" id="features">
-                <h2 className={cn('text-2xl font-semibold mb-6', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Features
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-6', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Features</h2>
                 <FeatureGrid features={features} />
             </section>
         </PageLayout>

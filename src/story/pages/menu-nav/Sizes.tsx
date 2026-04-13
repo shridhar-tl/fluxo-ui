@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { MenuNav } from '../../../components';
 import type { MenuNavSize } from '../../../components';
+import { MenuNav } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { basicMenuItems } from './menu-nav-story-data';
 
-const code = `import { MenuNav } from 'ether-ui';
+const code = `import { MenuNav } from 'fluxo-ui';
 
 <MenuNav items={items} size="xs" />
 <MenuNav items={items} size="sm" />
@@ -23,12 +23,20 @@ const sizes: { label: string; value: MenuNavSize }[] = [
 
 const Sizes: React.FC = () => {
     const [selectedIds, setSelectedIds] = useState<Record<string, string>>({
-        xs: 'home', sm: 'home', md: 'home', lg: 'home', xl: 'home',
+        xs: 'home',
+        sm: 'home',
+        md: 'home',
+        lg: 'home',
+        xl: 'home',
     });
 
     return (
         <>
-            <ComponentDemo title="Size Variants" description="The menu supports five size options from extra small to extra large." centered={false}>
+            <ComponentDemo
+                title="Size Variants"
+                description="The menu supports five size options from extra small to extra large."
+                centered={false}
+            >
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
                     {sizes.map(({ label, value }) => (
                         <div key={value}>

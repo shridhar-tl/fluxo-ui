@@ -3,7 +3,7 @@ import { Button, Modal } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Modal, Button } from 'ether-ui';
+const code = `import { Modal, Button } from 'fluxo-ui';
 import { useState } from 'react';
 
 function MyComponent() {

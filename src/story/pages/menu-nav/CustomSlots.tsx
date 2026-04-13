@@ -4,7 +4,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { collapsibleMenuItems } from './menu-nav-story-data';
 
-const code = `import { MenuNav } from 'ether-ui';
+const code = `import { MenuNav } from 'fluxo-ui';
 
 <MenuNav
   items={items}
@@ -38,7 +38,22 @@ const headerSlot = (
 
 const footerSlot = (
     <div style={{ padding: '12px 16px', borderTop: '1px solid var(--eui-border)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--eui-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '13px', fontWeight: 600 }}>JD</div>
+        <div
+            style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: 'var(--eui-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#fff',
+                fontSize: '13px',
+                fontWeight: 600,
+            }}
+        >
+            JD
+        </div>
         <div>
             <div style={{ fontSize: '13px', fontWeight: 500 }}>John Doe</div>
             <div style={{ fontSize: '11px', opacity: 0.6 }}>john@acme.com</div>
@@ -51,7 +66,11 @@ const CustomSlots: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Header, Footer & Search" description="Custom header and footer slots with built-in search functionality." centered={false}>
+            <ComponentDemo
+                title="Header, Footer & Search"
+                description="Custom header and footer slots with built-in search functionality."
+                centered={false}
+            >
                 <div className="flex flex-col sm:flex-row gap-6 w-full">
                     <div className="w-full sm:w-64 shrink-0">
                         <MenuNav

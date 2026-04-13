@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
-import { ImageEditor } from '../../../components';
 import type { ExportFormat } from '../../../components';
+import { ImageEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
 const sampleImage = 'https://picsum.photos/seed/ether/800/600';
 
-const code = `import { ImageEditor } from 'ether-ui';
+const code = `import { ImageEditor } from 'fluxo-ui';
 
 <ImageEditor
   src="https://picsum.photos/seed/ether/800/600"

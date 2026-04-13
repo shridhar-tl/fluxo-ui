@@ -20,8 +20,8 @@ const BasicUsage: React.FC = () => {
             <div className="mt-4">
                 <CodeBlock
                     title="Basic Example"
-                    code={`import { GanttChart } from 'ether-ui';
-import type { GanttTask } from 'ether-ui';
+                    code={`import { GanttChart } from 'fluxo-ui';
+import type { GanttTask } from 'fluxo-ui';
 
 const tasks: GanttTask[] = [
   {

@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { ImageEditor } from '../../../components';
 import type { ExportFormat } from '../../../components';
+import { ImageEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
 const sampleImage = 'https://picsum.photos/seed/ether/800/600';
 
-const code = `import { ImageEditor } from 'ether-ui';
+const code = `import { ImageEditor } from 'fluxo-ui';
 
 <ImageEditor
   src="https://picsum.photos/seed/ether/800/600"
@@ -37,7 +37,10 @@ const ExportOptions: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Export Options" description="Configure export format, quality, and max dimensions. This example exports as JPEG at 80% quality with max 1200x900.">
+            <ComponentDemo
+                title="Export Options"
+                description="Configure export format, quality, and max dimensions. This example exports as JPEG at 80% quality with max 1200x900."
+            >
                 <div className="w-full" style={{ height: 500 }}>
                     <ImageEditor
                         src={sampleImage}
@@ -51,9 +54,7 @@ const ExportOptions: React.FC = () => {
                         onSave={handleSave}
                     />
                 </div>
-                {saveInfo && (
-                    <p className="mt-2 text-sm text-blue-600">{saveInfo}</p>
-                )}
+                {saveInfo && <p className="mt-2 text-sm text-blue-600">{saveInfo}</p>}
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock code={code} language="tsx" />

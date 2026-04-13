@@ -6,7 +6,7 @@ import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 import { basicOptions } from './select-button-story-data';
 
-const code = `import { SelectButton } from 'ether-ui';
+const code = `import { SelectButton } from 'fluxo-ui';
 
 function MyComponent() {
   const [value, setValue] = useState('option2');

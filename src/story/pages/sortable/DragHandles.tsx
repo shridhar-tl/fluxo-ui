@@ -3,7 +3,7 @@ import { Sortable } from '../../../components/drag-drop';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Sortable } from 'ether-ui/dnd';
+const code = `import { Sortable } from 'fluxo-ui/dnd';
 
 function ListWithHandles() {
   const [items, setItems] = useState(['Item 1', 'Item 2', 'Item 3']);
@@ -28,21 +28,12 @@ function ListWithHandles() {
 }`;
 
 const DragHandles: React.FC = () => {
-    const [items, setItems] = useState([
-        'First Item',
-        'Second Item',
-        'Third Item',
-    ]);
+    const [items, setItems] = useState(['First Item', 'Second Item', 'Third Item']);
 
     return (
         <>
             <ComponentDemo title="Using provideDragRef for Custom Handles">
-                <Sortable
-                    items={items}
-                    onChange={(newItems) => setItems(newItems)}
-                    provideDragRef
-                    className="space-y-2"
-                >
+                <Sortable items={items} onChange={(newItems) => setItems(newItems)} provideDragRef className="space-y-2">
                     {(item, index, { draggable }) => (
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center gap-3 border border-gray-200 dark:border-gray-700">
                             <div
@@ -53,12 +44,8 @@ const DragHandles: React.FC = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
                                 </svg>
                             </div>
-                            <div className="flex-1 text-gray-900 dark:text-white">
-                                {item}
-                            </div>
-                            <div className="text-gray-500 text-sm">
-                                #{index + 1}
-                            </div>
+                            <div className="flex-1 text-gray-900 dark:text-white">{item}</div>
+                            <div className="text-gray-500 text-sm">#{index + 1}</div>
                         </div>
                     )}
                 </Sortable>

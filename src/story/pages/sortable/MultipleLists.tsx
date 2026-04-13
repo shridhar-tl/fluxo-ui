@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 import type { KanbanItem } from './sortable-story-data';
-import { columnTitles, columnColors, getTypeIcon } from './sortable-story-data';
+import { columnColors, columnTitles, getTypeIcon } from './sortable-story-data';
 
 const initialColumns: Record<string, KanbanItem[]> = {
     todo: [
@@ -13,15 +13,11 @@ const initialColumns: Record<string, KanbanItem[]> = {
         { id: 102, text: 'Update documentation', type: 'docs' },
         { id: 103, text: 'Fix bug in login', type: 'bug' },
     ],
-    inProgress: [
-        { id: 104, text: 'Implement dark mode', type: 'feature' },
-    ],
-    done: [
-        { id: 105, text: 'Setup CI/CD pipeline', type: 'devops' },
-    ],
+    inProgress: [{ id: 104, text: 'Implement dark mode', type: 'feature' }],
+    done: [{ id: 105, text: 'Setup CI/CD pipeline', type: 'devops' }],
 };
 
-const code = `import { Sortable } from 'ether-ui/dnd';
+const code = `import { Sortable } from 'fluxo-ui/dnd';
 
 function KanbanBoard() {
   const [columns, setColumns] = useState({
@@ -77,7 +73,9 @@ const MultipleLists: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {(Object.keys(columns) as Array<keyof typeof columns>).map((columnKey) => (
                         <div key={columnKey}>
-                            <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>{columnTitles[columnKey]}</h3>
+                            <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>
+                                {columnTitles[columnKey]}
+                            </h3>
                             <Sortable
                                 items={columns[columnKey]}
                                 onChange={(newItems) => {

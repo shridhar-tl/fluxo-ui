@@ -1,25 +1,25 @@
 import cn from 'classnames';
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
-import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
+import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
-import DetailedCards from './DetailedCards';
-import CompactMode from './CompactMode';
-import CustomTemplates from './CustomTemplates';
-import CustomColumnHeader from './CustomColumnHeader';
-import CardActions from './CardActions';
-import InteractiveBoard from './InteractiveBoard';
-import VerticalLayout from './VerticalLayout';
-import CollapsibleColumns from './CollapsibleColumns';
-import LockedColumns from './LockedColumns';
 import BlockedCards from './BlockedCards';
+import CardActions from './CardActions';
+import CollapsibleColumns from './CollapsibleColumns';
 import ColumnLimits from './ColumnLimits';
+import CompactMode from './CompactMode';
+import CustomColumnHeader from './CustomColumnHeader';
+import CustomTemplates from './CustomTemplates';
+import DetailedCards from './DetailedCards';
+import InteractiveBoard from './InteractiveBoard';
+import LockedColumns from './LockedColumns';
 import StickyHeaders from './StickyHeaders';
+import VerticalLayout from './VerticalLayout';
 
 const sectionNavItems: SectionNavItem[] = [
     { id: 'overview', title: 'Overview', description: 'Introduction and feature highlights' },
@@ -107,10 +107,22 @@ const features: FeatureItem[] = [
 ];
 
 const boardProps = {
-    columns: { type: 'KanbanColumnData[]', required: true, description: 'Array of column definitions with id, title, color, icon, limit, collapsed, locked.' },
-    cards: { type: 'KanbanCardData[]', required: true, description: 'Array of card data with id, title, columnId, order, priority, labels, assignees, etc.' },
+    columns: {
+        type: 'KanbanColumnData[]',
+        required: true,
+        description: 'Array of column definitions with id, title, color, icon, limit, collapsed, locked.',
+    },
+    cards: {
+        type: 'KanbanCardData[]',
+        required: true,
+        description: 'Array of card data with id, title, columnId, order, priority, labels, assignees, etc.',
+    },
     layout: { type: '"horizontal" | "vertical"', default: 'horizontal', description: 'Board layout direction.' },
-    cardSize: { type: '"compact" | "default" | "detailed"', default: 'default', description: 'Card display density. Compact hides labels/progress, detailed shows descriptions.' },
+    cardSize: {
+        type: '"compact" | "default" | "detailed"',
+        default: 'default',
+        description: 'Card display density. Compact hides labels/progress, detailed shows descriptions.',
+    },
     className: { type: 'string', description: 'Additional CSS class for the board container.' },
     columnWidth: { type: 'number | string', description: 'Fixed column width (px or CSS value).' },
     columnMinHeight: { type: 'number | string', description: 'Minimum column body height.' },
@@ -188,16 +200,14 @@ const KanbanBoardPage: React.FC = () => {
                         Kanban Board
                     </h1>
                     <p className={cn('text-base md:text-xl', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                        A fully-featured Kanban board component with drag-and-drop, customizable cards,
-                        column WIP limits, priority indicators, assignee avatars, collapsible columns, and search filtering.
+                        A fully-featured Kanban board component with drag-and-drop, customizable cards, column WIP limits, priority
+                        indicators, assignee avatars, collapsible columns, and search filtering.
                     </p>
                 </div>
             </div>
 
             <section className="scroll-mt-8" id="basic-usage">
-                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Basic Usage
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Basic Usage</h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
                     A standard Kanban board with drag-and-drop, card counts, search filtering, and collapsible columns.
                 </p>
@@ -215,9 +225,7 @@ const KanbanBoardPage: React.FC = () => {
             </section>
 
             <section className="scroll-mt-8" id="compact-mode">
-                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Compact Mode
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Compact Mode</h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
                     Use <code>cardSize="compact"</code> for a minimal card display ideal for high-density boards.
                 </p>
@@ -225,11 +233,10 @@ const KanbanBoardPage: React.FC = () => {
             </section>
 
             <section className="scroll-mt-8" id="column-limits">
-                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    WIP Limits
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>WIP Limits</h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                    Set a <code>limit</code> on columns to enforce work-in-progress constraints. Columns that exceed their limit display a visual warning indicator.
+                    Set a <code>limit</code> on columns to enforce work-in-progress constraints. Columns that exceed their limit display a
+                    visual warning indicator.
                 </p>
                 <ColumnLimits />
             </section>
@@ -239,27 +246,27 @@ const KanbanBoardPage: React.FC = () => {
                     Collapsible Columns
                 </h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                    Enable <code>allowCollapse</code> to add collapse/expand toggles in column headers. Collapsed columns shrink to a narrow strip with a vertically rotated title. Set <code>collapsed: true</code> on a column for an initially collapsed state. Click a collapsed column to expand it.
+                    Enable <code>allowCollapse</code> to add collapse/expand toggles in column headers. Collapsed columns shrink to a narrow
+                    strip with a vertically rotated title. Set <code>collapsed: true</code> on a column for an initially collapsed state.
+                    Click a collapsed column to expand it.
                 </p>
                 <CollapsibleColumns />
             </section>
 
             <section className="scroll-mt-8" id="blocked-cards">
-                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Blocked Cards
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Blocked Cards</h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                    Set <code>blocked: true</code> on a card to visually indicate it is blocked. Combine with <code>color</code> for a colored left border.
+                    Set <code>blocked: true</code> on a card to visually indicate it is blocked. Combine with <code>color</code> for a
+                    colored left border.
                 </p>
                 <BlockedCards />
             </section>
 
             <section className="scroll-mt-8" id="locked-columns">
-                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Locked Columns
-                </h2>
+                <h2 className={cn('text-2xl font-semibold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Locked Columns</h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                    Set <code>locked: true</code> on a column to prevent all interactions including drag-and-drop, editing, and adding cards.
+                    Set <code>locked: true</code> on a column to prevent all interactions including drag-and-drop, editing, and adding
+                    cards.
                 </p>
                 <LockedColumns />
             </section>
@@ -269,7 +276,8 @@ const KanbanBoardPage: React.FC = () => {
                     Vertical Layout
                 </h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                    Use <code>layout="vertical"</code> to stack columns vertically instead of horizontally. Useful for priority triage boards or narrow containers.
+                    Use <code>layout="vertical"</code> to stack columns vertically instead of horizontally. Useful for priority triage
+                    boards or narrow containers.
                 </p>
                 <VerticalLayout />
             </section>
@@ -279,7 +287,8 @@ const KanbanBoardPage: React.FC = () => {
                     Sticky Column Headers
                 </h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                    Enable <code>stickyColumnHeaders</code> with <code>maxColumnHeight</code> to keep headers visible while scrolling through cards.
+                    Enable <code>stickyColumnHeaders</code> with <code>maxColumnHeight</code> to keep headers visible while scrolling
+                    through cards.
                 </p>
                 <StickyHeaders />
             </section>
@@ -319,7 +328,8 @@ const KanbanBoardPage: React.FC = () => {
                     Interactive Board
                 </h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                    Full interactive demo with all CRUD operations: drag cards between columns, add/delete cards and columns, edit column titles, and reorder columns.
+                    Full interactive demo with all CRUD operations: drag cards between columns, add/delete cards and columns, edit column
+                    titles, and reorder columns.
                 </p>
                 <InteractiveBoard />
             </section>
@@ -327,7 +337,7 @@ const KanbanBoardPage: React.FC = () => {
             <section className="scroll-mt-8" id="import">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
                 <CodeBlock
-                    code={`import { KanbanBoard } from 'ether-ui';
+                    code={`import { KanbanBoard } from 'fluxo-ui';
 
 // Type imports
 import type {
@@ -351,22 +361,28 @@ import type {
   KanbanPriority,
   KanbanLayout,
   KanbanCardSize,
-} from 'ether-ui';`}
+} from 'fluxo-ui';`}
                 />
             </section>
 
             <section className="scroll-mt-8" id="board-props">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>KanbanBoard Props</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    KanbanBoard Props
+                </h2>
                 <PropsTable props={boardProps} />
             </section>
 
             <section className="scroll-mt-8" id="card-props">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>KanbanCardData Properties</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    KanbanCardData Properties
+                </h2>
                 <PropsTable props={cardProps} />
             </section>
 
             <section className="scroll-mt-8" id="column-props">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>KanbanColumnData Properties</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    KanbanColumnData Properties
+                </h2>
                 <PropsTable props={columnProps} />
             </section>
 

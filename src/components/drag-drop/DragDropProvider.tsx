@@ -27,7 +27,7 @@ export interface DragDropProviderProps {
  *
  * @example
  * ```tsx
- * import { DragDropProvider } from 'ether-ui';
+ * import { DragDropProvider } from 'fluxo-ui';
  *
  * function App() {
  *   return (

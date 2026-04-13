@@ -7,8 +7,8 @@ import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 import { currencyFormat, salesData } from './pivot-table-story-data';
 
-const code = `import { PivotTable } from 'ether-ui';
-import type { PivotConfig, FieldDefinition, PivotPlugin } from 'ether-ui';
+const code = `import { PivotTable } from 'fluxo-ui';
+import type { PivotConfig, FieldDefinition, PivotPlugin } from 'fluxo-ui';
 
 const [config, setConfig] = useState<PivotConfig>({
   rows: ['region'],
@@ -43,7 +43,10 @@ const InteractiveDemo: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Interactive Pivot" description="Drag fields between zones. Double-click leaf cells to edit. Change aggregation functions on value chips.">
+            <ComponentDemo
+                title="Interactive Pivot"
+                description="Drag fields between zones. Double-click leaf cells to edit. Change aggregation functions on value chips."
+            >
                 <div className={cn('rounded-lg overflow-hidden border', { 'border-white/10': isDark, 'border-gray-200': !isDark })}>
                     <PivotTable
                         data={data}

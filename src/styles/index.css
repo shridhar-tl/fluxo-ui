@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 body,
-.ether-ui {
+.fluxo-ui {
     font-family: 'Inter', sans-serif;
     font-size: 100%;
     line-height: 1.5;

@@ -2,10 +2,10 @@ import React from 'react';
 import { KanbanBoard } from '../../../components/kanban-board';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { basicColumns, basicCards } from './kanban-story-data';
+import { basicCards, basicColumns } from './kanban-story-data';
 
-const code = `import { KanbanBoard } from 'ether-ui';
-import type { KanbanCardData, KanbanColumnData } from 'ether-ui';
+const code = `import { KanbanBoard } from 'fluxo-ui';
+import type { KanbanCardData, KanbanColumnData } from 'fluxo-ui';
 
 const columns: KanbanColumnData[] = [
   { id: 'backlog', title: 'Backlog', color: '#94a3b8' },
@@ -40,7 +40,11 @@ const cards: KanbanCardData[] = [
 
 const BasicUsage: React.FC = () => (
     <>
-        <ComponentDemo title="Basic Kanban Board" description="Standard board with drag-and-drop, card count, search, and collapsible columns." centered={false}>
+        <ComponentDemo
+            title="Basic Kanban Board"
+            description="Standard board with drag-and-drop, card count, search, and collapsible columns."
+            centered={false}
+        >
             <div style={{ overflow: 'auto' }}>
                 <KanbanBoard
                     columns={basicColumns}

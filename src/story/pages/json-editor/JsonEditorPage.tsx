@@ -1,21 +1,21 @@
 import cn from 'classnames';
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
-import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
+import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
-import BasicUsage from './BasicUsage';
-import NestedObjects from './NestedObjects';
 import ArrayEditing from './ArrayEditing';
+import BasicUsage from './BasicUsage';
+import ComplexData from './ComplexData';
+import NestedObjects from './NestedObjects';
+import PermissionControls from './PermissionControls';
 import ReadOnlyMode from './ReadOnlyMode';
 import SizeVariants from './SizeVariants';
-import TypeShowcase from './TypeShowcase';
-import ComplexData from './ComplexData';
-import PermissionControls from './PermissionControls';
 import SortedKeys from './SortedKeys';
+import TypeShowcase from './TypeShowcase';
 
 const jsonEditorProps = {
     value: { type: 'JsonValue', description: 'The JSON value to display and edit', default: '-' },
@@ -94,9 +94,12 @@ const JsonEditorPage: React.FC = () => {
     return (
         <PageLayout sectionNavItems={sectionNavItems}>
             <div>
-                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>JSON Editor</h1>
+                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    JSON Editor
+                </h1>
                 <p className={cn('text-xl leading-relaxed', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                    An interactive tree-view editor for JSON data with inline editing, type detection, URL handling, and full CRUD operations on nested objects and arrays.
+                    An interactive tree-view editor for JSON data with inline editing, type detection, URL handling, and full CRUD
+                    operations on nested objects and arrays.
                 </p>
             </div>
 
@@ -147,7 +150,7 @@ const JsonEditorPage: React.FC = () => {
 
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import { JsonEditor } from 'ether-ui';\nimport type { JsonValue, JsonEditorProps } from 'ether-ui';`} />
+                <CodeBlock code={`import { JsonEditor } from 'fluxo-ui';\nimport type { JsonValue, JsonEditorProps } from 'fluxo-ui';`} />
             </section>
 
             <section id="props" className="scroll-mt-8">

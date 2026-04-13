@@ -15,15 +15,11 @@ const DateMarkers: React.FC = () => {
                 Mark important dates (sprint boundaries, deadlines, releases) with labelled vertical lines.
             </p>
             <ComponentDemo title="Markers &amp; Deadlines" centered={false}>
-                <GanttChart
-                    tasks={basicTasks}
-                    height={340}
-                    markers={markers}
-                />
+                <GanttChart tasks={basicTasks} height={340} markers={markers} />
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import type { GanttMarker } from 'ether-ui';
+                    code={`import type { GanttMarker } from 'fluxo-ui';
 
 const markers: GanttMarker[] = [
   { id: 'today',    date: new Date(),               label: 'Today',      color: '#3b82f6' },

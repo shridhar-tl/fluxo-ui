@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { JsonEditor } from '../../../components';
 import type { JsonValue } from '../../../components';
+import { JsonEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { typeShowcaseData } from './json-editor-story-data';
 
-const code = `import { JsonEditor } from 'ether-ui';
+const code = `import { JsonEditor } from 'fluxo-ui';
 
 <JsonEditor
   value={data}
@@ -19,15 +19,13 @@ const TypeShowcase: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Data Types & Type Badges" description="All supported data types with type badges and type changing" centered={false}>
+            <ComponentDemo
+                title="Data Types & Type Badges"
+                description="All supported data types with type badges and type changing"
+                centered={false}
+            >
                 <div className="w-full p-4">
-                    <JsonEditor
-                        value={data}
-                        onChange={setData}
-                        showDataTypes
-                        allowTypeChange
-                        expandDepth={1}
-                    />
+                    <JsonEditor value={data} onChange={setData} showDataTypes allowTypeChange expandDepth={1} />
                 </div>
             </ComponentDemo>
             <div className="mt-4">

@@ -3,7 +3,7 @@ import { Slider } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Slider } from 'ether-ui';
+const code = `import { Slider } from 'fluxo-ui';
 
 const [value, setValue] = useState(40);
 
@@ -26,11 +26,7 @@ const BasicUsage: React.FC = () => {
                 <div className="space-y-8 w-full max-w-lg">
                     <div>
                         <div className="text-sm mb-2 opacity-70">Controlled with tooltip (value: {value})</div>
-                        <Slider
-                            value={value}
-                            onChange={(v) => setValue(v as number)}
-                            showTooltip
-                        />
+                        <Slider value={value} onChange={(v) => setValue(v as number)} showTooltip />
                     </div>
                     <div>
                         <div className="text-sm mb-2 opacity-70">Uncontrolled with min/max labels</div>

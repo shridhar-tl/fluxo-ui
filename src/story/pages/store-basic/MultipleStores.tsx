@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React, { useRef } from 'react';
-import { create, createHook } from '../../../store';
 import { Button, InputSwitch, ProgressBar, TextInput } from '../../../components';
+import { create, createHook } from '../../../store';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -30,7 +30,9 @@ const taskStore = create<TaskState>(() => ({
 
 taskStore.compute('completedCount', (s) => s.tasks.filter((t) => t.done).length, ['tasks']);
 taskStore.compute('activeCount', (s) => s.tasks.filter((t) => !t.done).length, ['tasks']);
-taskStore.compute('progress', (s) => (s.tasks.length > 0 ? Math.round((s.tasks.filter((t) => t.done).length / s.tasks.length) * 100) : 0), ['tasks']);
+taskStore.compute('progress', (s) => (s.tasks.length > 0 ? Math.round((s.tasks.filter((t) => t.done).length / s.tasks.length) * 100) : 0), [
+    'tasks',
+]);
 
 const useTaskStore = createHook(taskStore);
 
@@ -61,7 +63,7 @@ const addRandomNotification = () => {
     }));
 };
 
-const code = `import { create, createHook } from 'ether-ui/store';
+const code = `import { create, createHook } from 'fluxo-ui/store';
 
 // Store A — Task management
 const taskStore = create<TaskState>(() => ({
@@ -98,7 +100,13 @@ function NotificationFeed() {
 
 const typeColors = {
     info: { dot: 'bg-blue-500', bg: 'bg-blue-500/10', text: 'text-blue-400', lightBg: 'bg-blue-50', lightText: 'text-blue-700' },
-    success: { dot: 'bg-emerald-500', bg: 'bg-emerald-500/10', text: 'text-emerald-400', lightBg: 'bg-emerald-50', lightText: 'text-emerald-700' },
+    success: {
+        dot: 'bg-emerald-500',
+        bg: 'bg-emerald-500/10',
+        text: 'text-emerald-400',
+        lightBg: 'bg-emerald-50',
+        lightText: 'text-emerald-700',
+    },
     warning: { dot: 'bg-amber-500', bg: 'bg-amber-500/10', text: 'text-amber-400', lightBg: 'bg-amber-50', lightText: 'text-amber-700' },
 };
 
@@ -144,15 +152,30 @@ const TaskPanel: React.FC = () => {
     };
 
     return (
-        <div className={cn('rounded-xl border p-5 flex flex-col', { 'border-white/10 bg-white/[0.03]': isDark, 'border-gray-200 bg-white': !isDark })}>
+        <div
+            className={cn('rounded-xl border p-5 flex flex-col', {
+                'border-white/10 bg-white/[0.03]': isDark,
+                'border-gray-200 bg-white': !isDark,
+            })}
+        >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <div className={cn('w-2.5 h-2.5 rounded-full', { 'bg-blue-500': true })} />
-                    <span className={cn('text-sm font-semibold uppercase tracking-wide', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    <span
+                        className={cn('text-sm font-semibold uppercase tracking-wide', {
+                            'text-gray-400': isDark,
+                            'text-gray-500': !isDark,
+                        })}
+                    >
                         Task Store
                     </span>
                 </div>
-                <div className={cn('text-xs px-2 py-0.5 rounded', { 'bg-amber-500/20 text-amber-400': isDark, 'bg-amber-100 text-amber-700': !isDark })}>
+                <div
+                    className={cn('text-xs px-2 py-0.5 rounded', {
+                        'bg-amber-500/20 text-amber-400': isDark,
+                        'bg-amber-100 text-amber-700': !isDark,
+                    })}
+                >
                     Renders: {renderCount.current}
                 </div>
             </div>
@@ -162,9 +185,7 @@ const TaskPanel: React.FC = () => {
                     <span className={cn('text-xs', { 'text-gray-500': isDark, 'text-gray-400': !isDark })}>
                         {completedCount} of {tasks.length} completed
                     </span>
-                    <span className={cn('text-xs font-medium', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                        {progress}%
-                    </span>
+                    <span className={cn('text-xs font-medium', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>{progress}%</span>
                 </div>
                 <ProgressBar value={progress} size="sm" />
             </div>
@@ -211,11 +232,13 @@ const TaskPanel: React.FC = () => {
                                 </svg>
                             )}
                         </button>
-                        <span className={cn('flex-1', {
-                            'line-through opacity-50': task.done,
-                            'text-gray-300': isDark && !task.done,
-                            'text-gray-700': !isDark && !task.done,
-                        })}>
+                        <span
+                            className={cn('flex-1', {
+                                'line-through opacity-50': task.done,
+                                'text-gray-300': isDark && !task.done,
+                                'text-gray-700': !isDark && !task.done,
+                            })}
+                        >
                             {task.title}
                         </span>
                         <button
@@ -239,8 +262,12 @@ const TaskPanel: React.FC = () => {
                     <TextInput
                         placeholder="Add a task..."
                         size="sm"
-                        onChange={(e) => { newTaskRef.current = e.value; }}
-                        onKeyDown={(e) => { if (e.key === 'Enter') addTask(); }}
+                        onChange={(e) => {
+                            newTaskRef.current = e.value;
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') addTask();
+                        }}
                     />
                 </div>
                 <Button label="Add" size="sm" onClick={addTask} />
@@ -257,15 +284,30 @@ const NotificationFeed: React.FC = () => {
     const { items, muted } = useNotificationStore();
 
     return (
-        <div className={cn('rounded-xl border p-5 flex flex-col', { 'border-white/10 bg-white/[0.03]': isDark, 'border-gray-200 bg-white': !isDark })}>
+        <div
+            className={cn('rounded-xl border p-5 flex flex-col', {
+                'border-white/10 bg-white/[0.03]': isDark,
+                'border-gray-200 bg-white': !isDark,
+            })}
+        >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <div className={cn('w-2.5 h-2.5 rounded-full', { 'bg-emerald-500': true })} />
-                    <span className={cn('text-sm font-semibold uppercase tracking-wide', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    <span
+                        className={cn('text-sm font-semibold uppercase tracking-wide', {
+                            'text-gray-400': isDark,
+                            'text-gray-500': !isDark,
+                        })}
+                    >
                         Notification Store
                     </span>
                 </div>
-                <div className={cn('text-xs px-2 py-0.5 rounded', { 'bg-amber-500/20 text-amber-400': isDark, 'bg-amber-100 text-amber-700': !isDark })}>
+                <div
+                    className={cn('text-xs px-2 py-0.5 rounded', {
+                        'bg-amber-500/20 text-amber-400': isDark,
+                        'bg-amber-100 text-amber-700': !isDark,
+                    })}
+                >
                     Renders: {renderCount.current}
                 </div>
             </div>
@@ -273,19 +315,10 @@ const NotificationFeed: React.FC = () => {
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                     <span className={cn('text-xs', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>Muted</span>
-                    <InputSwitch
-                        checked={muted}
-                        onChange={() => notificationStore.setState((s) => ({ muted: !s.muted }))}
-                        size="sm"
-                    />
+                    <InputSwitch checked={muted} onChange={() => notificationStore.setState((s) => ({ muted: !s.muted }))} size="sm" />
                 </div>
                 <div className="flex gap-2">
-                    <Button
-                        label="Add Random"
-                        size="xs"
-                        onClick={addRandomNotification}
-                        disabled={muted}
-                    />
+                    <Button label="Add Random" size="xs" onClick={addRandomNotification} disabled={muted} />
                     <Button
                         label="Clear All"
                         size="xs"
@@ -313,9 +346,7 @@ const NotificationFeed: React.FC = () => {
                             })}
                         >
                             <div className={cn('w-1.5 h-1.5 rounded-full mt-1 flex-shrink-0', colors.dot)} />
-                            <span className={cn('flex-1', { [colors.text]: isDark, [colors.lightText]: !isDark })}>
-                                {item.message}
-                            </span>
+                            <span className={cn('flex-1', { [colors.text]: isDark, [colors.lightText]: !isDark })}>{item.message}</span>
                             <button
                                 className={cn('opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0', {
                                     'text-gray-500 hover:text-gray-300': isDark,
@@ -360,10 +391,12 @@ const CrossStoreActions: React.FC = () => {
     };
 
     return (
-        <div className={cn('rounded-lg p-3 border border-dashed flex items-center justify-between', {
-            'border-white/10 bg-white/[0.02]': isDark,
-            'border-gray-300 bg-gray-50': !isDark,
-        })}>
+        <div
+            className={cn('rounded-lg p-3 border border-dashed flex items-center justify-between', {
+                'border-white/10 bg-white/[0.02]': isDark,
+                'border-gray-300 bg-gray-50': !isDark,
+            })}
+        >
             <span className={cn('text-xs', { 'text-gray-500': isDark, 'text-gray-400': !isDark })}>
                 Cross-store actions (updates both stores independently)
             </span>

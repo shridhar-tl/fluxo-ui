@@ -3,7 +3,7 @@ import { PivotTable } from '../../../components';
 import type { PivotConfig } from '../../../components/pivot-table/pivot-table-types';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { salesData, currencyFormat, decimalFormat, numberFormat } from './pivot-table-story-data';
+import { currencyFormat, decimalFormat, numberFormat, salesData } from './pivot-table-story-data';
 
 const config: PivotConfig = {
     rows: ['category'],
@@ -19,8 +19,8 @@ const config: PivotConfig = {
     ],
 };
 
-const code = `import { PivotTable } from 'ether-ui';
-import type { PivotConfig } from 'ether-ui';
+const code = `import { PivotTable } from 'fluxo-ui';
+import type { PivotConfig } from 'fluxo-ui';
 
 const config: PivotConfig = {
     rows: ['category'],

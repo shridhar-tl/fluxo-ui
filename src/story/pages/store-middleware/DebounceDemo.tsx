@@ -18,8 +18,8 @@ const useDebouncedStore = createHook(debouncedStore);
 const normalStore = create<SearchState>(() => ({ query: '', searchCount: 0 }));
 const useNormalStore = createHook(normalStore);
 
-const debounceCode = `import { create, createHook } from 'ether-ui/store';
-import { debounceMiddleware } from 'ether-ui/store/middlewares';
+const debounceCode = `import { create, createHook } from 'fluxo-ui/store';
+import { debounceMiddleware } from 'fluxo-ui/store/middlewares';
 
 const store = create<{ query: string }>(
   () => ({ query: '' }),

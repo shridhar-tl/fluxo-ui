@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const code = `import { useKeyboard } from 'ether-ui/hooks';
+const code = `import { useKeyboard } from 'fluxo-ui/hooks';
 
 useKeyboard({
   ArrowUp: () => moveUp(),
@@ -43,14 +43,19 @@ const UseKeyboardDemo: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="useKeyboard" description="Registers global keyboard event handlers. Supports enabling/disabling and auto-cleanup.">
+            <ComponentDemo
+                title="useKeyboard"
+                description="Registers global keyboard event handlers. Supports enabling/disabling and auto-cleanup."
+            >
                 <div className="space-y-3">
                     <label className="flex items-center gap-2 text-sm" style={{ color: 'var(--eui-text-muted)' }}>
                         <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
                         Keyboard handling enabled
                     </label>
 
-                    <p className="text-xs" style={{ color: 'var(--eui-text-muted)' }}>Use arrow keys to move the blue dot:</p>
+                    <p className="text-xs" style={{ color: 'var(--eui-text-muted)' }}>
+                        Use arrow keys to move the blue dot:
+                    </p>
 
                     <div className="inline-grid grid-cols-5 gap-1">
                         {Array.from({ length: 25 }, (_, i) => {
@@ -64,7 +69,9 @@ const UseKeyboardDemo: React.FC = () => {
                                         'border-white/10': isDark && !isActive,
                                         'border-gray-200': !isDark && !isActive,
                                     })}
-                                    style={isActive ? { backgroundColor: 'var(--eui-primary)', borderColor: 'var(--eui-primary)' } : undefined}
+                                    style={
+                                        isActive ? { backgroundColor: 'var(--eui-primary)', borderColor: 'var(--eui-primary)' } : undefined
+                                    }
                                 >
                                     {isActive && <div className="w-3 h-3 rounded-full bg-white" />}
                                 </div>
@@ -75,7 +82,9 @@ const UseKeyboardDemo: React.FC = () => {
                     {log.length > 0 && (
                         <div className={cn('p-2 rounded text-xs font-mono space-y-0.5', { 'bg-white/5': isDark, 'bg-gray-50': !isDark })}>
                             {log.map((entry, i) => (
-                                <div key={i} style={{ color: 'var(--eui-text-muted)' }}>{entry}</div>
+                                <div key={i} style={{ color: 'var(--eui-text-muted)' }}>
+                                    {entry}
+                                </div>
                             ))}
                         </div>
                     )}

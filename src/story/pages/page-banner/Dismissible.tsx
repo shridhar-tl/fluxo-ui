@@ -3,7 +3,7 @@ import { Button, PageBanner } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const dismissibleCode = `import { PageBanner } from 'ether-ui';
+const dismissibleCode = `import { PageBanner } from 'fluxo-ui';
 
 const [visible, setVisible] = useState(true);
 
@@ -15,7 +15,7 @@ const [visible, setVisible] = useState(true);
   onDismiss={() => setVisible(false)}
 />`;
 
-const autoDismissCode = `import { PageBanner } from 'ether-ui';
+const autoDismissCode = `import { PageBanner } from 'fluxo-ui';
 
 <PageBanner
   type="success"

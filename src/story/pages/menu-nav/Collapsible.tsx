@@ -4,7 +4,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { collapsibleMenuItems } from './menu-nav-story-data';
 
-const code = `import { MenuNav } from 'ether-ui';
+const code = `import { MenuNav } from 'fluxo-ui';
 
 const [collapsed, setCollapsed] = useState(false);
 
@@ -23,9 +23,20 @@ const Collapsible: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Collapsible Sidebar" description="Toggle between full and icon-only mode. Click the hamburger icon to collapse/expand." centered={false}>
+            <ComponentDemo
+                title="Collapsible Sidebar"
+                description="Toggle between full and icon-only mode. Click the hamburger icon to collapse/expand."
+                centered={false}
+            >
                 <div className="flex flex-col sm:flex-row gap-6 w-full">
-                    <div className="shrink-0" style={{ width: collapsed ? 'auto' : undefined, maxWidth: collapsed ? undefined : '240px', transition: 'width 0.2s ease' }}>
+                    <div
+                        className="shrink-0"
+                        style={{
+                            width: collapsed ? 'auto' : undefined,
+                            maxWidth: collapsed ? undefined : '240px',
+                            transition: 'width 0.2s ease',
+                        }}
+                    >
                         <MenuNav
                             items={collapsibleMenuItems}
                             collapsible
@@ -37,8 +48,12 @@ const Collapsible: React.FC = () => {
                     </div>
                     <div className="flex-1 flex items-center justify-center text-sm opacity-60">
                         <div className="text-center">
-                            <p>Selected: <strong>{selectedId}</strong></p>
-                            <p className="mt-1">Collapsed: <strong>{collapsed ? 'Yes' : 'No'}</strong></p>
+                            <p>
+                                Selected: <strong>{selectedId}</strong>
+                            </p>
+                            <p className="mt-1">
+                                Collapsed: <strong>{collapsed ? 'Yes' : 'No'}</strong>
+                            </p>
                         </div>
                     </div>
                 </div>

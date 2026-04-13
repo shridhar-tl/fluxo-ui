@@ -15,16 +15,11 @@ const CustomColumnsDemo: React.FC = () => {
                 Define any number of columns with custom render templates. Access the full task object inside templates.
             </p>
             <ComponentDemo title="Custom Column Rendering" centered={false}>
-                <GanttChart
-                    tasks={basicTasks}
-                    height={340}
-                    columns={customColumns}
-                    fieldsPanelWidth={370}
-                />
+                <GanttChart tasks={basicTasks} height={340} columns={customColumns} fieldsPanelWidth={370} />
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import type { GanttColumn } from 'ether-ui';
+                    code={`import type { GanttColumn } from 'fluxo-ui';
 
 const columns: GanttColumn[] = [
   { field: 'name', headerText: 'Task', width: 200 },

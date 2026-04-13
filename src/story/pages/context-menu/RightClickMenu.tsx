@@ -9,10 +9,7 @@ const RightClickMenu: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo
-                title="Right-click area"
-                description="Right-click anywhere in the shaded area to open the context menu."
-            >
+            <ComponentDemo title="Right-click area" description="Right-click anywhere in the shaded area to open the context menu.">
                 <div
                     ref={contextAreaRef}
                     onContextMenu={(e) => showContextMenu(e, basicMenuItems)}
@@ -23,7 +20,7 @@ const RightClickMenu: React.FC = () => {
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import { showContextMenu } from 'ether-ui';
+                    code={`import { showContextMenu } from 'fluxo-ui';
 
 const menuItems = [
   { label: 'Edit', icon: <EditIcon />, command: () => handleEdit() },

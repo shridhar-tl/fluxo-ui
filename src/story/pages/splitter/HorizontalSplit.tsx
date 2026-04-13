@@ -3,7 +3,7 @@ import { Splitter, SplitterPanel } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Splitter, SplitterPanel } from 'ether-ui';
+const code = `import { Splitter, SplitterPanel } from 'fluxo-ui';
 
 <Splitter style={{ height: '200px' }}>
   <SplitterPanel>

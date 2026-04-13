@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import type { DragDropInfo, TreeNode } from '../../../components';
 import { TreeView } from '../../../components';
-import type { TreeNode, DragDropInfo } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -40,8 +40,8 @@ const initialNodes: TreeNode[] = [
     },
 ];
 
-const code = `import { TreeView } from 'ether-ui';
-import type { TreeNode, DragDropInfo } from 'ether-ui';
+const code = `import { TreeView } from 'fluxo-ui';
+import type { TreeNode, DragDropInfo } from 'fluxo-ui';
 
 <TreeView
   nodes={nodes}
@@ -64,7 +64,10 @@ const DragDrop: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Drag and Drop" description="Drag nodes to reorder or move them into other folders. Drop positions: before, inside, or after.">
+            <ComponentDemo
+                title="Drag and Drop"
+                description="Drag nodes to reorder or move them into other folders. Drop positions: before, inside, or after."
+            >
                 <div className="w-full max-w-sm">
                     <TreeView
                         nodes={nodes}

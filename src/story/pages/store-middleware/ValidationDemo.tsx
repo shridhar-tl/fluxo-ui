@@ -1,8 +1,8 @@
 import cn from 'classnames';
 import React, { useCallback, useState } from 'react';
+import { Button, FieldLabel, TextInput } from '../../../components';
 import { create, createHook } from '../../../store';
 import { validationMiddleware } from '../../../store/middlewares';
-import { Button, FieldLabel, TextInput } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -42,9 +42,9 @@ const formStore = create<FormState>(
             },
             (errors) => {
                 formValidationErrors.current = errors as FormErrors;
-            }
+            },
         ),
-    ]
+    ],
 );
 const useFormStore = createHook(formStore);
 
@@ -70,14 +70,14 @@ const simpleValidatedStore = create<SimpleValidatedState>(
             },
             (errors) => {
                 simpleValidationError.current = errors.amount || 'Validation failed';
-            }
+            },
         ),
-    ]
+    ],
 );
 const useSimpleValidatedStore = createHook(simpleValidatedStore);
 
-const validationCode = `import { create, createHook } from 'ether-ui/store';
-import { validationMiddleware } from 'ether-ui/store/middlewares';
+const validationCode = `import { create, createHook } from 'fluxo-ui/store';
+import { validationMiddleware } from 'fluxo-ui/store/middlewares';
 
 interface FormState {
   name: string;
@@ -160,19 +160,26 @@ const SimpleValidation: React.FC = () => {
     }, []);
 
     return (
-        <ComponentDemo title="Basic Validation" description="Reject invalid state updates with validationMiddleware. Invalid setState calls are blocked entirely.">
+        <ComponentDemo
+            title="Basic Validation"
+            description="Reject invalid state updates with validationMiddleware. Invalid setState calls are blocked entirely."
+        >
             <div className="flex flex-col items-center gap-4">
                 <div className="text-4xl font-bold tabular-nums text-[var(--eui-primary)]">{amount}</div>
-                <div className={cn('text-xs', { 'text-gray-500': isDark, 'text-gray-400': !isDark })}>
-                    Valid range: 0 to 100
-                </div>
+                <div className={cn('text-xs', { 'text-gray-500': isDark, 'text-gray-400': !isDark })}>Valid range: 0 to 100</div>
                 {lastError && (
-                    <div className={cn('flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg', {
-                        'bg-red-500/10 text-red-400 border border-red-500/20': isDark,
-                        'bg-red-50 text-red-600 border border-red-200': !isDark,
-                    })}>
+                    <div
+                        className={cn('flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg', {
+                            'bg-red-500/10 text-red-400 border border-red-500/20': isDark,
+                            'bg-red-50 text-red-600 border border-red-200': !isDark,
+                        })}
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0">
-                            <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+                            <path
+                                fillRule="evenodd"
+                                d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                                clipRule="evenodd"
+                            />
                         </svg>
                         {lastError}
                     </div>
@@ -243,26 +250,20 @@ const FormValidation: React.FC = () => {
         setSubmitSuccess(false);
     }, []);
 
-    const shouldShowError = (field: keyof FormState) =>
-        (touchedFields.has(field) || submitAttempted) && !!fieldErrors[field];
+    const shouldShowError = (field: keyof FormState) => (touchedFields.has(field) || submitAttempted) && !!fieldErrors[field];
 
     return (
-        <ComponentDemo title="Form Validation" description="Field-level validation with per-field error messages. Invalid updates are rejected by the middleware.">
+        <ComponentDemo
+            title="Form Validation"
+            description="Field-level validation with per-field error messages. Invalid updates are rejected by the middleware."
+        >
             <div className="w-full max-w-md mx-auto flex flex-col gap-4">
                 <FieldLabel label="Name" error={shouldShowError('name') ? fieldErrors.name : undefined}>
-                    <TextInput
-                        value={name}
-                        placeholder="Enter your name"
-                        onChange={(e) => updateField('name', e.value)}
-                    />
+                    <TextInput value={name} placeholder="Enter your name" onChange={(e) => updateField('name', e.value)} />
                 </FieldLabel>
 
                 <FieldLabel label="Email" error={shouldShowError('email') ? fieldErrors.email : undefined}>
-                    <TextInput
-                        value={email}
-                        placeholder="user@example.com"
-                        onChange={(e) => updateField('email', e.value)}
-                    />
+                    <TextInput value={email} placeholder="user@example.com" onChange={(e) => updateField('email', e.value)} />
                 </FieldLabel>
 
                 <FieldLabel label="Age" error={shouldShowError('age') ? fieldErrors.age : undefined}>
@@ -274,39 +275,40 @@ const FormValidation: React.FC = () => {
                 </FieldLabel>
 
                 {submitSuccess && (
-                    <div className={cn('flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg', {
-                        'bg-green-500/10 text-green-400 border border-green-500/20': isDark,
-                        'bg-green-50 text-green-700 border border-green-200': !isDark,
-                    })}>
+                    <div
+                        className={cn('flex items-center gap-2 text-sm font-medium px-4 py-2.5 rounded-lg', {
+                            'bg-green-500/10 text-green-400 border border-green-500/20': isDark,
+                            'bg-green-50 text-green-700 border border-green-200': !isDark,
+                        })}
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clipRule="evenodd" />
+                            <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                                clipRule="evenodd"
+                            />
                         </svg>
                         All fields are valid! Form submitted successfully.
                     </div>
                 )}
 
                 <div className="flex gap-2 justify-end pt-2">
-                    <Button
-                        label="Reset"
-                        size="sm"
-                        variant="secondary"
-                        onClick={handleReset}
-                    />
-                    <Button
-                        label="Submit"
-                        size="sm"
-                        onClick={handleSubmit}
-                    />
+                    <Button label="Reset" size="sm" variant="secondary" onClick={handleReset} />
+                    <Button label="Submit" size="sm" onClick={handleSubmit} />
                 </div>
 
-                <div className={cn('rounded-lg px-4 py-3 text-xs font-mono', {
-                    'bg-white/5 text-gray-400 border border-white/10': isDark,
-                    'bg-gray-50 text-gray-500 border border-gray-200': !isDark,
-                })}>
-                    <div className={cn('text-[10px] uppercase tracking-wider font-semibold mb-2', {
-                        'text-gray-500': isDark,
-                        'text-gray-400': !isDark,
-                    })}>
+                <div
+                    className={cn('rounded-lg px-4 py-3 text-xs font-mono', {
+                        'bg-white/5 text-gray-400 border border-white/10': isDark,
+                        'bg-gray-50 text-gray-500 border border-gray-200': !isDark,
+                    })}
+                >
+                    <div
+                        className={cn('text-[10px] uppercase tracking-wider font-semibold mb-2', {
+                            'text-gray-500': isDark,
+                            'text-gray-400': !isDark,
+                        })}
+                    >
                         Current Store State
                     </div>
                     <pre className="whitespace-pre-wrap">{JSON.stringify({ name, email, age }, null, 2)}</pre>

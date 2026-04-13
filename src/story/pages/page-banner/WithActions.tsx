@@ -3,7 +3,7 @@ import { Button, PageBanner } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { PageBanner, Button } from 'ether-ui';
+const code = `import { PageBanner, Button } from 'fluxo-ui';
 
 <PageBanner
   type="warning"
@@ -24,7 +24,10 @@ const WithActions: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Banner with Actions" description="Add action buttons using the actions prop to let users take immediate action.">
+            <ComponentDemo
+                title="Banner with Actions"
+                description="Add action buttons using the actions prop to let users take immediate action."
+            >
                 <div className="space-y-4">
                     {updateVisible && (
                         <PageBanner

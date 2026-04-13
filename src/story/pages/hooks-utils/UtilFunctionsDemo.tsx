@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const code = `import { getFieldValue, setFieldValue, debounce, isNil, getPercentageChange } from 'ether-ui/utils';
+const code = `import { getFieldValue, setFieldValue, debounce, isNil, getPercentageChange } from 'fluxo-ui/utils';
 
 // Deep property access
 getFieldValue(obj, 'user.address.city'); // "NYC"
@@ -52,9 +52,14 @@ const UtilFunctionsDemo: React.FC = () => {
             <ComponentDemo title="Utility Functions" description="Common utility functions for data manipulation, validation, and more.">
                 <div className="space-y-6">
                     <div>
-                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>getFieldValue</h4>
+                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>
+                            getFieldValue
+                        </h4>
                         <div className="flex items-center gap-2 flex-wrap">
-                            <code className="text-xs px-2 py-1 rounded" style={{ backgroundColor: 'var(--eui-bg-subtle)', color: 'var(--eui-text-muted)' }}>
+                            <code
+                                className="text-xs px-2 py-1 rounded"
+                                style={{ backgroundColor: 'var(--eui-bg-subtle)', color: 'var(--eui-text-muted)' }}
+                            >
                                 Object: {JSON.stringify(sampleObj)}
                             </code>
                         </div>
@@ -76,7 +81,9 @@ const UtilFunctionsDemo: React.FC = () => {
                     </div>
 
                     <div>
-                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>setFieldValue (immutable)</h4>
+                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>
+                            setFieldValue (immutable)
+                        </h4>
                         <div className="flex items-center gap-2 flex-wrap">
                             <input
                                 value={setPath}
@@ -103,14 +110,21 @@ const UtilFunctionsDemo: React.FC = () => {
                     </div>
 
                     <div>
-                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>isNil</h4>
+                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>
+                            isNil
+                        </h4>
                         <div className="flex flex-wrap gap-3">
                             {nilTests.map((t) => (
-                                <div key={t.val} className={cn('px-3 py-1.5 rounded text-xs', {
-                                    'bg-white/5': isDark,
-                                    'bg-gray-50': !isDark,
-                                })}>
-                                    <span className="font-mono" style={{ color: 'var(--eui-text-muted)' }}>isNil({t.val})</span>
+                                <div
+                                    key={t.val}
+                                    className={cn('px-3 py-1.5 rounded text-xs', {
+                                        'bg-white/5': isDark,
+                                        'bg-gray-50': !isDark,
+                                    })}
+                                >
+                                    <span className="font-mono" style={{ color: 'var(--eui-text-muted)' }}>
+                                        isNil({t.val})
+                                    </span>
                                     <span className="ml-2 font-bold" style={{ color: t.result ? '#22c55e' : '#ef4444' }}>
                                         {String(t.result)}
                                     </span>
@@ -120,14 +134,18 @@ const UtilFunctionsDemo: React.FC = () => {
                     </div>
 
                     <div>
-                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>getPercentageChange</h4>
+                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>
+                            getPercentageChange
+                        </h4>
                         <p className="text-sm font-mono" style={{ color: 'var(--eui-text-muted)' }}>
                             getPercentageChange(120, 100) = <span style={{ color: 'var(--eui-primary)' }}>{pctResult}%</span>
                         </p>
                     </div>
 
                     <div>
-                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>removeNilValues</h4>
+                        <h4 className="font-semibold text-sm mb-2" style={{ color: 'var(--eui-text)' }}>
+                            removeNilValues
+                        </h4>
                         <p className="text-xs font-mono" style={{ color: 'var(--eui-text-muted)' }}>
                             Input: {'{ a: 1, b: null, c: undefined, d: "hello", e: 0 }'}
                         </p>

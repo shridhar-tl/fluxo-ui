@@ -3,7 +3,7 @@ import { PivotTable } from '../../../components';
 import type { PivotConfig } from '../../../components/pivot-table/pivot-table-types';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { salesData, currencyFormat, numberFormat } from './pivot-table-story-data';
+import { currencyFormat, numberFormat, salesData } from './pivot-table-story-data';
 
 const config: PivotConfig = {
     rows: ['region', 'country', 'city'],
@@ -15,8 +15,8 @@ const config: PivotConfig = {
     ],
 };
 
-const code = `import { PivotTable } from 'ether-ui';
-import type { PivotConfig } from 'ether-ui';
+const code = `import { PivotTable } from 'fluxo-ui';
+import type { PivotConfig } from 'fluxo-ui';
 
 const config: PivotConfig = {
     rows: ['region', 'country', 'city'],
@@ -43,14 +43,7 @@ const MultiLevelPivot: React.FC = () => (
             title="Multi-Level Row Pivot"
             description="Three levels of row grouping: Region > Country > City. Use the toolbar to expand or collapse all rows."
         >
-            <PivotTable
-                data={salesData}
-                config={config}
-                expandAll
-                showSubTotals
-                showToolbar
-                bordered
-            />
+            <PivotTable data={salesData} config={config} expandAll showSubTotals showToolbar bordered />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

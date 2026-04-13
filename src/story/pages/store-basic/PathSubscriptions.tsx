@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
-import { create, createHook } from '../../../store';
 import { Button, InputSwitch, TextInput } from '../../../components';
+import { create, createHook } from '../../../store';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -31,7 +31,7 @@ const profileStore = create<ProfileState>(() => ({
 
 const useProfile = createHook(profileStore);
 
-const code = `import { create, createHook } from 'ether-ui/store';
+const code = `import { create, createHook } from 'fluxo-ui/store';
 
 const profileStore = create<ProfileState>(() => ({
   user: { name: 'Alice', email: 'alice@example.com', role: 'Admin' },
@@ -77,10 +77,12 @@ const RenderBadge: React.FC<{ count: number; label: string }> = ({ count, label 
     const { isDark } = useStoryTheme();
 
     return (
-        <div className={cn('text-xs px-2 py-0.5 rounded flex items-center gap-1.5', {
-            'bg-amber-500/20 text-amber-400': isDark,
-            'bg-amber-100 text-amber-700': !isDark,
-        })}>
+        <div
+            className={cn('text-xs px-2 py-0.5 rounded flex items-center gap-1.5', {
+                'bg-amber-500/20 text-amber-400': isDark,
+                'bg-amber-100 text-amber-700': !isDark,
+            })}
+        >
             <span>{label}:</span>
             <span className="font-bold tabular-nums">{count}</span>
         </div>
@@ -120,7 +122,12 @@ const UserCard: React.FC = () => {
                 </div>
                 <RenderBadge count={renderCount.current} label="Renders" />
             </div>
-            <div className={cn('text-xs mb-3 px-2 py-1 rounded italic', { 'bg-blue-500/10 text-blue-400': isDark, 'bg-blue-50 text-blue-600': !isDark })}>
+            <div
+                className={cn('text-xs mb-3 px-2 py-1 rounded italic', {
+                    'bg-blue-500/10 text-blue-400': isDark,
+                    'bg-blue-50 text-blue-600': !isDark,
+                })}
+            >
                 useProfile((s) =&gt; s.user, true)
             </div>
             <div className="space-y-1 mb-3">
@@ -176,7 +183,12 @@ const SettingsPanel: React.FC = () => {
                 </div>
                 <RenderBadge count={renderCount.current} label="Renders" />
             </div>
-            <div className={cn('text-xs mb-3 px-2 py-1 rounded italic', { 'bg-blue-500/10 text-blue-400': isDark, 'bg-blue-50 text-blue-600': !isDark })}>
+            <div
+                className={cn('text-xs mb-3 px-2 py-1 rounded italic', {
+                    'bg-blue-500/10 text-blue-400': isDark,
+                    'bg-blue-50 text-blue-600': !isDark,
+                })}
+            >
                 useProfile((s) =&gt; s.settings, true)
             </div>
             <div className="space-y-1 mb-3">
@@ -185,11 +197,7 @@ const SettingsPanel: React.FC = () => {
                 </div>
                 <div className={cn('text-sm flex items-center gap-2', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>
                     Notifications:
-                    <InputSwitch
-                        checked={settings.notifications}
-                        onChange={toggleNotifications}
-                        size="sm"
-                    />
+                    <InputSwitch checked={settings.notifications} onChange={toggleNotifications} size="sm" />
                 </div>
                 <div className={cn('text-sm', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>
                     Language: <span className="font-medium text-[var(--eui-primary)]">{settings.language}</span>
@@ -218,10 +226,20 @@ const FullStateWatcher: React.FC = () => {
                 </div>
                 <RenderBadge count={renderCount.current} label="Renders" />
             </div>
-            <div className={cn('text-xs mb-3 px-2 py-1 rounded italic', { 'bg-red-500/10 text-red-400': isDark, 'bg-red-50 text-red-600': !isDark })}>
+            <div
+                className={cn('text-xs mb-3 px-2 py-1 rounded italic', {
+                    'bg-red-500/10 text-red-400': isDark,
+                    'bg-red-50 text-red-600': !isDark,
+                })}
+            >
                 useProfile() — re-renders on every change
             </div>
-            <pre className={cn('text-xs font-mono overflow-auto max-h-32 p-2 rounded', { 'bg-black/30 text-gray-300': isDark, 'bg-gray-100 text-gray-700': !isDark })}>
+            <pre
+                className={cn('text-xs font-mono overflow-auto max-h-32 p-2 rounded', {
+                    'bg-black/30 text-gray-300': isDark,
+                    'bg-gray-100 text-gray-700': !isDark,
+                })}
+            >
                 {JSON.stringify(state, null, 2)}
             </pre>
         </div>
@@ -249,7 +267,12 @@ const MetadataDisplay: React.FC = () => {
                 </div>
                 <RenderBadge count={renderCount.current} label="Renders" />
             </div>
-            <div className={cn('text-xs mb-3 px-2 py-1 rounded italic', { 'bg-blue-500/10 text-blue-400': isDark, 'bg-blue-50 text-blue-600': !isDark })}>
+            <div
+                className={cn('text-xs mb-3 px-2 py-1 rounded italic', {
+                    'bg-blue-500/10 text-blue-400': isDark,
+                    'bg-blue-50 text-blue-600': !isDark,
+                })}
+            >
                 useProfile((s) =&gt; s.metadata, true)
             </div>
             <div className="space-y-1 mb-3">
@@ -303,9 +326,7 @@ const ExternalSubscriptionLog: React.FC = () => {
         };
     }, []);
 
-    const filteredLogs = pathFilter
-        ? logs.filter((log) => log.toLowerCase().includes(pathFilter.toLowerCase()))
-        : logs;
+    const filteredLogs = pathFilter ? logs.filter((log) => log.toLowerCase().includes(pathFilter.toLowerCase())) : logs;
 
     return (
         <div className={cn('rounded-lg p-4 border', { 'border-white/10 bg-white/5': isDark, 'border-gray-200 bg-gray-50': !isDark })}>
@@ -314,16 +335,16 @@ const ExternalSubscriptionLog: React.FC = () => {
                     External Path Subscription Log
                 </div>
                 <div className="flex items-center gap-2">
-                    <TextInput
-                        value={pathFilter}
-                        onChange={(e) => setPathFilter(e.value)}
-                        placeholder="Filter paths..."
-                        size="sm"
-                    />
+                    <TextInput value={pathFilter} onChange={(e) => setPathFilter(e.value)} placeholder="Filter paths..." size="sm" />
                     <Button label="Clear" size="xs" variant="secondary" layout="plain" onClick={() => setLogs([])} />
                 </div>
             </div>
-            <div className={cn('font-mono text-xs space-y-1 max-h-48 overflow-y-auto', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
+            <div
+                className={cn('font-mono text-xs space-y-1 max-h-48 overflow-y-auto', {
+                    'text-gray-400': isDark,
+                    'text-gray-600': !isDark,
+                })}
+            >
                 {filteredLogs.length === 0 && (
                     <div className="italic opacity-50">
                         {logs.length === 0

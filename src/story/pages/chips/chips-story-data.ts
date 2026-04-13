@@ -1,4 +1,4 @@
-export const basicUsageCode = `import { Chips } from 'ether-ui';
+export const basicUsageCode = `import { Chips } from 'fluxo-ui';
 
 function MyComponent() {
   const [chips, setChips] = useState(['React', 'TypeScript']);
@@ -12,7 +12,7 @@ function MyComponent() {
   );
 }`;
 
-export const advancedUsageCode = `import { Chips } from 'ether-ui';
+export const advancedUsageCode = `import { Chips } from 'fluxo-ui';
 
 function MyComponent() {
   const [chips, setChips] = useState([]);

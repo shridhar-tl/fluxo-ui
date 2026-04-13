@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, showTooltip, hideTooltip } from '../../../components';
+import { Button, hideTooltip, showTooltip } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { showTooltip, hideTooltip } from 'ether-ui';
+const code = `import { showTooltip, hideTooltip } from 'fluxo-ui';
 
 <Button
   onMouseEnter={(e) => showTooltip(e, 'Hello, I am a tooltip!')}

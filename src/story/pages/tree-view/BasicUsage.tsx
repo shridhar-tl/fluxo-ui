@@ -1,6 +1,6 @@
 import React from 'react';
-import { TreeView } from '../../../components';
 import type { TreeNode } from '../../../components';
+import { TreeView } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -45,8 +45,8 @@ const nodes: TreeNode[] = [
     },
 ];
 
-const code = `import { TreeView } from 'ether-ui';
-import type { TreeNode } from 'ether-ui';
+const code = `import { TreeView } from 'fluxo-ui';
+import type { TreeNode } from 'fluxo-ui';
 
 const nodes: TreeNode[] = [
   {

@@ -1,17 +1,17 @@
 import cn from 'classnames';
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
-import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
+import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
-import GroupedItems from './GroupedItems';
 import ControlledPopover from './ControlledPopover';
 import CustomContent from './CustomContent';
 import FilterablePopover from './FilterablePopover';
+import GroupedItems from './GroupedItems';
 
 const popoverProps = {
     isOpen: {
@@ -142,7 +142,9 @@ const PopoverPage: React.FC = () => {
     return (
         <PageLayout sectionNavItems={sectionNavItems}>
             <div>
-                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Popover</h1>
+                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Popover
+                </h1>
                 <p className={cn('text-base md:text-xl', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
                     A floating panel anchored to a trigger element that displays a selectable list of items. Supports keyboard navigation,
                     grouped items, custom rendering, built-in filtering, and mobile-responsive layout.
@@ -160,23 +162,29 @@ const PopoverPage: React.FC = () => {
             </section>
 
             <section className="scroll-mt-8" id="controlled">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Controlled Open/Close</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Controlled Open/Close
+                </h2>
                 <ControlledPopover />
             </section>
 
             <section className="scroll-mt-8" id="custom-content">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Custom Render Item</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Custom Render Item
+                </h2>
                 <CustomContent />
             </section>
 
             <section className="scroll-mt-8" id="filterable">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Filterable Popover</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Filterable Popover
+                </h2>
                 <FilterablePopover />
             </section>
 
             <section className="scroll-mt-8" id="import">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import { Popover } from 'ether-ui';`} />
+                <CodeBlock code={`import { Popover } from 'fluxo-ui';`} />
             </section>
 
             <section className="scroll-mt-8" id="api-reference">

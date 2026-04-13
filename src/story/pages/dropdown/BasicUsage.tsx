@@ -7,7 +7,7 @@ import { basicOptions } from './dropdown-story-data';
 
 const Dropdown = withFieldLabel(DropdownRaw);
 
-const code = `import { Dropdown } from 'ether-ui';
+const code = `import { Dropdown } from 'fluxo-ui';
 
 function MyComponent() {
   const [value, setValue] = useState('');

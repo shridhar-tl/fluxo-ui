@@ -1,6 +1,6 @@
 import React from 'react';
-import { Carousel } from '../../../components';
 import type { CarouselSlide } from '../../../components';
+import { Carousel } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -11,7 +11,7 @@ const slides: CarouselSlide[] = [
     { id: 'a4', type: 'image', src: 'https://picsum.photos/seed/auto4/800/400', alt: 'Slide 4' },
 ];
 
-const code = `import { Carousel } from 'ether-ui';
+const code = `import { Carousel } from 'fluxo-ui';
 
 <Carousel
   slides={slides}
@@ -22,15 +22,13 @@ const code = `import { Carousel } from 'ether-ui';
 
 const Autoplay: React.FC = () => (
     <>
-        <ComponentDemo title="Autoplay with Loop" description="Slides advance automatically every 3 seconds and loop back to the first slide. Pauses on hover." centered={false}>
+        <ComponentDemo
+            title="Autoplay with Loop"
+            description="Slides advance automatically every 3 seconds and loop back to the first slide. Pauses on hover."
+            centered={false}
+        >
             <div className="w-full max-w-2xl mx-auto">
-                <Carousel
-                    slides={slides}
-                    autoplay
-                    autoplayInterval={3000}
-                    loop
-                    aspectRatio="16/9"
-                />
+                <Carousel slides={slides} autoplay autoplayInterval={3000} loop aspectRatio="16/9" />
             </div>
         </ComponentDemo>
         <div className="mt-4">

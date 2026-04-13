@@ -9,7 +9,7 @@ const generateItems = (start: number, count: number) =>
         title: `Record ${start + i + 1}`,
     }));
 
-const code = `import { InfiniteScroll } from 'ether-ui';
+const code = `import { InfiniteScroll } from 'fluxo-ui';
 
 const [error, setError] = useState<string | null>(null);
 
@@ -61,7 +61,11 @@ const ErrorHandling: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Error Handling with Retry" description="When loading fails, an error message with a retry button is displayed. Every other load attempt simulates a failure." centered={false}>
+            <ComponentDemo
+                title="Error Handling with Retry"
+                description="When loading fails, an error message with a retry button is displayed. Every other load attempt simulates a failure."
+                centered={false}
+            >
                 <div className="h-72 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg" id="error-scroll-container">
                     <InfiniteScroll
                         loadMore={loadMore}

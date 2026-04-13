@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { JsonEditor } from '../../../components';
 import type { JsonValue } from '../../../components';
+import { JsonEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { basicObject } from './json-editor-story-data';
 
-const code = `import { JsonEditor } from 'ether-ui';
+const code = `import { JsonEditor } from 'fluxo-ui';
 
 const [data, setData] = useState({
   name: 'John Doe',
@@ -22,7 +22,11 @@ const BasicUsage: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Basic JSON Editor" description="Edit simple key-value pairs with automatic type detection" centered={false}>
+            <ComponentDemo
+                title="Basic JSON Editor"
+                description="Edit simple key-value pairs with automatic type detection"
+                centered={false}
+            >
                 <div className="w-full p-4">
                     <JsonEditor value={data} onChange={setData} />
                 </div>

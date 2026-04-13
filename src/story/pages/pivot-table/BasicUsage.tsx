@@ -3,7 +3,7 @@ import { PivotTable } from '../../../components';
 import type { PivotConfig } from '../../../components/pivot-table/pivot-table-types';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { salesData, currencyFormat, numberFormat } from './pivot-table-story-data';
+import { currencyFormat, numberFormat, salesData } from './pivot-table-story-data';
 
 const config: PivotConfig = {
     rows: ['region'],
@@ -15,8 +15,8 @@ const config: PivotConfig = {
     ],
 };
 
-const code = `import { PivotTable } from 'ether-ui';
-import type { PivotConfig } from 'ether-ui';
+const code = `import { PivotTable } from 'fluxo-ui';
+import type { PivotConfig } from 'fluxo-ui';
 
 const config: PivotConfig = {
     rows: ['region'],
@@ -32,10 +32,7 @@ const config: PivotConfig = {
 
 const BasicUsage: React.FC = () => (
     <>
-        <ComponentDemo
-            title="Simple Pivot Table"
-            description="Sales data pivoted by region showing revenue, quantity, and profit totals."
-        >
+        <ComponentDemo title="Simple Pivot Table" description="Sales data pivoted by region showing revenue, quantity, and profit totals.">
             <PivotTable data={salesData} config={config} showToolbar />
         </ComponentDemo>
         <div className="mt-4">

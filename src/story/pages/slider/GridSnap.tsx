@@ -3,7 +3,7 @@ import { Slider } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Slider } from 'ether-ui';
+const code = `import { Slider } from 'fluxo-ui';
 
 // Snap to step with smooth animation
 <Slider
@@ -30,18 +30,14 @@ const GridSnap: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Grid & Snap Behavior" description="Enable snap for step-based snapping, or use gridStep for coarser grid alignment with animated transitions.">
+            <ComponentDemo
+                title="Grid & Snap Behavior"
+                description="Enable snap for step-based snapping, or use gridStep for coarser grid alignment with animated transitions."
+            >
                 <div className="space-y-10 w-full max-w-lg">
                     <div>
                         <div className="text-sm mb-2 opacity-70">Snap to step=10 (value: {snapValue})</div>
-                        <Slider
-                            value={snapValue}
-                            onChange={(v) => setSnapValue(v as number)}
-                            snap
-                            step={10}
-                            marks
-                            showTooltip
-                        />
+                        <Slider value={snapValue} onChange={(v) => setSnapValue(v as number)} snap step={10} marks showTooltip />
                     </div>
                     <div>
                         <div className="text-sm mb-2 opacity-70">Grid step=25 with animation (value: {gridValue})</div>
@@ -57,15 +53,7 @@ const GridSnap: React.FC = () => {
                     </div>
                     <div>
                         <div className="text-sm mb-2 opacity-70">Snap to step=5 with no fill</div>
-                        <Slider
-                            defaultValue={30}
-                            snap
-                            step={5}
-                            marks
-                            filled={false}
-                            showTooltip
-                            variant="info"
-                        />
+                        <Slider defaultValue={30} snap step={5} marks filled={false} showTooltip variant="info" />
                     </div>
                     <div>
                         <div className="text-sm mb-2 opacity-70">Grid step=20, range mode</div>

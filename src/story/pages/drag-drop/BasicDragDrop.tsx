@@ -6,7 +6,7 @@ import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 import { sourceItems } from './drag-drop-story-data';
 
-const code = `import { Draggable, Droppable } from 'ether-ui/dnd';
+const code = `import { Draggable, Droppable } from 'fluxo-ui/dnd';
 
 function DragDropExample() {
   const [items] = useState(['Item 1', 'Item 2', 'Item 3']);
@@ -76,16 +76,12 @@ const BasicDragDrop: React.FC = () => {
             <ComponentDemo title="Simple Drag & Drop">
                 <div className="flex flex-col sm:flex-row gap-6 sm:gap-8">
                     <div className="flex-1">
-                        <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>Draggable Items</h3>
+                        <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>
+                            Draggable Items
+                        </h3>
                         <div className="space-y-2">
                             {sourceItems.map((item, index) => (
-                                <Draggable
-                                    key={index}
-                                    containerId="source"
-                                    index={index}
-                                    item={item}
-                                    itemType="task"
-                                >
+                                <Draggable key={index} containerId="source" index={index} item={item} itemType="task">
                                     <div className="bg-blue-600 text-white px-4 py-3 rounded cursor-move hover:bg-blue-500 transition-colors">
                                         {item}
                                     </div>
@@ -95,13 +91,7 @@ const BasicDragDrop: React.FC = () => {
                     </div>
                     <div className="flex-1">
                         <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>Drop Zone</h3>
-                        <Droppable
-                            containerId="target"
-                            index={0}
-                            accept="task"
-                            onDrop={handleDrop}
-                            className="min-h-50"
-                        >
+                        <Droppable containerId="target" index={0} accept="task" onDrop={handleDrop} className="min-h-50">
                             {({ isOver, canDrop, dropRef }) => (
                                 <div
                                     ref={dropRef}
@@ -109,8 +99,8 @@ const BasicDragDrop: React.FC = () => {
                                         isOver && canDrop
                                             ? 'border-green-500 bg-green-500/10'
                                             : canDrop
-                                            ? 'border-gray-400 dark:border-gray-500'
-                                            : 'border-gray-300 dark:border-gray-700'
+                                              ? 'border-gray-400 dark:border-gray-500'
+                                              : 'border-gray-300 dark:border-gray-700'
                                     }`}
                                 >
                                     {droppedItems.length > 0 ? (
@@ -122,9 +112,7 @@ const BasicDragDrop: React.FC = () => {
                                             ))}
                                         </div>
                                     ) : (
-                                        <div className="text-gray-500 dark:text-gray-500 text-center py-16">
-                                            Drop items here
-                                        </div>
+                                        <div className="text-gray-500 dark:text-gray-500 text-center py-16">Drop items here</div>
                                     )}
                                 </div>
                             )}

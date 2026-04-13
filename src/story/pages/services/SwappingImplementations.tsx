@@ -1,7 +1,7 @@
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
 
-const classSwapCode = `import { createContainer } from 'ether-ui/services';
+const classSwapCode = `import { createContainer } from 'fluxo-ui/services';
 
 const services = createContainer();
 

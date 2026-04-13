@@ -4,8 +4,8 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { approvalStates, priorityStates } from './multi-state-checkbox-story-data';
 
-const code = `import { MultiStateCheckbox } from 'ether-ui';
-import { InfoIcon, WarningIcon, FlagIcon, CheckIcon, MinusIcon } from 'ether-ui/icons';
+const code = `import { MultiStateCheckbox } from 'fluxo-ui';
+import { InfoIcon, WarningIcon, FlagIcon, CheckIcon, MinusIcon } from 'fluxo-ui/icons';
 
 const priorityStates = [
   { value: null, label: 'No Priority', icon: undefined },
@@ -51,19 +51,11 @@ const CustomStates: React.FC = () => {
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2">
                         <span className="text-sm font-medium text-gray-500">Priority Selector (3 states)</span>
-                        <MultiStateCheckbox
-                            items={priorityStates}
-                            value={priority}
-                            onChange={(e) => setPriority(e.value)}
-                        />
+                        <MultiStateCheckbox items={priorityStates} value={priority} onChange={(e) => setPriority(e.value)} />
                     </div>
                     <div className="flex flex-col gap-2">
                         <span className="text-sm font-medium text-gray-500">Approval Workflow (4 states)</span>
-                        <MultiStateCheckbox
-                            items={approvalStates}
-                            value={approval}
-                            onChange={(e) => setApproval(e.value)}
-                        />
+                        <MultiStateCheckbox items={approvalStates} value={approval} onChange={(e) => setApproval(e.value)} />
                     </div>
                 </div>
             </ComponentDemo>

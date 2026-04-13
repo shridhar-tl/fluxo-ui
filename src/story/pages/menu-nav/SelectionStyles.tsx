@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { MenuNav } from '../../../components';
 import type { MenuNavSelectionStyle } from '../../../components';
+import { MenuNav } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { basicMenuItems } from './menu-nav-story-data';
 
-const code = `import { MenuNav } from 'ether-ui';
-import type { MenuNavSelectionStyle } from 'ether-ui';
+const code = `import { MenuNav } from 'fluxo-ui';
+import type { MenuNavSelectionStyle } from 'fluxo-ui';
 
 <MenuNav
   items={items}
@@ -48,9 +48,9 @@ const SelectionStyles: React.FC = () => {
     const [selectedIds, setSelectedIds] = useState<Record<string, string>>({
         'border-left': 'home',
         'border-bottom': 'home',
-        'background': 'home',
-        'arrow': 'home',
-        'highlight': 'home',
+        background: 'home',
+        arrow: 'home',
+        highlight: 'home',
     });
 
     return (

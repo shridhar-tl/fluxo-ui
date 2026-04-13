@@ -6,7 +6,7 @@ import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 import { detailedSteps } from './stepper-story-data';
 
-const code = `import { Stepper } from 'ether-ui';
+const code = `import { Stepper } from 'fluxo-ui';
 
 const steps = [
   { label: 'Account Setup', description: 'Create your account credentials' },
@@ -27,8 +27,21 @@ const BasicUsage: React.FC = () => {
                 <div className="w-full p-4">
                     <Stepper steps={detailedSteps} activeStep={active} />
                     <div className="flex gap-3 mt-6 justify-center">
-                        <button className={cn('px-3 py-1.5 text-sm rounded-md', { 'bg-gray-700 text-gray-200': isDark, 'bg-gray-200 text-gray-700': !isDark })} onClick={() => setActive(Math.max(0, active - 1))}>Back</button>
-                        <button className="px-3 py-1.5 text-sm rounded-md bg-blue-500 text-white" onClick={() => setActive(Math.min(detailedSteps.length - 1, active + 1))}>Next</button>
+                        <button
+                            className={cn('px-3 py-1.5 text-sm rounded-md', {
+                                'bg-gray-700 text-gray-200': isDark,
+                                'bg-gray-200 text-gray-700': !isDark,
+                            })}
+                            onClick={() => setActive(Math.max(0, active - 1))}
+                        >
+                            Back
+                        </button>
+                        <button
+                            className="px-3 py-1.5 text-sm rounded-md bg-blue-500 text-white"
+                            onClick={() => setActive(Math.min(detailedSteps.length - 1, active + 1))}
+                        >
+                            Next
+                        </button>
                     </div>
                 </div>
             </ComponentDemo>

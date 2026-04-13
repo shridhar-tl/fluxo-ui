@@ -1,6 +1,6 @@
 import React from 'react';
-import { Breadcrumb } from '../../../components';
 import type { BreadcrumbItem } from '../../../components';
+import { Breadcrumb } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -14,7 +14,7 @@ const items: BreadcrumbItem[] = [
     { label: 'Street' },
 ];
 
-const code = `import { Breadcrumb } from 'ether-ui';
+const code = `import { Breadcrumb } from 'fluxo-ui';
 
 const items = [
   { label: 'Home', href: '/' },
@@ -30,7 +30,10 @@ const items = [
 
 const CollapsedItems: React.FC = () => (
     <>
-        <ComponentDemo title="Collapsed Items" description="When maxItems is set, middle items collapse into an ellipsis dropdown. Click the ellipsis to expand.">
+        <ComponentDemo
+            title="Collapsed Items"
+            description="When maxItems is set, middle items collapse into an ellipsis dropdown. Click the ellipsis to expand."
+        >
             <Breadcrumb items={items} maxItems={3} />
         </ComponentDemo>
         <div className="mt-4">

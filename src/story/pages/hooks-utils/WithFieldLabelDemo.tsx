@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { TextInput } from '../../../components';
 import type { ComponentEvent } from '../../../components';
+import { TextInput } from '../../../components';
 import { withFieldLabel } from '../../../utils/field-label';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { withFieldLabel } from 'ether-ui/utils';
-import { TextInput } from 'ether-ui';
+const code = `import { withFieldLabel } from 'fluxo-ui/utils';
+import { TextInput } from 'fluxo-ui';
 
 const LabeledTextInput = withFieldLabel(TextInput);
 
@@ -36,7 +36,10 @@ const WithFieldLabelDemo: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="withFieldLabel" description="Higher-order component that wraps any input component with a FieldLabel, adding label, required, error, and hint props.">
+            <ComponentDemo
+                title="withFieldLabel"
+                description="Higher-order component that wraps any input component with a FieldLabel, adding label, required, error, and hint props."
+            >
                 <div className="max-w-sm space-y-4">
                     <LabeledTextInput
                         label="Email Address"
@@ -48,16 +51,9 @@ const WithFieldLabelDemo: React.FC = () => {
                         onChange={handleChange}
                     />
 
-                    <LabeledTextInput
-                        label="Username"
-                        placeholder="johndoe"
-                    />
+                    <LabeledTextInput label="Username" placeholder="johndoe" />
 
-                    <LabeledTextInput
-                        label="Disabled Field"
-                        disabled
-                        placeholder="Cannot edit"
-                    />
+                    <LabeledTextInput label="Disabled Field" disabled placeholder="Cannot edit" />
                 </div>
             </ComponentDemo>
             <div className="mt-4">

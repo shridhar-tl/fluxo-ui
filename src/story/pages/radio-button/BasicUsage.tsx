@@ -25,7 +25,7 @@ const BasicUsage: React.FC = () => {
             <div className="mt-4">
                 <CodeBlock
                     title="Basic Example"
-                    code={`import { RadioButtonGroup } from 'ether-ui';
+                    code={`import { RadioButtonGroup } from 'fluxo-ui';
 
 function MyComponent() {
   const [value, setValue] = useState('option2');

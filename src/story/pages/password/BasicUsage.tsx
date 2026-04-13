@@ -6,7 +6,7 @@ import { ComponentDemo } from '../../ComponentDemo';
 
 const Password = withFieldLabel(PasswordRaw);
 
-const code = `import { Password } from 'ether-ui';
+const code = `import { Password } from 'fluxo-ui';
 
 function MyComponent() {
   const [password, setPassword] = useState('');

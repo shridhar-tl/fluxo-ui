@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Drawer } from '../../../components';
 import type { DrawerPosition } from '../../../components';
+import { Button, Drawer } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Drawer } from 'ether-ui';
-import type { DrawerPosition } from 'ether-ui';
+const code = `import { Drawer } from 'fluxo-ui';
+import type { DrawerPosition } from 'fluxo-ui';
 
 <Drawer open={open} onClose={close} position="left" header="Left Drawer">
   ...
@@ -49,7 +49,9 @@ const Positions: React.FC = () => {
                     size={size || '400px'}
                     header={`${position.charAt(0).toUpperCase() + position.slice(1)} Drawer`}
                 >
-                    <p>This drawer slides in from the <strong>{position}</strong> edge of the screen.</p>
+                    <p>
+                        This drawer slides in from the <strong>{position}</strong> edge of the screen.
+                    </p>
                 </Drawer>
             ))}
             <div className="mt-4">

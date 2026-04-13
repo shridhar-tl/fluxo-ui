@@ -13,7 +13,7 @@ const initialTasks: Task[] = [
     { id: 5, title: 'Deploy to production', description: 'Configure CI/CD and deploy', priority: 'low' },
 ];
 
-const code = `import { Sortable } from 'ether-ui/dnd';
+const code = `import { Sortable } from 'fluxo-ui/dnd';
 
 interface Task {
   id: number;
@@ -53,11 +53,7 @@ const ComplexItems: React.FC = () => {
     return (
         <>
             <ComponentDemo title="Task List with Priority">
-                <Sortable
-                    items={taskList}
-                    onChange={(newItems) => setTaskList(newItems)}
-                    className="space-y-3"
-                >
+                <Sortable items={taskList} onChange={(newItems) => setTaskList(newItems)} className="space-y-3">
                     {(task, index) => (
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 cursor-move hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700">
                             <div className="flex items-start gap-3">
@@ -66,9 +62,7 @@ const ComplexItems: React.FC = () => {
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="text-gray-900 dark:text-white font-medium mb-1">{task.title}</h3>
-                                    {task.description && (
-                                        <p className="text-gray-600 dark:text-gray-400 text-sm">{task.description}</p>
-                                    )}
+                                    {task.description && <p className="text-gray-600 dark:text-gray-400 text-sm">{task.description}</p>}
                                 </div>
                                 <div className="shrink-0">
                                     <span className="text-gray-500 text-sm">#{index + 1}</span>

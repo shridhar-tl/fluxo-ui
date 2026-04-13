@@ -1,4 +1,4 @@
-export const basicUsageCode = `import { DateRangePicker } from 'ether-ui';
+export const basicUsageCode = `import { DateRangePicker } from 'fluxo-ui';
 import { useState } from 'react';
 
 function MyComponent() {
@@ -13,7 +13,7 @@ function MyComponent() {
   );
 }`;
 
-export const quickSelectCode = `import { DateRangePicker } from 'ether-ui';
+export const quickSelectCode = `import { DateRangePicker } from 'fluxo-ui';
 import { useState } from 'react';
 
 function MyComponent() {
@@ -53,7 +53,7 @@ function MyComponent() {
   );
 }`;
 
-export const advancedUsageCode = `import { DateRangePicker } from 'ether-ui';
+export const advancedUsageCode = `import { DateRangePicker } from 'fluxo-ui';
 import { useState } from 'react';
 
 function MyComponent() {
@@ -100,9 +100,6 @@ export const quickRanges = [
     {
         value: 'thismonth',
         label: 'This Month',
-        range: [
-            new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-            new Date(),
-        ] as [Date, Date],
+        range: [new Date(new Date().getFullYear(), new Date().getMonth(), 1), new Date()] as [Date, Date],
     },
 ];

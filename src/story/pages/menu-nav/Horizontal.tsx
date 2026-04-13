@@ -4,7 +4,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { horizontalMenuItems } from './menu-nav-story-data';
 
-const code = `import { MenuNav } from 'ether-ui';
+const code = `import { MenuNav } from 'fluxo-ui';
 
 <MenuNav
   items={items}

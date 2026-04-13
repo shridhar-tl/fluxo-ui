@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const code = `import { Sortable } from 'ether-ui/dnd';
+const code = `import { Sortable } from 'fluxo-ui/dnd';
 
 function TypeBasedSorting() {
   const [items, setItems] = useState({
@@ -135,7 +135,9 @@ const TypeBasedSortable: React.FC = () => {
                     </div>
 
                     <div>
-                        <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>Mixed (Accepts Both)</h3>
+                        <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>
+                            Mixed (Accepts Both)
+                        </h3>
                         <Sortable
                             items={typeBasedItems.mixed}
                             accept={['feature', 'bug']}
@@ -165,11 +167,11 @@ const TypeBasedSortable: React.FC = () => {
                             }
                         >
                             {(item) => (
-                                <div className={`rounded-lg p-3 cursor-move transition-colors ${
-                                    item.type === 'feature'
-                                        ? 'bg-blue-700 hover:bg-blue-600'
-                                        : 'bg-red-700 hover:bg-red-600'
-                                }`}>
+                                <div
+                                    className={`rounded-lg p-3 cursor-move transition-colors ${
+                                        item.type === 'feature' ? 'bg-blue-700 hover:bg-blue-600' : 'bg-red-700 hover:bg-red-600'
+                                    }`}
+                                >
                                     <div className="flex items-center gap-2">
                                         <span className="text-lg">{item.type === 'feature' ? '✨' : '🐛'}</span>
                                         <span className="text-white text-sm flex-1">{item.text}</span>
@@ -180,8 +182,8 @@ const TypeBasedSortable: React.FC = () => {
                     </div>
                 </div>
                 <p className={cn('text-sm mt-4', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                    Try dragging items between columns. The "Mixed" column accepts both features and bugs,
-                    but features and bugs columns only accept their own types.
+                    Try dragging items between columns. The "Mixed" column accepts both features and bugs, but features and bugs columns
+                    only accept their own types.
                 </p>
             </ComponentDemo>
             <div className="mt-4">

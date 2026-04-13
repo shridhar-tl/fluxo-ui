@@ -7,7 +7,7 @@ import { frameworkOptions } from './multiselect-story-data';
 
 const Multiselect = withFieldLabel(MultiselectRaw);
 
-const code = `import { Multiselect } from 'ether-ui';
+const code = `import { Multiselect } from 'fluxo-ui';
 
 function MyComponent() {
   const [values, setValues] = useState(['react', 'typescript']);

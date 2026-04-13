@@ -1,7 +1,7 @@
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
 
-const eventCode = `import { TabView, TabPage, TabChangeEvent, TabCloseEvent } from 'ether-ui';
+const eventCode = `import { TabView, TabPage, TabChangeEvent, TabCloseEvent } from 'fluxo-ui';
 
 function MyComponent() {
   const handleTabChange = (e: TabChangeEvent) => {
@@ -33,8 +33,6 @@ function MyComponent() {
   );
 }`;
 
-const EventHandling: React.FC = () => (
-    <CodeBlock code={eventCode} language="tsx" />
-);
+const EventHandling: React.FC = () => <CodeBlock code={eventCode} language="tsx" />;
 
 export default EventHandling;

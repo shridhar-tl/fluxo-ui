@@ -1,11 +1,11 @@
 import React from 'react';
-import { Slider } from '../../../components';
 import type { SliderSize } from '../../../components';
+import { Slider } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Slider } from 'ether-ui';
-import type { SliderSize } from 'ether-ui';
+const code = `import { Slider } from 'fluxo-ui';
+import type { SliderSize } from 'fluxo-ui';
 
 const sizes: SliderSize[] = ['xs', 'sm', 'md', 'lg', 'xl'];
 
@@ -28,13 +28,10 @@ const Sizes: React.FC = () => {
                 <div className="space-y-6 w-full max-w-lg">
                     {sizes.map(({ size, label }) => (
                         <div key={size}>
-                            <div className="text-sm mb-2 opacity-70">{label} ({size})</div>
-                            <Slider
-                                size={size}
-                                defaultValue={50}
-                                showTooltip
-                                showMinMax
-                            />
+                            <div className="text-sm mb-2 opacity-70">
+                                {label} ({size})
+                            </div>
+                            <Slider size={size} defaultValue={50} showTooltip showMinMax />
                         </div>
                     ))}
                 </div>

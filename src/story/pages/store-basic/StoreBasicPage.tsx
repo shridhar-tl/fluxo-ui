@@ -1,29 +1,61 @@
 import cn from 'classnames';
 import React from 'react';
 import { CodeBlock } from '../../CodeBlock';
-import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
+import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
-import ComputedProperties from './ComputedProperties';
 import BatchedUpdates from './BatchedUpdates';
-import PathSubscriptions from './PathSubscriptions';
+import ComputedProperties from './ComputedProperties';
 import MultipleStores from './MultipleStores';
+import PathSubscriptions from './PathSubscriptions';
 
 const storeApiProps = {
-    'create(initializer, middlewares?)': { type: '(initializer: () => T, middlewares?: Middleware<T>[]) => Store<T>', description: 'Create a new store with initial state and optional middleware', default: '-' },
+    'create(initializer, middlewares?)': {
+        type: '(initializer: () => T, middlewares?: Middleware<T>[]) => Store<T>',
+        description: 'Create a new store with initial state and optional middleware',
+        default: '-',
+    },
     'store.getState()': { type: '() => T', description: 'Get the current state snapshot (includes computed properties)', default: '-' },
-    'store.setState(update)': { type: '(partial: Partial<T>) => void', description: 'Merge partial state into current state (batched via microtask)', default: '-' },
-    'store.setState(updater)': { type: '(fn: (state: T) => Partial<T>) => void', description: 'Update state using an updater function for safe reads', default: '-' },
-    'store.on(event, listener)': { type: "(event: 'init' | 'change', listener) => unsubscribe", description: 'Subscribe to all state changes or initialization', default: '-' },
-    'store.on(event, path, listener)': { type: "(event: 'change', path: string, listener) => unsubscribe", description: 'Subscribe to changes on a specific state path', default: '-' },
+    'store.setState(update)': {
+        type: '(partial: Partial<T>) => void',
+        description: 'Merge partial state into current state (batched via microtask)',
+        default: '-',
+    },
+    'store.setState(updater)': {
+        type: '(fn: (state: T) => Partial<T>) => void',
+        description: 'Update state using an updater function for safe reads',
+        default: '-',
+    },
+    'store.on(event, listener)': {
+        type: "(event: 'init' | 'change', listener) => unsubscribe",
+        description: 'Subscribe to all state changes or initialization',
+        default: '-',
+    },
+    'store.on(event, path, listener)': {
+        type: "(event: 'change', path: string, listener) => unsubscribe",
+        description: 'Subscribe to changes on a specific state path',
+        default: '-',
+    },
     'store.reset()': { type: '() => void', description: 'Reset state to the initial value from the initializer function', default: '-' },
-    'store.compute(name, fn, deps)': { type: '(name: string, fn: (state: T) => R, deps: string[]) => void', description: 'Register a computed property with dependency tracking', default: '-' },
-    'createHook(store)': { type: '(store: Store<T>) => useStore', description: 'Create a React hook bound to a store for reactive component integration', default: '-' },
-    'useStore(selector?, equalityFn?)': { type: '(selector?, equalityFn?) => T | R', description: 'React hook returned by createHook. Optional selector for derived slices', default: '-' },
+    'store.compute(name, fn, deps)': {
+        type: '(name: string, fn: (state: T) => R, deps: string[]) => void',
+        description: 'Register a computed property with dependency tracking',
+        default: '-',
+    },
+    'createHook(store)': {
+        type: '(store: Store<T>) => useStore',
+        description: 'Create a React hook bound to a store for reactive component integration',
+        default: '-',
+    },
+    'useStore(selector?, equalityFn?)': {
+        type: '(selector?, equalityFn?) => T | R',
+        description: 'React hook returned by createHook. Optional selector for derived slices',
+        default: '-',
+    },
 };
 
 const sectionNavItems: SectionNavItem[] = [
@@ -76,9 +108,12 @@ const StoreBasicPage: React.FC = () => {
     return (
         <PageLayout sectionNavItems={sectionNavItems}>
             <div>
-                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Basic Store</h1>
+                <h1 className={cn('text-2xl md:text-4xl font-bold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Basic Store
+                </h1>
                 <p className={cn('text-xl leading-relaxed', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                    A lightweight state management solution with batched updates, computed properties, path-based subscriptions, and a composable middleware system.
+                    A lightweight state management solution with batched updates, computed properties, path-based subscriptions, and a
+                    composable middleware system.
                 </p>
             </div>
 
@@ -88,28 +123,38 @@ const StoreBasicPage: React.FC = () => {
             </section>
 
             <section id="computed" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Computed Properties</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Computed Properties
+                </h2>
                 <ComputedProperties />
             </section>
 
             <section id="batched" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Batched Updates</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Batched Updates
+                </h2>
                 <BatchedUpdates />
             </section>
 
             <section id="path-subscriptions" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Path Subscriptions</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Path Subscriptions
+                </h2>
                 <PathSubscriptions />
             </section>
 
             <section id="multiple-stores" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Multiple Stores</h2>
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Multiple Stores
+                </h2>
                 <MultipleStores />
             </section>
 
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import { create, createHook } from 'ether-ui/store';\nimport {\n  persistMiddleware,\n  undoRedoMiddleware,\n  validationMiddleware,\n  loggerMiddleware,\n  throttleMiddleware,\n  devToolsMiddleware,\n} from 'ether-ui/store/middlewares';`} />
+                <CodeBlock
+                    code={`import { create, createHook } from 'fluxo-ui/store';\nimport {\n  persistMiddleware,\n  undoRedoMiddleware,\n  validationMiddleware,\n  loggerMiddleware,\n  throttleMiddleware,\n  devToolsMiddleware,\n} from 'fluxo-ui/store/middlewares';`}
+                />
             </section>
 
             <section id="api" className="scroll-mt-8">

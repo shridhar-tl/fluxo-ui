@@ -1,6 +1,6 @@
 import React from 'react';
-import { Carousel } from '../../../components';
 import type { CarouselSlide } from '../../../components';
+import { Carousel } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -12,8 +12,8 @@ const slides: CarouselSlide[] = [
     { id: 's5', type: 'image', src: 'https://picsum.photos/seed/carousel5/800/400', alt: 'Desert dunes' },
 ];
 
-const code = `import { Carousel } from 'ether-ui';
-import type { CarouselSlide } from 'ether-ui';
+const code = `import { Carousel } from 'fluxo-ui';
+import type { CarouselSlide } from 'fluxo-ui';
 
 const slides: CarouselSlide[] = [
   { id: 's1', type: 'image', src: '/photo1.jpg', alt: 'Mountain landscape' },

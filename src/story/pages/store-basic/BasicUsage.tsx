@@ -1,6 +1,6 @@
 import React from 'react';
-import { create, createHook } from '../../../store';
 import { Button } from '../../../components';
+import { create, createHook } from '../../../store';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -11,7 +11,7 @@ interface CounterState {
 const counterStore = create<CounterState>(() => ({ count: 0 }));
 const useCounter = createHook(counterStore);
 
-const code = `import { create, createHook } from 'ether-ui/store';
+const code = `import { create, createHook } from 'fluxo-ui/store';
 
 interface CounterState {
   count: number;
@@ -43,22 +43,9 @@ const CounterDisplay: React.FC = () => {
         <div className="flex flex-col items-center gap-4">
             <div className="text-5xl font-bold tabular-nums text-[var(--eui-primary)]">{count}</div>
             <div className="flex gap-3">
-                <Button
-                    label="Decrement"
-                    size="sm"
-                    onClick={() => counterStore.setState((s) => ({ count: s.count - 1 }))}
-                />
-                <Button
-                    label="Increment"
-                    size="sm"
-                    onClick={() => counterStore.setState((s) => ({ count: s.count + 1 }))}
-                />
-                <Button
-                    label="Reset"
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => counterStore.reset()}
-                />
+                <Button label="Decrement" size="sm" onClick={() => counterStore.setState((s) => ({ count: s.count - 1 }))} />
+                <Button label="Increment" size="sm" onClick={() => counterStore.setState((s) => ({ count: s.count + 1 }))} />
+                <Button label="Reset" size="sm" variant="secondary" onClick={() => counterStore.reset()} />
             </div>
         </div>
     );

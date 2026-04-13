@@ -4,7 +4,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { readOnlyData } from './json-editor-story-data';
 
-const code = `import { JsonEditor } from 'ether-ui';
+const code = `import { JsonEditor } from 'fluxo-ui';
 
 <JsonEditor value={data} readOnly />`;
 

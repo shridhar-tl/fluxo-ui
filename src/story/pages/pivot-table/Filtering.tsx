@@ -3,13 +3,13 @@ import { Button, PivotTable } from '../../../components';
 import type { PivotConfig, PivotFilter } from '../../../components/pivot-table/pivot-table-types';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { salesData, currencyFormat, numberFormat } from './pivot-table-story-data';
+import { currencyFormat, numberFormat, salesData } from './pivot-table-story-data';
 
 const regionOptions = ['All Regions', 'North America', 'Europe', 'Asia Pacific'] as const;
 const categoryOptions = ['All Categories', 'Electronics', 'Accessories'] as const;
 
-const code = `import { PivotTable } from 'ether-ui';
-import type { PivotConfig, PivotFilter } from 'ether-ui';
+const code = `import { PivotTable } from 'fluxo-ui';
+import type { PivotConfig, PivotFilter } from 'fluxo-ui';
 
 const filters: PivotFilter[] = [
     { field: 'region', operator: 'eq', value: 'Europe' },

@@ -13,7 +13,7 @@ export const suggestions = [
     'Orange',
 ].map((v) => ({ label: v, value: v }));
 
-export const basicUsageCode = `import { AutocompleteMulti } from 'ether-ui';
+export const basicUsageCode = `import { AutocompleteMulti } from 'fluxo-ui';
 
 const items = [
   { label: 'Apple', value: 'apple' },
@@ -35,7 +35,7 @@ function MyComponent() {
   );
 }`;
 
-export const advancedUsageCode = `import { AutocompleteMulti } from 'ether-ui';
+export const advancedUsageCode = `import { AutocompleteMulti } from 'fluxo-ui';
 
 function MyComponent() {
   const [value, setValue] = useState(['apple']);

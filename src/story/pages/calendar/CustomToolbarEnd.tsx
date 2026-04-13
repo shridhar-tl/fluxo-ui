@@ -1,12 +1,12 @@
 import React from 'react';
-import { Calendar, ViewMode } from '../../../components/calendar';
-import type { ToolbarEndRenderProps } from '../../../components/calendar';
 import { Button } from '../../../components/Button';
-import { ComponentDemo } from '../../ComponentDemo';
+import type { ToolbarEndRenderProps } from '../../../components/calendar';
+import { Calendar, ViewMode } from '../../../components/calendar';
 import { CodeBlock } from '../../CodeBlock';
+import { ComponentDemo } from '../../ComponentDemo';
 import { sampleEntries } from './calendar-story-data';
 
-const customToolbarEndCode = `import { Calendar, ToolbarEndRenderProps } from 'ether-ui';
+const customToolbarEndCode = `import { Calendar, ToolbarEndRenderProps } from 'fluxo-ui';
 
 <Calendar
   entries={entries}
@@ -42,58 +42,58 @@ const iconOnlyPickerCode = `<Calendar
 //   styled as the header text with a picker icon`;
 
 const CustomToolbarEnd: React.FC = () => {
-  return (
-    <>
-      <ComponentDemo
-        title="Custom Toolbar End"
-        description="Use renderToolbarEnd to compose the right side of the toolbar with your own components alongside the built-in view switcher and plugin actions."
-        centered={false}
-      >
-        <div style={{ height: 500, width: '100%' }}>
-          <Calendar
-            entries={sampleEntries}
-            initialView={ViewMode.timeGridWeek}
-            height="100%"
-            showNavigationPicker
-            nowIndicator
-            renderToolbarEnd={({ viewSwitcher, pluginActions }: ToolbarEndRenderProps) => (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Button label="+ New Event" size="sm" onClick={() => alert('Create new event!')} />
-                <Button label="Filter" size="sm" layout="outlined" onClick={() => alert('Open filters!')} />
-                {pluginActions}
-                {viewSwitcher}
-              </div>
-            )}
-          />
-        </div>
-      </ComponentDemo>
-      <div className="mt-4">
-        <CodeBlock title="Custom Toolbar End" code={customToolbarEndCode} />
-      </div>
+    return (
+        <>
+            <ComponentDemo
+                title="Custom Toolbar End"
+                description="Use renderToolbarEnd to compose the right side of the toolbar with your own components alongside the built-in view switcher and plugin actions."
+                centered={false}
+            >
+                <div style={{ height: 500, width: '100%' }}>
+                    <Calendar
+                        entries={sampleEntries}
+                        initialView={ViewMode.timeGridWeek}
+                        height="100%"
+                        showNavigationPicker
+                        nowIndicator
+                        renderToolbarEnd={({ viewSwitcher, pluginActions }: ToolbarEndRenderProps) => (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <Button label="+ New Event" size="sm" onClick={() => alert('Create new event!')} />
+                                <Button label="Filter" size="sm" layout="outlined" onClick={() => alert('Open filters!')} />
+                                {pluginActions}
+                                {viewSwitcher}
+                            </div>
+                        )}
+                    />
+                </div>
+            </ComponentDemo>
+            <div className="mt-4">
+                <CodeBlock title="Custom Toolbar End" code={customToolbarEndCode} />
+            </div>
 
-      <div className="mt-8">
-        <ComponentDemo
-          title="Icon-Only Navigation Picker"
-          description="With navigationPickerIconOnly, the title remains visible as the header while a compact calendar icon provides quick date navigation."
-          centered={false}
-        >
-          <div style={{ height: 500, width: '100%' }}>
-            <Calendar
-              entries={sampleEntries}
-              initialView={ViewMode.timeGridWeek}
-              height="100%"
-              showNavigationPicker
-              navigationPickerIconOnly
-              nowIndicator
-            />
-          </div>
-        </ComponentDemo>
-        <div className="mt-4">
-          <CodeBlock title="Icon-Only Navigation Picker" code={iconOnlyPickerCode} />
-        </div>
-      </div>
-    </>
-  );
+            <div className="mt-8">
+                <ComponentDemo
+                    title="Icon-Only Navigation Picker"
+                    description="With navigationPickerIconOnly, the title remains visible as the header while a compact calendar icon provides quick date navigation."
+                    centered={false}
+                >
+                    <div style={{ height: 500, width: '100%' }}>
+                        <Calendar
+                            entries={sampleEntries}
+                            initialView={ViewMode.timeGridWeek}
+                            height="100%"
+                            showNavigationPicker
+                            navigationPickerIconOnly
+                            nowIndicator
+                        />
+                    </div>
+                </ComponentDemo>
+                <div className="mt-4">
+                    <CodeBlock title="Icon-Only Navigation Picker" code={iconOnlyPickerCode} />
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default CustomToolbarEnd;

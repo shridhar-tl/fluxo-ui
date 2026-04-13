@@ -1,10 +1,10 @@
 import React from 'react';
-import { CollapsibleTabs } from '../../../components';
 import type { CollapsibleTabItem } from '../../../components';
+import { CollapsibleTabs } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { CollapsibleTabs } from 'ether-ui';
+const code = `import { CollapsibleTabs } from 'fluxo-ui';
 
 const tabs = [
   { id: 'editor', label: 'Editor', isOpen: true, render: () => <div>Editor</div> },

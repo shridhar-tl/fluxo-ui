@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
-import { createModel } from '../../../store';
 import { Button } from '../../../components';
+import { createModel } from '../../../store';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
@@ -18,7 +18,7 @@ let productIdCounter = 0;
 const initialProducts: Partial<Product>[] = [
     { name: 'Wireless Mouse', price: 29.99, category: 'Electronics' },
     { name: 'Mechanical Keyboard', price: 89.99, category: 'Electronics' },
-    { name: 'USB-C Hub', price: 45.00, category: 'Accessories' },
+    { name: 'USB-C Hub', price: 45.0, category: 'Accessories' },
     { name: 'Monitor Stand', price: 34.99, category: 'Furniture' },
     { name: 'Webcam HD', price: 59.99, category: 'Electronics' },
     { name: 'Desk Lamp', price: 24.99, category: 'Furniture' },
@@ -39,7 +39,7 @@ const productFactory = createModel<Product>({
 
 initialProducts.forEach((p) => productFactory.create(p));
 
-const code = `import { createModel, createListHook } from 'ether-ui/store';
+const code = `import { createModel, createListHook } from 'fluxo-ui/store';
 
 const productFactory = createModel<Product>({
     nextId: () => ++productIdCounter,
@@ -98,7 +98,11 @@ const ListManagement: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="List Management with Pagination" description="Use list() to paginate and sort model items" centered={false}>
+            <ComponentDemo
+                title="List Management with Pagination"
+                description="Use list() to paginate and sort model items"
+                centered={false}
+            >
                 <div className="w-full max-w-2xl mx-auto p-4">
                     <div className="flex flex-wrap gap-2 mb-4">
                         <Button label="Add Random Product" size="sm" onClick={handleAddProduct} />
@@ -118,35 +122,80 @@ const ListManagement: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className={cn('rounded-lg border overflow-hidden', {
-                        'border-white/10': isDark,
-                        'border-gray-200': !isDark,
-                    })}>
+                    <div
+                        className={cn('rounded-lg border overflow-hidden', {
+                            'border-white/10': isDark,
+                            'border-gray-200': !isDark,
+                        })}
+                    >
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className={cn('border-b', {
-                                    'border-white/10 bg-white/5': isDark,
-                                    'border-gray-200 bg-gray-50': !isDark,
-                                })}>
-                                    <th className={cn('text-left px-4 py-2 font-medium', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>Name</th>
-                                    <th className={cn('text-left px-4 py-2 font-medium', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>Category</th>
-                                    <th className={cn('text-right px-4 py-2 font-medium', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>Price</th>
+                                <tr
+                                    className={cn('border-b', {
+                                        'border-white/10 bg-white/5': isDark,
+                                        'border-gray-200 bg-gray-50': !isDark,
+                                    })}
+                                >
+                                    <th
+                                        className={cn('text-left px-4 py-2 font-medium', {
+                                            'text-gray-400': isDark,
+                                            'text-gray-500': !isDark,
+                                        })}
+                                    >
+                                        Name
+                                    </th>
+                                    <th
+                                        className={cn('text-left px-4 py-2 font-medium', {
+                                            'text-gray-400': isDark,
+                                            'text-gray-500': !isDark,
+                                        })}
+                                    >
+                                        Category
+                                    </th>
+                                    <th
+                                        className={cn('text-right px-4 py-2 font-medium', {
+                                            'text-gray-400': isDark,
+                                            'text-gray-500': !isDark,
+                                        })}
+                                    >
+                                        Price
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {listState.items.map((item) => (
-                                    <tr key={item.id} className={cn('border-b last:border-b-0', {
-                                        'border-white/5': isDark,
-                                        'border-gray-100': !isDark,
-                                    })}>
-                                        <td className={cn('px-4 py-2.5', { 'text-gray-200': isDark, 'text-gray-700': !isDark })}>{item.name}</td>
-                                        <td className={cn('px-4 py-2.5', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>{item.category}</td>
-                                        <td className={cn('px-4 py-2.5 text-right font-mono', { 'text-gray-300': isDark, 'text-gray-600': !isDark })}>${item.price.toFixed(2)}</td>
+                                    <tr
+                                        key={item.id}
+                                        className={cn('border-b last:border-b-0', {
+                                            'border-white/5': isDark,
+                                            'border-gray-100': !isDark,
+                                        })}
+                                    >
+                                        <td className={cn('px-4 py-2.5', { 'text-gray-200': isDark, 'text-gray-700': !isDark })}>
+                                            {item.name}
+                                        </td>
+                                        <td className={cn('px-4 py-2.5', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                                            {item.category}
+                                        </td>
+                                        <td
+                                            className={cn('px-4 py-2.5 text-right font-mono', {
+                                                'text-gray-300': isDark,
+                                                'text-gray-600': !isDark,
+                                            })}
+                                        >
+                                            ${item.price.toFixed(2)}
+                                        </td>
                                     </tr>
                                 ))}
                                 {listState.items.length === 0 && (
                                     <tr>
-                                        <td colSpan={3} className={cn('px-4 py-8 text-center text-sm', { 'text-gray-600': isDark, 'text-gray-400': !isDark })}>
+                                        <td
+                                            colSpan={3}
+                                            className={cn('px-4 py-8 text-center text-sm', {
+                                                'text-gray-600': isDark,
+                                                'text-gray-400': !isDark,
+                                            })}
+                                        >
                                             No products. Add some above.
                                         </td>
                                     </tr>

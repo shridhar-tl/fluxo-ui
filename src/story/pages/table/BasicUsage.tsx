@@ -4,7 +4,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { basicColumns, sampleUsers } from './table-story-data';
 
-const code = `import { Table } from 'ether-ui';
+const code = `import { Table } from 'fluxo-ui';
 
 const columns = [
   { title: 'ID', field: 'id', sortable: true },

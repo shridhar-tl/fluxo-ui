@@ -1,9 +1,11 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import fs from 'fs-extra';
+import { defineConfig, type Plugin } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import svgr from 'vite-plugin-svgr';
 import webfontDownload from 'vite-plugin-webfont-dl';
+import vitePluginPrerender from './vite-plugin-prerender';
 
 const isProdMode = process.env.NODE_ENV === 'production';
 
@@ -52,8 +54,33 @@ export default defineConfig({
             include: '**/*.svg?react',
         }),
         htmlPlugin as any,
+        create404(),
+        vitePluginPrerender({
+            timeoutMs: 10000,
+            port: 5000,
+            maxDepth: 8,
+            domain: 'https://fluxo-ui.utilsware.com',
+            generateSitemap: true,
+            sitemapPath: 'sitemap.xml',
+        }),
     ],
     server: {
-        open: true,
+        open: !isProdMode,
     },
 });
+
+function create404(): Plugin {
+    return {
+        name: 'create-404',
+        apply: 'build',
+        closeBundle() {
+            const indexPath = 'dist/index.html';
+            const notFoundPath = 'dist/404.html';
+
+            if (fs.existsSync(indexPath)) {
+                fs.copyFileSync(indexPath, notFoundPath);
+                console.log('404.html has been created from index.html');
+            }
+        },
+    };
+}

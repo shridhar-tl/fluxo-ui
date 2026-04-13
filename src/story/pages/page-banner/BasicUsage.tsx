@@ -3,7 +3,7 @@ import { PageBanner } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { PageBanner } from 'ether-ui';
+const code = `import { PageBanner } from 'fluxo-ui';
 
 <PageBanner type="info" message="This is an informational banner." />
 <PageBanner type="success" message="Operation completed successfully!" />
@@ -36,11 +36,7 @@ const BasicUsage: React.FC = () => {
                         message="Something went wrong while processing your request. Please try again."
                         dismissible={false}
                     />
-                    <PageBanner
-                        type="default"
-                        message="This is a default banner for general-purpose messaging."
-                        dismissible={false}
-                    />
+                    <PageBanner type="default" message="This is a default banner for general-purpose messaging." dismissible={false} />
                 </div>
             </ComponentDemo>
             <div className="mt-4">

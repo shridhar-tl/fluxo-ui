@@ -10,12 +10,7 @@ import Lifetimes from './Lifetimes';
 import Parameterized from './Parameterized';
 import ReactIntegration from './ReactIntegration';
 import SwappingImplementations from './SwappingImplementations';
-import {
-    containerApiProps,
-    features,
-    reactApiProps,
-    sectionNavItems,
-} from './services-story-data';
+import { containerApiProps, features, reactApiProps, sectionNavItems } from './services-story-data';
 
 const ServicesPage: React.FC = () => {
     const { isDark } = useStoryTheme();
@@ -29,16 +24,16 @@ const ServicesPage: React.FC = () => {
                     Dependency Injection
                 </h1>
                 <p className={cn('text-base md:text-xl', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                    A class-based dependency injection container. Register service classes with static dependency arrays,
-                    swap implementations by environment, and resolve by name — the container handles instantiation and wiring.
+                    A class-based dependency injection container. Register service classes with static dependency arrays, swap
+                    implementations by environment, and resolve by name — the container handles instantiation and wiring.
                 </p>
             </div>
 
             <section id="basic" className="scroll-mt-8">
                 <h2 className={h2}>Basic Usage</h2>
                 <p className={desc}>
-                    Register classes with injectable(), declare dependencies via static arrays, and resolve by name.
-                    The container instantiates the class and injects its dependencies as constructor arguments.
+                    Register classes with injectable(), declare dependencies via static arrays, and resolve by name. The container
+                    instantiates the class and injects its dependencies as constructor arguments.
                 </p>
                 <BasicUsage />
             </section>
@@ -46,8 +41,8 @@ const ServicesPage: React.FC = () => {
             <section id="lifetimes" className="scroll-mt-8">
                 <h2 className={h2}>Service Lifetimes</h2>
                 <p className={desc}>
-                    Control instance caching: singleton (default, one instance forever), scoped (one per scope),
-                    transient (always new), and retain (survives clearInstances).
+                    Control instance caching: singleton (default, one instance forever), scoped (one per scope), transient (always new), and
+                    retain (survives clearInstances).
                 </p>
                 <Lifetimes />
             </section>
@@ -55,8 +50,8 @@ const ServicesPage: React.FC = () => {
             <section id="parameterized" className="scroll-mt-8">
                 <h2 className={h2}>Parameterized Services</h2>
                 <p className={desc}>
-                    Register factories that receive arguments at resolution time. The factory also receives a resolver
-                    to access other services. Arguments become part of the cache key for singleton and scoped lifetimes.
+                    Register factories that receive arguments at resolution time. The factory also receives a resolver to access other
+                    services. Arguments become part of the cache key for singleton and scoped lifetimes.
                 </p>
                 <Parameterized />
             </section>
@@ -64,8 +59,8 @@ const ServicesPage: React.FC = () => {
             <section id="swapping" className="scroll-mt-8">
                 <h2 className={h2}>Swapping Implementations</h2>
                 <p className={desc}>
-                    Register different classes under the same service name based on environment, config, or runtime conditions.
-                    Consumer code resolves by name and never knows which implementation it gets.
+                    Register different classes under the same service name based on environment, config, or runtime conditions. Consumer
+                    code resolves by name and never knows which implementation it gets.
                 </p>
                 <SwappingImplementations />
             </section>
@@ -73,15 +68,16 @@ const ServicesPage: React.FC = () => {
             <section id="react-integration" className="scroll-mt-8">
                 <h2 className={h2}>React Integration</h2>
                 <p className={desc}>
-                    ServiceProvider supplies default parameters for parameterized services. ServiceScope creates isolated
-                    scopes that auto-dispose on unmount. Hooks and HOC for consuming services in components.
+                    ServiceProvider supplies default parameters for parameterized services. ServiceScope creates isolated scopes that
+                    auto-dispose on unmount. Hooks and HOC for consuming services in components.
                 </p>
                 <ReactIntegration />
             </section>
 
             <section id="import" className="scroll-mt-8">
                 <h2 className={h2}>Import</h2>
-                <CodeBlock code={`import {
+                <CodeBlock
+                    code={`import {
     createContainer,
     ServiceContainer,
     ServiceProvider,
@@ -91,7 +87,7 @@ const ServicesPage: React.FC = () => {
     useScope,
     useContainer,
     withServices,
-} from 'ether-ui/services';
+} from 'fluxo-ui/services';
 
 // Create a container
 const services = createContainer();
@@ -109,7 +105,8 @@ services
     .registerTransientFactory('AnotherService', '$another', (resolver) => ({ ... }));
 
 // Parameterized (chainable)
-services.registerParameterized('UserApi', '$userApi', 'scoped', (resolver, userId) => ({ ... }));`} />
+services.registerParameterized('UserApi', '$userApi', 'scoped', (resolver, userId) => ({ ... }));`}
+                />
             </section>
 
             <section id="container-api" className="scroll-mt-8">

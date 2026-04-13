@@ -1,6 +1,6 @@
 import React from 'react';
-import { TreeView } from '../../../components';
 import type { TreeNode } from '../../../components';
+import { TreeView } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -23,8 +23,8 @@ const loadChildren = (node: TreeNode): Promise<TreeNode[]> => {
     });
 };
 
-const code = `import { TreeView } from 'ether-ui';
-import type { TreeNode } from 'ether-ui';
+const code = `import { TreeView } from 'fluxo-ui';
+import type { TreeNode } from 'fluxo-ui';
 
 const loadChildren = (node: TreeNode): Promise<TreeNode[]> => {
   return new Promise((resolve) => {
@@ -45,12 +45,12 @@ const loadChildren = (node: TreeNode): Promise<TreeNode[]> => {
 
 const AsyncLoading: React.FC = () => (
     <>
-        <ComponentDemo title="Async Loading" description="Nodes load their children lazily when expanded. A spinner is shown during loading.">
+        <ComponentDemo
+            title="Async Loading"
+            description="Nodes load their children lazily when expanded. A spinner is shown during loading."
+        >
             <div className="w-full max-w-sm">
-                <TreeView
-                    nodes={nodes}
-                    loadChildren={loadChildren}
-                />
+                <TreeView nodes={nodes} loadChildren={loadChildren} />
             </div>
         </ComponentDemo>
         <div className="mt-4">

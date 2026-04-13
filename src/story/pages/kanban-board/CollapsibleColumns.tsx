@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import type { KanbanCardData, KanbanColumnData, KanbanColumnId } from '../../../components/kanban-board';
 import { KanbanBoard } from '../../../components/kanban-board';
-import type { KanbanColumnData, KanbanCardData, KanbanColumnId } from '../../../components/kanban-board';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -24,8 +24,8 @@ const cards: KanbanCardData[] = [
     { id: '9', title: 'Setup logging infrastructure', columnId: 'done', order: 1, priority: 'medium' },
 ];
 
-const code = `import { KanbanBoard } from 'ether-ui';
-import type { KanbanColumnData, KanbanCardData, KanbanColumnId } from 'ether-ui';
+const code = `import { KanbanBoard } from 'fluxo-ui';
+import type { KanbanColumnData, KanbanCardData, KanbanColumnId } from 'fluxo-ui';
 
 const columns: KanbanColumnData[] = [
   { id: 'backlog', title: 'Backlog', color: '#94a3b8' },

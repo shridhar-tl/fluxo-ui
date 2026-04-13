@@ -3,7 +3,7 @@ import { Slider } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Slider } from 'ether-ui';
+const code = `import { Slider } from 'fluxo-ui';
 
 const [range, setRange] = useState<[number, number]>([20, 80]);
 
@@ -35,7 +35,9 @@ const RangeSlider: React.FC = () => {
             <ComponentDemo title="Range Slider" description="Use the range prop for dual-thumb selection of a value range.">
                 <div className="space-y-8 w-full max-w-lg">
                     <div>
-                        <div className="text-sm mb-2 opacity-70">Basic range ({range[0]} - {range[1]})</div>
+                        <div className="text-sm mb-2 opacity-70">
+                            Basic range ({range[0]} - {range[1]})
+                        </div>
                         <Slider
                             range
                             rangeValue={range}
@@ -60,13 +62,7 @@ const RangeSlider: React.FC = () => {
                     </div>
                     <div>
                         <div className="text-sm mb-2 opacity-70">Range with marks</div>
-                        <Slider
-                            range
-                            defaultRangeValue={[25, 75]}
-                            marks
-                            step={25}
-                            showTooltip
-                        />
+                        <Slider range defaultRangeValue={[25, 75]} marks step={25} showTooltip />
                     </div>
                 </div>
             </ComponentDemo>

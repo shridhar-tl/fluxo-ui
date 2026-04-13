@@ -3,7 +3,7 @@ import { Button, PageBanner } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const pageLevelCode = `import { PageBanner } from 'ether-ui';
+const pageLevelCode = `import { PageBanner } from 'fluxo-ui';
 
 <PageBanner
   type="error"
@@ -12,7 +12,7 @@ const pageLevelCode = `import { PageBanner } from 'ether-ui';
   onDismiss={() => setVisible(false)}
 />`;
 
-const borderedCode = `import { PageBanner } from 'ether-ui';
+const borderedCode = `import { PageBanner } from 'fluxo-ui';
 
 <PageBanner
   type="info"
@@ -26,32 +26,47 @@ const PageLevel: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Page-Level Banner" description="Page-level banners use createPortal to render at the top of the page, above all other content.">
+            <ComponentDemo
+                title="Page-Level Banner"
+                description="Page-level banners use createPortal to render at the top of the page, above all other content."
+            >
                 <div className="flex flex-wrap gap-3">
                     <Button
                         variant="primary"
-                        onClick={() => { setPageLevelType('error'); setPageLevelVisible(true); }}
+                        onClick={() => {
+                            setPageLevelType('error');
+                            setPageLevelVisible(true);
+                        }}
                     >
                         Show Error Banner
                     </Button>
                     <Button
                         variant="primary"
                         layout="outlined"
-                        onClick={() => { setPageLevelType('warning'); setPageLevelVisible(true); }}
+                        onClick={() => {
+                            setPageLevelType('warning');
+                            setPageLevelVisible(true);
+                        }}
                     >
                         Show Warning Banner
                     </Button>
                     <Button
                         variant="primary"
                         layout="outlined"
-                        onClick={() => { setPageLevelType('info'); setPageLevelVisible(true); }}
+                        onClick={() => {
+                            setPageLevelType('info');
+                            setPageLevelVisible(true);
+                        }}
                     >
                         Show Info Banner
                     </Button>
                     <Button
                         variant="primary"
                         layout="outlined"
-                        onClick={() => { setPageLevelType('success'); setPageLevelVisible(true); }}
+                        onClick={() => {
+                            setPageLevelType('success');
+                            setPageLevelVisible(true);
+                        }}
                     >
                         Show Success Banner
                     </Button>
@@ -73,30 +88,10 @@ const PageLevel: React.FC = () => {
 
             <ComponentDemo title="Bordered Banner" description="Add a left border accent using the bordered prop.">
                 <div className="space-y-4">
-                    <PageBanner
-                        type="info"
-                        message="Bordered info banner with a left accent line."
-                        bordered
-                        dismissible={false}
-                    />
-                    <PageBanner
-                        type="success"
-                        message="Bordered success banner with a left accent line."
-                        bordered
-                        dismissible={false}
-                    />
-                    <PageBanner
-                        type="warning"
-                        message="Bordered warning banner with a left accent line."
-                        bordered
-                        dismissible={false}
-                    />
-                    <PageBanner
-                        type="error"
-                        message="Bordered error banner with a left accent line."
-                        bordered
-                        dismissible={false}
-                    />
+                    <PageBanner type="info" message="Bordered info banner with a left accent line." bordered dismissible={false} />
+                    <PageBanner type="success" message="Bordered success banner with a left accent line." bordered dismissible={false} />
+                    <PageBanner type="warning" message="Bordered warning banner with a left accent line." bordered dismissible={false} />
+                    <PageBanner type="error" message="Bordered error banner with a left accent line." bordered dismissible={false} />
                 </div>
             </ComponentDemo>
             <div className="mt-4">

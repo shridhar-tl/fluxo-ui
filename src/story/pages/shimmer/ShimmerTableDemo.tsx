@@ -13,7 +13,7 @@ const ShimmerTableDemo: React.FC = () => {
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock
-                    code={`import { ShimmerTable } from 'ether-ui';
+                    code={`import { ShimmerTable } from 'fluxo-ui';
 
 {isLoading && <ShimmerTable rows={5} columns={6} showHeader />}
 {!isLoading && <DataTable rows={data} columns={columns} />}`}
