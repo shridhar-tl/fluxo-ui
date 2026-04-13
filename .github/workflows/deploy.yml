@@ -1,0 +1,43 @@
+name: Build and Deploy
+
+on:
+    push:
+        branches:
+            - main
+    workflow_dispatch:
+
+permissions:
+    contents: write
+    pages: write
+    id-token: write
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '24'
+
+            - name: Install dependencies
+              run: npm install --force
+
+            - name: Build frontend
+              run: npm run build
+
+            - name: Generate CNAME file
+              run: echo "${{ vars.FRONTEND_DOMAIN }}" > build/CNAME
+
+            - name: Deploy to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v4
+              with:
+                  publish_dir: build
+                  external_repository: ${{ vars.FRONTEND_REPO }}
+                  personal_token: ${{ secrets.GIT_ACCESS_TOKEN }}
+                  publish_branch: gh-pages
+                  force_orphan: true
