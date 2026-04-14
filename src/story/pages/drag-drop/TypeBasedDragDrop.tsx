@@ -179,36 +179,22 @@ const TypeBasedDragDrop: React.FC = () => {
                                     imageFolder: [...prev.imageFolder, source.item],
                                 }));
                             }}
+                            className="min-h-30 border-2 border-dashed rounded-lg p-3 border-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20"
                         >
-                            {({ dropRef, isOver, canDrop }) => (
-                                <div
-                                    ref={dropRef}
-                                    className={`min-h-30 border-2 border-dashed rounded-lg p-3 transition-colors ${
-                                        isOver && canDrop
-                                            ? 'border-blue-500 bg-blue-500/20'
-                                            : canDrop
-                                              ? 'border-blue-400 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                                              : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/20'
-                                    }`}
-                                >
-                                    {typeBasedItems.imageFolder.length > 0 ? (
-                                        <div className="space-y-1">
-                                            {typeBasedItems.imageFolder.map((item) => (
-                                                <div
-                                                    key={item.id}
-                                                    className="bg-blue-700 text-white px-2 py-1 rounded text-xs flex items-center gap-1"
-                                                >
-                                                    <span>🖼️</span>
-                                                    <span>{item.name}</span>
-                                                </div>
-                                            ))}
+                            {typeBasedItems.imageFolder.length > 0 ? (
+                                <div className="space-y-1">
+                                    {typeBasedItems.imageFolder.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="bg-blue-700 text-white px-2 py-1 rounded text-xs flex items-center gap-1"
+                                        >
+                                            <span>🖼️</span>
+                                            <span>{item.name}</span>
                                         </div>
-                                    ) : (
-                                        <div className="text-gray-500 text-center py-8 text-sm">
-                                            {isOver ? 'Release to drop' : 'Drop images here'}
-                                        </div>
-                                    )}
+                                    ))}
                                 </div>
+                            ) : (
+                                <div className="text-gray-500 text-center py-8 text-sm">Drop images here</div>
                             )}
                         </Droppable>
 
@@ -225,36 +211,22 @@ const TypeBasedDragDrop: React.FC = () => {
                                     documentFolder: [...prev.documentFolder, source.item],
                                 }));
                             }}
+                            className="min-h-30 border-2 border-dashed rounded-lg p-3 border-green-400 dark:border-green-600 bg-green-50 dark:bg-green-900/20"
                         >
-                            {({ dropRef, isOver, canDrop }) => (
-                                <div
-                                    ref={dropRef}
-                                    className={`min-h-30 border-2 border-dashed rounded-lg p-3 transition-colors ${
-                                        isOver && canDrop
-                                            ? 'border-green-500 bg-green-500/20'
-                                            : canDrop
-                                              ? 'border-green-400 dark:border-green-600 bg-green-50 dark:bg-green-900/20'
-                                              : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/20'
-                                    }`}
-                                >
-                                    {typeBasedItems.documentFolder.length > 0 ? (
-                                        <div className="space-y-1">
-                                            {typeBasedItems.documentFolder.map((item) => (
-                                                <div
-                                                    key={item.id}
-                                                    className="bg-green-700 text-white px-2 py-1 rounded text-xs flex items-center gap-1"
-                                                >
-                                                    <span>📄</span>
-                                                    <span>{item.name}</span>
-                                                </div>
-                                            ))}
+                            {typeBasedItems.documentFolder.length > 0 ? (
+                                <div className="space-y-1">
+                                    {typeBasedItems.documentFolder.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className="bg-green-700 text-white px-2 py-1 rounded text-xs flex items-center gap-1"
+                                        >
+                                            <span>📄</span>
+                                            <span>{item.name}</span>
                                         </div>
-                                    ) : (
-                                        <div className="text-gray-500 text-center py-8 text-sm">
-                                            {isOver ? 'Release to drop' : 'Drop documents here'}
-                                        </div>
-                                    )}
+                                    ))}
                                 </div>
+                            ) : (
+                                <div className="text-gray-500 text-center py-8 text-sm">Drop documents here</div>
                             )}
                         </Droppable>
                     </div>
@@ -273,38 +245,26 @@ const TypeBasedDragDrop: React.FC = () => {
                                     recyclingBin: [...prev.recyclingBin, source.item],
                                 }));
                             }}
+                            className="min-h-75 border-2 border-dashed rounded-lg p-3 border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-900/20"
                         >
-                            {({ dropRef, isOver, canDrop }) => (
-                                <div
-                                    ref={dropRef}
-                                    className={`min-h-75 border-2 border-dashed rounded-lg p-3 transition-colors ${
-                                        isOver && canDrop
-                                            ? 'border-red-500 bg-red-500/20'
-                                            : canDrop
-                                              ? 'border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-900/20'
-                                              : 'border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/20'
-                                    }`}
-                                >
-                                    {typeBasedItems.recyclingBin.length > 0 ? (
-                                        <div className="space-y-1">
-                                            {typeBasedItems.recyclingBin.map((item) => (
-                                                <div
-                                                    key={item.id}
-                                                    className={`px-2 py-1 rounded text-xs flex items-center gap-1 ${
-                                                        item.type === 'image' ? 'bg-blue-700 text-white' : 'bg-green-700 text-white'
-                                                    }`}
-                                                >
-                                                    <span>{item.type === 'image' ? '🖼️' : '📄'}</span>
-                                                    <span>{item.name}</span>
-                                                </div>
-                                            ))}
+                            {typeBasedItems.recyclingBin.length > 0 ? (
+                                <div className="space-y-1">
+                                    {typeBasedItems.recyclingBin.map((item) => (
+                                        <div
+                                            key={item.id}
+                                            className={`px-2 py-1 rounded text-xs flex items-center gap-1 ${
+                                                item.type === 'image' ? 'bg-blue-700 text-white' : 'bg-green-700 text-white'
+                                            }`}
+                                        >
+                                            <span>{item.type === 'image' ? '🖼️' : '📄'}</span>
+                                            <span>{item.name}</span>
                                         </div>
-                                    ) : (
-                                        <div className="text-gray-500 text-center py-24 text-sm">
-                                            <div className="text-4xl mb-2">🗑️</div>
-                                            {isOver ? 'Release to delete' : 'Drop any file here'}
-                                        </div>
-                                    )}
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-gray-500 text-center py-24 text-sm">
+                                    <div className="text-4xl mb-2">🗑️</div>
+                                    Drop any file here
                                 </div>
                             )}
                         </Droppable>

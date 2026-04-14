@@ -5,6 +5,10 @@ import { DragItem, DropResult } from './Draggable';
 
 export type DndRefCallback<T = HTMLElement> = ((node: T | null) => any) | null;
 
+export type DropIndicator = 'highlight' | 'line' | 'none';
+
+export type DropOrientation = 'vertical' | 'horizontal';
+
 export interface DroppableRenderProps<T = HTMLElement> {
     dropRef: DndRefCallback<T>;
     canDrop: boolean;
@@ -45,6 +49,29 @@ export interface DroppableProps<T = HTMLElement> {
     className?: string;
 
     /**
+     * How to visually indicate a valid drop target.
+     * - 'highlight': animated glow + inset border around the entire droppable
+     * - 'line': thin insertion line along the edge (great for sortable lists)
+     * - 'none': no built-in indicator, style via render props
+     * @default 'highlight'
+     */
+    dropIndicator?: DropIndicator;
+
+    /**
+     * Where to show the insertion line when `dropIndicator='line'`.
+     * - 'start': top (or left when horizontal)
+     * - 'end': bottom (or right when horizontal)
+     * @default 'start'
+     */
+    linePosition?: 'start' | 'end';
+
+    /**
+     * Orientation of the container — affects line indicator direction.
+     * @default 'vertical'
+     */
+    orientation?: DropOrientation;
+
+    /**
      * Test ID for testing purposes
      */
     testId?: string;
@@ -80,6 +107,9 @@ function Droppable<T extends HTMLElement = HTMLElement>(props: DroppableProps<T>
         children,
         accept = 'any',
         className,
+        dropIndicator = 'highlight',
+        linePosition = 'start',
+        orientation = 'vertical',
         testId,
         onDrop,
         onHover,
@@ -127,6 +157,10 @@ function Droppable<T extends HTMLElement = HTMLElement>(props: DroppableProps<T>
         'eui-droppable-denied': !canDrop,
         'eui-droppable-hover': isOver,
         'eui-droppable-hover-current': isOverCurrent,
+        'eui-droppable-indicator-highlight': dropIndicator === 'highlight',
+        'eui-droppable-indicator-line': dropIndicator === 'line',
+        'eui-droppable-line-bottom': dropIndicator === 'line' && linePosition === 'end',
+        'eui-droppable-horizontal': dropIndicator === 'line' && orientation === 'horizontal',
     });
 
     return (

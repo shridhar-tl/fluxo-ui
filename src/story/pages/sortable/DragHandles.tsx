@@ -33,12 +33,12 @@ const DragHandles: React.FC = () => {
     return (
         <>
             <ComponentDemo title="Using provideDragRef for Custom Handles">
-                <Sortable items={items} onChange={(newItems) => setItems(newItems)} provideDragRef className="space-y-2">
+                <Sortable items={items} onChange={(newItems) => setItems(newItems)} provideDragRef>
                     {(item, index, { draggable }) => (
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 flex items-center gap-3 border border-gray-200 dark:border-gray-700">
+                        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 flex items-center gap-3 border border-gray-200 dark:border-gray-700 shadow-sm">
                             <div
                                 ref={draggable?.dragRef}
-                                className="cursor-move text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-white transition-colors"
+                                className="cursor-grab active:cursor-grabbing text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-white transition-colors"
                             >
                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />

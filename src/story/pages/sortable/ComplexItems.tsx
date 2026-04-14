@@ -53,9 +53,9 @@ const ComplexItems: React.FC = () => {
     return (
         <>
             <ComponentDemo title="Task List with Priority">
-                <Sortable items={taskList} onChange={(newItems) => setTaskList(newItems)} className="space-y-3">
+                <Sortable items={taskList} onChange={(newItems) => setTaskList(newItems)} gap="0.75rem">
                     {(task, index) => (
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 cursor-move hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-700">
+                        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
                             <div className="flex items-start gap-3">
                                 <div className="shrink-0 mt-1">
                                     <div className={`w-3 h-3 rounded-full ${getPriorityColor(task.priority)}`} />

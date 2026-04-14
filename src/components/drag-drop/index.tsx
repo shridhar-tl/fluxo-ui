@@ -11,6 +11,6 @@ export type { DragDropProviderProps } from './DragDropProvider';
 
 export type { DndRefCallback, DraggableProps, DraggableRenderProps, DragItem, DropResult } from './Draggable';
 
-export type { DroppableProps, DroppableRenderProps } from './Droppable';
+export type { DropIndicator, DropOrientation, DroppableProps, DroppableRenderProps } from './Droppable';
 
 export type { SortableChangeEvent, SortableProps } from './Sortable';

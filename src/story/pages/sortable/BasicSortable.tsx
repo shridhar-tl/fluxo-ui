@@ -17,10 +17,10 @@ function SortableList() {
     <Sortable
       items={items}
       onChange={(newItems) => setItems(newItems)}
-      className="space-y-2"
+      dropIndicator="line"
     >
       {(item, index) => (
-        <div className="bg-blue-600 px-4 py-3 rounded cursor-move">
+        <div className="bg-blue-600 px-4 py-3 rounded-md">
           {index + 1}. {item}
         </div>
       )}
@@ -34,9 +34,9 @@ const BasicSortable: React.FC = () => {
     return (
         <>
             <ComponentDemo title="Simple List Reordering">
-                <Sortable items={basicItems} onChange={(newItems) => setBasicItems(newItems)} className="space-y-2">
+                <Sortable items={basicItems} onChange={(newItems) => setBasicItems(newItems)}>
                     {(item, index) => (
-                        <div className="bg-blue-600 text-white px-4 py-3 rounded cursor-move hover:bg-blue-500 transition-colors">
+                        <div className="bg-blue-600 text-white px-4 py-3 rounded-md shadow-sm hover:bg-blue-500 transition-colors">
                             {index + 1}. {item}
                         </div>
                     )}

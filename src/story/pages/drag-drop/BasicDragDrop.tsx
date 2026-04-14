@@ -35,29 +35,17 @@ function DragDropExample() {
         ))}
       </div>
 
-      {/* Drop Zone */}
+      {/* Drop Zone — built-in highlight indicator, no manual border logic needed */}
       <Droppable
         containerId="target"
         index={0}
         accept="task"
         onDrop={handleDrop}
+        className="min-h-50 border-2 border-dashed border-gray-300 rounded-lg p-4"
       >
-        {({ isOver, canDrop, dropRef }) => (
-          <div
-            ref={dropRef}
-            className={\`border-2 border-dashed rounded p-4 \${
-              isOver && canDrop ? 'border-green-500' : 'border-gray-400'
-            }\`}
-          >
-            {droppedItems.length > 0 ? (
-              droppedItems.map((item, idx) => (
-                <div key={idx}>{item}</div>
-              ))
-            ) : (
-              'Drop here'
-            )}
-          </div>
-        )}
+        {droppedItems.length > 0
+          ? droppedItems.map((item, idx) => <div key={idx}>{item}</div>)
+          : 'Drop here'}
       </Droppable>
     </div>
   );
@@ -91,30 +79,23 @@ const BasicDragDrop: React.FC = () => {
                     </div>
                     <div className="flex-1">
                         <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>Drop Zone</h3>
-                        <Droppable containerId="target" index={0} accept="task" onDrop={handleDrop} className="min-h-50">
-                            {({ isOver, canDrop, dropRef }) => (
-                                <div
-                                    ref={dropRef}
-                                    className={`border-2 border-dashed rounded p-4 min-h-50 transition-colors ${
-                                        isOver && canDrop
-                                            ? 'border-green-500 bg-green-500/10'
-                                            : canDrop
-                                              ? 'border-gray-400 dark:border-gray-500'
-                                              : 'border-gray-300 dark:border-gray-700'
-                                    }`}
-                                >
-                                    {droppedItems.length > 0 ? (
-                                        <div className="space-y-2">
-                                            {droppedItems.map((item, idx) => (
-                                                <div key={idx} className="bg-green-600 text-white px-4 py-3 rounded">
-                                                    {item}
-                                                </div>
-                                            ))}
+                        <Droppable
+                            containerId="target"
+                            index={0}
+                            accept="task"
+                            onDrop={handleDrop}
+                            className="min-h-50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4"
+                        >
+                            {droppedItems.length > 0 ? (
+                                <div className="space-y-2">
+                                    {droppedItems.map((item, idx) => (
+                                        <div key={idx} className="bg-green-600 text-white px-4 py-3 rounded">
+                                            {item}
                                         </div>
-                                    ) : (
-                                        <div className="text-gray-500 dark:text-gray-500 text-center py-16">Drop items here</div>
-                                    )}
+                                    ))}
                                 </div>
+                            ) : (
+                                <div className="text-gray-500 dark:text-gray-500 text-center py-16">Drop items here</div>
                             )}
                         </Droppable>
                     </div>

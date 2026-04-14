@@ -63,6 +63,15 @@ const draggableProps = {
         type: 'string',
         description: 'Additional CSS classes',
     },
+    draggingClassName: {
+        type: 'string',
+        description: 'Extra CSS classes applied only while the item is being dragged',
+    },
+    hideDefaultPreview: {
+        type: 'boolean',
+        default: 'false',
+        description: 'Hide the default browser drag preview (useful for custom overlays)',
+    },
     children: {
         type: 'ReactNode | ((props: DraggableRenderProps) => ReactNode)',
         description: 'Children can be ReactNode or render prop function',
@@ -109,6 +118,21 @@ const droppableProps = {
     className: {
         type: 'string',
         description: 'Additional CSS classes',
+    },
+    dropIndicator: {
+        type: "'highlight' | 'line' | 'none'",
+        default: "'highlight'",
+        description: 'Built-in visual indicator style for drop targets',
+    },
+    linePosition: {
+        type: "'start' | 'end'",
+        default: "'start'",
+        description: "Where to render the insertion line when dropIndicator='line'",
+    },
+    orientation: {
+        type: "'vertical' | 'horizontal'",
+        default: "'vertical'",
+        description: 'Direction of the line indicator',
     },
     children: {
         type: 'ReactNode | ((props: DroppableRenderProps) => ReactNode)',

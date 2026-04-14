@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import React, { ReactNode } from 'react';
-import { useDrag, DragSourceMonitor } from 'react-dnd';
+import React, { ReactNode, useEffect } from 'react';
+import { useDrag, DragSourceMonitor, useDragDropManager } from 'react-dnd';
 
 export interface DragItem {
     index: number;
@@ -71,6 +71,18 @@ export interface DraggableProps<T = HTMLElement> {
     className?: string;
 
     /**
+     * Extra CSS classes applied only while the item is being dragged
+     */
+    draggingClassName?: string;
+
+    /**
+     * Hide the default browser drag preview (uses an empty image).
+     * Useful when rendering a custom drag overlay.
+     * @default false
+     */
+    hideDefaultPreview?: boolean;
+
+    /**
      * Whether the item can be dragged
      * @default true
      */
@@ -111,10 +123,12 @@ function Draggable<T extends HTMLElement = HTMLElement>(props: DraggableProps<T>
         onDragStart,
         onDragEnd,
         className,
+        draggingClassName,
+        hideDefaultPreview = false,
         canDrag: canDragProp = true,
     } = props;
 
-    const [{ canDrag, isDragging, handlerId }, dragRef] = useDrag<DragItem, DropResult, { canDrag: boolean; isDragging: boolean; handlerId: string | symbol | null }>(
+    const [{ canDrag, isDragging, handlerId }, dragRef, dragPreviewRef] = useDrag<DragItem, DropResult, { canDrag: boolean; isDragging: boolean; handlerId: string | symbol | null }>(
         () => ({
             type: itemType,
             canDrag: canDragProp,
@@ -144,6 +158,22 @@ function Draggable<T extends HTMLElement = HTMLElement>(props: DraggableProps<T>
         [onRemove, onDragStart, onDragEnd, index, id, item, containerId, itemType, args, canDragProp]
     );
 
+    const dragDropManager = useDragDropManager();
+
+    useEffect(() => {
+        if (!hideDefaultPreview || !dragPreviewRef) {
+            return;
+        }
+        const backend = dragDropManager.getBackend() as unknown as { __isHtml5?: boolean };
+        if (typeof window === 'undefined' || !('Image' in window)) {
+            return;
+        }
+        const emptyImg = new Image();
+        emptyImg.src = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+        dragPreviewRef(emptyImg, { captureDraggingState: true });
+        void backend;
+    }, [hideDefaultPreview, dragPreviewRef, dragDropManager]);
+
     if (typeof children === 'function') {
         return <>{children({ isDragging, canDrag, dragRef, handlerId })}</>;
     }
@@ -151,6 +181,7 @@ function Draggable<T extends HTMLElement = HTMLElement>(props: DraggableProps<T>
     const elClassName = classNames('eui-draggable', className, {
         'eui-draggable-enabled': canDrag,
         'eui-draggable-dragging': isDragging,
+        [draggingClassName || '']: isDragging && !!draggingClassName,
     });
 
     return (

@@ -1,6 +1,31 @@
 @use '../eui-vars' as *;
 
+:root {
+    --eui-dnd-drag-scale: 1.02;
+    --eui-dnd-drag-rotate: 1.5deg;
+    --eui-dnd-drag-opacity: 0.35;
+    --eui-dnd-drag-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.25), 0 4px 10px -4px rgba(0, 0, 0, 0.15);
+    --eui-dnd-drop-bg: color-mix(in srgb, var(--eui-primary) 10%, transparent);
+    --eui-dnd-drop-bg-strong: color-mix(in srgb, var(--eui-primary) 18%, transparent);
+    --eui-dnd-drop-border: var(--eui-primary);
+    --eui-dnd-drop-glow: 0 0 0 3px color-mix(in srgb, var(--eui-primary) 25%, transparent);
+    --eui-dnd-drop-radius: var(--eui-radius-md);
+    --eui-dnd-line-thickness: 3px;
+    --eui-dnd-line-color: var(--eui-primary);
+    --eui-dnd-line-glow: 0 0 8px color-mix(in srgb, var(--eui-primary) 60%, transparent);
+    --eui-dnd-deny-color: #dc2626;
+    --eui-dnd-transition: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+body.mode-dark {
+    --eui-dnd-drag-shadow: 0 14px 34px -6px rgba(0, 0, 0, 0.6), 0 6px 12px -4px rgba(0, 0, 0, 0.45);
+}
+
 .eui-draggable {
+    position: relative;
+    transition: transform var(--eui-dnd-transition), box-shadow var(--eui-dnd-transition), opacity var(--eui-dnd-transition);
+    will-change: transform, opacity;
+
     &.eui-draggable-enabled {
         cursor: grab;
 
@@ -10,34 +35,112 @@
     }
 
     &.eui-draggable-dragging {
-        opacity: 0.4;
+        opacity: var(--eui-dnd-drag-opacity);
+        transform: scale(var(--eui-dnd-drag-scale)) rotate(var(--eui-dnd-drag-rotate));
+        box-shadow: var(--eui-dnd-drag-shadow);
+        z-index: 10;
     }
 }
 
 .eui-droppable {
-    transition: background-color 0.15s ease, border-color 0.15s ease;
+    position: relative;
+    transition: background-color var(--eui-dnd-transition), transform var(--eui-dnd-transition);
 
-    &.eui-droppable-allowed {
-        &.eui-droppable-hover {
-            background-color: var(--eui-primary-subtle);
-            outline: 2px dashed var(--eui-primary-border);
-            outline-offset: -2px;
-            border-radius: var(--eui-radius-sm);
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: var(--eui-dnd-drop-radius);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity var(--eui-dnd-transition), box-shadow var(--eui-dnd-transition), background-color var(--eui-dnd-transition);
+        z-index: 1;
+    }
+
+    &.eui-droppable-indicator-highlight {
+        &.eui-droppable-allowed.eui-droppable-hover::before {
+            opacity: 1;
+            background-color: var(--eui-dnd-drop-bg);
+            box-shadow: inset 0 0 0 2px var(--eui-dnd-drop-border), var(--eui-dnd-drop-glow);
         }
 
-        &.eui-droppable-hover-current {
-            background-color: var(--eui-primary-subtle);
-            outline: 2px solid var(--eui-primary);
-            outline-offset: -2px;
-            border-radius: var(--eui-radius-sm);
+        &.eui-droppable-allowed.eui-droppable-hover-current::before {
+            background-color: var(--eui-dnd-drop-bg-strong);
+        }
+
+        &.eui-droppable-denied.eui-droppable-hover::before {
+            opacity: 1;
+            background-color: color-mix(in srgb, var(--eui-dnd-deny-color) 10%, transparent);
+            box-shadow: inset 0 0 0 2px var(--eui-dnd-deny-color);
         }
     }
 
-    &.eui-droppable-denied {
-        &.eui-droppable-hover {
-            outline: 2px dashed #dc2626;
-            outline-offset: -2px;
-            border-radius: var(--eui-radius-sm);
+    &.eui-droppable-indicator-line {
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: var(--eui-dnd-line-thickness);
+            background: var(--eui-dnd-line-color);
+            border-radius: 999px;
+            transform: translateY(-50%) scaleX(0);
+            transform-origin: center;
+            opacity: 0;
+            pointer-events: none;
+            box-shadow: var(--eui-dnd-line-glow);
+            transition: opacity var(--eui-dnd-transition), transform var(--eui-dnd-transition);
+            z-index: 2;
+        }
+
+        &.eui-droppable-line-bottom::after {
+            top: auto;
+            bottom: 0;
+            transform: translateY(50%) scaleX(0);
+        }
+
+        &.eui-droppable-allowed.eui-droppable-hover::after {
+            opacity: 1;
+            transform: translateY(-50%) scaleX(1);
+        }
+
+        &.eui-droppable-allowed.eui-droppable-hover.eui-droppable-line-bottom::after {
+            transform: translateY(50%) scaleX(1);
+        }
+
+        &.eui-droppable-denied.eui-droppable-hover::after {
+            opacity: 1;
+            background: var(--eui-dnd-deny-color);
+            box-shadow: 0 0 8px color-mix(in srgb, var(--eui-dnd-deny-color) 60%, transparent);
+            transform: translateY(-50%) scaleX(1);
+        }
+    }
+
+    &.eui-droppable-indicator-line.eui-droppable-horizontal {
+        &::after {
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: auto;
+            height: auto;
+            width: var(--eui-dnd-line-thickness);
+            transform: translateX(-50%) scaleY(0);
+            transform-origin: center;
+        }
+
+        &.eui-droppable-line-bottom::after {
+            left: auto;
+            right: 0;
+            transform: translateX(50%) scaleY(0);
+        }
+
+        &.eui-droppable-allowed.eui-droppable-hover::after {
+            transform: translateX(-50%) scaleY(1);
+        }
+
+        &.eui-droppable-allowed.eui-droppable-hover.eui-droppable-line-bottom::after {
+            transform: translateX(50%) scaleY(1);
         }
     }
 }
@@ -45,23 +148,86 @@
 .eui-sortable {
     display: flex;
     flex-direction: column;
+    gap: var(--eui-sortable-gap, 0.5rem);
+
+    &.eui-sortable-horizontal {
+        flex-direction: row;
+    }
+
+    .eui-sortable-item {
+        transition: transform var(--eui-dnd-transition);
+    }
 
     .eui-drop-placeholder {
-        min-height: 2.5rem;
-        border-radius: var(--eui-radius-md);
+        min-height: 3rem;
+        border-radius: var(--eui-dnd-drop-radius);
         border: 2px dashed var(--eui-border);
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--eui-text-muted);
         font-size: 0.875rem;
-        transition: background-color 0.15s ease, border-color 0.15s ease;
+        background-color: var(--eui-bg-subtle);
+        transition: background-color var(--eui-dnd-transition), border-color var(--eui-dnd-transition), color var(--eui-dnd-transition),
+            transform var(--eui-dnd-transition);
+
+        &::before {
+            display: none;
+        }
 
         &.eui-droppable-allowed.eui-droppable-hover,
         &.eui-droppable-allowed.eui-droppable-hover-current {
-            border-color: var(--eui-primary);
-            background-color: var(--eui-primary-subtle);
+            border-color: var(--eui-dnd-drop-border);
+            border-style: solid;
+            background-color: var(--eui-dnd-drop-bg);
             color: var(--eui-primary);
+            box-shadow: var(--eui-dnd-drop-glow);
+            animation: eui-dnd-pulse 1.4s ease-in-out infinite;
         }
+    }
+
+    .eui-sortable-empty-slot {
+        min-height: 4rem;
+        border-radius: var(--eui-dnd-drop-radius);
+        border: 2px dashed var(--eui-border);
+        background-color: var(--eui-bg-subtle);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .eui-sortable-empty-hint {
+            color: var(--eui-text-muted);
+            font-size: 0.875rem;
+        }
+
+        &.eui-droppable-allowed.eui-droppable-hover {
+            border-style: solid;
+        }
+    }
+}
+
+@keyframes eui-dnd-pulse {
+    0%,
+    100% {
+        box-shadow: var(--eui-dnd-drop-glow);
+    }
+    50% {
+        box-shadow: 0 0 0 6px color-mix(in srgb, var(--eui-primary) 18%, transparent);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-draggable,
+    .eui-droppable,
+    .eui-droppable::before,
+    .eui-droppable::after,
+    .eui-sortable .eui-sortable-item,
+    .eui-sortable .eui-drop-placeholder {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .eui-draggable.eui-draggable-dragging {
+        transform: none;
     }
 }

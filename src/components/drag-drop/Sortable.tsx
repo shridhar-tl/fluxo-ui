@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import { ElementType, ReactNode, useCallback, useId, useMemo, useRef } from 'react';
+import { CSSProperties, ElementType, ReactNode, useCallback, useId, useMemo, useRef } from 'react';
 import Draggable, { DraggableRenderProps, DragItem, DropResult } from './Draggable';
-import Droppable, { DroppableRenderProps } from './Droppable';
+import Droppable, { DropIndicator, DropOrientation, DroppableRenderProps } from './Droppable';
 
 export interface SortableChangeEvent {
     source?: DragItem;
@@ -40,6 +40,32 @@ export interface SortableProps<T = any> {
      * Additional CSS classes
      */
     className?: string;
+
+    /**
+     * How to visually indicate drop targets on each sortable slot.
+     * - 'line': thin insertion line between items (default, recommended for lists)
+     * - 'highlight': glow around the hovered slot
+     * - 'none': no built-in indicator
+     * @default 'line'
+     */
+    dropIndicator?: DropIndicator;
+
+    /**
+     * Layout orientation for items within the sortable.
+     * @default 'vertical'
+     */
+    orientation?: DropOrientation;
+
+    /**
+     * Gap between items. Accepts any valid CSS length (e.g. '0.5rem', '8px').
+     * @default '0.5rem'
+     */
+    gap?: string;
+
+    /**
+     * Inline style passed to the container element
+     */
+    style?: CSSProperties;
 
     /**
      * Whether items can be removed by dragging to another container
@@ -132,6 +158,10 @@ function Sortable<T = any>(props: SortableProps<T>) {
         placeholder,
         as: Component = 'div',
         allowRemove = true,
+        dropIndicator = 'line',
+        orientation = 'vertical',
+        gap = '0.5rem',
+        style,
         children,
         args,
     } = props;
@@ -220,10 +250,30 @@ function Sortable<T = any>(props: SortableProps<T>) {
         [containerId, itemTypeProp, itemType, args, allowRemove, handleItemRemoved, provideDragRef, renderItem],
     );
 
+    const containerStyle = useMemo<CSSProperties>(
+        () => ({ '--eui-sortable-gap': gap, ...style } as CSSProperties),
+        [gap, style]
+    );
+
+    const containerClass = classNames('eui-sortable', className, {
+        'eui-sortable-horizontal': orientation === 'horizontal',
+    });
+
     return (
-        <Component className={classNames('eui-sortable', className)}>
+        <Component className={containerClass} style={containerStyle}>
             {items.map((item, i) => (
-                <Droppable key={i} containerId={containerId} index={i} accept={accept} onDrop={handleItemDropped} args={args}>
+                <Droppable
+                    key={i}
+                    containerId={containerId}
+                    index={i}
+                    accept={accept}
+                    onDrop={handleItemDropped}
+                    args={args}
+                    dropIndicator={dropIndicator}
+                    orientation={orientation}
+                    linePosition="start"
+                    className="eui-sortable-item"
+                >
                     {provideDropRef ? (droppable) => renderDraggable(item, i, droppable) : renderDraggable(item, i)}
                 </Droppable>
             ))}
@@ -235,8 +285,22 @@ function Sortable<T = any>(props: SortableProps<T>) {
                     index={items?.length || 0}
                     accept={accept}
                     onDrop={handleItemDropped}
+                    dropIndicator="highlight"
                 >
                     {placeholder}
+                </Droppable>
+            )}
+            {items.length === 0 && !showPlaceholder && !placeholder && (
+                <Droppable
+                    containerId={containerId}
+                    className="eui-sortable-empty-slot"
+                    args={args}
+                    index={0}
+                    accept={accept}
+                    onDrop={handleItemDropped}
+                    dropIndicator="highlight"
+                >
+                    <div className="eui-sortable-empty-hint">Drop here</div>
                 </Droppable>
             )}
         </Component>

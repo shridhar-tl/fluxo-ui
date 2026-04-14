@@ -100,10 +100,10 @@ const TypeBasedSortable: React.FC = () => {
                                 setTypeBasedItems((prev) => ({ ...prev, features: newItems }));
                             }}
                             itemType="feature"
-                            className="space-y-2 min-h-62.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3"
+                            className="min-h-62.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3"
                         >
                             {(item) => (
-                                <div className="bg-blue-600 rounded-lg p-3 cursor-move hover:bg-blue-500 transition-colors">
+                                <div className="bg-blue-600 rounded-lg p-3 hover:bg-blue-500 transition-colors">
                                     <div className="flex items-center gap-2">
                                         <span className="text-lg">✨</span>
                                         <span className="text-white text-sm flex-1">{item.text}</span>
@@ -121,10 +121,10 @@ const TypeBasedSortable: React.FC = () => {
                                 setTypeBasedItems((prev) => ({ ...prev, bugs: newItems }));
                             }}
                             itemType="bug"
-                            className="space-y-2 min-h-62.5 bg-red-50 dark:bg-red-900/20 rounded-lg p-3"
+                            className="min-h-62.5 bg-red-50 dark:bg-red-900/20 rounded-lg p-3"
                         >
                             {(item) => (
-                                <div className="bg-red-600 rounded-lg p-3 cursor-move hover:bg-red-500 transition-colors">
+                                <div className="bg-red-600 rounded-lg p-3 hover:bg-red-500 transition-colors">
                                     <div className="flex items-center gap-2">
                                         <span className="text-lg">🐛</span>
                                         <span className="text-white text-sm flex-1">{item.text}</span>
@@ -158,17 +158,14 @@ const TypeBasedSortable: React.FC = () => {
                                     return newState;
                                 });
                             }}
-                            className="space-y-2 min-h-62.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3"
+                            className="min-h-62.5 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3"
+                            dropIndicator="highlight"
                             showPlaceholder
-                            placeholder={
-                                <div className="border-2 border-dashed border-purple-400 dark:border-purple-700 rounded-lg p-4 text-center text-purple-600 dark:text-purple-400 text-sm">
-                                    Drop features or bugs here
-                                </div>
-                            }
+                            placeholder={<div className="text-center text-purple-600 dark:text-purple-400 text-sm">Drop features or bugs here</div>}
                         >
                             {(item) => (
                                 <div
-                                    className={`rounded-lg p-3 cursor-move transition-colors ${
+                                    className={`rounded-lg p-3 transition-colors ${
                                         item.type === 'feature' ? 'bg-blue-700 hover:bg-blue-600' : 'bg-red-700 hover:bg-red-600'
                                     }`}
                                 >

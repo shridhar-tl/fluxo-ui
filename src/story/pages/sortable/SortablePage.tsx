@@ -23,6 +23,21 @@ const sortableProps = {
     allowRemove: { type: 'boolean', default: 'true', description: 'Whether items can be removed by dragging to another container' },
     showPlaceholder: { type: 'boolean', default: 'false', description: 'Whether to show a placeholder drop zone at the end' },
     placeholder: { type: 'ReactNode', description: 'Custom placeholder content' },
+    dropIndicator: {
+        type: "'highlight' | 'line' | 'none'",
+        default: "'line'",
+        description: "Drop indicator style — 'line' shows an insertion line between items, 'highlight' glows the slot",
+    },
+    orientation: {
+        type: "'vertical' | 'horizontal'",
+        default: "'vertical'",
+        description: 'Layout direction for items',
+    },
+    gap: {
+        type: 'string',
+        default: "'0.5rem'",
+        description: 'Gap between items (any valid CSS length)',
+    },
     as: { type: 'ElementType', default: "'div'", description: 'HTML tag name for the container element' },
     provideDropRef: { type: 'boolean', default: 'false', description: 'Pass drop ref to children render function' },
     provideDragRef: { type: 'boolean', default: 'false', description: 'Pass drag ref to children render function' },

@@ -91,16 +91,13 @@ const MultipleLists: React.FC = () => {
                                         return newState;
                                     });
                                 }}
-                                className="space-y-2 min-h-75 bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3"
+                                className="min-h-75 bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3"
+                                dropIndicator="highlight"
                                 showPlaceholder
-                                placeholder={
-                                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-4 text-center text-gray-500 text-sm">
-                                        Drop here
-                                    </div>
-                                }
+                                placeholder={<div className="text-center text-gray-500 text-sm">Drop here</div>}
                             >
                                 {(item) => (
-                                    <div className={`rounded-lg p-3 cursor-move transition-colors border ${columnColors[columnKey]}`}>
+                                    <div className={`rounded-lg p-3 transition-colors border ${columnColors[columnKey]}`}>
                                         <div className="flex items-center gap-2">
                                             <span className="text-lg">{getTypeIcon(item.type)}</span>
                                             <span className="text-gray-800 dark:text-white text-sm flex-1">{item.text}</span>
