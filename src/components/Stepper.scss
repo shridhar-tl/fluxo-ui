@@ -1,4 +1,5 @@
 @use './_eui-vars' as *;
+@use 'sass:map';
 
 $stepper-variants: (
     default: var(--eui-border),
@@ -182,42 +183,42 @@ $stepper-sizes: (
     // Sizes
     @each $name, $config in $stepper-sizes {
         &.eui-stepper-#{$name} {
-            gap: map-get($config, gap);
+            gap: map.get($config, gap);
 
             .eui-stepper-indicator {
-                width: map-get($config, indicator);
-                height: map-get($config, indicator);
-                font-size: map-get($config, font);
+                width: map.get($config, indicator);
+                height: map.get($config, indicator);
+                font-size: map.get($config, font);
             }
 
             .eui-stepper-indicator-icon {
-                width: map-get($config, icon);
-                height: map-get($config, icon);
+                width: map.get($config, icon);
+                height: map.get($config, icon);
             }
 
             .eui-stepper-dot {
-                width: calc(map-get($config, indicator) * 0.3);
-                height: calc(map-get($config, indicator) * 0.3);
+                width: calc(map.get($config, indicator) * 0.3);
+                height: calc(map.get($config, indicator) * 0.3);
             }
 
             .eui-stepper-label {
-                font-size: map-get($config, label-font);
+                font-size: map.get($config, label-font);
             }
 
             .eui-stepper-description {
-                font-size: map-get($config, desc-font);
+                font-size: map.get($config, desc-font);
             }
 
             .eui-stepper-connector-line {
-                height: map-get($config, connector-thickness);
+                height: map.get($config, connector-thickness);
             }
 
             .eui-stepper-content {
-                gap: calc(map-get($config, gap) * 0.25);
+                gap: calc(map.get($config, gap) * 0.25);
             }
 
             .eui-stepper-step {
-                gap: map-get($config, gap);
+                gap: map.get($config, gap);
             }
         }
     }
@@ -311,7 +312,7 @@ $stepper-sizes: (
         // Vertically center connector on the indicator for each size
         @each $name, $config in $stepper-sizes {
             &.eui-stepper-#{$name} .eui-stepper-connector {
-                margin-top: calc(map-get($config, indicator) / 2 - 1px);
+                margin-top: calc(map.get($config, indicator) / 2 - 1px);
             }
         }
 
@@ -404,7 +405,7 @@ $stepper-sizes: (
         // align connector under the indicator center
         @each $name, $config in $stepper-sizes {
             &.eui-stepper-#{$name} .eui-stepper-connector {
-                margin-left: calc(map-get($config, indicator) / 2 - 1px);
+                margin-left: calc(map.get($config, indicator) / 2 - 1px);
             }
         }
     }

@@ -1,4 +1,5 @@
 @use './_eui-vars' as *;
+@use 'sass:map';
 
 @mixin btn-reset {
     appearance: none;
@@ -65,12 +66,12 @@ $fab-sizes: (
 
     @each $name, $config in $fab-variants {
         &.eui-fab-variant-#{$name} {
-            background: map-get($config, bg);
-            color: map-get($config, color);
-            border: 1px solid map-get($config, border);
+            background: map.get($config, bg);
+            color: map.get($config, color);
+            border: 1px solid map.get($config, border);
 
             &:hover:not(.eui-fab-disabled) {
-                background: map-get($config, hover-bg);
+                background: map.get($config, hover-bg);
             }
 
             &:active:not(.eui-fab-disabled) {
@@ -81,25 +82,25 @@ $fab-sizes: (
 
     @each $name, $config in $fab-sizes {
         &.eui-fab-#{$name} {
-            width: map-get($config, size);
-            height: map-get($config, size);
-            box-shadow: map-get($config, shadow);
+            width: map.get($config, size);
+            height: map.get($config, size);
+            box-shadow: map.get($config, shadow);
 
             .eui-fab-icon {
-                width: map-get($config, icon);
-                height: map-get($config, icon);
+                width: map.get($config, icon);
+                height: map.get($config, icon);
             }
 
             .eui-fab-label {
-                font-size: map-get($config, font);
+                font-size: map.get($config, font);
             }
 
             &.eui-fab-extended {
                 width: auto;
-                border-radius: calc(map-get($config, size) / 2);
-                padding: map-get($config, padding);
+                border-radius: calc(map.get($config, size) / 2);
+                padding: map.get($config, padding);
                 gap: 0.5rem;
-                min-width: map-get($config, size);
+                min-width: map.get($config, size);
             }
         }
     }

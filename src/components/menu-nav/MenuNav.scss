@@ -1,4 +1,5 @@
 @use '../eui-vars' as *;
+@use 'sass:map';
 
 // Size config
 $sizes: (
@@ -12,18 +13,18 @@ $sizes: (
 @each $name, $config in $sizes {
     .eui-menu-nav-#{$name} {
         .eui-menu-nav-item {
-            padding: map-get($config, item-py) map-get($config, item-px);
-            font-size: map-get($config, font);
+            padding: map.get($config, item-py) map.get($config, item-px);
+            font-size: map.get($config, font);
         }
 
         .eui-menu-nav-item-icon svg,
         .eui-menu-nav-item-icon img {
-            width: map-get($config, icon);
-            height: map-get($config, icon);
+            width: map.get($config, icon);
+            height: map.get($config, icon);
         }
 
         .eui-menu-nav-group-label {
-            font-size: map-get($config, group-font);
+            font-size: map.get($config, group-font);
         }
     }
 }

@@ -1,4 +1,5 @@
 @use './_eui-vars' as *;
+@use 'sass:map';
 
 $speed-dial-variants: (
     default: (bg: var(--eui-bg-subtle), color: var(--eui-text), hover-bg: var(--eui-bg-hover), border: var(--eui-border)),
@@ -59,13 +60,13 @@ $speed-dial-sizes: (
 
         @each $name, $config in $speed-dial-variants {
             &.eui-speed-dial-trigger-variant-#{$name} {
-                background: map-get($config, bg);
-                color: map-get($config, color);
-                border: 1px solid map-get($config, border);
+                background: map.get($config, bg);
+                color: map.get($config, color);
+                border: 1px solid map.get($config, border);
                 box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
 
                 &:hover {
-                    background: map-get($config, hover-bg);
+                    background: map.get($config, hover-bg);
                 }
 
                 &:active {
@@ -259,31 +260,31 @@ $speed-dial-sizes: (
     @each $name, $config in $speed-dial-sizes {
         &.eui-speed-dial-#{$name} {
             .eui-speed-dial-trigger {
-                width: map-get($config, trigger);
-                height: map-get($config, trigger);
+                width: map.get($config, trigger);
+                height: map.get($config, trigger);
             }
 
             .eui-speed-dial-trigger-icon {
-                width: map-get($config, icon);
-                height: map-get($config, icon);
+                width: map.get($config, icon);
+                height: map.get($config, icon);
             }
 
             .eui-speed-dial-action {
-                width: map-get($config, action);
-                height: map-get($config, action);
+                width: map.get($config, action);
+                height: map.get($config, action);
             }
 
             .eui-speed-dial-action-icon {
-                width: map-get($config, action-icon);
-                height: map-get($config, action-icon);
+                width: map.get($config, action-icon);
+                height: map.get($config, action-icon);
             }
 
             .eui-speed-dial-action-label {
-                font-size: map-get($config, label-font);
+                font-size: map.get($config, label-font);
             }
 
             .eui-speed-dial-actions {
-                gap: map-get($config, gap);
+                gap: map.get($config, gap);
             }
         }
     }
