@@ -68,9 +68,19 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     useKeyboard({ Escape: closePanel }, isOpen);
 
     useLayoutEffect(() => {
-        if (isOpen && triggerRef.current && panelRef.current) {
-            calculatePosition(triggerRef.current, panelRef.current);
-        }
+        if (!isOpen) return;
+        const reposition = () => {
+            if (triggerRef.current && panelRef.current) {
+                calculatePosition(triggerRef.current, panelRef.current);
+            }
+        };
+        reposition();
+        window.addEventListener('scroll', reposition, true);
+        window.addEventListener('resize', reposition);
+        return () => {
+            window.removeEventListener('scroll', reposition, true);
+            window.removeEventListener('resize', reposition);
+        };
     }, [isOpen, calculatePosition]);
 
     const handleScroll = useCallback(async () => {

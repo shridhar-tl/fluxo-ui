@@ -42,6 +42,9 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/fieldlabel': () => import('./field-label/BasicLabel'),
     '/components/inputgroup': () => import('./input-group/EmailInput'),
     '/components/slider': () => import('./slider/BasicUsage'),
+    '/components/rating': () => import('./rating/BasicUsage'),
+    '/components/color-picker': () => import('./color-picker/BasicUsage'),
+    '/components/time-picker': () => import('./time-picker/BasicUsage'),
     '/components/checkbox': () => import('./checkbox/BasicUsage'),
     '/components/multistatecheckbox': () => import('./multi-state-checkbox/BasicUsage'),
     '/components/radiobutton': () => import('./radio-button/BasicUsage'),
@@ -230,7 +233,8 @@ const formInputs: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Textarea', description: 'Multi-line text area with auto-resize', path: '/components/textarea' },
     { title: 'Field Label', description: 'Accessible form field labels and hints', path: '/components/fieldlabel' },
     { title: 'Input Group', description: 'Group inputs with addons and buttons', path: '/components/inputgroup' },
-    { title: 'Slider', description: 'Single/range slider with marks and labels', path: '/components/slider', badge: 'New' },
+    { title: 'Slider', description: 'Single/range slider with marks and labels', path: '/components/slider' },
+    { title: 'Rating', description: 'Star/heart/thumb rating with fractional precision', path: '/components/rating', badge: 'New' },
 ];
 
 const selectionComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -245,25 +249,59 @@ const selectionComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Autocomplete', description: 'Input with filtered suggestions', path: '/components/autocomplete' },
     { title: 'List Box', description: 'Scrollable selection list', path: '/components/listbox' },
     { title: 'Chips', description: 'Tag-style input for multiple values', path: '/components/chips' },
-    { title: 'Date Range Picker', description: 'Date range selection with presets', path: '/components/daterangepicker' },
 ];
 
-const dataDisplayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+const pickerComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Date Range Picker', description: 'Date range selection with presets', path: '/components/daterangepicker' },
+    { title: 'Time Picker', description: '12/24 hour time picker with step increments', path: '/components/time-picker', badge: 'New' },
+    { title: 'Color Picker', description: 'HSV canvas with hex/RGB inputs and swatches', path: '/components/color-picker', badge: 'New' },
+    { title: 'Calendar', description: 'Full-featured event calendar', path: '/components/calendar' },
+];
+
+const dataTableComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Table', description: 'Data grid with sort, filter, pagination', path: '/components/table' },
+    { title: 'Pivot Table', description: 'Aggregation, pivoting, expand/collapse', path: '/components/pivot-table' },
+    { title: 'TreeView', description: 'Hierarchical tree with expand/collapse', path: '/components/tree-view' },
+    { title: 'JSON Editor', description: 'Interactive JSON viewer and editor', path: '/components/json-editor' },
+];
+
+const chartBoardComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Gantt Chart', description: 'Project timeline and task visualization', path: '/components/gantt-chart' },
     { title: 'Kanban Board', description: 'Drag-and-drop task board with columns', path: '/components/kanban-board' },
-    { title: 'Calendar', description: 'Full-featured event calendar', path: '/components/calendar' },
-    { title: 'Canvas Draw', description: 'Drawing and annotation overlay', path: '/components/canvas-draw' },
-    { title: 'JSON Editor', description: 'Interactive JSON viewer and editor', path: '/components/json-editor' },
-    { title: 'Tab View', description: 'Tabbed content with multiple variants', path: '/components/tab-view' },
+    { title: 'Timeline', description: 'Vertical/horizontal event sequence', path: '/components/timeline' },
     { title: 'Progress Bar', description: 'Determinate and indeterminate progress', path: '/components/progress-bar' },
-    { title: 'Stepper', description: 'Multi-step wizard navigation', path: '/components/stepper' },
-    { title: 'Shimmer / Skeleton', description: 'Loading placeholders and skeletons', path: '/components/shimmer' },
-    { title: 'TreeView', description: 'Hierarchical tree with expand/collapse', path: '/components/tree-view', badge: 'New' },
-    { title: 'Timeline', description: 'Vertical/horizontal event sequence', path: '/components/timeline', badge: 'New' },
-    { title: 'Carousel', description: 'Image/video slider with thumbnails', path: '/components/carousel', badge: 'New' },
-    { title: 'Pivot Table', description: 'Aggregation, pivoting, expand/collapse', path: '/components/pivot-table' },
+];
+
+const mediaComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Carousel', description: 'Image/video slider with thumbnails', path: '/components/carousel' },
+    { title: 'Lightbox', description: 'Hover/click preview with zoom-out', path: '/components/lightbox' },
     { title: 'Image Editor', description: 'Crop, rotate, blur, annotate images', path: '/components/image-editor' },
+    { title: 'Canvas Draw', description: 'Drawing and annotation overlay', path: '/components/canvas-draw' },
+    { title: 'File Upload', description: 'Drag-and-drop file upload zone', path: '/components/file-upload' },
+];
+
+const navigationComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Tab View', description: 'Tabbed content with multiple variants', path: '/components/tab-view' },
+    { title: 'Stepper', description: 'Multi-step wizard navigation', path: '/components/stepper' },
+    { title: 'Breadcrumb', description: 'Navigation breadcrumb trail', path: '/components/breadcrumb' },
+    { title: 'Menu Nav', description: 'Multi-level menu navigation', path: '/components/menu-nav' },
+    { title: 'Step Tour', description: 'Guided UI walkthroughs', path: '/components/tour' },
+];
+
+const feedbackComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Snackbar', description: 'Toast notifications', path: '/components/snackbar' },
+    { title: 'Notification Center', description: 'Dropdown notification panel', path: '/components/notification-center' },
+    { title: 'Page Banner', description: 'Page-level message banners', path: '/components/page-banner' },
+    { title: 'Tooltip', description: 'Hover/focus information popups', path: '/components/tooltip' },
+    { title: 'Shimmer / Skeleton', description: 'Loading placeholders and skeletons', path: '/components/shimmer' },
+];
+
+const overlayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Modal', description: 'Dialog overlays with backdrop', path: '/components/modal' },
+    { title: 'Drawer', description: 'Slide-in panel from any edge', path: '/components/drawer' },
+    { title: 'Popover', description: 'Click-triggered content popovers', path: '/components/popover' },
+    { title: 'Confirm Popover', description: 'Inline confirmation dialogs', path: '/components/confirm-popover' },
+    { title: 'Context Menu', description: 'Right-click context menus', path: '/components/context-menu' },
 ];
 
 const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -272,32 +310,10 @@ const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Drag & Drop', description: 'Draggable and droppable containers', path: '/components/drag-drop' },
     { title: 'Sortable', description: 'Drag-to-reorder lists and grids', path: '/components/sortable' },
     { title: 'Splitter', description: 'Resizable split panels', path: '/components/splitter' },
-    { title: 'Step Tour', description: 'Guided UI walkthroughs', path: '/components/tour' },
+    { title: 'Collapsible Panel', description: 'Expand/collapse sections & accordion', path: '/components/collapsible-panel' },
     { title: 'Deferred View', description: 'Lazy-render with visibility detection', path: '/components/deferred-view' },
-    { title: 'Infinite Scroll', description: 'Load-more on scroll with indicators', path: '/components/infinite-scroll', badge: 'New' },
-    { title: 'File Upload', description: 'Drag-and-drop file upload zone', path: '/components/file-upload', badge: 'New' },
-    { title: 'Animate On View', description: 'Scroll-triggered CSS animations', path: '/components/animate-on-view', badge: 'New' },
-    {
-        title: 'Collapsible Panel',
-        description: 'Expand/collapse sections & accordion',
-        path: '/components/collapsible-panel',
-        badge: 'New',
-    },
-];
-
-const overlayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
-    { title: 'Modal', description: 'Dialog overlays with backdrop', path: '/components/modal' },
-    { title: 'Drawer', description: 'Slide-in panel from any edge', path: '/components/drawer', badge: 'New' },
-    { title: 'Tooltip', description: 'Hover/focus information popups', path: '/components/tooltip' },
-    { title: 'Popover', description: 'Click-triggered content popovers', path: '/components/popover' },
-    { title: 'Snackbar', description: 'Toast notifications', path: '/components/snackbar' },
-    { title: 'Confirm Popover', description: 'Inline confirmation dialogs', path: '/components/confirm-popover' },
-    { title: 'Context Menu', description: 'Right-click context menus', path: '/components/context-menu' },
-    { title: 'Breadcrumb', description: 'Navigation breadcrumb trail', path: '/components/breadcrumb', badge: 'New' },
-    { title: 'Notification Center', description: 'Dropdown notification panel', path: '/components/notification-center', badge: 'New' },
-    { title: 'Page Banner', description: 'Page-level message banners', path: '/components/page-banner' },
-    { title: 'Menu Nav', description: 'Multi-level menu navigation', path: '/components/menu-nav', badge: 'New' },
-    { title: 'Lightbox', description: 'Hover/click preview with zoom-out', path: '/components/lightbox', badge: 'New' },
+    { title: 'Infinite Scroll', description: 'Load-more on scroll with indicators', path: '/components/infinite-scroll' },
+    { title: 'Animate On View', description: 'Scroll-triggered CSS animations', path: '/components/animate-on-view' },
 ];
 
 const HomePage: React.FC = () => {
@@ -386,21 +402,51 @@ const HomePage: React.FC = () => {
                         isDark={isDark}
                     />
                     <CategorySection
-                        title="Data Display"
+                        title="Date, Time & Color"
+                        icon="&#9200;"
+                        items={pickerComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Data Tables"
                         icon="&#9638;"
-                        items={dataDisplayComponents.map((i) => ({ ...i, isDark }))}
+                        items={dataTableComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                     <CategorySection
-                        title="Interactive"
-                        icon="&#9757;"
-                        items={interactiveComponents.map((i) => ({ ...i, isDark }))}
+                        title="Charts & Boards"
+                        icon="&#9646;"
+                        items={chartBoardComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                     <CategorySection
-                        title="Overlays & Navigation"
+                        title="Media"
+                        icon="&#9634;"
+                        items={mediaComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Navigation"
+                        icon="&#9776;"
+                        items={navigationComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Feedback"
+                        icon="&#9888;"
+                        items={feedbackComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Overlays"
                         icon="&#9671;"
                         items={overlayComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Actions & Interaction"
+                        icon="&#9757;"
+                        items={interactiveComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                 </div>

@@ -1,0 +1,106 @@
+@use '../eui-vars' as *;
+
+.eui-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--eui-font-family);
+    color: var(--eui-text);
+    user-select: none;
+    outline: none;
+
+    &:focus-visible {
+        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+        border-radius: var(--eui-radius-sm);
+    }
+
+    &.eui-rating-disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    &.eui-rating-readonly {
+        cursor: default;
+    }
+
+    &.eui-rating-interactive .eui-rating-item {
+        cursor: pointer;
+    }
+
+    &.eui-rating-default .eui-rating-item-filled { color: var(--eui-text-muted); }
+    &.eui-rating-primary .eui-rating-item-filled { color: var(--eui-primary); }
+    &.eui-rating-success .eui-rating-item-filled { color: #22c55e; }
+    &.eui-rating-warning .eui-rating-item-filled { color: #f59e0b; }
+    &.eui-rating-danger  .eui-rating-item-filled { color: #ef4444; }
+    &.eui-rating-info    .eui-rating-item-filled { color: #3b82f6; }
+}
+
+.eui-rating-items {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.eui-rating-item {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    transition: transform 0.15s ease;
+
+    .eui-rating-interactive &:hover {
+        transform: scale(1.15);
+    }
+
+    svg {
+        display: block;
+    }
+}
+
+.eui-rating-item-empty {
+    position: absolute;
+    inset: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--eui-border);
+    pointer-events: none;
+}
+
+.eui-rating-item-filled {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.eui-rating-value {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--eui-text-muted);
+    white-space: nowrap;
+}
+
+.eui-rating-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--eui-text);
+    white-space: nowrap;
+}
+
+.eui-rating-xs .eui-rating-value,
+.eui-rating-xs .eui-rating-label { font-size: 0.7rem; }
+
+.eui-rating-sm .eui-rating-value,
+.eui-rating-sm .eui-rating-label { font-size: 0.75rem; }
+
+.eui-rating-lg .eui-rating-value,
+.eui-rating-lg .eui-rating-label { font-size: 0.9rem; }
+
+.eui-rating-xl .eui-rating-value,
+.eui-rating-xl .eui-rating-label { font-size: 1rem; }

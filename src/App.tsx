@@ -78,6 +78,9 @@ const InfiniteScrollPage = React.lazy(() => import('./story/pages/infinite-scrol
 const NotificationCenterPage = React.lazy(() => import('./story/pages/notification-center/NotificationCenterPage'));
 const ImageEditorPage = React.lazy(() => import('./story/pages/image-editor/ImageEditorPage'));
 const SliderPage = React.lazy(() => import('./story/pages/slider/SliderPage'));
+const RatingPage = React.lazy(() => import('./story/pages/rating/RatingPage'));
+const ColorPickerPage = React.lazy(() => import('./story/pages/color-picker/ColorPickerPage'));
+const TimePickerPage = React.lazy(() => import('./story/pages/time-picker/TimePickerPage'));
 const PivotTablePage = React.lazy(() => import('./story/pages/pivot-table/PivotTablePage'));
 const PageBannerPage = React.lazy(() => import('./story/pages/page-banner/PageBannerPage'));
 const MenuNavPage = React.lazy(() => import('./story/pages/menu-nav/MenuNavPage'));
@@ -521,6 +524,9 @@ const App: React.FC = () => {
                     <Route path="/components/notification-center" element={<LayoutWrapper><NotificationCenterPage /></LayoutWrapper>} />
                     <Route path="/components/image-editor" element={<LayoutWrapper><ImageEditorPage /></LayoutWrapper>} />
                     <Route path="/components/slider" element={<LayoutWrapper><SliderPage /></LayoutWrapper>} />
+                    <Route path="/components/rating" element={<LayoutWrapper><RatingPage /></LayoutWrapper>} />
+                    <Route path="/components/color-picker" element={<LayoutWrapper><ColorPickerPage /></LayoutWrapper>} />
+                    <Route path="/components/time-picker" element={<LayoutWrapper><TimePickerPage /></LayoutWrapper>} />
                     <Route path="/components/pivot-table" element={<LayoutWrapper><PivotTablePage /></LayoutWrapper>} />
                     <Route path="/components/page-banner" element={<LayoutWrapper><PageBannerPage /></LayoutWrapper>} />
                     <Route path="/components/menu-nav" element={<LayoutWrapper><MenuNavPage /></LayoutWrapper>} />

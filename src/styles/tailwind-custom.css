@@ -734,3 +734,64 @@
     background-color: rgb(from var(--color-primary-900) r g b / 0.2);
     color: var(--color-primary-400);
 }
+
+/*
+ * Dark-mode remapping for Tailwind light-only text/background utility classes.
+ *
+ * Many story demo files were written assuming a white background and use
+ * `text-gray-700`, `text-gray-900`, `text-black`, `bg-white`, etc. directly
+ * without a `dark:` counterpart. Those classes become unreadable when the
+ * user toggles dark mode or when the same demo is rendered inside a
+ * dark-themed container (e.g. the Lightbox hover preview on HomePage).
+ *
+ * Rather than touching every demo file, we remap the common offenders here
+ * under `body.mode-dark` so they automatically flip to theme-aware values.
+ * `:where()` keeps specificity at (0,1,0) — identical to the original
+ * Tailwind utility — and because this file is imported after Tailwind, the
+ * cascade picks these rules in dark mode.
+ *
+ * Status colors (red/green/amber/blue/indigo) and explicit `dark:` variants
+ * are left untouched.
+ */
+body.mode-dark :where(.text-black) { color: var(--eui-text); }
+body.mode-dark :where(.text-gray-900) { color: var(--eui-text); }
+body.mode-dark :where(.text-gray-800) { color: var(--eui-text); }
+body.mode-dark :where(.text-gray-700) { color: var(--eui-text); }
+body.mode-dark :where(.text-gray-600) { color: var(--eui-text-muted); }
+body.mode-dark :where(.text-gray-500) { color: var(--eui-text-muted); }
+body.mode-dark :where(.text-slate-900) { color: var(--eui-text); }
+body.mode-dark :where(.text-slate-800) { color: var(--eui-text); }
+body.mode-dark :where(.text-slate-700) { color: var(--eui-text); }
+body.mode-dark :where(.text-slate-600) { color: var(--eui-text-muted); }
+body.mode-dark :where(.text-neutral-900) { color: var(--eui-text); }
+body.mode-dark :where(.text-neutral-800) { color: var(--eui-text); }
+body.mode-dark :where(.text-neutral-700) { color: var(--eui-text); }
+body.mode-dark :where(.text-neutral-600) { color: var(--eui-text-muted); }
+body.mode-dark :where(.text-zinc-900) { color: var(--eui-text); }
+body.mode-dark :where(.text-zinc-800) { color: var(--eui-text); }
+body.mode-dark :where(.text-zinc-700) { color: var(--eui-text); }
+body.mode-dark :where(.text-zinc-600) { color: var(--eui-text-muted); }
+body.mode-dark :where(.text-stone-900) { color: var(--eui-text); }
+body.mode-dark :where(.text-stone-800) { color: var(--eui-text); }
+body.mode-dark :where(.text-stone-700) { color: var(--eui-text); }
+body.mode-dark :where(.text-stone-600) { color: var(--eui-text-muted); }
+
+body.mode-dark :where(.bg-white) { background-color: var(--eui-bg); }
+body.mode-dark :where(.bg-gray-50) { background-color: var(--eui-bg-subtle); }
+body.mode-dark :where(.bg-gray-100) { background-color: var(--eui-bg-subtle); }
+body.mode-dark :where(.bg-slate-50) { background-color: var(--eui-bg-subtle); }
+body.mode-dark :where(.bg-slate-100) { background-color: var(--eui-bg-subtle); }
+body.mode-dark :where(.bg-neutral-50) { background-color: var(--eui-bg-subtle); }
+body.mode-dark :where(.bg-neutral-100) { background-color: var(--eui-bg-subtle); }
+
+body.mode-dark :where(.border-gray-100) { border-color: var(--eui-border-subtle); }
+body.mode-dark :where(.border-gray-200) { border-color: var(--eui-border-subtle); }
+body.mode-dark :where(.border-gray-300) { border-color: var(--eui-border); }
+body.mode-dark :where(.border-slate-100) { border-color: var(--eui-border-subtle); }
+body.mode-dark :where(.border-slate-200) { border-color: var(--eui-border-subtle); }
+body.mode-dark :where(.border-slate-300) { border-color: var(--eui-border); }
+
+body.mode-dark :where(.divide-gray-100 > :not([hidden]) ~ :not([hidden])),
+body.mode-dark :where(.divide-gray-200 > :not([hidden]) ~ :not([hidden])) {
+    border-color: var(--eui-border-subtle);
+}

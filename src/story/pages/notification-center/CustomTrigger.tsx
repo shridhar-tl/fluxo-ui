@@ -50,12 +50,20 @@ const CustomTrigger: React.FC = () => {
                         </Button>
                     }
                     header={
-                        <div className="p-3 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
-                            <span className="font-bold text-lg">My Alerts</span>
+                        <div
+                            className="p-3 flex items-center justify-between"
+                            style={{ borderBottom: '1px solid var(--eui-border-subtle)' }}
+                        >
+                            <span className="font-bold text-lg" style={{ color: 'var(--eui-text)' }}>
+                                My Alerts
+                            </span>
                         </div>
                     }
                     footer={
-                        <div className="p-3 text-center text-sm opacity-70 border-t border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-100">
+                        <div
+                            className="p-3 text-center text-sm cursor-pointer"
+                            style={{ color: 'var(--eui-text-muted)', borderTop: '1px solid var(--eui-border-subtle)' }}
+                        >
                             View all notifications
                         </div>
                     }
