@@ -1,0 +1,124 @@
+@use '../eui-vars' as *;
+
+.eui-sig {
+    display: inline-flex;
+    flex-direction: column;
+    font-family: var(--eui-font-family);
+    color: var(--eui-text);
+    gap: 0.5rem;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+.eui-sig-canvas-wrap {
+    position: relative;
+    width: 100%;
+    background: var(--eui-bg);
+    border-radius: var(--eui-radius-md);
+    overflow: hidden;
+    box-sizing: border-box;
+
+    &.eui-sig-border-solid  { border: 1px solid var(--eui-border); }
+    &.eui-sig-border-dashed { border: 1px dashed var(--eui-border); }
+    &.eui-sig-border-none   { border: 1px solid transparent; }
+
+    &.eui-sig-bg-white       { background: var(--eui-bg); }
+    &.eui-sig-bg-transparent { background: transparent; }
+    &.eui-sig-bg-grid {
+        background-color: var(--eui-bg);
+        background-image:
+            linear-gradient(to right, rgba(99,102,241,0.18) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(99,102,241,0.18) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+    &.eui-sig-bg-dotted {
+        background-color: var(--eui-bg);
+        background-image: radial-gradient(circle, var(--eui-border) 1px, transparent 1px);
+        background-size: 14px 14px;
+    }
+
+    &:focus-within {
+        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+    }
+}
+
+.eui-sig-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+}
+
+.eui-sig-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--eui-text-muted);
+    font-size: 0.9rem;
+    pointer-events: none;
+    user-select: none;
+    font-style: italic;
+}
+
+.eui-sig-size-sm .eui-sig-canvas-wrap { width: 260px; height: 120px; }
+.eui-sig-size-md .eui-sig-canvas-wrap { width: 380px; height: 160px; }
+.eui-sig-size-lg .eui-sig-canvas-wrap { width: 520px; height: 220px; }
+.eui-sig-size-full .eui-sig-canvas-wrap { width: 100%; height: 200px; }
+
+.eui-sig-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.eui-sig-btn {
+    appearance: none;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--eui-radius-sm);
+    border: 1px solid var(--eui-border);
+    background: var(--eui-bg);
+    color: var(--eui-text);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover:not(:disabled) {
+        background: var(--eui-bg-hover);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.eui-sig-swatches {
+    display: inline-flex;
+    gap: 0.375rem;
+    align-items: center;
+}
+
+.eui-sig-swatch {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    border: 2px solid var(--eui-border);
+    cursor: pointer;
+    padding: 0;
+
+    &.eui-sig-swatch-active {
+        border-color: var(--eui-primary);
+        box-shadow: 0 0 0 2px var(--eui-primary-subtle);
+    }
+}

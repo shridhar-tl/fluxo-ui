@@ -1,0 +1,134 @@
+@use '../eui-vars' as *;
+
+.eui-wds {
+    display: inline-flex;
+    font-family: var(--eui-font-family);
+    color: var(--eui-text);
+    user-select: none;
+
+    &.eui-wds-spaced {
+        gap: 0.375rem;
+    }
+
+    &.eui-wds-joined {
+        gap: 0;
+
+        .eui-wds-item {
+            border-radius: 0;
+            margin-left: -1px;
+
+            &:first-child { margin-left: 0; }
+        }
+
+        &.eui-wds-shape-rounded .eui-wds-item {
+            &:first-child { border-top-left-radius: 9999px; border-bottom-left-radius: 9999px; }
+            &:last-child  { border-top-right-radius: 9999px; border-bottom-right-radius: 9999px; }
+        }
+
+        &.eui-wds-shape-squared .eui-wds-item {
+            &:first-child { border-top-left-radius: var(--eui-radius-md); border-bottom-left-radius: var(--eui-radius-md); }
+            &:last-child  { border-top-right-radius: var(--eui-radius-md); border-bottom-right-radius: var(--eui-radius-md); }
+        }
+
+        &.eui-wds-shape-circle .eui-wds-item {
+            &:first-child { border-top-left-radius: 9999px; border-bottom-left-radius: 9999px; }
+            &:last-child  { border-top-right-radius: 9999px; border-bottom-right-radius: 9999px; }
+        }
+    }
+}
+
+.eui-wds-item {
+    appearance: none;
+    font-family: inherit;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--eui-bg);
+    color: var(--eui-text);
+    border: 1px solid var(--eui-border);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+    min-width: 2.25rem;
+    padding: 0 0.5rem;
+    position: relative;
+
+    &:hover:not(:disabled):not(.eui-wds-item-selected) {
+        background: var(--eui-bg-hover);
+        border-color: var(--eui-primary-border);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+        z-index: 1;
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+    }
+
+    &.eui-wds-item-selected {
+        z-index: 1;
+    }
+}
+
+.eui-wds-shape-rounded .eui-wds-item { border-radius: 9999px; }
+.eui-wds-shape-squared .eui-wds-item { border-radius: var(--eui-radius-md); }
+.eui-wds-shape-circle  .eui-wds-item { border-radius: 9999px; aspect-ratio: 1 / 1; padding: 0; }
+
+.eui-wds-size-sm .eui-wds-item { height: 1.75rem; min-width: 1.75rem; font-size: 0.72rem; }
+.eui-wds-size-md .eui-wds-item { height: 2.25rem; min-width: 2.25rem; font-size: 0.8rem; }
+.eui-wds-size-lg .eui-wds-item { height: 2.75rem; min-width: 2.75rem; font-size: 0.9rem; }
+
+@mixin wds-solid($bg, $text) {
+    background: $bg;
+    border-color: $bg;
+    color: $text;
+}
+
+@mixin wds-outlined($accent) {
+    background: transparent;
+    border-color: $accent;
+    color: $accent;
+    box-shadow: inset 0 0 0 1px $accent;
+}
+
+@mixin wds-subtle($accent, $bg) {
+    background: $bg;
+    border-color: $bg;
+    color: $accent;
+}
+
+.eui-wds-fill-solid {
+    &.eui-wds-variant-default .eui-wds-item-selected { @include wds-solid(var(--eui-text), var(--eui-bg)); }
+    &.eui-wds-variant-primary .eui-wds-item-selected { @include wds-solid(var(--eui-primary), #ffffff); }
+    &.eui-wds-variant-success .eui-wds-item-selected { @include wds-solid(#16a34a, #ffffff); }
+    &.eui-wds-variant-danger  .eui-wds-item-selected { @include wds-solid(#dc2626, #ffffff); }
+}
+
+.eui-wds-fill-outlined {
+    &.eui-wds-variant-default .eui-wds-item-selected { @include wds-outlined(var(--eui-text)); }
+    &.eui-wds-variant-primary .eui-wds-item-selected { @include wds-outlined(var(--eui-primary)); }
+    &.eui-wds-variant-success .eui-wds-item-selected { @include wds-outlined(#16a34a); }
+    &.eui-wds-variant-danger  .eui-wds-item-selected { @include wds-outlined(#dc2626); }
+}
+
+.eui-wds-fill-subtle {
+    &.eui-wds-variant-default .eui-wds-item-selected { @include wds-subtle(var(--eui-text), var(--eui-bg-hover)); }
+    &.eui-wds-variant-primary .eui-wds-item-selected { @include wds-subtle(var(--eui-primary), var(--eui-primary-subtle)); }
+    &.eui-wds-variant-success .eui-wds-item-selected { @include wds-subtle(#16a34a, rgba(34,197,94,0.18)); }
+    &.eui-wds-variant-danger  .eui-wds-item-selected { @include wds-subtle(#dc2626, rgba(239,68,68,0.18)); }
+}
+
+body.mode-dark .eui-wds-item {
+    background: var(--eui-bg-subtle);
+    color: var(--eui-text);
+}
+
+body.mode-dark .eui-wds-fill-solid.eui-wds-variant-default .eui-wds-item-selected {
+    background: var(--eui-text);
+    border-color: var(--eui-text);
+    color: var(--eui-bg);
+}

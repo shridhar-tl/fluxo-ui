@@ -132,7 +132,6 @@ function Counter() {
 | Masked Input | Input with format masks (phone, date, etc.) |
 | Password | Password field with visibility toggle and strength |
 | Textarea | Multi-line text area with auto-resize |
-| Markdown Editor | Markdown editor and preview with toolbar, upload, and split view |
 | Field Label | Accessible form field labels and hints |
 | Input Group | Group inputs with addons and buttons |
 | Slider | Single/range slider with marks and labels |
@@ -170,6 +169,13 @@ function Counter() {
 | Table | Data grid with sort, filter, pagination |
 | Pivot Table | Aggregation, pivoting, expand/collapse |
 | TreeView | Hierarchical tree with expand/collapse |
+
+### Editors
+
+| Component | Description |
+| --- | --- |
+| Markdown Editor | Markdown editor and preview with toolbar, upload, and split view |
+| HTML Editor | WYSIWYG rich text editor with full formatting, tables, images, and sanitized preview |
 | JSON Editor | Interactive JSON viewer and editor |
 
 ### Charts & Boards

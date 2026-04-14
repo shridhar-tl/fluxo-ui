@@ -93,22 +93,34 @@ export { default as RedoIcon } from './icons/redo.svg?react';
 export { default as SplitViewIcon } from './icons/split-view.svg?react';
 export { default as IndentIcon } from './icons/indent.svg?react';
 export { default as OutdentIcon } from './icons/outdent.svg?react';
-
-/// Items to take care
-export { default as ArrowRightIcon } from './icons/web.svg?react';
-export { default as AlertIcon } from './icons/web.svg?react';
-export { default as FileUpload } from './icons/web.svg?react';
-export { default as FolderIcon } from './icons/web.svg?react';
-export { default as BadgeIcon } from './icons/web.svg?react';
-export { default as AwardIcon } from './icons/web.svg?react';
-export { default as SaveIcon } from './icons/web.svg?react';
-export { default as SendIcon } from './icons/web.svg?react';
-export { default as TrophyIcon } from './icons/web.svg?react';
+export { default as UnderlineIcon } from './icons/underline.svg?react';
+export { default as SuperscriptIcon } from './icons/superscript.svg?react';
+export { default as SubscriptIcon } from './icons/subscript.svg?react';
+export { default as HighlightIcon } from './icons/highlight.svg?react';
+export { default as TextColorIcon } from './icons/text-color.svg?react';
+export { default as BgColorIcon } from './icons/bg-color.svg?react';
+export { default as FontFamilyIcon } from './icons/font-family.svg?react';
+export { default as FontSizeIcon } from './icons/font-size.svg?react';
+export { default as AlignLeftIcon } from './icons/align-left.svg?react';
+export { default as AlignCenterIcon } from './icons/align-center.svg?react';
+export { default as AlignRightIcon } from './icons/align-right.svg?react';
+export { default as AlignJustifyIcon } from './icons/align-justify.svg?react';
+export { default as ClearFormatIcon } from './icons/clear-format.svg?react';
+export { default as UnlinkIcon } from './icons/unlink.svg?react';
+export { default as ArrowRightIcon } from './icons/arrow-right.svg?react';
+export { default as AlertIcon } from './icons/alert.svg?react';
+export { default as FileUpload } from './icons/file-upload.svg?react';
+export { default as FolderIcon } from './icons/folder.svg?react';
+export { default as BadgeIcon } from './icons/badge.svg?react';
+export { default as AwardIcon } from './icons/award.svg?react';
+export { default as SaveIcon } from './icons/save.svg?react';
+export { default as SendIcon } from './icons/send.svg?react';
+export { default as TrophyIcon } from './icons/trophy.svg?react';
 export { default as PaletteIcon } from './icons/palette.svg?react';
-export { default as ShieldIcon } from './icons/web.svg?react';
-export { default as BlockIcon } from './icons/web.svg?react';
-export { default as PieChartIcon } from './icons/web.svg?react';
-export { default as UsersIcon } from './icons/web.svg?react';
+export { default as ShieldIcon } from './icons/shield.svg?react';
+export { default as BlockIcon } from './icons/block.svg?react';
+export { default as PieChartIcon } from './icons/pie-chart.svg?react';
+export { default as UsersIcon } from './icons/users.svg?react';
 
 export type SVGIcon = React.FunctionComponent<
     React.ComponentProps<'svg'> & { title?: string; titleId?: string; desc?: string; descId?: string }

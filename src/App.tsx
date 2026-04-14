@@ -52,6 +52,7 @@ const StepperPage = React.lazy(() => import('./story/pages/stepper/StepperPage')
 const FabSpeedDialPage = React.lazy(() => import('./story/pages/fab-speed-dial/FabSpeedDialPage'));
 const JsonEditorPage = React.lazy(() => import('./story/pages/json-editor/JsonEditorPage'));
 const MarkdownPage = React.lazy(() => import('./story/pages/markdown/MarkdownPage'));
+const HtmlEditorPage = React.lazy(() => import('./story/pages/html-editor/HtmlEditorPage'));
 const StoreBasicPage = React.lazy(() => import('./story/pages/store-basic/StoreBasicPage'));
 const StoreMiddlewarePage = React.lazy(() => import('./story/pages/store-middleware/StoreMiddlewarePage'));
 const StoreModelPage = React.lazy(() => import('./story/pages/store-model/StoreModelPage'));
@@ -91,6 +92,11 @@ const PivotTablePlaygroundPage = React.lazy(() => import('./story/pages/pivot-ta
 const LightboxPage = React.lazy(() => import('./story/pages/lightbox/LightboxPage'));
 const CollapsiblePanelPage = React.lazy(() => import('./story/pages/collapsible-panel/CollapsiblePanelPage'));
 const ServicesPage = React.lazy(() => import('./story/pages/services/ServicesPage'));
+const WeekDaySelectorPage = React.lazy(() => import('./story/pages/week-day-selector/WeekDaySelectorPage'));
+const CardPage = React.lazy(() => import('./story/pages/card/CardPage'));
+const AccordionPage = React.lazy(() => import('./story/pages/accordion/AccordionPage'));
+const SignaturePadPage = React.lazy(() => import('./story/pages/signature-pad/SignaturePadPage'));
+const DiffViewerPage = React.lazy(() => import('./story/pages/diff-viewer/DiffViewerPage'));
 
 const App: React.FC = () => {
     return (
@@ -538,6 +544,12 @@ const App: React.FC = () => {
                     <Route path="/components/collapsible-panel" element={<LayoutWrapper><CollapsiblePanelPage /></LayoutWrapper>} />
                     <Route path="/services/dependency-injection" element={<LayoutWrapper><ServicesPage /></LayoutWrapper>} />
                     <Route path="/components/markdown" element={<LayoutWrapper><MarkdownPage /></LayoutWrapper>} />
+                    <Route path="/components/week-day-selector" element={<LayoutWrapper><WeekDaySelectorPage /></LayoutWrapper>} />
+                    <Route path="/components/card" element={<LayoutWrapper><CardPage /></LayoutWrapper>} />
+                    <Route path="/components/accordion" element={<LayoutWrapper><AccordionPage /></LayoutWrapper>} />
+                    <Route path="/components/signature-pad" element={<LayoutWrapper><SignaturePadPage /></LayoutWrapper>} />
+                    <Route path="/components/diff-viewer" element={<LayoutWrapper><DiffViewerPage /></LayoutWrapper>} />
+                    <Route path="/components/html-editor" element={<LayoutWrapper><HtmlEditorPage /></LayoutWrapper>} />
                     <Route
                         path="*"
                         element={

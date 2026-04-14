@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { BrightSunIcon, ChevronDownIcon, ChevronRightIcon, ExternalLinkIcon, NightLightIcon, SearchIcon } from '../assets/icons';
 import { ColorTheme, colorThemes, useStoryTheme } from './StoryThemeContext';
@@ -34,11 +34,12 @@ const navSections: NavSection[] = [
             { label: 'Masked Input', path: '/components/maskedinput' },
             { label: 'Password', path: '/components/password' },
             { label: 'Textarea', path: '/components/textarea' },
-            { label: 'Markdown Editor', path: '/components/markdown' },
             { label: 'Field Label', path: '/components/fieldlabel' },
             { label: 'Input Group', path: '/components/inputgroup' },
             { label: 'Slider', path: '/components/slider' },
             { label: 'Rating', path: '/components/rating' },
+            { label: 'Signature Pad', path: '/components/signature-pad' },
+            { label: 'Week Day Selector', path: '/components/week-day-selector' },
         ],
     },
     {
@@ -76,6 +77,14 @@ const navSections: NavSection[] = [
             { label: 'Table', path: '/components/table' },
             { label: 'Pivot Table', path: '/components/pivot-table' },
             { label: 'TreeView', path: '/components/tree-view' },
+        ],
+    },
+    {
+        title: 'Editors',
+        key: 'editors',
+        items: [
+            { label: 'Markdown Editor', path: '/components/markdown' },
+            { label: 'HTML Editor', path: '/components/html-editor' },
             { label: 'JSON Editor', path: '/components/json-editor' },
         ],
     },
@@ -143,6 +152,9 @@ const navSections: NavSection[] = [
             { label: 'Sortable', path: '/components/sortable' },
             { label: 'Splitter', path: '/components/splitter' },
             { label: 'Collapsible Panel', path: '/components/collapsible-panel' },
+            { label: 'Accordion', path: '/components/accordion' },
+            { label: 'Card', path: '/components/card' },
+            { label: 'Diff Viewer', path: '/components/diff-viewer' },
             { label: 'Deferred View', path: '/components/deferred-view' },
             { label: 'Infinite Scroll', path: '/components/infinite-scroll' },
             { label: 'Animate On View', path: '/components/animate-on-view' },
@@ -206,20 +218,23 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
     const location = useLocation();
     const { isDark, toggleTheme, colorTheme, setColorTheme } = useStoryTheme();
     const [search, setSearch] = useState('');
-    const [expandedSections, setExpandedSections] = useState<Set<string>>(
-        new Set([
-            'getting-started',
-            'form-inputs',
-            'selection',
-            'data-display',
-            'interactive',
-            'overlays',
-            'state-management',
-            'services',
-            'hooks-utils',
-            'design-system',
-        ]),
-    );
+    const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
+        const initial = new Set<string>(['getting-started']);
+        const active = navSections.find((s) => s.items.some((i) => i.path === location.pathname));
+        if (active) initial.add(active.key);
+        return initial;
+    });
+
+    useEffect(() => {
+        const active = navSections.find((s) => s.items.some((i) => i.path === location.pathname));
+        if (!active) return;
+        setExpandedSections((prev) => {
+            if (prev.has(active.key)) return prev;
+            const next = new Set(prev);
+            next.add(active.key);
+            return next;
+        });
+    }, [location.pathname]);
 
     const filteredSections = useMemo(() => {
         if (!search.trim()) return navSections;

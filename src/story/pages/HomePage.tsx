@@ -40,6 +40,7 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/password': () => import('./password/BasicUsage'),
     '/components/textarea': () => import('./textarea/BasicUsage'),
     '/components/markdown': () => import('./markdown/BasicUsage'),
+    '/components/html-editor': () => import('./html-editor/BasicUsage'),
     '/components/fieldlabel': () => import('./field-label/BasicLabel'),
     '/components/inputgroup': () => import('./input-group/EmailInput'),
     '/components/slider': () => import('./slider/BasicUsage'),
@@ -232,11 +233,12 @@ const formInputs: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Masked Input', description: 'Input with format masks (phone, date, etc.)', path: '/components/maskedinput' },
     { title: 'Password', description: 'Password field with visibility toggle and strength', path: '/components/password' },
     { title: 'Textarea', description: 'Multi-line text area with auto-resize', path: '/components/textarea' },
-    { title: 'Markdown Editor', description: 'Markdown editor and preview with toolbar, upload, and split view', path: '/components/markdown', badge: 'New' },
     { title: 'Field Label', description: 'Accessible form field labels and hints', path: '/components/fieldlabel' },
     { title: 'Input Group', description: 'Group inputs with addons and buttons', path: '/components/inputgroup' },
     { title: 'Slider', description: 'Single/range slider with marks and labels', path: '/components/slider' },
     { title: 'Rating', description: 'Star/heart/thumb rating with fractional precision', path: '/components/rating', badge: 'New' },
+    { title: 'Signature Pad', description: 'Canvas signature capture with smooth strokes, color and thickness variants', path: '/components/signature-pad', badge: 'New' },
+    { title: 'Week Day Selector', description: 'Compact weekday picker with single or multi-day selection', path: '/components/week-day-selector', badge: 'New' },
 ];
 
 const selectionComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -264,6 +266,11 @@ const dataTableComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Table', description: 'Data grid with sort, filter, pagination', path: '/components/table' },
     { title: 'Pivot Table', description: 'Aggregation, pivoting, expand/collapse', path: '/components/pivot-table' },
     { title: 'TreeView', description: 'Hierarchical tree with expand/collapse', path: '/components/tree-view' },
+];
+
+const editorComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Markdown Editor', description: 'Markdown editor and preview with toolbar, upload, and split view', path: '/components/markdown' },
+    { title: 'HTML Editor', description: 'WYSIWYG rich text editor with full formatting, tables, images, and sanitized preview', path: '/components/html-editor', badge: 'New' },
     { title: 'JSON Editor', description: 'Interactive JSON viewer and editor', path: '/components/json-editor' },
 ];
 
@@ -313,6 +320,9 @@ const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Sortable', description: 'Drag-to-reorder lists and grids', path: '/components/sortable' },
     { title: 'Splitter', description: 'Resizable split panels', path: '/components/splitter' },
     { title: 'Collapsible Panel', description: 'Expand/collapse sections & accordion', path: '/components/collapsible-panel' },
+    { title: 'Accordion', description: 'Multi-item collapsible panel group with single/multi expand and five visual variants', path: '/components/accordion', badge: 'New' },
+    { title: 'Card', description: 'Content container with header, body, footer, cover media, and five visual variants', path: '/components/card', badge: 'New' },
+    { title: 'Diff Viewer', description: 'High-performance text diff with unified, split, inline variants and large-file virtualization', path: '/components/diff-viewer', badge: 'New' },
     { title: 'Deferred View', description: 'Lazy-render with visibility detection', path: '/components/deferred-view' },
     { title: 'Infinite Scroll', description: 'Load-more on scroll with indicators', path: '/components/infinite-scroll' },
     { title: 'Animate On View', description: 'Scroll-triggered CSS animations', path: '/components/animate-on-view' },
@@ -413,6 +423,12 @@ const HomePage: React.FC = () => {
                         title="Data Tables"
                         icon="&#9638;"
                         items={dataTableComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Editors"
+                        icon="&#9998;"
+                        items={editorComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                     <CategorySection
