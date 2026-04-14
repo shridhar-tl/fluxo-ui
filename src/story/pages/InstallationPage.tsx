@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { CodeBlock } from '../CodeBlock';
 import PageLayout from '../PageLayout';
 import type { SectionNavItem } from '../SectionNav';
@@ -198,7 +199,9 @@ const MyButton: React.FC<ButtonProps> = (props) => {
                         <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
                             Browse through all available components and their documentation.
                         </p>
-                        <button className="text-blue-400 hover:text-blue-300 font-medium transition-colors">View Components →</button>
+                        <Link to="/components/button" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                            View Components →
+                        </Link>
                     </div>
 
                     <div
@@ -213,7 +216,9 @@ const MyButton: React.FC<ButtonProps> = (props) => {
                         <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
                             Learn how to customize themes and styling to match your brand.
                         </p>
-                        <button className="text-blue-400 hover:text-blue-300 font-medium transition-colors">Theming Guide →</button>
+                        <Link to="/" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                            Theming Guide →
+                        </Link>
                     </div>
                 </div>
             </section>
