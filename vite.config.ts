@@ -1,6 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs-extra';
+import pkg from './package.json';
 import { defineConfig, type Plugin } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import svgr from 'vite-plugin-svgr';
@@ -23,6 +24,9 @@ const htmlPlugin = createHtmlPlugin({
 });
 
 export default defineConfig({
+    define: {
+        __FLUXO_UI_VERSION__: JSON.stringify(pkg.version),
+    },
     build: {
         sourcemap: true,
         outDir: 'build',

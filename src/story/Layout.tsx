@@ -90,6 +90,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     >
                         Fluxo UI
                     </span>
+                    <span
+                        title={`Version ${__FLUXO_UI_VERSION__}`}
+                        className={cn(
+                            'inline-flex items-center px-1.5 py-px rounded-full text-[9px] font-semibold tracking-wide leading-none border',
+                            {
+                                'bg-white/10 text-gray-200 border-white/15': isDark,
+                                'bg-gray-900/5 text-gray-700 border-gray-900/10': !isDark,
+                            },
+                        )}
+                    >
+                        v{__FLUXO_UI_VERSION__}
+                    </span>
                 </div>
             </div>
 
@@ -147,7 +159,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <Navigation />
             </aside>
 
-            <div className="flex-1 md:ml-60 flex flex-col min-h-screen max-w-full overflow-x-clip">
+            <div className="flex-1 min-w-0 md:ml-60 flex flex-col min-h-screen max-w-full overflow-x-clip">
                 <main className="flex-1">
                     <div className="w-full px-3 py-4 pt-16 md:px-8 md:py-8 md:pt-8">{children}</div>
                 </main>

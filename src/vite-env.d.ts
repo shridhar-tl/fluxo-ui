@@ -11,3 +11,5 @@ declare module '*.css' {
     const content: { [className: string]: string };
     export default content;
 }
+
+declare const __FLUXO_UI_VERSION__: string;

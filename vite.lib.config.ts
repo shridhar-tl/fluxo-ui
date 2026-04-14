@@ -111,6 +111,7 @@ export default defineConfig({
                 'react-dnd',
                 'react-dnd-html5-backend',
                 'html2canvas',
+                // The following externals are required as vite plugin is exported
                 'vite',
                 'fs',
                 'path',

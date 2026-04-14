@@ -38,6 +38,60 @@ $bp-2xl: 1536px;
     --eui-radius-md: 0.375rem;
 }
 
+@mixin eui-thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--eui-border) transparent;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--eui-border);
+        border-radius: 3px;
+
+        &:hover {
+            background-color: var(--eui-text-muted);
+        }
+    }
+
+    &::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+}
+
+[class*="eui-"] {
+    scrollbar-width: thin;
+    scrollbar-color: var(--eui-border) transparent;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: var(--eui-border);
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: var(--eui-text-muted);
+    }
+
+    &::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+}
+
 body.mode-dark {
     --eui-bg: #1f2937;
     --eui-bg-subtle: #111827;

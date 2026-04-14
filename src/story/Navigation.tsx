@@ -223,13 +223,27 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
                 <div className="flex items-center gap-2.5">
                     <img src="/logo.svg" alt="Fluxo UI" className="w-7 h-7 rounded-lg shadow-md" />
                     <div>
-                        <div
-                            className={cn('text-sm font-semibold tracking-tight leading-tight', {
-                                'text-white': isDark,
-                                'text-gray-900': !isDark,
-                            })}
-                        >
-                            Fluxo UI
+                        <div className="flex items-center gap-1.5">
+                            <div
+                                className={cn('text-sm font-semibold tracking-tight leading-tight', {
+                                    'text-white': isDark,
+                                    'text-gray-900': !isDark,
+                                })}
+                            >
+                                Fluxo UI
+                            </div>
+                            <span
+                                title={`Version ${__FLUXO_UI_VERSION__}`}
+                                className={cn(
+                                    'inline-flex items-center px-1.5 py-px rounded-full text-[9px] font-semibold tracking-wide leading-none border',
+                                    {
+                                        'bg-white/10 text-gray-200 border-white/15': isDark,
+                                        'bg-gray-900/5 text-gray-700 border-gray-900/10': !isDark,
+                                    },
+                                )}
+                            >
+                                v{__FLUXO_UI_VERSION__}
+                            </span>
                         </div>
                         <div
                             className={cn('text-[10px] leading-tight mt-0.5', {

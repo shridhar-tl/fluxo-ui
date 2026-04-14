@@ -5,6 +5,9 @@
     flex-direction: column;
     gap: 12px;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
     font-family: var(--eui-font-family);
     color: var(--eui-text);
 }
@@ -77,21 +80,10 @@
     overflow-y: hidden;
     padding: 4px;
     align-items: flex-start;
+    min-width: 0;
+    max-width: 100%;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-
-    &::-webkit-scrollbar {
-        height: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: var(--eui-border-subtle);
-        border-radius: 3px;
-    }
 }
 
 .eui-kanban-columns-sortable {
@@ -363,15 +355,6 @@ body.mode-dark .eui-kanban-column-over-limit .eui-kanban-column-count {
     overflow-y: auto;
     padding: 8px;
     min-height: 60px;
-
-    &::-webkit-scrollbar {
-        width: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: var(--eui-border-subtle);
-        border-radius: 2px;
-    }
 }
 
 .eui-kanban-sticky-headers .eui-kanban-column-header {
