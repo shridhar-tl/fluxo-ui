@@ -6,7 +6,7 @@ import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 import { sourceItems } from './drag-drop-story-data';
 
-const code = `import { Draggable, Droppable } from 'fluxo-ui/dnd';
+const code = `import { Draggable, Droppable } from 'fluxo-ui';
 
 function DragDropExample() {
   const [items] = useState(['Item 1', 'Item 2', 'Item 3']);

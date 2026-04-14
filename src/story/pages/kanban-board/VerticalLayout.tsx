@@ -16,16 +16,14 @@ const code = `<KanbanBoard
 const VerticalLayout: React.FC = () => (
     <>
         <ComponentDemo title="Vertical Layout" description="Stack columns vertically instead of horizontally. Useful for priority triage or narrow containers." centered={false}>
-            <div style={{ overflow: 'auto' }}>
-                <KanbanBoard
-                    columns={verticalColumns}
-                    cards={verticalCards}
-                    layout="vertical"
-                    draggable
-                    showCardCount
-                    allowCollapse
-                />
-            </div>
+            <KanbanBoard
+                columns={verticalColumns}
+                cards={verticalCards}
+                layout="vertical"
+                draggable
+                showCardCount
+                allowCollapse
+            />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

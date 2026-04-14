@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const code = `import { Draggable, Droppable } from 'fluxo-ui/dnd';
+const code = `import { Draggable, Droppable } from 'fluxo-ui';
 
 function KanbanBoard() {
   const [items, setItems] = useState({

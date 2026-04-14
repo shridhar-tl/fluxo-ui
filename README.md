@@ -22,7 +22,6 @@ A comprehensive, accessible React component library built with TypeScript. Inclu
 
 Optional peer dependencies (only needed if you use the related components):
 
-- `react-dnd` and `react-dnd-html5-backend` — for drag-and-drop components
 - `html2canvas` — for image/canvas export features
 
 ## Installation

@@ -1,47 +1,18 @@
-import { ReactNode } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { ReactNode, useEffect } from 'react';
+import { ensureDocumentListeners } from './core/install';
 import './drag-drop.scss';
 
-// DragDropProvider component props
 export interface DragDropProviderProps {
-    /**
-     * Children to wrap with DnD context
-     */
     children: ReactNode;
-
-    /**
-     * Optional custom backend (defaults to HTML5Backend)
-     */
-    backend?: any;
-
-    /**
-     * Optional backend options
-     */
-    options?: any;
+    /** @deprecated kept for API compatibility, now a no-op */
+    backend?: unknown;
+    /** @deprecated kept for API compatibility, now a no-op */
+    options?: unknown;
 }
 
-/**
- * DragDropProvider component that wraps children with react-dnd context.
- * This must be placed at the root of your app (or at least above any drag-drop components).
- *
- * @example
- * ```tsx
- * import { DragDropProvider } from 'fluxo-ui';
- *
- * function App() {
- *   return (
- *     <DragDropProvider>
- *       <YourApp />
- *     </DragDropProvider>
- *   );
- * }
- * ```
- */
-export default function DragDropProvider({ children, backend = HTML5Backend, options }: DragDropProviderProps) {
-    return (
-        <DndProvider backend={backend} options={options}>
-            {children}
-        </DndProvider>
-    );
+export default function DragDropProvider({ children }: DragDropProviderProps) {
+    useEffect(() => {
+        ensureDocumentListeners();
+    }, []);
+    return <>{children}</>;
 }

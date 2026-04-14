@@ -36,38 +36,36 @@ const CardActions: React.FC = () => {
     return (
         <>
             <ComponentDemo title="Custom Card Actions" description="Use cardActionsTemplate to add action buttons in the card footer area." centered={false}>
-                <div style={{ overflow: 'auto' }}>
-                    <KanbanBoard
-                        columns={compactColumns}
-                        cards={compactCards}
-                        draggable
-                        showCardCount
-                        cardActionsTemplate={(card: KanbanCardData, _column: KanbanColumnData) => (
-                            <div className="flex items-center gap-1 mt-1">
-                                <button
-                                    className={cn('px-2 py-0.5 text-[11px] rounded transition-colors', {
-                                        'hover:bg-white/10 text-gray-400': isDark,
-                                        'hover:bg-gray-100 text-gray-500': !isDark,
-                                    })}
-                                    onClick={(e) => { e.stopPropagation(); console.log('Edit:', card.title); }}
-                                    type="button"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    className={cn('px-2 py-0.5 text-[11px] rounded transition-colors', {
-                                        'hover:bg-white/10 text-gray-400': isDark,
-                                        'hover:bg-gray-100 text-gray-500': !isDark,
-                                    })}
-                                    onClick={(e) => { e.stopPropagation(); console.log('Archive:', card.title); }}
-                                    type="button"
-                                >
-                                    Archive
-                                </button>
-                            </div>
-                        )}
-                    />
-                </div>
+                <KanbanBoard
+                    columns={compactColumns}
+                    cards={compactCards}
+                    draggable
+                    showCardCount
+                    cardActionsTemplate={(card: KanbanCardData, _column: KanbanColumnData) => (
+                        <div className="flex items-center gap-1 mt-1">
+                            <button
+                                className={cn('px-2 py-0.5 text-[11px] rounded transition-colors', {
+                                    'hover:bg-white/10 text-gray-400': isDark,
+                                    'hover:bg-gray-100 text-gray-500': !isDark,
+                                })}
+                                onClick={(e) => { e.stopPropagation(); console.log('Edit:', card.title); }}
+                                type="button"
+                            >
+                                Edit
+                            </button>
+                            <button
+                                className={cn('px-2 py-0.5 text-[11px] rounded transition-colors', {
+                                    'hover:bg-white/10 text-gray-400': isDark,
+                                    'hover:bg-gray-100 text-gray-500': !isDark,
+                                })}
+                                onClick={(e) => { e.stopPropagation(); console.log('Archive:', card.title); }}
+                                type="button"
+                            >
+                                Archive
+                            </button>
+                        </div>
+                    )}
+                />
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock code={code} language="tsx" />

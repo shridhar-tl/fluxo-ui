@@ -60,17 +60,15 @@ const CollapsibleColumns: React.FC = () => {
                 description="Click the collapse button in the column header to collapse a column. The 'Code Review' column starts collapsed. Collapsed columns display a rotated vertical title and remaining columns fill the available space. Click a collapsed column to expand it."
                 centered={false}
             >
-                <div style={{ overflow: 'auto' }}>
-                    <KanbanBoard
-                        columns={columns}
-                        cards={cards}
-                        allowCollapse
-                        showCardCount
-                        onColumnCollapse={(columnId: KanbanColumnId, collapsed: boolean) => {
-                            setLastEvent(`${String(columnId)} ${collapsed ? 'collapsed' : 'expanded'}`);
-                        }}
-                    />
-                </div>
+                <KanbanBoard
+                    columns={columns}
+                    cards={cards}
+                    allowCollapse
+                    showCardCount
+                    onColumnCollapse={(columnId: KanbanColumnId, collapsed: boolean) => {
+                        setLastEvent(`${String(columnId)} ${collapsed ? 'collapsed' : 'expanded'}`);
+                    }}
+                />
                 {lastEvent && (
                     <p className="mt-2 text-xs text-gray-500">
                         Last event: <strong>{lastEvent}</strong>

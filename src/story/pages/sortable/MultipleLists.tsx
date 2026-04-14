@@ -17,7 +17,7 @@ const initialColumns: Record<string, KanbanItem[]> = {
     done: [{ id: 105, text: 'Setup CI/CD pipeline', type: 'devops' }],
 };
 
-const code = `import { Sortable } from 'fluxo-ui/dnd';
+const code = `import { Sortable } from 'fluxo-ui';
 
 function KanbanBoard() {
   const [columns, setColumns] = useState({

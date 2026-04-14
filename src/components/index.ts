@@ -22,6 +22,33 @@ export { InfiniteScroll } from './InfiniteScroll';
 export type { InfiniteScrollProps } from './InfiniteScroll';
 export { default as DateRangePicker } from './date-range';
 export type { DateRangeValue, DateSelectedCallbackArg, RangeOption, SelectionMode } from './date-range';
+export { DragDropProvider, Draggable, Droppable, Sortable, useDrag, useDrop, useDragLayer } from './drag-drop';
+export type {
+    DragDropProviderProps,
+    DndRefCallback,
+    DraggableProps,
+    DraggableRenderProps,
+    DragItem as DndDragItem,
+    DropResult as DndDropResult,
+    DragPreviewProp,
+    DropIndicator,
+    DropOrientation,
+    DroppableProps,
+    DroppableRenderProps,
+    SortableChangeEvent,
+    SortableProps,
+    SortableOrientation,
+    DropPosition,
+    DropEffect,
+    ClientPoint,
+    ActiveDrag,
+    DndAxis,
+    UseDragReturn,
+    UseDropReturn,
+    UseDropSpec,
+    DragLayerState,
+} from './drag-drop';
+export * from './kanban-board';
 export { Dropdown } from './Dropdown';
 export { Fab } from './Fab';
 export type { FabPosition, FabProps, FabSize, FabVariant } from './Fab';

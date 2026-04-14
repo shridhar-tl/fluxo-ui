@@ -41,17 +41,15 @@ const card: KanbanCardData = {
 const DetailedCards: React.FC = () => (
     <>
         <ComponentDemo title="Detailed Card View" description="Cards with descriptions, progress bars, labels, subtask counts, and assignee stacking." centered={false}>
-            <div style={{ overflow: 'auto' }}>
-                <KanbanBoard
-                    columns={detailedColumns}
-                    cards={detailedCards}
-                    cardSize="detailed"
-                    draggable
-                    showCardCount
-                    showColumnLimit
-                    allowCollapse
-                />
-            </div>
+            <KanbanBoard
+                columns={detailedColumns}
+                cards={detailedCards}
+                cardSize="detailed"
+                draggable
+                showCardCount
+                showColumnLimit
+                allowCollapse
+            />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

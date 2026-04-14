@@ -37,15 +37,13 @@ const code = `const cards: KanbanCardData[] = [
 const BlockedCards: React.FC = () => (
     <>
         <ComponentDemo title="Blocked Cards" description="Set blocked: true on a card to visually indicate it is blocked. Combine with color to add a colored left border." centered={false}>
-            <div style={{ overflow: 'auto' }}>
-                <KanbanBoard
-                    columns={blockedColumns}
-                    cards={blockedCards}
-                    cardSize="detailed"
-                    draggable
-                    showCardCount
-                />
-            </div>
+            <KanbanBoard
+                columns={blockedColumns}
+                cards={blockedCards}
+                cardSize="detailed"
+                draggable
+                showCardCount
+            />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

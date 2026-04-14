@@ -21,15 +21,13 @@ const code = `const columns: KanbanColumnData[] = [
 const LockedColumns: React.FC = () => (
     <>
         <ComponentDemo title="Locked Columns" description="Set locked: true on a column to prevent drag-and-drop and hide add/delete controls. Ideal for archival or read-only columns." centered={false}>
-            <div style={{ overflow: 'auto' }}>
-                <KanbanBoard
-                    columns={lockedColumns}
-                    cards={lockedCards}
-                    draggable
-                    allowAddCard
-                    showCardCount
-                />
-            </div>
+            <KanbanBoard
+                columns={lockedColumns}
+                cards={lockedCards}
+                draggable
+                allowAddCard
+                showCardCount
+            />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

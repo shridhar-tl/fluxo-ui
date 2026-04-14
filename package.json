@@ -1,6 +1,6 @@
 {
     "name": "fluxo-ui",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "A comprehensive, accessible React component library built with TypeScript. Includes 60+ production-ready UI components, a custom state management solution, dependency injection container, 12 color themes, dark mode, and full keyboard navigation.",
     "keywords": [
         "react-component-library",
@@ -60,20 +60,10 @@
             "import": "./dist/utils.js",
             "require": "./dist/utils.cjs"
         },
-        "./dnd": {
-            "types": "./dist/src/components/drag-drop/index.d.ts",
-            "import": "./dist/dnd.js",
-            "require": "./dist/dnd.cjs"
-        },
         "./draw": {
             "types": "./dist/src/components/canvas-draw/index.d.ts",
             "import": "./dist/draw.js",
             "require": "./dist/draw.cjs"
-        },
-        "./kanban": {
-            "types": "./dist/src/components/kanban-board/index.d.ts",
-            "import": "./dist/kanban.js",
-            "require": "./dist/kanban.cjs"
         },
         "./styles": "./dist/styles/components.css",
         "./services": {
@@ -107,17 +97,9 @@
     ],
     "peerDependencies": {
         "react": ">=18.0.0",
-        "react-dnd": "^16.0.1",
-        "react-dnd-html5-backend": "^16.0.1",
         "react-dom": ">=18.0.0"
     },
     "peerDependenciesMeta": {
-        "react-dnd": {
-            "optional": true
-        },
-        "react-dnd-html5-backend": {
-            "optional": true
-        },
         "html2canvas": {
             "optional": true
         }
@@ -142,8 +124,6 @@
         "html2canvas": "^1.4.1",
         "puppeteer": "^24.40.0",
         "react": "^19.2.5",
-        "react-dnd": "^16.0.1",
-        "react-dnd-html5-backend": "^16.0.1",
         "react-dom": "^19.2.5",
         "react-router-dom": "^7.14.1",
         "sass": "^1.99.0",

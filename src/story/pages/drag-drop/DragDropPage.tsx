@@ -8,6 +8,9 @@ import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import BasicDragDrop from './BasicDragDrop';
+import DragHandleStrict from './DragHandleStrict';
+import DropPositionAuto from './DropPositionAuto';
+import FileDropZone from './FileDropZone';
 import MultiContainer from './MultiContainer';
 import RenderProps from './RenderProps';
 import SetupSection from './SetupSection';
@@ -141,11 +144,14 @@ const droppableProps = {
 };
 
 const sectionNavItems: SectionNavItem[] = [
-    { id: 'setup', title: 'Setup', description: 'DragDropProvider setup' },
+    { id: 'setup', title: 'Setup', description: 'Import and use' },
     { id: 'basic', title: 'Basic Drag & Drop', description: 'Simple drag and drop' },
     { id: 'multi-container', title: 'Multi-Container', description: 'Kanban-style board' },
     { id: 'render-props', title: 'Render Props', description: 'Custom styling' },
     { id: 'type-based', title: 'Type-Based', description: 'Drop type restrictions' },
+    { id: 'drop-position-auto', title: 'Drop Position Auto', description: 'Before / after insertion' },
+    { id: 'drag-handles', title: 'Drag Handles', description: 'Handle-only activation' },
+    { id: 'file-drop', title: 'File Drop', description: 'Native OS file drops' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'draggable-props', title: 'Draggable Props', description: 'Draggable API' },
     { id: 'droppable-props', title: 'Droppable Props', description: 'Droppable API' },
@@ -205,7 +211,7 @@ const DragDropPage: React.FC = () => {
                     Drag & Drop
                 </h1>
                 <p className={cn('text-base md:text-xl', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                    Powerful drag and drop components built with react-dnd for creating interactive interfaces.
+                    Powerful drag and drop components with scroll-aware positioning, auto-scroll, touch support, and fine-grained drop validation — zero third-party dependencies.
                 </p>
             </div>
 
@@ -242,9 +248,30 @@ const DragDropPage: React.FC = () => {
                 <TypeBasedDragDrop />
             </section>
 
+            <section id="drop-position-auto" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Drop Position — Before / After
+                </h2>
+                <DropPositionAuto />
+            </section>
+
+            <section id="drag-handles" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Strict Drag Handles
+                </h2>
+                <DragHandleStrict />
+            </section>
+
+            <section id="file-drop" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Native File Drop
+                </h2>
+                <FileDropZone />
+            </section>
+
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import { DragDropProvider, Draggable, Droppable } from 'fluxo-ui/dnd';`} />
+                <CodeBlock code={`import { Draggable, Droppable } from 'fluxo-ui';`} />
             </section>
 
             <section id="draggable-props" className="scroll-mt-8">

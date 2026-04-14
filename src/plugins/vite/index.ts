@@ -7,7 +7,7 @@ interface EtherUiSourcePluginOptions {
     useSource?: boolean;
 }
 
-const peerDepsWithSubpaths: string[] = ['react', 'react-dom', 'react/jsx-runtime', 'react-dnd', 'react-dnd-html5-backend'];
+const peerDepsWithSubpaths: string[] = ['react', 'react-dom', 'react/jsx-runtime'];
 
 function etherUiSource(options: EtherUiSourcePluginOptions = {}): Plugin {
     return {

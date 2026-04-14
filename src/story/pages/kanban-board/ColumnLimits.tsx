@@ -22,15 +22,13 @@ const code = `const columns: KanbanColumnData[] = [
 const ColumnLimits: React.FC = () => (
     <>
         <ComponentDemo title="WIP Limits" description="Set limit on columns to enforce work-in-progress constraints. Columns exceeding their limit display a visual warning." centered={false}>
-            <div style={{ overflow: 'auto' }}>
-                <KanbanBoard
-                    columns={wipColumns}
-                    cards={wipCards}
-                    draggable
-                    showCardCount
-                    showColumnLimit
-                />
-            </div>
+            <KanbanBoard
+                columns={wipColumns}
+                cards={wipCards}
+                draggable
+                showCardCount
+                showColumnLimit
+            />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

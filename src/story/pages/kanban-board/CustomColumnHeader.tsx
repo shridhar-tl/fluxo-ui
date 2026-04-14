@@ -38,35 +38,33 @@ const CustomColumnHeader: React.FC = () => {
     return (
         <>
             <ComponentDemo title="Custom Column Header & Empty State" description="Use columnHeaderTemplate and emptyColumnTemplate for full control over column rendering." centered={false}>
-                <div style={{ overflow: 'auto' }}>
-                    <KanbanBoard
-                        columns={basicColumns}
-                        cards={basicCards}
-                        draggable
-                        columnHeaderTemplate={(column: KanbanColumnData, cardCount: number) => (
-                            <div className="flex items-center gap-2 px-3 py-2.5">
-                                <span
-                                    className="w-3 h-3 rounded-full shrink-0"
-                                    style={{ backgroundColor: column.color }}
-                                />
-                                <span className={cn('text-sm font-semibold flex-1', { 'text-gray-100': isDark, 'text-gray-800': !isDark })}>
-                                    {column.title}
-                                </span>
-                                <span className={cn('text-[11px] font-medium px-2 py-0.5 rounded-full', {
-                                    'bg-white/10 text-gray-400': isDark,
-                                    'bg-gray-100 text-gray-500': !isDark,
-                                })}>
-                                    {cardCount}
-                                </span>
-                            </div>
-                        )}
-                        emptyColumnTemplate={(column: KanbanColumnData) => (
-                            <div className={cn('text-center py-8 text-sm italic', { 'text-gray-600': isDark, 'text-gray-400': !isDark })}>
-                                No items in {column.title}
-                            </div>
-                        )}
-                    />
-                </div>
+                <KanbanBoard
+                    columns={basicColumns}
+                    cards={basicCards}
+                    draggable
+                    columnHeaderTemplate={(column: KanbanColumnData, cardCount: number) => (
+                        <div className="flex items-center gap-2 px-3 py-2.5">
+                            <span
+                                className="w-3 h-3 rounded-full shrink-0"
+                                style={{ backgroundColor: column.color }}
+                            />
+                            <span className={cn('text-sm font-semibold flex-1', { 'text-gray-100': isDark, 'text-gray-800': !isDark })}>
+                                {column.title}
+                            </span>
+                            <span className={cn('text-[11px] font-medium px-2 py-0.5 rounded-full', {
+                                'bg-white/10 text-gray-400': isDark,
+                                'bg-gray-100 text-gray-500': !isDark,
+                            })}>
+                                {cardCount}
+                            </span>
+                        </div>
+                    )}
+                    emptyColumnTemplate={(column: KanbanColumnData) => (
+                        <div className={cn('text-center py-8 text-sm italic', { 'text-gray-600': isDark, 'text-gray-400': !isDark })}>
+                            No items in {column.title}
+                        </div>
+                    )}
+                />
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock code={code} language="tsx" />

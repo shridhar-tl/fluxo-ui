@@ -9,26 +9,31 @@ const SetupSection: React.FC = () => {
     return (
         <>
             <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                Before using drag and drop components, you must wrap your app with the DragDropProvider at the root level.
+                Drag & drop components work out of the box — no provider wrapping, no extra peer dependencies.
+                Just import from <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">fluxo-ui</code> and go.
             </p>
-            <CodeBlock title="1. Install peer dependencies" code={`npm install react-dnd react-dnd-html5-backend`} />
             <CodeBlock
-                title="2. Wrap your app with DragDropProvider"
-                code={`import { DragDropProvider } from 'fluxo-ui/dnd';
+                title="Use it directly"
+                code={`import { Draggable, Droppable } from 'fluxo-ui';
 
-function App() {
+function MyList() {
   return (
-    <DragDropProvider>
-      <YourApp />
-    </DragDropProvider>
+    <>
+      <Draggable containerId="list" index={0} item={myItem}>
+        <div>Drag me</div>
+      </Draggable>
+      <Droppable containerId="target" index={0} onDrop={handleDrop}>
+        <div>Drop here</div>
+      </Droppable>
+    </>
   );
 }`}
             />
             <p className={cn('mt-4 text-sm', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                Drag & Drop components are available from the{' '}
-                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">fluxo-ui/dnd</code> entry point. This keeps{' '}
-                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">react-dnd</code> as an optional dependency —
-                projects that don't use drag & drop won't need to install it.
+                The built-in engine supports mouse, touch, pen, drag handles, delay activation, custom live previews, auto-scroll
+                near container edges, and scroll-aware positioning — all with zero third-party dependencies. An optional{' '}
+                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">DragDropProvider</code>{' '}
+                is still exported for backwards compatibility but is no longer required.
             </p>
         </>
     );

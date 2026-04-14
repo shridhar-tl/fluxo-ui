@@ -3,7 +3,7 @@ import { Sortable } from '../../../components/drag-drop';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const code = `import { Sortable } from 'fluxo-ui/dnd';
+const code = `import { Sortable } from 'fluxo-ui';
 
 function SortableList() {
   const [items, setItems] = useState([

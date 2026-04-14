@@ -16,16 +16,14 @@ const code = `<KanbanBoard
 const StickyHeaders: React.FC = () => (
     <>
         <ComponentDemo title="Sticky Column Headers" description="Enable stickyColumnHeaders with maxColumnHeight to keep column headers visible while scrolling through cards." centered={false}>
-            <div style={{ overflow: 'auto' }}>
-                <KanbanBoard
-                    columns={basicColumns}
-                    cards={basicCards}
-                    draggable
-                    showCardCount
-                    stickyColumnHeaders
-                    maxColumnHeight={300}
-                />
-            </div>
+            <KanbanBoard
+                columns={basicColumns}
+                cards={basicCards}
+                draggable
+                showCardCount
+                stickyColumnHeaders
+                maxColumnHeight={300}
+            />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

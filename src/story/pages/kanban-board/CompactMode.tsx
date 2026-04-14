@@ -16,16 +16,14 @@ const code = `<KanbanBoard
 const CompactMode: React.FC = () => (
     <>
         <ComponentDemo title="Compact Mode" description="Minimal card display ideal for high-density boards with many items." centered={false}>
-            <div style={{ overflow: 'auto' }}>
-                <KanbanBoard
-                    columns={compactColumns}
-                    cards={compactCards}
-                    cardSize="compact"
-                    draggable
-                    showCardCount
-                    columnWidth={240}
-                />
-            </div>
+            <KanbanBoard
+                columns={compactColumns}
+                cards={compactCards}
+                cardSize="compact"
+                draggable
+                showCardCount
+                columnWidth={240}
+            />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

@@ -1,100 +1,48 @@
 import classNames from 'classnames';
-import { ReactNode } from 'react';
-import { useDrop, DropTargetMonitor } from 'react-dnd';
-import { DragItem, DropResult } from './Draggable';
-
-export type DndRefCallback<T = HTMLElement> = ((node: T | null) => any) | null;
+import { CSSProperties, ReactNode, useMemo } from 'react';
+import { useDrop } from './hooks/useDrop';
+import type { DragItem, DropPosition, DropResult } from './core/types';
 
 export type DropIndicator = 'highlight' | 'line' | 'none';
-
 export type DropOrientation = 'vertical' | 'horizontal';
+
+export type DndRefCallback<T = HTMLElement> = ((node: T | null) => void) | null;
 
 export interface DroppableRenderProps<T = HTMLElement> {
     dropRef: DndRefCallback<T>;
     canDrop: boolean;
     isOver: boolean;
     isOverCurrent: boolean;
+    position: DropPosition | undefined;
 }
 
 export interface DroppableProps<T = HTMLElement> {
-    /**
-     * Unique identifier for the container
-     */
     containerId: string;
-
-    /**
-     * Index position within the container
-     */
     index: number;
-
-    /**
-     * Optional unique identifier
-     */
     id?: string | number;
-
-    /**
-     * Additional arguments to pass to drop handler
-     */
-    args?: any;
-
-    /**
-     * Type(s) of draggable items this droppable accepts
-     * @default 'any'
-     */
+    args?: unknown;
     accept?: string | string[];
-
-    /**
-     * Additional CSS classes
-     */
     className?: string;
+    style?: CSSProperties;
 
-    /**
-     * How to visually indicate a valid drop target.
-     * - 'highlight': animated glow + inset border around the entire droppable
-     * - 'line': thin insertion line along the edge (great for sortable lists)
-     * - 'none': no built-in indicator, style via render props
-     * @default 'highlight'
-     */
     dropIndicator?: DropIndicator;
-
-    /**
-     * Where to show the insertion line when `dropIndicator='line'`.
-     * - 'start': top (or left when horizontal)
-     * - 'end': bottom (or right when horizontal)
-     * @default 'start'
-     */
     linePosition?: 'start' | 'end';
-
-    /**
-     * Orientation of the container — affects line indicator direction.
-     * @default 'vertical'
-     */
     orientation?: DropOrientation;
 
-    /**
-     * Test ID for testing purposes
-     */
+    dropPosition?: DropPosition | 'auto';
+    edgeThreshold?: number;
+    acceptFiles?: boolean;
+    greedy?: boolean;
+    dropEffect?: 'move' | 'copy' | 'link' | 'none';
+
     testId?: string;
+    canDrop?: boolean | ((item: DragItem) => boolean);
 
-    /**
-     * Whether dropping is currently allowed
-     * @default true
-     */
-    canDrop?: boolean | ((item: DragItem, monitor: DropTargetMonitor) => boolean);
-
-    /**
-     * Callback when an item is dropped
-     */
     onDrop?: (source: DragItem, target: DropResult) => void;
+    onDragEnter?: (item: DragItem) => void;
+    onDragLeave?: (item: DragItem) => void;
+    onHover?: (item: DragItem, position: DropPosition | undefined) => void;
 
-    /**
-     * Callback when a draggable item hovers over this droppable
-     */
-    onHover?: (item: DragItem, monitor: DropTargetMonitor) => void;
-
-    /**
-     * Children can be ReactNode or render prop function
-     */
     children: ReactNode | ((props: DroppableRenderProps<T>) => ReactNode);
 }
 
@@ -102,69 +50,74 @@ function Droppable<T extends HTMLElement = HTMLElement>(props: DroppableProps<T>
     const {
         containerId,
         index,
-        args,
         id,
-        children,
+        args,
         accept = 'any',
         className,
+        style,
         dropIndicator = 'highlight',
         linePosition = 'start',
         orientation = 'vertical',
+        dropPosition = 'inside',
+        edgeThreshold = 8,
+        acceptFiles = false,
+        greedy = true,
+        dropEffect = 'move',
         testId,
+        canDrop: canDropProp,
         onDrop,
+        onDragEnter,
+        onDragLeave,
         onHover,
-        canDrop: canDropProp = true,
+        children,
     } = props;
 
-    const [{ canDrop, isOver, isOverCurrent }, dropRef] = useDrop<DragItem, DropResult, { canDrop: boolean; isOver: boolean; isOverCurrent: boolean }>(
-        () => ({
-            accept,
-            canDrop: (item, monitor) => {
-                if (typeof canDropProp === 'function') {
-                    return canDropProp(item, monitor);
-                }
-                return canDropProp;
-            },
-            drop: (source, monitor) => {
-                // Don't handle drop if it was already handled by a nested droppable
-                if (monitor.didDrop()) {
-                    return undefined;
-                }
+    const drop = useDrop({
+        containerId,
+        index,
+        id,
+        args,
+        accept,
+        greedy,
+        orientation,
+        dropPosition,
+        edgeThreshold,
+        acceptFiles,
+        dropEffect,
+        canDrop: canDropProp,
+        onDragEnter,
+        onDragLeave,
+        onHover,
+        onDrop,
+    });
 
-                const target: DropResult = { index, args, id, containerId };
-                onDrop?.(source, target);
+    const { dropRef, isOver, isOverCurrent, canDrop, position } = drop;
 
-                return target;
-            },
-            hover: (item, monitor) => {
-                onHover?.(item, monitor);
-            },
-            collect: (monitor) => ({
-                isOver: monitor.isOver(),
-                isOverCurrent: monitor.isOver({ shallow: true }),
-                canDrop: monitor.canDrop(),
+    const elClassName = useMemo(
+        () =>
+            classNames('eui-droppable', className, {
+                'eui-droppable-allowed': canDrop,
+                'eui-droppable-denied': !canDrop && isOver,
+                'eui-droppable-hover': isOver,
+                'eui-droppable-hover-current': isOverCurrent,
+                'eui-droppable-indicator-highlight': dropIndicator === 'highlight',
+                'eui-droppable-indicator-line': dropIndicator === 'line',
+                'eui-droppable-line-bottom':
+                    (dropIndicator === 'line' && linePosition === 'end') ||
+                    (dropIndicator === 'line' && dropPosition === 'auto' && position === 'after'),
+                'eui-droppable-line-top':
+                    dropIndicator === 'line' && dropPosition === 'auto' && position === 'before',
+                'eui-droppable-horizontal': dropIndicator === 'line' && orientation === 'horizontal',
             }),
-        }),
-        [onDrop, onHover, index, args, id, containerId, accept, canDropProp]
+        [className, canDrop, isOver, isOverCurrent, dropIndicator, linePosition, orientation, dropPosition, position],
     );
 
     if (typeof children === 'function') {
-        return <>{children({ dropRef, canDrop, isOver, isOverCurrent })}</>;
+        return <>{(children as (p: DroppableRenderProps<T>) => ReactNode)({ dropRef: dropRef as DndRefCallback<T>, canDrop, isOver, isOverCurrent, position })}</>;
     }
 
-    const elClassName = classNames('eui-droppable', className, {
-        'eui-droppable-allowed': canDrop,
-        'eui-droppable-denied': !canDrop,
-        'eui-droppable-hover': isOver,
-        'eui-droppable-hover-current': isOverCurrent,
-        'eui-droppable-indicator-highlight': dropIndicator === 'highlight',
-        'eui-droppable-indicator-line': dropIndicator === 'line',
-        'eui-droppable-line-bottom': dropIndicator === 'line' && linePosition === 'end',
-        'eui-droppable-horizontal': dropIndicator === 'line' && orientation === 'horizontal',
-    });
-
     return (
-        <div ref={dropRef as DndRefCallback<HTMLDivElement>} className={elClassName} data-testid={testId}>
+        <div ref={dropRef as DndRefCallback<HTMLDivElement>} className={elClassName} style={style} data-testid={testId}>
             {children}
         </div>
     );

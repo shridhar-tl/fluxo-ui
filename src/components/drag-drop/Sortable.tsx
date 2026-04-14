@@ -1,148 +1,55 @@
 import classNames from 'classnames';
 import { CSSProperties, ElementType, ReactNode, useCallback, useId, useMemo, useRef } from 'react';
-import Draggable, { DraggableRenderProps, DragItem, DropResult } from './Draggable';
-import Droppable, { DropIndicator, DropOrientation, DroppableRenderProps } from './Droppable';
+import Draggable, { DraggableRenderProps } from './Draggable';
+import Droppable, { DropIndicator, DroppableRenderProps } from './Droppable';
+import type { DragItem, DropOrientation, DropResult } from './core/types';
+
+export type SortableOrientation = DropOrientation;
 
 export interface SortableChangeEvent {
     source?: DragItem;
     target?: DropResult;
     removed?: { index: number; id?: string | number };
+    reason: 'reorder' | 'insert' | 'remove';
 }
 
-export interface SortableProps<T = any> {
-    /**
-     * Array of items to render
-     */
+export interface SortableProps<T = unknown> {
     items: T[];
-
-    /**
-     * Type(s) of external draggable items this sortable accepts
-     */
     accept?: string | string[];
-
-    /**
-     * Default item type for items within this sortable
-     * @default 'any'
-     */
     itemType?: string;
-
-    /**
-     * Property name on items to get their type (for mixed item types)
-     */
     itemTypeProp?: string;
-
-    /**
-     * Additional arguments passed to callbacks
-     */
-    args?: any;
-
-    /**
-     * Additional CSS classes
-     */
+    idProp?: string;
+    args?: unknown;
     className?: string;
-
-    /**
-     * How to visually indicate drop targets on each sortable slot.
-     * - 'line': thin insertion line between items (default, recommended for lists)
-     * - 'highlight': glow around the hovered slot
-     * - 'none': no built-in indicator
-     * @default 'line'
-     */
+    orientation?: SortableOrientation;
     dropIndicator?: DropIndicator;
-
-    /**
-     * Layout orientation for items within the sortable.
-     * @default 'vertical'
-     */
-    orientation?: DropOrientation;
-
-    /**
-     * Gap between items. Accepts any valid CSS length (e.g. '0.5rem', '8px').
-     * @default '0.5rem'
-     */
     gap?: string;
-
-    /**
-     * Inline style passed to the container element
-     */
     style?: CSSProperties;
-
-    /**
-     * Whether items can be removed by dragging to another container
-     * @default true
-     */
-    allowRemove?: boolean;
-
-    /**
-     * Whether to show a placeholder drop zone at the end
-     * @default false
-     */
-    showPlaceholder?: boolean;
-
-    /**
-     * Custom placeholder content
-     */
-    placeholder?: ReactNode;
-
-    /**
-     * HTML tag name for the container element
-     * @default 'div'
-     */
     as?: ElementType;
 
-    /**
-     * Pass drop ref to children render function
-     * @default false
-     */
+    allowRemove?: boolean;
+    showPlaceholder?: boolean;
+    placeholder?: ReactNode;
+    emptyHint?: ReactNode;
+
+    dragHandleProp?: string;
+    canDragItem?: (item: T, index: number) => boolean;
+    canDropItem?: (source: DragItem, index: number) => boolean;
+
+    provideDragRef?: boolean;
     provideDropRef?: boolean;
 
-    /**
-     * Pass drag ref to children render function
-     * @default false
-     */
-    provideDragRef?: boolean;
+    onChange: (items: T[], args?: unknown, event?: SortableChangeEvent) => void;
+    onDrop?: (source: DragItem, target: DropResult, args?: unknown) => void;
+    onRemove?: (removed: { index: number; id?: string | number }, result: DropResult | null) => void;
 
-    /**
-     * Callback when items are reordered or changed
-     */
-    onChange: (items: T[], args?: any, event?: SortableChangeEvent) => void;
+    children: (item: T, index: number, refs: { draggable?: DraggableRenderProps; droppable?: DroppableRenderProps }) => ReactNode;
 
-    /**
-     * Callback when an external item is dropped
-     */
-    onDrop?: (source: DragItem, target: DropResult, args?: any) => void;
-
-    /**
-     * Callback when an item is removed (dragged out)
-     */
-    onRemove?: (removed: { index: number; id?: string | number }, dropResult: DropResult | null) => void;
-
-    /**
-     * Render function for each item
-     */
-    children: (
-        item: T,
-        index: number,
-        refs: {
-            draggable?: DraggableRenderProps;
-            droppable?: DroppableRenderProps;
-        },
-    ) => ReactNode;
-
-    /**
-     * @deprecated Use `children` instead
-     */
-    itemTemplate?: (
-        item: T,
-        index: number,
-        refs: {
-            draggable?: DraggableRenderProps;
-            droppable?: DroppableRenderProps;
-        },
-    ) => ReactNode;
+    /** @deprecated use children */
+    itemTemplate?: (item: T, index: number, refs: { draggable?: DraggableRenderProps; droppable?: DroppableRenderProps }) => ReactNode;
 }
 
-function Sortable<T = any>(props: SortableProps<T>) {
+function Sortable<T = unknown>(props: SortableProps<T>) {
     const propsRef = useRef(props);
     propsRef.current = props;
 
@@ -151,128 +58,140 @@ function Sortable<T = any>(props: SortableProps<T>) {
         accept: acceptFromProps,
         itemType = 'any',
         itemTypeProp,
+        idProp,
         className,
         provideDropRef,
         provideDragRef,
         showPlaceholder,
         placeholder,
+        emptyHint,
         as: Component = 'div',
-        allowRemove = true,
-        dropIndicator = 'line',
+        allowRemove = false,
         orientation = 'vertical',
+        dropIndicator = 'line',
         gap = '0.5rem',
         style,
         children,
         args,
+        canDragItem,
+        canDropItem,
     } = props;
 
-    // Use children or fall back to deprecated itemTemplate
     const renderItem = children || props.itemTemplate;
+    if (!renderItem) throw new Error('Sortable: children render function is required');
 
-    // Combine accepted types with default item type
     const accept = useMemo(() => {
-        if (!acceptFromProps) {
-            return itemType;
-        }
-
-        if (!Array.isArray(acceptFromProps)) {
-            return [acceptFromProps, itemType];
-        }
-
+        if (!acceptFromProps) return itemType;
+        if (!Array.isArray(acceptFromProps)) return [acceptFromProps, itemType];
         return [...acceptFromProps, itemType];
     }, [acceptFromProps, itemType]);
 
     const containerId = useId();
 
-    const handleItemRemoved = useCallback((removed: { index: number; id?: string | number }, dropResult: DropResult | null) => {
-        const { onRemove, items, onChange, args } = propsRef.current;
+    const getItemId = useCallback(
+        (item: T, index: number): string | number | undefined => {
+            if (idProp) {
+                const val = (item as Record<string, unknown>)[idProp];
+                if (typeof val === 'string' || typeof val === 'number') return val;
+            }
+            return index;
+        },
+        [idProp],
+    );
 
-        if (onRemove) {
-            onRemove(removed, dropResult);
+    const handleItemRemoved = useCallback((removed: { index: number; id?: string | number }, dropResult: DropResult | null) => {
+        const current = propsRef.current;
+        if (current.onRemove) {
+            current.onRemove(removed, dropResult);
             return;
         }
-
-        const newItems = [...items];
-        newItems.splice(removed.index, 1);
-
-        onChange(newItems, args, { removed });
+        const next = [...current.items];
+        const idx = typeof removed.id !== 'undefined' ? next.findIndex((it, i) => getItemIdSafe(it, i, current.idProp) === removed.id) : removed.index;
+        if (idx < 0) return;
+        next.splice(idx, 1);
+        current.onChange(next, current.args, { removed, reason: 'remove' });
     }, []);
 
     const handleItemDropped = useCallback(
         (source: DragItem, target: DropResult) => {
-            const { items, onChange, onDrop, args, itemType } = propsRef.current;
+            const current = propsRef.current;
+            const { items: currentItems, onChange, onDrop, args: currentArgs, itemType: currentItemType } = current;
 
-            // Ensure target has item reference
             if (!target.item) {
-                target.item = items[target.index];
+                target.item = currentItems[target.index] as unknown;
             }
 
-            // If item is from external container and has different type or custom drop handler, delegate to onDrop
-            if (source.containerId !== containerId && (onDrop || source.itemType !== itemType)) {
-                onDrop?.(source, target, args);
+            if (source.containerId !== containerId && (onDrop || source.itemType !== currentItemType)) {
+                onDrop?.(source, target, currentArgs);
                 return;
             }
 
-            const newItems = [...items];
-
-            // Remove from original position if reordering within same container
+            const nextItems = [...currentItems];
+            let insertIndex = target.index;
             if (source.containerId === target.containerId) {
-                newItems.splice(source.index, 1);
+                if (source.index < insertIndex) insertIndex -= 1;
+                nextItems.splice(source.index, 1);
             }
+            nextItems.splice(insertIndex, 0, source.item as T);
 
-            // Insert at new position
-            newItems.splice(target.index, 0, source.item);
-
-            onChange(newItems, args, { source, target });
+            onChange(nextItems, currentArgs, {
+                source,
+                target,
+                reason: source.containerId === target.containerId ? 'reorder' : 'insert',
+            });
         },
         [containerId],
     );
 
-    const renderDraggable = useCallback(
-        (item: T, index: number, droppable?: DroppableRenderProps) => {
-            const dragItemType = (itemTypeProp && (item as any)[itemTypeProp]) || itemType;
-
-            return (
-                <Draggable
-                    containerId={containerId}
-                    index={index}
-                    item={item}
-                    args={args}
-                    itemType={dragItemType}
-                    onRemove={allowRemove ? handleItemRemoved : undefined}
-                >
-                    {provideDragRef
-                        ? (draggable) => renderItem(item, index, { draggable, droppable })
-                        : renderItem(item, index, { droppable })}
-                </Draggable>
-            );
-        },
-        [containerId, itemTypeProp, itemType, args, allowRemove, handleItemRemoved, provideDragRef, renderItem],
-    );
-
     const containerStyle = useMemo<CSSProperties>(
         () => ({ '--eui-sortable-gap': gap, ...style } as CSSProperties),
-        [gap, style]
+        [gap, style],
     );
 
     const containerClass = classNames('eui-sortable', className, {
         'eui-sortable-horizontal': orientation === 'horizontal',
     });
 
+    const renderDraggable = (item: T, index: number, droppable?: DroppableRenderProps) => {
+        const dragItemType = (itemTypeProp && (item as Record<string, unknown>)[itemTypeProp]) || itemType;
+        const itemId = getItemId(item, index);
+        const allowedToDrag = canDragItem ? canDragItem(item, index) : true;
+        return (
+            <Draggable
+                containerId={containerId}
+                index={index}
+                id={itemId}
+                item={item}
+                args={args}
+                itemType={typeof dragItemType === 'string' ? dragItemType : itemType}
+                canDrag={allowedToDrag}
+                onRemove={allowRemove ? handleItemRemoved : undefined}
+            >
+                {provideDragRef
+                    ? (draggable) => renderItem(item, index, { draggable, droppable })
+                    : renderItem(item, index, { droppable })}
+            </Draggable>
+        );
+    };
+
+    const itemCanDrop = canDropItem ? (src: DragItem, index: number) => canDropItem(src, index) : undefined;
+
     return (
         <Component className={containerClass} style={containerStyle}>
             {items.map((item, i) => (
                 <Droppable
-                    key={i}
+                    key={(getItemId(item, i) as string | number | undefined) ?? i}
                     containerId={containerId}
                     index={i}
                     accept={accept}
                     onDrop={handleItemDropped}
                     args={args}
-                    dropIndicator={dropIndicator}
                     orientation={orientation}
-                    linePosition="start"
+                    dropIndicator={dropIndicator}
+                    dropPosition="auto"
+                    edgeThreshold={10}
                     className="eui-sortable-item"
+                    canDrop={itemCanDrop ? (src) => itemCanDrop(src, i) : undefined}
                 >
                     {provideDropRef ? (droppable) => renderDraggable(item, i, droppable) : renderDraggable(item, i)}
                 </Droppable>
@@ -300,11 +219,19 @@ function Sortable<T = any>(props: SortableProps<T>) {
                     onDrop={handleItemDropped}
                     dropIndicator="highlight"
                 >
-                    <div className="eui-sortable-empty-hint">Drop here</div>
+                    <div className="eui-sortable-empty-hint">{emptyHint ?? 'Drop here'}</div>
                 </Droppable>
             )}
         </Component>
     );
+}
+
+function getItemIdSafe<T>(item: T, index: number, idProp?: string): string | number | undefined {
+    if (idProp) {
+        const val = (item as Record<string, unknown>)[idProp];
+        if (typeof val === 'string' || typeof val === 'number') return val;
+    }
+    return index;
 }
 
 export default Sortable;

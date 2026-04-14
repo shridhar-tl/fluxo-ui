@@ -13,7 +13,7 @@ const initialTasks: Task[] = [
     { id: 5, title: 'Deploy to production', description: 'Configure CI/CD and deploy', priority: 'low' },
 ];
 
-const code = `import { Sortable } from 'fluxo-ui/dnd';
+const code = `import { Sortable } from 'fluxo-ui';
 
 interface Task {
   id: number;

@@ -85,9 +85,7 @@ export default defineConfig({
         lib: {
             entry: {
                 index: resolve(__dirname, 'src/components/index.ts'),
-                dnd: resolve(__dirname, 'src/components/drag-drop/index.tsx'),
                 draw: resolve(__dirname, 'src/components/canvas-draw/index.ts'),
-                kanban: resolve(__dirname, 'src/components/kanban-board/index.ts'),
                 utils: resolve(__dirname, 'src/utils/lib.ts'),
                 hooks: resolve(__dirname, 'src/hooks/index.ts'),
                 icons: resolve(__dirname, 'src/assets/icons.ts'),
@@ -108,8 +106,6 @@ export default defineConfig({
                 'react',
                 'react-dom',
                 'react/jsx-runtime',
-                'react-dnd',
-                'react-dnd-html5-backend',
                 'html2canvas',
                 // The following externals are required as vite plugin is exported
                 'vite',

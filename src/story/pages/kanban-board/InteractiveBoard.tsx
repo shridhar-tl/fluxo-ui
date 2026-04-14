@@ -149,32 +149,30 @@ const InteractiveBoard: React.FC = () => {
         <>
             <ComponentDemo title="Interactive Board" description="Full interactive demo: drag cards, add/delete cards and columns, edit column titles, reorder columns." centered={false}>
                 <div className="space-y-3">
-                    <div style={{ overflow: 'auto' }}>
-                        <KanbanBoard
-                            columns={interactiveColumns}
-                            cards={interactiveCards}
-                            draggable
-                            columnDraggable
-                            allowAddCard
-                            allowAddColumn
-                            allowDeleteCard
-                            allowDeleteColumn
-                            allowEditColumn
-                            allowCollapse
-                            showCardCount
-                            showColumnLimit
-                            showSearch
-                            onCardMove={handleCardMove}
-                            onCardReorder={handleCardReorder}
-                            onCardCreate={handleCardCreate}
-                            onCardDelete={handleCardDelete}
-                            onCardClick={handleCardClick}
-                            onColumnCreate={handleColumnCreate}
-                            onColumnDelete={handleColumnDelete}
-                            onColumnUpdate={handleColumnUpdate}
-                            onColumnReorder={handleColumnReorder}
-                        />
-                    </div>
+                    <KanbanBoard
+                        columns={interactiveColumns}
+                        cards={interactiveCards}
+                        draggable
+                        columnDraggable
+                        allowAddCard
+                        allowAddColumn
+                        allowDeleteCard
+                        allowDeleteColumn
+                        allowEditColumn
+                        allowCollapse
+                        showCardCount
+                        showColumnLimit
+                        showSearch
+                        onCardMove={handleCardMove}
+                        onCardReorder={handleCardReorder}
+                        onCardCreate={handleCardCreate}
+                        onCardDelete={handleCardDelete}
+                        onCardClick={handleCardClick}
+                        onColumnCreate={handleColumnCreate}
+                        onColumnDelete={handleColumnDelete}
+                        onColumnUpdate={handleColumnUpdate}
+                        onColumnReorder={handleColumnReorder}
+                    />
                     {lastEvent && (
                         <div className={cn('text-sm px-4 py-2 rounded border', {
                             'border-blue-800 bg-blue-900/30 text-blue-300': isDark,

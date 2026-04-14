@@ -45,18 +45,16 @@ const BasicUsage: React.FC = () => (
             description="Standard board with drag-and-drop, card count, search, and collapsible columns."
             centered={false}
         >
-            <div style={{ overflow: 'auto' }}>
-                <KanbanBoard
-                    columns={basicColumns}
-                    cards={basicCards}
-                    draggable
-                    showCardCount
-                    showColumnLimit
-                    showSearch
-                    allowCollapse
-                    onCardClick={(e) => console.log('Clicked:', e.card.title)}
-                />
-            </div>
+            <KanbanBoard
+                columns={basicColumns}
+                cards={basicCards}
+                draggable
+                showCardCount
+                showColumnLimit
+                showSearch
+                allowCollapse
+                onCardClick={(e) => console.log('Clicked:', e.card.title)}
+            />
         </ComponentDemo>
         <div className="mt-4">
             <CodeBlock code={code} language="tsx" />

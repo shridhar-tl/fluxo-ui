@@ -9,26 +9,28 @@ const SetupSection: React.FC = () => {
     return (
         <>
             <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                Before using the Sortable component, you must wrap your app with the DragDropProvider at the root level.
+                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">Sortable</code>{' '}
+                is available from the main <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">fluxo-ui</code>{' '}
+                entry — no provider wrapping and no extra peer dependencies.
             </p>
-            <CodeBlock title="1. Install peer dependencies" code={`npm install react-dnd react-dnd-html5-backend`} />
             <CodeBlock
-                title="2. Wrap your app with DragDropProvider"
-                code={`import { DragDropProvider } from 'fluxo-ui/dnd';
+                title="Use it directly"
+                code={`import { Sortable } from 'fluxo-ui';
 
-function App() {
+function MyList() {
+  const [items, setItems] = useState(['One', 'Two', 'Three']);
   return (
-    <DragDropProvider>
-      <YourApp />
-    </DragDropProvider>
+    <Sortable items={items} onChange={setItems}>
+      {(item) => <div className="row">{item}</div>}
+    </Sortable>
   );
 }`}
             />
             <p className={cn('mt-4 text-sm', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                Drag & Drop components are available from the{' '}
-                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">fluxo-ui/dnd</code> entry point. This keeps{' '}
-                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">react-dnd</code> as an optional dependency —
-                projects that don't use drag & drop won't need to install it.
+                Sortable ships with scroll-aware positioning, auto-scroll near container edges, touch and pen support, optional
+                drag handles, delay activation, and fine-grained{' '}
+                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">canDragItem</code> /{' '}
+                <code className="px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-700 text-sm">canDropItem</code> callbacks — all in the main library bundle.
             </p>
         </>
     );

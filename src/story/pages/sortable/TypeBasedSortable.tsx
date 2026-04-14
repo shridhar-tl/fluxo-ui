@@ -5,7 +5,7 @@ import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
-const code = `import { Sortable } from 'fluxo-ui/dnd';
+const code = `import { Sortable } from 'fluxo-ui';
 
 function TypeBasedSorting() {
   const [items, setItems] = useState({

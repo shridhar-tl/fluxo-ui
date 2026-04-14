@@ -11,6 +11,7 @@ import BasicSortable from './BasicSortable';
 import ComplexItems from './ComplexItems';
 import DragHandles from './DragHandles';
 import MultipleLists from './MultipleLists';
+import ScrollableLongList from './ScrollableLongList';
 import SetupSection from './SetupSection';
 import TypeBasedSortable from './TypeBasedSortable';
 
@@ -20,7 +21,7 @@ const sortableProps = {
     itemType: { type: 'string', default: "'any'", description: 'Default item type for items within this sortable' },
     itemTypeProp: { type: 'string', description: 'Property name on items to get their type (for mixed item types)' },
     args: { type: 'any', description: 'Additional arguments passed to callbacks' },
-    allowRemove: { type: 'boolean', default: 'true', description: 'Whether items can be removed by dragging to another container' },
+    allowRemove: { type: 'boolean', default: 'false', description: 'Auto-remove items from source list on cross-container drop (default false — manage removal in destination onDrop)' },
     showPlaceholder: { type: 'boolean', default: 'false', description: 'Whether to show a placeholder drop zone at the end' },
     placeholder: { type: 'ReactNode', description: 'Custom placeholder content' },
     dropIndicator: {
@@ -63,12 +64,13 @@ const sortableProps = {
 };
 
 const sectionNavItems: SectionNavItem[] = [
-    { id: 'setup', title: 'Setup', description: 'DragDropProvider setup' },
+    { id: 'setup', title: 'Setup', description: 'Import and use' },
     { id: 'basic', title: 'Basic Sortable', description: 'Simple list reordering' },
     { id: 'complex-items', title: 'Complex Items', description: 'Task list with priority' },
     { id: 'multiple-lists', title: 'Multiple Lists', description: 'Kanban board' },
     { id: 'type-based', title: 'Type-Based', description: 'Accept specific types' },
     { id: 'drag-handles', title: 'Drag Handles', description: 'Custom drag handles' },
+    { id: 'scrollable-long', title: 'Scrollable + Long List', description: '500 items with auto-scroll' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'props', title: 'Props', description: 'Component API reference' },
     { id: 'features', title: 'Features', description: 'Feature summary' },
@@ -171,9 +173,16 @@ const SortablePage: React.FC = () => {
                 <DragHandles />
             </section>
 
+            <section id="scrollable-long" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Scrollable Container + Long List
+                </h2>
+                <ScrollableLongList />
+            </section>
+
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import { DragDropProvider, Sortable } from 'fluxo-ui/dnd';`} />
+                <CodeBlock code={`import { Sortable } from 'fluxo-ui';`} />
             </section>
 
             <section id="props" className="scroll-mt-8">
