@@ -132,9 +132,11 @@ function Counter() {
 | Masked Input | Input with format masks (phone, date, etc.) |
 | Password | Password field with visibility toggle and strength |
 | Textarea | Multi-line text area with auto-resize |
+| Markdown Editor | Markdown editor and preview with toolbar, upload, and split view |
 | Field Label | Accessible form field labels and hints |
 | Input Group | Group inputs with addons and buttons |
 | Slider | Single/range slider with marks and labels |
+| Rating | Star/heart/thumb rating with fractional precision |
 
 ### Selection
 
@@ -151,29 +153,75 @@ function Counter() {
 | Autocomplete | Input with filtered suggestions |
 | List Box | Scrollable selection list |
 | Chips | Tag-style input for multiple values |
-| Date Range Picker | Date range selection with presets |
 
-### Data Display
+### Date, Time & Color
+
+| Component | Description |
+| --- | --- |
+| Date Range Picker | Date range selection with presets |
+| Time Picker | 12/24 hour time picker with step increments |
+| Color Picker | HSV canvas with hex/RGB inputs and swatches |
+| Calendar | Full-featured event calendar |
+
+### Data Tables
 
 | Component | Description |
 | --- | --- |
 | Table | Data grid with sort, filter, pagination |
+| Pivot Table | Aggregation, pivoting, expand/collapse |
+| TreeView | Hierarchical tree with expand/collapse |
+| JSON Editor | Interactive JSON viewer and editor |
+
+### Charts & Boards
+
+| Component | Description |
+| --- | --- |
 | Gantt Chart | Project timeline and task visualization |
 | Kanban Board | Drag-and-drop task board with columns |
-| Calendar | Full-featured event calendar |
-| Canvas Draw | Drawing and annotation overlay |
-| JSON Editor | Interactive JSON viewer and editor |
-| Tab View | Tabbed content with multiple variants |
-| Progress Bar | Determinate and indeterminate progress |
-| Stepper | Multi-step wizard navigation |
-| Shimmer / Skeleton | Loading placeholders and skeletons |
-| TreeView | Hierarchical tree with expand/collapse |
 | Timeline | Vertical/horizontal event sequence |
-| Carousel | Image/video slider with thumbnails |
-| Pivot Table | Aggregation, pivoting, expand/collapse |
-| Image Editor | Crop, rotate, blur, annotate images |
+| Progress Bar | Determinate and indeterminate progress |
 
-### Interactive
+### Media
+
+| Component | Description |
+| --- | --- |
+| Carousel | Image/video slider with thumbnails |
+| Lightbox | Hover/click preview with zoom-out |
+| Image Editor | Crop, rotate, blur, annotate images |
+| Canvas Draw | Drawing and annotation overlay |
+| File Upload | Drag-and-drop file upload zone |
+
+### Navigation
+
+| Component | Description |
+| --- | --- |
+| Tab View | Tabbed content with multiple variants |
+| Stepper | Multi-step wizard navigation |
+| Breadcrumb | Navigation breadcrumb trail |
+| Menu Nav | Multi-level menu navigation |
+| Step Tour | Guided UI walkthroughs |
+
+### Feedback
+
+| Component | Description |
+| --- | --- |
+| Snackbar | Toast notifications |
+| Notification Center | Dropdown notification panel |
+| Page Banner | Page-level message banners |
+| Tooltip | Hover/focus information popups |
+| Shimmer / Skeleton | Loading placeholders and skeletons |
+
+### Overlays
+
+| Component | Description |
+| --- | --- |
+| Modal | Dialog overlays with backdrop |
+| Drawer | Slide-in panel from any edge |
+| Popover | Click-triggered content popovers |
+| Confirm Popover | Inline confirmation dialogs |
+| Context Menu | Right-click context menus |
+
+### Actions & Interaction
 
 | Component | Description |
 | --- | --- |
@@ -182,29 +230,10 @@ function Counter() {
 | Drag & Drop | Draggable and droppable containers |
 | Sortable | Drag-to-reorder lists and grids |
 | Splitter | Resizable split panels |
-| Step Tour | Guided UI walkthroughs |
+| Collapsible Panel | Expand/collapse sections & accordion |
 | Deferred View | Lazy-render with visibility detection |
 | Infinite Scroll | Load-more on scroll with indicators |
-| File Upload | Drag-and-drop file upload zone |
 | Animate On View | Scroll-triggered CSS animations |
-| Collapsible Panel | Expand/collapse sections & accordion |
-
-### Overlays & Navigation
-
-| Component | Description |
-| --- | --- |
-| Modal | Dialog overlays with backdrop |
-| Drawer | Slide-in panel from any edge |
-| Tooltip | Hover/focus information popups |
-| Popover | Click-triggered content popovers |
-| Snackbar | Toast notifications |
-| Confirm Popover | Inline confirmation dialogs |
-| Context Menu | Right-click context menus |
-| Breadcrumb | Navigation breadcrumb trail |
-| Notification Center | Dropdown notification panel |
-| Page Banner | Page-level message banners |
-| Menu Nav | Multi-level menu navigation |
-| Lightbox | Hover/click preview with zoom-out |
 
 ## Hooks & Utilities
 

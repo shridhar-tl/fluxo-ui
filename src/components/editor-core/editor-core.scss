@@ -1,0 +1,464 @@
+@use '../eui-vars' as *;
+
+.eui-editor-shell {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-md);
+    background: var(--eui-bg);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    overflow: hidden;
+
+    &.is-disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    &-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        border-bottom: 1px solid var(--eui-border-subtle);
+        background: var(--eui-bg-subtle);
+        flex-wrap: wrap;
+    }
+
+    &-toolbar-main {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    &-view-switcher {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 2px;
+        background: var(--eui-bg);
+        border: 1px solid var(--eui-border-subtle);
+        border-radius: var(--eui-radius-sm);
+        flex-shrink: 0;
+    }
+
+    &-view-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--eui-text-muted);
+        background: transparent;
+        border: none;
+        border-radius: var(--eui-radius-sm);
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+
+        &:hover:not(.is-active) {
+            background: var(--eui-bg-hover);
+            color: var(--eui-text);
+        }
+
+        &.is-active {
+            background: var(--eui-primary);
+            color: var(--eui-text-on-primary);
+        }
+
+        .eui-editor-shell-view-btn-icon {
+            display: inline-flex;
+            width: 14px;
+            height: 14px;
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    &-mobile-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--eui-border-subtle);
+        background: var(--eui-bg-subtle);
+    }
+
+    &-mobile-tab {
+        flex: 1;
+        padding: 10px;
+        font-size: 13px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: var(--eui-text-muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+
+        &.is-active {
+            color: var(--eui-primary);
+            border-bottom-color: var(--eui-primary);
+        }
+    }
+
+    &-body {
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    &-pane {
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+
+        > * {
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+
+        &.is-hidden-mobile {
+            display: none;
+        }
+    }
+
+    &-edit-pane {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    &.view-split &-edit-pane {
+        border-right: 1px solid var(--eui-border-subtle);
+    }
+
+    &.view-edit &-edit-pane,
+    &.view-preview &-preview-pane {
+        flex: 1 1 100%;
+    }
+
+    &-statusbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 12px;
+        border-top: 1px solid var(--eui-border-subtle);
+        background: var(--eui-bg-subtle);
+        font-size: 12px;
+        color: var(--eui-text-muted);
+    }
+}
+
+@media (max-width: $bp-sm) {
+    .eui-editor-shell.view-split .eui-editor-shell-body {
+        flex-direction: column;
+    }
+
+    .eui-editor-shell.view-split .eui-editor-shell-edit-pane {
+        border-right: none;
+    }
+}
+
+.eui-editor-toolbar-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 4px;
+    border-right: 1px solid var(--eui-border-subtle);
+
+    &:last-child {
+        border-right: none;
+    }
+}
+
+.eui-editor-toolbar-divider {
+    display: inline-block;
+    width: 1px;
+    height: 18px;
+    background: var(--eui-border-subtle);
+    margin: 0 4px;
+}
+
+.eui-editor-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--eui-radius-sm);
+    color: var(--eui-text);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+    &:hover:not(:disabled) {
+        background: var(--eui-bg-hover);
+        border-color: var(--eui-border-subtle);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
+    }
+
+    &.is-active {
+        background: var(--eui-primary-subtle);
+        border-color: var(--eui-primary-border);
+        color: var(--eui-primary);
+    }
+
+    &:disabled,
+    &.is-disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    &-icon {
+        display: inline-flex;
+        width: 16px;
+        height: 16px;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &-label {
+        font-size: 12px;
+        font-weight: 500;
+    }
+}
+
+.eui-editor-toolbar-dd-btn {
+    gap: 4px;
+    padding-right: 4px;
+}
+
+.eui-editor-toolbar-dd-caret {
+    display: inline-flex;
+    width: 12px;
+    height: 12px;
+    color: var(--eui-text-muted);
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.eui-editor-toolbar-dd-menu {
+    position: absolute;
+    z-index: 10055;
+    background: var(--eui-bg);
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-md);
+    box-shadow: var(--eui-shadow);
+    padding: 4px;
+    max-height: 320px;
+    overflow-y: auto;
+    font-family: var(--eui-font-family);
+    animation: eui-editor-fade-in 0.12s ease-out;
+    @include eui-thin-scrollbar;
+}
+
+.eui-editor-toolbar-dd-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--eui-text);
+    background: transparent;
+    border: none;
+    border-radius: var(--eui-radius-sm);
+    cursor: pointer;
+    text-align: left;
+
+    &.is-active {
+        background: var(--eui-bg-hover);
+    }
+
+    &.is-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &-label {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &-shortcut {
+        color: var(--eui-text-muted);
+        font-size: 11px;
+        font-variant-numeric: tabular-nums;
+    }
+}
+
+.eui-editor-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10060;
+    padding: 16px;
+    animation: eui-editor-fade-in 0.15s ease-out;
+}
+
+.eui-editor-dialog {
+    background: var(--eui-bg);
+    color: var(--eui-text);
+    border-radius: var(--eui-radius-md);
+    border: 1px solid var(--eui-border);
+    box-shadow: var(--eui-shadow);
+    min-width: 320px;
+    max-width: 480px;
+    width: 100%;
+    font-family: var(--eui-font-family);
+    animation: eui-editor-zoom-in 0.15s ease-out;
+
+    &-header {
+        padding: 14px 18px;
+        font-size: 15px;
+        font-weight: 600;
+        border-bottom: 1px solid var(--eui-border-subtle);
+    }
+
+    &-tabs {
+        display: flex;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--eui-border-subtle);
+    }
+
+    &-tab {
+        padding: 10px 14px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--eui-text-muted);
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        margin-bottom: -1px;
+
+        &.is-active {
+            color: var(--eui-primary);
+            border-bottom-color: var(--eui-primary);
+        }
+
+        &:hover:not(.is-active) {
+            color: var(--eui-text);
+        }
+    }
+
+    &-body {
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    &-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--eui-text-muted);
+
+        input[type='text'],
+        input[type='url'] {
+            padding: 8px 10px;
+            background: var(--eui-bg-subtle);
+            border: 1px solid var(--eui-border);
+            border-radius: var(--eui-radius-sm);
+            color: var(--eui-text);
+            font-size: 14px;
+            font-family: inherit;
+
+            &:focus {
+                outline: none;
+                border-color: var(--eui-primary);
+                box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+            }
+        }
+    }
+
+    &-file-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    &-file-name {
+        font-size: 13px;
+        color: var(--eui-text);
+    }
+
+    &-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding-top: 4px;
+    }
+
+    &-btn {
+        padding: 7px 14px;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: inherit;
+        background: var(--eui-bg-subtle);
+        color: var(--eui-text);
+        border: 1px solid var(--eui-border);
+        border-radius: var(--eui-radius-sm);
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s;
+
+        &:hover:not(:disabled) {
+            background: var(--eui-bg-hover);
+            border-color: var(--eui-primary-border);
+        }
+
+        &.is-primary {
+            background: var(--eui-primary);
+            color: var(--eui-text-on-primary);
+            border-color: var(--eui-primary);
+
+            &:hover:not(:disabled) {
+                background: var(--eui-primary-hover);
+                border-color: var(--eui-primary-hover);
+            }
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+}
+
+@keyframes eui-editor-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes eui-editor-zoom-in {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}

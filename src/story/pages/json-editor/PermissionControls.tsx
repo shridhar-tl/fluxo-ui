@@ -7,7 +7,7 @@ import { ComponentDemo } from '../../ComponentDemo';
 import { useStoryTheme } from '../../StoryThemeContext';
 
 const sampleData: JsonValue = {
-    project: 'EtherUI',
+    project: 'FluxoUI',
     version: '1.0.0',
     settings: {
         debug: false,

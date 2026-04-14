@@ -34,6 +34,7 @@ const navSections: NavSection[] = [
             { label: 'Masked Input', path: '/components/maskedinput' },
             { label: 'Password', path: '/components/password' },
             { label: 'Textarea', path: '/components/textarea' },
+            { label: 'Markdown Editor', path: '/components/markdown' },
             { label: 'Field Label', path: '/components/fieldlabel' },
             { label: 'Input Group', path: '/components/inputgroup' },
             { label: 'Slider', path: '/components/slider' },

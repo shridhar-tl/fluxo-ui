@@ -2,14 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import type { Plugin } from 'vite';
 
-interface EtherUiSourcePluginOptions {
+interface FluxoUiSourcePluginOptions {
     sourcePath?: string;
     useSource?: boolean;
 }
 
 const peerDepsWithSubpaths: string[] = ['react', 'react-dom', 'react/jsx-runtime'];
 
-function etherUiSource(options: EtherUiSourcePluginOptions = {}): Plugin {
+function fluxoUiSource(options: FluxoUiSourcePluginOptions = {}): Plugin {
     return {
         name: 'fluxo-ui-source',
         config() {
@@ -50,5 +50,5 @@ function etherUiSource(options: EtherUiSourcePluginOptions = {}): Plugin {
     };
 }
 
-export { etherUiSource };
-export type { EtherUiSourcePluginOptions };
+export { fluxoUiSource };
+export type { FluxoUiSourcePluginOptions };

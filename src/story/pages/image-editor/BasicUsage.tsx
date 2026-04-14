@@ -4,7 +4,7 @@ import { ImageEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const sampleImage = 'https://picsum.photos/seed/ether/800/600';
+const sampleImage = 'https://picsum.photos/seed/fluxo/800/600';
 
 const code = `import { ImageEditor } from 'fluxo-ui';
 
@@ -18,7 +18,7 @@ const handleSave = (blob: Blob, format: ExportFormat) => {
 };
 
 <ImageEditor
-  src="https://picsum.photos/seed/ether/800/600"
+  src="https://picsum.photos/seed/fluxo/800/600"
   alt="Sample landscape"
   onSave={handleSave}
   onCancel={() => console.log('Cancelled')}

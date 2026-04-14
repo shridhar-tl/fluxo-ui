@@ -51,6 +51,7 @@ const ProgressBarPage = React.lazy(() => import('./story/pages/progress-bar/Prog
 const StepperPage = React.lazy(() => import('./story/pages/stepper/StepperPage'));
 const FabSpeedDialPage = React.lazy(() => import('./story/pages/fab-speed-dial/FabSpeedDialPage'));
 const JsonEditorPage = React.lazy(() => import('./story/pages/json-editor/JsonEditorPage'));
+const MarkdownPage = React.lazy(() => import('./story/pages/markdown/MarkdownPage'));
 const StoreBasicPage = React.lazy(() => import('./story/pages/store-basic/StoreBasicPage'));
 const StoreMiddlewarePage = React.lazy(() => import('./story/pages/store-middleware/StoreMiddlewarePage'));
 const StoreModelPage = React.lazy(() => import('./story/pages/store-model/StoreModelPage'));
@@ -536,6 +537,7 @@ const App: React.FC = () => {
                     <Route path="/components/lightbox" element={<LayoutWrapper><LightboxPage /></LayoutWrapper>} />
                     <Route path="/components/collapsible-panel" element={<LayoutWrapper><CollapsiblePanelPage /></LayoutWrapper>} />
                     <Route path="/services/dependency-injection" element={<LayoutWrapper><ServicesPage /></LayoutWrapper>} />
+                    <Route path="/components/markdown" element={<LayoutWrapper><MarkdownPage /></LayoutWrapper>} />
                     <Route
                         path="*"
                         element={

@@ -94,7 +94,7 @@ export default defineConfig({
                 services: resolve(__dirname, 'src/services/index.ts'),
                 'vite-plugin': resolve(__dirname, 'src/plugins/vite/index.ts'),
             },
-            name: 'EtherUI',
+            name: 'FluxoUI',
             formats: ['es', 'cjs'],
             fileName: (format, entryName) => {
                 const extension = format === 'cjs' ? 'cjs' : 'js';

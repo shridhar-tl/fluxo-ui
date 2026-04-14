@@ -74,6 +74,25 @@ export { default as UserGroupIcon } from './icons/user-group.svg?react';
 export { default as UserIcon } from './icons/user.svg?react';
 export { default as WarningIcon } from './icons/warning.svg?react';
 export { default as WebsiteIcon } from './icons/web.svg?react';
+export { default as BoldIcon } from './icons/bold.svg?react';
+export { default as ItalicIcon } from './icons/italic.svg?react';
+export { default as StrikethroughIcon } from './icons/strikethrough.svg?react';
+export { default as HeadingIcon } from './icons/heading.svg?react';
+export { default as QuoteIcon } from './icons/quote.svg?react';
+export { default as CodeIcon } from './icons/code.svg?react';
+export { default as CodeBlockIcon } from './icons/code-block.svg?react';
+export { default as LinkIcon } from './icons/link-2.svg?react';
+export { default as ImageIcon } from './icons/image.svg?react';
+export { default as ListUlIcon } from './icons/list-ul.svg?react';
+export { default as ListOlIcon } from './icons/list-ol.svg?react';
+export { default as ListCheckIcon } from './icons/list-check.svg?react';
+export { default as TableIcon } from './icons/table-2.svg?react';
+export { default as HorizontalRuleIcon } from './icons/horizontal-rule.svg?react';
+export { default as UndoIcon } from './icons/undo.svg?react';
+export { default as RedoIcon } from './icons/redo.svg?react';
+export { default as SplitViewIcon } from './icons/split-view.svg?react';
+export { default as IndentIcon } from './icons/indent.svg?react';
+export { default as OutdentIcon } from './icons/outdent.svg?react';
 
 /// Items to take care
 export { default as ArrowRightIcon } from './icons/web.svg?react';

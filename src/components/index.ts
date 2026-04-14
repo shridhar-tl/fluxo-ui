@@ -65,6 +65,7 @@ export * from './rating';
 export * from './color-picker';
 export * from './time-picker';
 export { JsonEditor } from './json-editor';
+export * from './markdown';
 export type { JsonEditorProps, JsonEditorSize, JsonEditorTheme, JsonValue, JsonObject, JsonArray, JsonValueType } from './json-editor';
 export { InputGroup } from './InputGroup';
 export { InputSwitch } from './InputSwitch';

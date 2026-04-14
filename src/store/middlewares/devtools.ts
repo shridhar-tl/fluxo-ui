@@ -1,8 +1,8 @@
 import { Store } from '../types';
 
 export const devToolsMiddleware = <T>(store: Store<T>): Store<T> => {
-    if (typeof window !== 'undefined' && (window as any).__ETHER_DEVTOOLS__) {
-        const devTools = (window as any).__ETHER_DEVTOOLS__;
+    if (typeof window !== 'undefined' && (window as any).__FLUXO_DEVTOOLS__) {
+        const devTools = (window as any).__FLUXO_DEVTOOLS__;
 
         const originalSetState = store.setState;
 
