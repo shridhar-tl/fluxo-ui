@@ -22,6 +22,7 @@ const navSections: NavSection[] = [
         items: [
             { label: 'Overview', path: '/' },
             { label: 'Installation', path: '/installation' },
+            { label: 'AI / MCP Integration', path: '/mcp-integration' },
         ],
     },
     {

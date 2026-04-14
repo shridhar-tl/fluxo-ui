@@ -11,6 +11,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'npm-install', title: 'NPM Installation', description: 'Install via npm, yarn, or pnpm' },
     { id: 'setup', title: 'Setup', description: 'CSS, ThemeProvider, and first usage' },
     { id: 'typescript', title: 'TypeScript Support', description: 'Built-in type definitions' },
+    { id: 'ai-mcp', title: 'AI / MCP Integration', description: 'Use with Claude Code, Copilot, Cursor' },
     { id: 'next-steps', title: 'Next Steps', description: 'Explore components and theming' },
     { id: 'troubleshooting', title: 'Troubleshooting', description: 'Common issues and fixes' },
 ];
@@ -77,10 +78,10 @@ const InstallationPage: React.FC = () => {
                     </p>
                     <CodeBlock
                         code={`// In your main CSS file (e.g., index.css or App.css)
-@import 'fluxo-ui/dist/index.css';
+@import 'fluxo-ui/styles';
 
-// Or import directly in your component
-import 'fluxo-ui/dist/index.css';`}
+// Or import directly in your entry point (main.tsx / index.tsx)
+import 'fluxo-ui/styles';`}
                         language="css"
                     />
                 </div>
@@ -184,6 +185,35 @@ const MyButton: React.FC<ButtonProps> = (props) => {
                 </div>
             </section>
 
+            <section className="scroll-mt-8" id="ai-mcp">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    AI / MCP Integration
+                </h2>
+                <div
+                    className={cn('rounded-lg p-6 border relative overflow-hidden', {
+                        'bg-white/4 border-white/8': isDark,
+                        'bg-white border-gray-200 shadow-sm': !isDark,
+                    })}
+                >
+                    <div className="inline-flex items-center gap-2 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-[var(--eui-primary)]/15 text-[var(--eui-primary)]">
+                        Built-in
+                    </div>
+                    <p className={cn('mb-4', { 'text-gray-300': isDark, 'text-gray-600': !isDark })}>
+                        Fluxo UI ships with an MCP server bundled inside the package — so Claude Code, GitHub Copilot, Cursor, and any
+                        other AI assistant can write correct Fluxo UI code on the first try. No extra install, no separate package.
+                    </p>
+                    <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                        Enable it in Claude Code with one command:
+                    </p>
+                    <CodeBlock code="claude mcp add fluxo-ui -- npx fluxo-ui-mcp" language="bash" />
+                    <div className="mt-4">
+                        <Link to="/mcp-integration" className="text-sm font-medium text-[var(--eui-primary)] hover:underline">
+                            Full guide for Claude Code, Copilot, Cursor &amp; more →
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
             <section className="scroll-mt-8" id="next-steps">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Next Steps</h2>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -240,7 +270,7 @@ const MyButton: React.FC<ButtonProps> = (props) => {
                         <p className={cn('mb-3', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
                             Make sure you've imported the CSS file and that your bundler is configured to handle CSS imports.
                         </p>
-                        <CodeBlock code="import 'fluxo-ui/dist/index.css';" language="typescript" />
+                        <CodeBlock code="import 'fluxo-ui/styles';" language="typescript" />
                     </div>
 
                     <div

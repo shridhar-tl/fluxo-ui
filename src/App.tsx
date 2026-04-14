@@ -13,6 +13,7 @@ const ScrollToTop: React.FC = () => {
 
 const HomePage = React.lazy(() => import('./story/pages/HomePage'));
 const InstallationPage = React.lazy(() => import('./story/pages/InstallationPage'));
+const MCPIntegrationPage = React.lazy(() => import('./story/pages/MCPIntegrationPage'));
 
 const AutocompleteMultiPage = React.lazy(() => import('./story/pages/autocomplete-multi/AutocompleteMultiPage'));
 const AutocompletePage = React.lazy(() => import('./story/pages/autocomplete/AutocompletePage'));
@@ -107,6 +108,14 @@ const App: React.FC = () => {
                         element={
                             <LayoutWrapper>
                                 <InstallationPage />
+                            </LayoutWrapper>
+                        }
+                    />
+                    <Route
+                        path="/mcp-integration"
+                        element={
+                            <LayoutWrapper>
+                                <MCPIntegrationPage />
                             </LayoutWrapper>
                         }
                     />

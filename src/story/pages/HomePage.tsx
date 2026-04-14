@@ -13,6 +13,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'hooks', title: 'Hooks & Utils', description: 'Hooks and utility functions' },
     { id: 'store', title: 'State Management', description: 'Custom store solution' },
     { id: 'services', title: 'Services', description: 'Dependency injection' },
+    { id: 'mcp', title: 'AI / MCP', description: 'Built-in MCP server' },
     { id: 'quick-start', title: 'Quick Start', description: 'Installation & setup' },
 ];
 
@@ -537,6 +538,58 @@ const HomePage: React.FC = () => {
                             </Link>
                         ))}
                     </div>
+                </div>
+            </section>
+
+            <section className="scroll-mt-8" id="mcp">
+                <div className="py-8">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 mb-3 rounded-full text-xs font-semibold bg-[var(--eui-primary)]/15 text-[var(--eui-primary)]">
+                        AI Integration
+                    </div>
+                    <h2 className={cn('text-2xl font-bold mb-2', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                        Built-in MCP Server for AI Assistants
+                    </h2>
+                    <p className={cn('text-sm mb-6 max-w-3xl', { 'text-gray-500': true })}>
+                        Fluxo UI ships with a bundled Model Context Protocol server so Claude Code, GitHub Copilot, Cursor, and every other
+                        MCP-compatible assistant can generate correct Fluxo UI code on the first try — with accurate component names,
+                        import paths, props, examples, and theme tokens. No extra install, no separate package, always version-locked to
+                        the library you have.
+                    </p>
+                    <div className="grid sm:grid-cols-3 gap-3 mb-6">
+                        {[
+                            {
+                                title: 'Zero Extra Install',
+                                desc: 'Bundled inside the fluxo-ui npm package. If you have the library, you have the MCP server.',
+                            },
+                            {
+                                title: 'Version-Locked',
+                                desc: 'The index is regenerated on every build, so agents never suggest props from a version you do not have.',
+                            },
+                            {
+                                title: 'Local Only',
+                                desc: 'Runs over stdio on your machine. No hosting, no accounts, no network calls, no telemetry.',
+                            },
+                        ].map(({ title, desc }) => (
+                            <div
+                                key={title}
+                                className={cn('p-5 rounded-lg border transition-all', {
+                                    'bg-white/3 border-white/8 hover:border-white/20': isDark,
+                                    'bg-white border-gray-200 hover:shadow-md': !isDark,
+                                })}
+                            >
+                                <h4 className={cn('text-sm font-semibold mb-1', { 'text-gray-200': isDark, 'text-gray-800': !isDark })}>
+                                    {title}
+                                </h4>
+                                <p className={cn('text-xs', { 'text-gray-500': true })}>{desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <Link
+                        to="/mcp-integration"
+                        className="inline-flex items-center gap-2 px-5 py-2 bg-[var(--eui-primary)] hover:opacity-90 text-white font-semibold rounded-lg transition-all text-sm"
+                    >
+                        View MCP Integration Guide →
+                    </Link>
                 </div>
             </section>
 

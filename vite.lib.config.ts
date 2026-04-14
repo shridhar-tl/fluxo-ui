@@ -49,6 +49,7 @@ const writeDistPackageJson = (): Plugin => ({
             'sideEffects',
             'peerDependencies',
             'peerDependenciesMeta',
+            'bin',
         ];
         const distPkg: Record<string, unknown> = {};
         for (const key of keepKeys) {
@@ -59,6 +60,13 @@ const writeDistPackageJson = (): Plugin => ({
         distPkg.types = stripDistPrefix(rootPkg.types);
         if (rootPkg.exports) {
             distPkg.exports = rewriteExports(rootPkg.exports as Record<string, unknown>);
+        }
+        if (rootPkg.bin && typeof rootPkg.bin === 'object') {
+            const binOut: Record<string, string> = {};
+            for (const [k, v] of Object.entries(rootPkg.bin as Record<string, string>)) {
+                binOut[k] = stripDistPrefix(v);
+            }
+            distPkg.bin = binOut;
         }
         writeFileSync(resolve(__dirname, 'dist/package.json'), JSON.stringify(distPkg, null, 2) + '\n', 'utf-8');
 

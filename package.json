@@ -85,7 +85,11 @@
             "types": "./dist/src/plugins/vite/index.d.ts",
             "import": "./dist/vite-plugin.js",
             "require": "./dist/vite-plugin.cjs"
-        }
+        },
+        "./mcp-index.json": "./dist/mcp/mcp-index.json"
+    },
+    "bin": {
+        "fluxo-ui-mcp": "./dist/mcp/server.mjs"
     },
     "files": [
         "dist"
@@ -93,7 +97,7 @@
     "scripts": {
         "start": "vite",
         "build": "tsc -b && vite build",
-        "build-lib": "tsc -b && vite build --config vite.lib.config.ts",
+        "build-lib": "tsc -b && vite build --config vite.lib.config.ts && node scripts/build-mcp-index.mjs",
         "prepublishOnly": "npm run build-lib",
         "prepare": "npm run build-lib",
         "lint": "eslint ."
