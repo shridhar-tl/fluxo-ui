@@ -166,12 +166,6 @@
     min-height: 2.5rem;
     transition: all 0.15s ease;
 
-    &.eui-pivot-config-zone-over {
-        border-color: var(--eui-primary);
-        background-color: var(--eui-primary-subtle);
-        border-style: solid;
-    }
-
     &.eui-pivot-config-zone-disabled {
         opacity: 0.5;
     }

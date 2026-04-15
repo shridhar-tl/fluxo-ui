@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
+import { DragDropProvider } from '../drag-drop';
 import PivotCellEditor from './PivotCellEditor';
 import PivotConfigPanel from './PivotConfigPanel';
 import { buildColumnTree, buildPivotTree, detectFieldType, getCellValue, getNestedValue, setNestedValue, sortPivotNodes } from './pivot-engine';
@@ -550,6 +551,7 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
     const showPanel = showConfigPanel && permissions.allowConfigPanel;
 
     return (
+        <DragDropProvider>
         <div
             className={cn(
                 'eui-pivot-table-container',
@@ -639,6 +641,7 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
                 </div>
             </div>
         </div>
+        </DragDropProvider>
     );
 }
 
