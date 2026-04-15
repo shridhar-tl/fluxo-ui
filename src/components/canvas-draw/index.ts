@@ -13,6 +13,7 @@ export type {
     ArrowheadStyle,
     DrawTransition,
     DrawPoint,
+    BaseDrawObject,
     DrawObject,
     ArrowObject,
     LineObject,

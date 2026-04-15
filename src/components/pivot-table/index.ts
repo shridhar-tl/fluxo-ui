@@ -4,6 +4,6 @@ export type {
     AggregateFunction, BuiltInAggregateFunction,
     FieldDefinition, CellEditorProps, CellTemplateProps,
     CustomAggregatePlugin, PivotPlugin, PivotPermissions,
-    PivotNode, ColumnNode, DragItem, PivotZone, FieldDataType,
+    PivotNode, ColumnNode, PivotZone, FieldDataType,
     EditMode, EditConfig,
 } from './pivot-table-types';

@@ -97,7 +97,7 @@ export interface TextObject extends BaseObject {
     fontFamily: FontFamily;
     fontSize: number;
     fontColor: DrawColor;
-    fillColor: DrawColor | 'transparent';
+    fillColor?: DrawColor | 'transparent';
     fontBold?: boolean;
     fontItalic?: boolean;
     fontUnderline?: boolean;
@@ -194,9 +194,16 @@ export interface DrawToolDefaults {
     arrowheadStyle: ArrowheadStyle;
 }
 
-export interface DrawItem {
+export interface BaseDrawObject {
     id: string;
-    object: DrawObject;
+    type: string;
+    strokeColor: string;
+    strokeWidth: number;
+}
+
+export interface DrawItem<T extends BaseDrawObject = DrawObject> {
+    id: string;
+    object: T;
     showAtMs: number;
     hideAtMs: number | null;
     transition: DrawTransition;

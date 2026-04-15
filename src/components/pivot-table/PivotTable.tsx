@@ -657,5 +657,5 @@ export type {
     AggregateFunction, BuiltInAggregateFunction,
     FieldDefinition, CellEditorProps, CellTemplateProps,
     CustomAggregatePlugin, PivotPlugin, PivotPermissions,
-    PivotNode, ColumnNode, DragItem, PivotZone,
+    PivotNode, ColumnNode, PivotZone,
 } from './pivot-table-types';

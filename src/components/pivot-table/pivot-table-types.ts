@@ -186,9 +186,3 @@ export interface ColumnNode {
     span: number;
 }
 
-export interface DragItem {
-    field: string;
-    label: string;
-    sourceZone: PivotZone;
-    aggregateFunction?: AggregateFunction;
-}
