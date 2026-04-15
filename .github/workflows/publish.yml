@@ -21,7 +21,7 @@ jobs:
                   registry-url: 'https://registry.npmjs.org'
 
             - name: Install dependencies
-              run: npm install --no-package-lock
+              run: npm install --no-package-lock --force
 
             - name: Build library
               run: npm run build-lib
