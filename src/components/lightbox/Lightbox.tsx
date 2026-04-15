@@ -192,6 +192,10 @@ const Lightbox: React.FC<LightboxProps> = ({
     const renderContent = () => {
         if (!isOpen) return null;
 
+        const scaledBodyHeight = zoomOut
+            ? `calc(${typeof zoomHeight === 'number' ? `${zoomHeight}px` : zoomHeight} * ${zoomScale})`
+            : undefined;
+
         const sizeStyle: React.CSSProperties = {
             width: isCenter ? undefined : width,
             height: height,
@@ -238,7 +242,10 @@ const Lightbox: React.FC<LightboxProps> = ({
                             )}
                         </div>
                     )}
-                    <div className={cn('eui-lightbox-body', contentClassName)}>
+                    <div
+                        className={cn('eui-lightbox-body', { 'eui-lightbox-body-zoom': zoomOut }, contentClassName)}
+                        style={zoomOut ? { height: scaledBodyHeight } : undefined}
+                    >
                         {zoomOut ? (
                             <div
                                 className="eui-lightbox-zoom-container"

@@ -25,7 +25,7 @@ interface DiffViewerProps {
 }
 
 interface VirtualItem {
-    kind: 'row' | 'skip';
+    kind: 'row' | 'skip' | 'replace-del' | 'replace-add';
     row?: LineDiffRow;
     skipCount?: number;
     offset: number;
@@ -70,17 +70,62 @@ const DiffViewer: React.FC<DiffViewerProps> = ({
     const clippedNew = useMemo(() => clipByLines(newValue, maxLines), [newValue, maxLines]);
 
     const rows = useMemo<LineDiffRow[]>(() => {
-        const needsNormalize = ignoreWhitespace || ignoreCase || ignoreEmptyLines;
-        if (!needsNormalize) {
-            return pairReplacements(diffLines(clippedOld.text, clippedNew.text));
-        }
         const aLines = clippedOld.text.split(/\r\n|\r|\n/);
         const bLines = clippedNew.text.split(/\r\n|\r|\n/);
-        const normA = aLines.map((l) => (ignoreEmptyLines && l.trim() === '' ? '' : normalizeForCompare(l, ignoreWhitespace, ignoreCase)));
-        const normB = bLines.map((l) => (ignoreEmptyLines && l.trim() === '' ? '' : normalizeForCompare(l, ignoreWhitespace, ignoreCase)));
-        const normOld = normA.join('\n');
-        const normNew = normB.join('\n');
-        const normRows = pairReplacements(diffLines(normOld, normNew));
+
+        if (!ignoreWhitespace && !ignoreCase && !ignoreEmptyLines) {
+            return pairReplacements(diffLines(clippedOld.text, clippedNew.text));
+        }
+
+        const isEmpty = (l: string) => l.trim() === '';
+
+        if (ignoreEmptyLines) {
+            const aNonEmptyIdxMap: number[] = [];
+            const bNonEmptyIdxMap: number[] = [];
+            const aNonEmpty: string[] = [];
+            const bNonEmpty: string[] = [];
+            aLines.forEach((l, i) => { if (!isEmpty(l)) { aNonEmptyIdxMap.push(i); aNonEmpty.push(l); } });
+            bLines.forEach((l, i) => { if (!isEmpty(l)) { bNonEmptyIdxMap.push(i); bNonEmpty.push(l); } });
+
+            const normA = aNonEmpty.map((l) => normalizeForCompare(l, ignoreWhitespace, ignoreCase));
+            const normB = bNonEmpty.map((l) => normalizeForCompare(l, ignoreWhitespace, ignoreCase));
+            const normRows = pairReplacements(diffLines(normA.join('\n'), normB.join('\n')));
+
+            const result: LineDiffRow[] = normRows.map((r) => {
+                const oldOrigIdx = r.oldIndex !== null ? (aNonEmptyIdxMap[r.oldIndex] ?? null) : null;
+                const newOrigIdx = r.newIndex !== null ? (bNonEmptyIdxMap[r.newIndex] ?? null) : null;
+                return {
+                    ...r,
+                    oldIndex: oldOrigIdx,
+                    newIndex: newOrigIdx,
+                    oldText: oldOrigIdx !== null ? aLines[oldOrigIdx] : '',
+                    newText: newOrigIdx !== null ? bLines[newOrigIdx] : '',
+                };
+            });
+
+            const usedOldIndices = new Set(result.map((r) => r.oldIndex).filter((i): i is number => i !== null));
+            const usedNewIndices = new Set(result.map((r) => r.newIndex).filter((i): i is number => i !== null));
+            aLines.forEach((l, i) => {
+                if (isEmpty(l) && !usedOldIndices.has(i)) {
+                    result.push({ type: 'equal', oldIndex: i, newIndex: null, oldText: l, newText: '' });
+                }
+            });
+            bLines.forEach((l, i) => {
+                if (isEmpty(l) && !usedNewIndices.has(i)) {
+                    result.push({ type: 'equal', oldIndex: null, newIndex: i, oldText: '', newText: l });
+                }
+            });
+            result.sort((a, b) => {
+                const ai = a.oldIndex ?? a.newIndex ?? 0;
+                const bi = b.oldIndex ?? b.newIndex ?? 0;
+                return ai - bi;
+            });
+            return result;
+        }
+
+        const normA = aLines.map((l) => normalizeForCompare(l, ignoreWhitespace, ignoreCase));
+        const normB = bLines.map((l) => normalizeForCompare(l, ignoreWhitespace, ignoreCase));
+        const normRows = pairReplacements(diffLines(normA.join('\n'), normB.join('\n')));
         return normRows.map((r) => ({
             ...r,
             oldText: r.oldIndex !== null && aLines[r.oldIndex] !== undefined ? aLines[r.oldIndex] : r.oldText,
@@ -89,12 +134,21 @@ const DiffViewer: React.FC<DiffViewerProps> = ({
     }, [clippedOld.text, clippedNew.text, ignoreWhitespace, ignoreCase, ignoreEmptyLines]);
 
     const virtualItems = useMemo<VirtualItem[]>(() => {
+        const pushRow = (items: VirtualItem[], r: LineDiffRow, offset: number): number => {
+            if (r.type === 'replace' && variant !== 'split') {
+                items.push({ kind: 'replace-del', row: r, offset });
+                items.push({ kind: 'replace-add', row: r, offset: offset + rowHeight });
+                return offset + rowHeight * 2;
+            }
+            items.push({ kind: 'row', row: r, offset });
+            return offset + rowHeight;
+        };
+
         const items: VirtualItem[] = [];
         let offset = 0;
         if (!collapseEnabled) {
             for (const r of rows) {
-                items.push({ kind: 'row', row: r, offset });
-                offset += rowHeight;
+                offset = pushRow(items, r, offset);
             }
             return items;
         }
@@ -109,33 +163,30 @@ const DiffViewer: React.FC<DiffViewerProps> = ({
                 const trailingKeep = j === n ? 0 : contextLines;
                 if (equalLen <= leadingKeep + trailingKeep + 1) {
                     for (let k = i; k < j; k++) {
-                        items.push({ kind: 'row', row: rows[k], offset });
-                        offset += rowHeight;
+                        offset = pushRow(items, rows[k], offset);
                     }
                 } else {
                     for (let k = 0; k < leadingKeep; k++) {
-                        items.push({ kind: 'row', row: rows[i + k], offset });
-                        offset += rowHeight;
+                        offset = pushRow(items, rows[i + k], offset);
                     }
                     const hiddenCount = equalLen - leadingKeep - trailingKeep;
                     items.push({ kind: 'skip', skipCount: hiddenCount, offset });
                     offset += rowHeight;
                     for (let k = 0; k < trailingKeep; k++) {
-                        items.push({ kind: 'row', row: rows[j - trailingKeep + k], offset });
-                        offset += rowHeight;
+                        offset = pushRow(items, rows[j - trailingKeep + k], offset);
                     }
                 }
                 i = j;
             } else {
-                items.push({ kind: 'row', row: rows[i], offset });
-                offset += rowHeight;
+                offset = pushRow(items, rows[i], offset);
                 i++;
             }
         }
         return items;
-    }, [rows, collapseEnabled, contextLines, rowHeight]);
+    }, [rows, collapseEnabled, contextLines, rowHeight, variant]);
 
-    const totalHeight = virtualItems.length * rowHeight + (clippedOld.truncated || clippedNew.truncated ? rowHeight * 2 : 0);
+    const lastItem = virtualItems[virtualItems.length - 1];
+    const totalHeight = (lastItem ? lastItem.offset + rowHeight : 0) + (clippedOld.truncated || clippedNew.truncated ? rowHeight * 2 : 0);
 
     const scrollRef = useRef<HTMLDivElement>(null);
     const [scrollTop, setScrollTop] = useState(0);
@@ -155,8 +206,25 @@ const DiffViewer: React.FC<DiffViewerProps> = ({
     }, []);
 
     const overscan = 10;
-    const startIdx = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
-    const endIdx = Math.min(virtualItems.length, Math.ceil((scrollTop + viewportH) / rowHeight) + overscan);
+    const startIdx = Math.max(0, (() => {
+        let lo = 0, hi = virtualItems.length - 1;
+        while (lo < hi) {
+            const mid = (lo + hi) >> 1;
+            if (virtualItems[mid].offset < scrollTop - overscan * rowHeight) lo = mid + 1;
+            else hi = mid;
+        }
+        return lo;
+    })());
+    const endIdx = Math.min(virtualItems.length, (() => {
+        const bottom = scrollTop + viewportH + overscan * rowHeight;
+        let lo = startIdx, hi = virtualItems.length;
+        while (lo < hi) {
+            const mid = (lo + hi) >> 1;
+            if (virtualItems[mid].offset <= bottom) lo = mid + 1;
+            else hi = mid;
+        }
+        return lo;
+    })());
 
     const renderLineContent = (row: LineDiffRow, side: 'old' | 'new') => {
         const text = side === 'old' ? row.oldText : row.newText;
@@ -183,15 +251,22 @@ const DiffViewer: React.FC<DiffViewerProps> = ({
             );
         }
         const row = item.row!;
-        if (row.type === 'replace') {
+        if (item.kind === 'replace-del') {
             return (
-                <React.Fragment key={key}>
-                    <div className="eui-diff-row eui-diff-row-del" style={{ top: item.offset, height: rowHeight }}>
-                        {showLineNumbers && <div className="eui-diff-gutter">{row.oldIndex !== null ? row.oldIndex + 1 : ''}</div>}
-                        <div className="eui-diff-sign">−</div>
-                        <div className="eui-diff-content">{renderLineContent(row, 'old')}</div>
-                    </div>
-                </React.Fragment>
+                <div key={key} className="eui-diff-row eui-diff-row-del" style={{ top: item.offset, height: rowHeight }}>
+                    {showLineNumbers && <div className="eui-diff-gutter">{row.oldIndex !== null ? row.oldIndex + 1 : ''}</div>}
+                    <div className="eui-diff-sign">−</div>
+                    <div className="eui-diff-content">{renderLineContent(row, 'old')}</div>
+                </div>
+            );
+        }
+        if (item.kind === 'replace-add') {
+            return (
+                <div key={key} className="eui-diff-row eui-diff-row-add" style={{ top: item.offset, height: rowHeight }}>
+                    {showLineNumbers && <div className="eui-diff-gutter">{row.newIndex !== null ? row.newIndex + 1 : ''}</div>}
+                    <div className="eui-diff-sign">+</div>
+                    <div className="eui-diff-content">{renderLineContent(row, 'new')}</div>
+                </div>
             );
         }
         const isAdd = row.type === 'insert';
@@ -259,16 +334,17 @@ const DiffViewer: React.FC<DiffViewerProps> = ({
             if (document.activeElement !== el && !el.contains(document.activeElement)) return;
             if (e.key === 'j' || e.key === 'k') {
                 const dir = e.key === 'j' ? 1 : -1;
-                const topIdx = Math.floor(el.scrollTop / rowHeight);
-                let target = topIdx;
-                for (let i = topIdx + dir; dir > 0 ? i < virtualItems.length : i >= 0; i += dir) {
+                let curIdx = virtualItems.findIndex((it) => it.offset >= el.scrollTop);
+                if (curIdx < 0) curIdx = 0;
+                let targetOffset = el.scrollTop;
+                for (let i = curIdx + dir; dir > 0 ? i < virtualItems.length : i >= 0; i += dir) {
                     const it = virtualItems[i];
-                    if (it && it.kind === 'row' && it.row && it.row.type !== 'equal') {
-                        target = i;
+                    if (it && (it.kind === 'row' || it.kind === 'replace-del') && it.row && it.row.type !== 'equal') {
+                        targetOffset = it.offset;
                         break;
                     }
                 }
-                el.scrollTo({ top: target * rowHeight, behavior: 'smooth' });
+                el.scrollTo({ top: targetOffset, behavior: 'smooth' });
             }
         };
         el.addEventListener('keydown', handler);

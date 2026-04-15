@@ -121,6 +121,11 @@
     }
 }
 
+.eui-lightbox-body-zoom {
+    overflow: hidden;
+    flex: none;
+}
+
 .eui-lightbox-zoom-container {
     overflow: hidden;
     position: relative;

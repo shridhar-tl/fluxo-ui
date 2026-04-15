@@ -4,6 +4,7 @@ import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import BasicUsage from './BasicUsage';
+import InteractiveViewer from './InteractiveViewer';
 import IgnoreOptions from './IgnoreOptions';
 import LargeFile from './LargeFile';
 import Variants from './Variants';
@@ -12,6 +13,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Unified diff' },
     { id: 'variants', title: 'Variants', description: 'Split, inline, minimal, collapse' },
     { id: 'ignore', title: 'Ignore Options', description: 'Whitespace, case, empty lines' },
+    { id: 'bitbucket', title: 'Interactive Viewer', description: 'File list, view switcher, and all options' },
     { id: 'large', title: 'Large Files', description: 'Virtualized rendering' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'props', title: 'Props', description: 'Component API' },
@@ -62,6 +64,11 @@ const DiffViewerPage: React.FC = () => (
         <section id="ignore" className="scroll-mt-8">
             <h2 className="text-2xl font-semibold mb-4" style={headingStyle}>Ignore Options</h2>
             <IgnoreOptions />
+        </section>
+
+        <section id="bitbucket" className="scroll-mt-8">
+            <h2 className="text-2xl font-semibold mb-4" style={headingStyle}>Interactive Viewer</h2>
+            <InteractiveViewer />
         </section>
 
         <section id="large" className="scroll-mt-8">

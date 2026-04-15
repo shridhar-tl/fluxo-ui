@@ -120,19 +120,18 @@ body.mode-dark .eui-diff {
 .eui-diff-word-add { background: var(--eui-diff-add-strong); border-radius: 2px; }
 .eui-diff-word-del { background: var(--eui-diff-del-strong); border-radius: 2px; text-decoration: line-through; text-decoration-color: rgba(0,0,0,0.25); }
 
-.eui-diff-split {
+.eui-diff-split-side {
+    flex: 1 1 50%;
+    min-width: 0;
     display: flex;
     align-items: stretch;
-    width: 100%;
+    border-right: 1px solid var(--eui-border-subtle);
 
-    > .eui-diff-split-side {
-        flex: 1 1 50%;
-        min-width: 0;
-        display: flex;
-        align-items: stretch;
-        border-right: 1px solid var(--eui-border-subtle);
+    &:last-child { border-right: none; }
 
-        &:last-child { border-right: none; }
+    .eui-diff-content {
+        overflow: hidden;
+        text-overflow: clip;
     }
 }
 

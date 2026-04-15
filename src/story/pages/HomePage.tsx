@@ -29,9 +29,11 @@ const largeComponents = new Set([
     'Tab View',
     'Sortable',
     'Stepper',
+    'Kanban Board',
+    'Diff Viewer',
 ]);
 
-const heavyComponents = new Set(['Kanban Board', 'Drag & Drop', 'Step Tour']);
+const heavyComponents = new Set(['Drag & Drop', 'Step Tour']);
 
 const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>> = {
     '/components/textinput': () => import('./text-input/BasicUsage'),
@@ -94,6 +96,13 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/image-editor': () => import('./image-editor/BasicUsage'),
     '/components/sortable': () => import('./sortable/BasicSortable'),
     '/components/collapsible-panel': () => import('./collapsible-panel/BasicUsage'),
+    '/components/signature-pad': () => import('./signature-pad/BasicUsage'),
+    '/components/week-day-selector': () => import('./week-day-selector/BasicUsage'),
+    '/components/accordion': () => import('./accordion/BasicUsage'),
+    '/components/card': () => import('./card/BasicUsage'),
+    '/components/diff-viewer': () => import('./diff-viewer/BasicUsage'),
+    '/components/kanban-board': () => import('./kanban-board/BasicUsage'),
+    '/components/drag-drop': () => import('./drag-drop/BasicDragDrop'),
 };
 
 const LazyPreview: React.FC<{ path: string }> = ({ path }) => {
@@ -129,7 +138,6 @@ interface ComponentCardProps {
 const ComponentCard: React.FC<ComponentCardProps> = ({ title, description, path, isDark, badge }) => {
     const isLarge = largeComponents.has(title);
     const isHeavy = heavyComponents.has(title);
-    const hasPreview = !!previewMap[path] && !isHeavy;
 
     const cardContent = (
         <Link
@@ -163,7 +171,44 @@ const ComponentCard: React.FC<ComponentCardProps> = ({ title, description, path,
         </Link>
     );
 
-    if (!hasPreview) return cardContent;
+    if (isHeavy) {
+        return (
+            <Lightbox
+                trigger="hover"
+                position="auto"
+                hoverDelay={400}
+                hoverCloseDelay={300}
+                showCloseButton={false}
+                width={260}
+                header={
+                    <div className="flex items-center justify-between">
+                        <span>{title}</span>
+                        <Link to={path} className="text-xs font-medium hover:underline" style={{ color: 'var(--eui-primary)' }}>
+                            Open full page →
+                        </Link>
+                    </div>
+                }
+                content={
+                    <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
+                        <div style={{ fontSize: 13, color: 'var(--eui-text)' }}>
+                            Live preview requires user interaction and is not available on hover.
+                        </div>
+                        <Link
+                            to={path}
+                            className="text-xs font-medium hover:underline"
+                            style={{ color: 'var(--eui-primary)' }}
+                        >
+                            Open full page to explore →
+                        </Link>
+                    </div>
+                }
+            >
+                {cardContent}
+            </Lightbox>
+        );
+    }
+
+    if (!previewMap[path]) return cardContent;
 
     return (
         <Lightbox
@@ -188,9 +233,13 @@ const ComponentCard: React.FC<ComponentCardProps> = ({ title, description, path,
             }
             contentClassName="eui-lightbox-preview-mode"
             content={
-                <div style={{ padding: isLarge ? 0 : '0.5rem', overflow: 'auto', maxHeight: isLarge ? undefined : '400px' }}>
+                isLarge ? (
                     <LazyPreview path={path} />
-                </div>
+                ) : (
+                    <div style={{ padding: '0.5rem', overflow: 'auto', maxHeight: '400px' }}>
+                        <LazyPreview path={path} />
+                    </div>
+                )
             }
         >
             {cardContent}

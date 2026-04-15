@@ -1,9 +1,7 @@
-import cn from 'classnames';
 import React, { useState } from 'react';
 import { Draggable, Droppable } from '../../../components/drag-drop';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
-import { useStoryTheme } from '../../StoryThemeContext';
 import { sourceItems } from './drag-drop-story-data';
 
 const code = `import { Draggable, Droppable } from 'fluxo-ui';
@@ -52,7 +50,6 @@ function DragDropExample() {
 }`;
 
 const BasicDragDrop: React.FC = () => {
-    const { isDark } = useStoryTheme();
     const [droppedItems, setDroppedItems] = useState<string[]>([]);
 
     const handleDrop = (source: any) => {
@@ -64,7 +61,7 @@ const BasicDragDrop: React.FC = () => {
             <ComponentDemo title="Simple Drag & Drop">
                 <div className="flex flex-col sm:flex-row gap-6 sm:gap-8">
                     <div className="flex-1">
-                        <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>
+                        <h3 className="text-sm font-medium mb-3" style={{ color: 'var(--eui-text)' }}>
                             Draggable Items
                         </h3>
                         <div className="space-y-2">
@@ -78,13 +75,14 @@ const BasicDragDrop: React.FC = () => {
                         </div>
                     </div>
                     <div className="flex-1">
-                        <h3 className={cn('text-sm font-medium mb-3', { 'text-gray-300': isDark, 'text-gray-700': !isDark })}>Drop Zone</h3>
+                        <h3 className="text-sm font-medium mb-3" style={{ color: 'var(--eui-text)' }}>Drop Zone</h3>
                         <Droppable
                             containerId="target"
                             index={0}
                             accept="task"
                             onDrop={handleDrop}
-                            className="min-h-50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4"
+                            className="min-h-50 rounded-lg border-2 border-dashed p-4"
+                            style={{ borderColor: 'var(--eui-border)', background: 'var(--eui-bg-subtle)' }}
                         >
                             {droppedItems.length > 0 ? (
                                 <div className="space-y-2">
@@ -95,7 +93,7 @@ const BasicDragDrop: React.FC = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="text-gray-500 dark:text-gray-500 text-center py-16">Drop items here</div>
+                                <div className="text-center py-16" style={{ color: 'var(--eui-text-muted)' }}>Drop items here</div>
                             )}
                         </Droppable>
                     </div>

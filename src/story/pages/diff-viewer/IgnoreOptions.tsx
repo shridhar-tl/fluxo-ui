@@ -3,15 +3,25 @@ import { Checkbox, DiffViewer } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
-const oldText = `function   hello( name ) {
-    console.log( "Hi, " + name );
+const oldText = `// Config file
+const   HOST = "localhost";
+const   PORT = 3000;
 
-}
+const   USER = "Admin";
+const   PASS = "Secret";
+
+
+const DB = "mydb";
+const TIMEOUT = 30;
 `;
 
-const newText = `function hello(name) {
-    CONSOLE.log("hi, " + name);
-}
+const newText = `// config file
+const HOST = "localhost";
+const PORT = 3000;
+const user = "admin";
+const pass = "secret";
+const DB = "mydb";
+const TIMEOUT = 30;
 `;
 
 const code = `<DiffViewer
@@ -23,9 +33,9 @@ const code = `<DiffViewer
 />`;
 
 const IgnoreOptions: React.FC = () => {
-    const [ignoreWs, setIgnoreWs] = useState(true);
+    const [ignoreWs, setIgnoreWs] = useState(false);
     const [ignoreCase, setIgnoreCase] = useState(false);
-    const [ignoreEmpty, setIgnoreEmpty] = useState(true);
+    const [ignoreEmpty, setIgnoreEmpty] = useState(false);
 
     return (
         <>

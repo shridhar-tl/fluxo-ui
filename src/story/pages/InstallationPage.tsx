@@ -57,7 +57,16 @@ const InstallationPage: React.FC = () => {
                     NPM Installation
                 </h2>
                 <p className={cn('mb-6', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                    Install Fluxo UI using your preferred package manager:
+                    Install Fluxo UI using your preferred package manager. View the package on{' '}
+                    <a
+                        href="https://www.npmjs.com/package/fluxo-ui"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--eui-primary)] hover:underline"
+                    >
+                        npm
+                    </a>
+                    .
                 </p>
                 <div className="space-y-4">
                     <CodeBlock title="npm" code="npm install fluxo-ui" language="bash" />
