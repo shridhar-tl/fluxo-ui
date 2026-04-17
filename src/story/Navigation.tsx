@@ -71,12 +71,14 @@ const navSections: NavSection[] = [
         ],
     },
     {
-        title: 'Data Tables',
-        key: 'data-tables',
+        title: 'Data & Reports',
+        key: 'data-reports',
         items: [
             { label: 'Table', path: '/components/table' },
             { label: 'Pivot Table', path: '/components/pivot-table' },
             { label: 'TreeView', path: '/components/tree-view' },
+            { label: 'Report Builder', path: '/components/report-builder' },
+            { label: 'Report Viewer', path: '/components/report-viewer' },
         ],
     },
     {
@@ -86,6 +88,7 @@ const navSections: NavSection[] = [
             { label: 'Markdown Editor', path: '/components/markdown' },
             { label: 'HTML Editor', path: '/components/html-editor' },
             { label: 'JSON Editor', path: '/components/json-editor' },
+            { label: 'Diff Viewer', path: '/components/diff-viewer' },
         ],
     },
     {
@@ -143,6 +146,17 @@ const navSections: NavSection[] = [
         ],
     },
     {
+        title: 'Layout',
+        key: 'layout',
+        items: [
+            { label: 'Splitter', path: '/components/splitter' },
+            { label: 'Collapsible Panel', path: '/components/collapsible-panel' },
+            { label: 'Accordion', path: '/components/accordion' },
+            { label: 'Card', path: '/components/card' },
+            { label: 'Docked Layout', path: '/components/docked-layout' },
+        ],
+    },
+    {
         title: 'Actions & Interaction',
         key: 'interactive',
         items: [
@@ -150,12 +164,6 @@ const navSections: NavSection[] = [
             { label: 'Fab & Speed Dial', path: '/components/fab-speed-dial' },
             { label: 'Drag & Drop', path: '/components/drag-drop' },
             { label: 'Sortable', path: '/components/sortable' },
-            { label: 'Splitter', path: '/components/splitter' },
-            { label: 'Collapsible Panel', path: '/components/collapsible-panel' },
-            { label: 'Accordion', path: '/components/accordion' },
-            { label: 'Card', path: '/components/card' },
-            { label: 'Diff Viewer', path: '/components/diff-viewer' },
-            { label: 'Docked Layout', path: '/components/docked-layout' },
             { label: 'Deferred View', path: '/components/deferred-view' },
             { label: 'Infinite Scroll', path: '/components/infinite-scroll' },
             { label: 'Animate On View', path: '/components/animate-on-view' },

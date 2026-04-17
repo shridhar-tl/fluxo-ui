@@ -85,6 +85,7 @@ export default defineConfig({
         lib: {
             entry: {
                 index: resolve(__dirname, 'src/components/index.ts'),
+                'report-builder': resolve(__dirname, 'src/components/report-builder/index.ts'),
                 draw: resolve(__dirname, 'src/components/canvas-draw/index.ts'),
                 utils: resolve(__dirname, 'src/utils/lib.ts'),
                 hooks: resolve(__dirname, 'src/hooks/index.ts'),
@@ -107,6 +108,9 @@ export default defineConfig({
                 'react-dom',
                 'react/jsx-runtime',
                 'html2canvas',
+                'chart.js',
+                'chart.js/auto',
+                'react-chartjs-2',
                 // The following externals are required as vite plugin is exported
                 'vite',
                 'fs',
@@ -118,6 +122,9 @@ export default defineConfig({
                     'react-dom': 'ReactDOM',
                     'react/jsx-runtime': 'jsxRuntime',
                     html2canvas: 'html2canvas',
+                    'chart.js': 'ChartJS',
+                    'chart.js/auto': 'ChartJSAuto',
+                    'react-chartjs-2': 'reactChartjs2',
                 },
                 assetFileNames: (assetInfo) => {
                     if (assetInfo.name && assetInfo.name.endsWith('.css')) {

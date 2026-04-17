@@ -6,14 +6,16 @@
         "react-component-library",
         "react-ui-kit",
         "design-system",
+        "report-builder",
         "data-grid",
-        "kanban-board",
         "gantt-chart",
+        "kanban-board",
         "pivot-table",
-        "json-editor",
-        "image-annotation",
+        "rich-text-editor",
+        "drag-and-drop",
         "state-management",
-        "dependency-injection"
+        "calendar",
+        "accessible"
     ],
     "author": "Shridhar TL",
     "license": "MIT",
@@ -76,6 +78,11 @@
             "import": "./dist/vite-plugin.js",
             "require": "./dist/vite-plugin.cjs"
         },
+        "./report-builder": {
+            "types": "./dist/src/components/report-builder/index.d.ts",
+            "import": "./dist/report-builder.js",
+            "require": "./dist/report-builder.cjs"
+        },
         "./mcp-index.json": "./dist/mcp/mcp-index.json"
     },
     "bin": {
@@ -102,6 +109,12 @@
     "peerDependenciesMeta": {
         "html2canvas": {
             "optional": true
+        },
+        "chart.js": {
+            "optional": true
+        },
+        "react-chartjs-2": {
+            "optional": true
         }
     },
     "dependencies": {
@@ -116,6 +129,7 @@
         "@types/react": "^19.2.14",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^6.0.1",
+        "chart.js": "^4.5.1",
         "eslint": "^10.2.0",
         "eslint-plugin-react-hooks": "^7.1.0",
         "eslint-plugin-react-refresh": "^0.5.2",
@@ -124,6 +138,7 @@
         "html2canvas": "^1.4.1",
         "puppeteer": "^24.41.0",
         "react": "^19.2.5",
+        "react-chartjs-2": "^5.3.1",
         "react-dom": "^19.2.5",
         "react-router-dom": "^7.14.1",
         "sass": "^1.99.0",

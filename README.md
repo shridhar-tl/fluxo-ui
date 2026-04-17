@@ -162,13 +162,15 @@ function Counter() {
 | Color Picker | HSV canvas with hex/RGB inputs and swatches |
 | Calendar | Full-featured event calendar |
 
-### Data Tables
+### Data & Reports
 
 | Component | Description |
 | --- | --- |
 | Table | Data grid with sort, filter, pagination |
 | Pivot Table | Aggregation, pivoting, expand/collapse |
 | TreeView | Hierarchical tree with expand/collapse |
+| Report Builder | Visual report designer with datasource plugins, parameters, and JSON export |
+| Report Viewer | Renders report definitions with sorting, drill-through, PDF export, and parameters |
 
 ### Editors
 
@@ -177,6 +179,7 @@ function Counter() {
 | Markdown Editor | Markdown editor and preview with toolbar, upload, and split view |
 | HTML Editor | WYSIWYG rich text editor with full formatting, tables, images, and sanitized preview |
 | JSON Editor | Interactive JSON viewer and editor |
+| Diff Viewer | High-performance text diff with unified, split, inline variants and large-file virtualization |
 
 ### Charts & Boards
 
@@ -227,6 +230,16 @@ function Counter() {
 | Confirm Popover | Inline confirmation dialogs |
 | Context Menu | Right-click context menus |
 
+### Layout
+
+| Component | Description |
+| --- | --- |
+| Splitter | Resizable split panels |
+| Collapsible Panel | Expand/collapse sections & accordion |
+| Accordion | Multi-item collapsible panel group with single/multi expand and five visual variants |
+| Card | Content container with header, body, footer, cover media, and five visual variants |
+| Docked Layout | VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels |
+
 ### Actions & Interaction
 
 | Component | Description |
@@ -235,8 +248,6 @@ function Counter() {
 | Fab & Speed Dial | Floating action buttons |
 | Drag & Drop | Draggable and droppable containers |
 | Sortable | Drag-to-reorder lists and grids |
-| Splitter | Resizable split panels |
-| Collapsible Panel | Expand/collapse sections & accordion |
 | Deferred View | Lazy-render with visibility detection |
 | Infinite Scroll | Load-more on scroll with indicators |
 | Animate On View | Scroll-triggered CSS animations |

@@ -9,4 +9,5 @@ export type {
     PinState,
     TabMode,
     Breakpoint,
+    ContentTab,
 } from './docked-layout-types';

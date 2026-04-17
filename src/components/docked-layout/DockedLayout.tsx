@@ -138,6 +138,11 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
     onChange,
     tabMode = 'icon',
     breakpoints: propBreakpoints,
+    contentTabs,
+    activeContentTabId: externalActiveTabId,
+    onContentTabChange,
+    onContentTabClose,
+    enableContentTabs = false,
     className,
     style,
 }) => {
@@ -146,6 +151,17 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
     const [internalState, setInternalState] = useState<DockedLayoutState>(() =>
         externalState ?? buildInitialState(panelConfigs),
     );
+    const [internalActiveTabId, setInternalActiveTabId] = useState<string>(
+        () => externalActiveTabId ?? contentTabs?.[0]?.id ?? '',
+    );
+    const activeContentTabId = externalActiveTabId ?? internalActiveTabId;
+    const handleContentTabChange = useCallback((tabId: string) => {
+        setInternalActiveTabId(tabId);
+        onContentTabChange?.(tabId);
+    }, [onContentTabChange]);
+    const handleContentTabClose = useCallback((tabId: string) => {
+        onContentTabClose?.(tabId);
+    }, [onContentTabClose]);
     const [autoHideExpanded, setAutoHideExpanded] = useState<Record<string, boolean>>({});
     const [dragState, setDragState] = useState<DragState | null>(null);
     const [resizeState, setResizeState] = useState<ResizeState | null>(null);
@@ -794,8 +810,43 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
 
             {/* Center column */}
             <div className="eui-dl-center">
+                {enableContentTabs && contentTabs && contentTabs.length > 0 && (
+                    <div className="eui-dl-content-tabs" role="tablist" aria-label="Content tabs">
+                        {contentTabs.map((tab) => {
+                            const Icon = tab.icon;
+                            return (
+                                <div
+                                    key={tab.id}
+                                    className={classNames('eui-dl-content-tab', { active: tab.id === activeContentTabId })}
+                                    role="tab"
+                                    aria-selected={tab.id === activeContentTabId}
+                                    tabIndex={tab.id === activeContentTabId ? 0 : -1}
+                                    onClick={() => handleContentTabChange(tab.id)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleContentTabChange(tab.id); }
+                                    }}
+                                >
+                                    {Icon && <Icon aria-hidden="true" style={{ width: 14, height: 14 }} />}
+                                    <span className="eui-dl-content-tab-label">{tab.label}</span>
+                                    {tab.closable !== false && onContentTabClose && (
+                                        <button
+                                            className="eui-dl-content-tab-close"
+                                            onClick={(e) => { e.stopPropagation(); handleContentTabClose(tab.id); }}
+                                            aria-label={`Close ${tab.label}`}
+                                            tabIndex={-1}
+                                        >
+                                            <TimesIcon aria-hidden="true" style={{ width: 10, height: 10 }} />
+                                        </button>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
                 <div className="eui-dl-content" id="eui-dl-main-content">
-                    {children}
+                    {enableContentTabs && contentTabs && contentTabs.length > 0
+                        ? contentTabs.find((t) => t.id === activeContentTabId)?.content ?? children
+                        : children}
                 </div>
 
                 {/* Bottom resize handle */}

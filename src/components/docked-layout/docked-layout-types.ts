@@ -58,6 +58,14 @@ export interface DockedLayoutState {
     activeTabs: Record<string, string | null>;
 }
 
+export interface ContentTab {
+    id: string;
+    label: string;
+    icon?: SVGIcon;
+    closable?: boolean;
+    content: React.ReactNode;
+}
+
 export interface DockedLayoutProps {
     panels: PanelConfig[];
     children?: React.ReactNode;
@@ -65,6 +73,11 @@ export interface DockedLayoutProps {
     onChange?: (state: DockedLayoutState) => void;
     tabMode?: TabMode;
     breakpoints?: Breakpoint[];
+    contentTabs?: ContentTab[];
+    activeContentTabId?: string;
+    onContentTabChange?: (tabId: string) => void;
+    onContentTabClose?: (tabId: string) => void;
+    enableContentTabs?: boolean;
     className?: string;
     style?: React.CSSProperties;
 }

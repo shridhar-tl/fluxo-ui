@@ -130,6 +130,10 @@ export { default as DatabaseIcon } from './icons/database.svg?react';
 export { default as WrenchIcon } from './icons/wrench.svg?react';
 export { default as TerminalIcon } from './icons/terminal.svg?react';
 export { default as LayersIcon } from './icons/layers.svg?react';
+export { default as DonutChartIcon } from './icons/donut-chart.svg?react';
+export { default as ColumnsLayoutIcon } from './icons/columns-layout.svg?react';
+export { default as TabViewIcon } from './icons/tab-view.svg?react';
+export { default as CanvasLayoutIcon } from './icons/canvas-layout.svg?react';
 
 export type SVGIcon = React.FunctionComponent<
     React.ComponentProps<'svg'> & { title?: string; titleId?: string; desc?: string; descId?: string }

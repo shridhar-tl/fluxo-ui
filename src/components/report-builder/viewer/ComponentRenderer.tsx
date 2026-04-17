@@ -1,0 +1,346 @@
+import React, { useEffect, useState } from 'react';
+import { evaluateExpression } from '../expression/expression-parser';
+import type { ExpressionContext } from '../expression/expression-types';
+import type {
+    ReportComponent,
+    ComponentStyleProps,
+    HeaderComponentProps,
+    TextComponentProps,
+    ImageComponentProps,
+    HorizontalLineComponentProps,
+    TabComponentProps,
+    CanvasComponentProps,
+    CanvasItemLayout,
+} from '../report-definition-types';
+import { ComponentErrorBoundary } from './ComponentErrorBoundary';
+import { useViewerContext, buildExpressionDatasources } from './ViewerExpressionContext';
+import { TableRenderer } from './TableRenderer';
+import { SubReportRenderer } from './SubReportRenderer';
+import { ChartRenderer } from './ChartRenderer';
+
+function toReactCSSProps(styles: ComponentStyleProps): React.CSSProperties {
+    const css: React.CSSProperties = {};
+    if (styles.textColor) css.color = styles.textColor;
+    if (styles.backgroundColor) css.backgroundColor = styles.backgroundColor;
+    if (styles.fontSize) css.fontSize = styles.fontSize;
+    if (styles.fontFamily) css.fontFamily = styles.fontFamily;
+    if (styles.fontWeight) css.fontWeight = styles.fontWeight;
+    if (styles.fontStyle) css.fontStyle = styles.fontStyle;
+    if (styles.textAlign) css.textAlign = styles.textAlign;
+    if (styles.borderColor) css.borderColor = styles.borderColor;
+    if (styles.borderWidth) css.borderWidth = styles.borderWidth;
+    if (styles.borderStyle) css.borderStyle = styles.borderStyle;
+    if (styles.borderRadius) css.borderRadius = styles.borderRadius;
+    if (styles.paddingTop != null) css.paddingTop = styles.paddingTop;
+    if (styles.paddingRight != null) css.paddingRight = styles.paddingRight;
+    if (styles.paddingBottom != null) css.paddingBottom = styles.paddingBottom;
+    if (styles.paddingLeft != null) css.paddingLeft = styles.paddingLeft;
+    if (styles.marginTop != null) css.marginTop = styles.marginTop;
+    if (styles.marginRight != null) css.marginRight = styles.marginRight;
+    if (styles.marginBottom != null) css.marginBottom = styles.marginBottom;
+    if (styles.marginLeft != null) css.marginLeft = styles.marginLeft;
+    if (styles.width) css.width = styles.width;
+    if (styles.height) css.height = styles.height;
+    return css;
+}
+
+async function evalExprString(expr: string, ctx: ExpressionContext): Promise<unknown> {
+    if (!expr || !expr.startsWith('=')) return expr;
+    const { result, error } = await evaluateExpression(expr.slice(1), ctx);
+    if (error) throw new Error(error);
+    return result;
+}
+
+async function evalVisible(visible: boolean | string | undefined, ctx: ExpressionContext): Promise<boolean> {
+    if (visible === undefined || visible === true) return true;
+    if (visible === false) return false;
+    const result = await evalExprString(visible as string, ctx);
+    return result !== false && result !== 0 && result !== '' && result !== null && result !== undefined;
+}
+
+const Shimmer: React.FC<{ height?: number }> = ({ height = 32 }) => (
+    <div className="eui-rb-viewer-shimmer" style={{ height }} aria-hidden="true" />
+);
+
+export const ComponentRenderer: React.FC<{ component: ReportComponent; depth?: number }> = ({ component, depth = 0 }) => {
+    const ctx = useViewerContext();
+    const [visible, setVisible] = useState(true);
+    const [loading, setLoading] = useState(false);
+
+    const exprCtx: ExpressionContext = {
+        datasources: buildExpressionDatasources(ctx.datasources),
+        parameters: ctx.parameters,
+    };
+
+    useEffect(() => {
+        const styles = component.styles as ComponentStyleProps;
+        if (styles.visible !== undefined) {
+            setLoading(true);
+            evalVisible(styles.visible, exprCtx)
+                .then((v) => { setVisible(v); setLoading(false); })
+                .catch(() => setLoading(false));
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [component.styles, ctx.datasources, ctx.parameters]);
+
+    if (loading) return <Shimmer height={32} />;
+    if (!visible) return null;
+
+    return (
+        <ComponentErrorBoundary componentId={component.id}>
+            <ComponentContent component={component} exprCtx={exprCtx} depth={depth} />
+        </ComponentErrorBoundary>
+    );
+};
+
+const ComponentContent: React.FC<{
+    component: ReportComponent;
+    exprCtx: ExpressionContext;
+    depth: number;
+}> = ({ component, exprCtx, depth }) => {
+    const styleCss = toReactCSSProps(component.styles as ComponentStyleProps);
+
+    switch (component.type) {
+        case 'header':
+            return <HeaderRenderer component={component} exprCtx={exprCtx} styleCss={styleCss} />;
+        case 'text':
+            return <TextRenderer component={component} exprCtx={exprCtx} styleCss={styleCss} />;
+        case 'image':
+            return <ImageRenderer component={component} exprCtx={exprCtx} styleCss={styleCss} />;
+        case 'horizontal-line':
+            return <HorizontalLineRenderer component={component} styleCss={styleCss} />;
+        case 'columns':
+            return <ColumnsRenderer component={component} styleCss={styleCss} depth={depth} />;
+        case 'canvas':
+            return <CanvasRenderer component={component} styleCss={styleCss} depth={depth} />;
+        case 'tab':
+            return <TabRenderer component={component} styleCss={styleCss} depth={depth} />;
+        case 'table':
+            return <TableRenderer component={component} styleCss={styleCss} />;
+        case 'sub-report':
+            return <SubReportRenderer component={component} styleCss={styleCss} />;
+        case 'chart-bar':
+        case 'chart-pie':
+        case 'chart-donut':
+        case 'chart-line':
+            return <ChartRenderer component={component} styleCss={styleCss} />;
+        default:
+            return (
+                <div style={{ padding: '8px', color: 'var(--eui-text-muted)', fontSize: 12, fontStyle: 'italic', ...styleCss }}>
+                    {component.type} — not rendered
+                </div>
+            );
+    }
+};
+
+const headerTags: Record<string, React.ElementType> = {
+    h1: 'h1', h2: 'h2', h3: 'h3', h4: 'h4', h5: 'h5', h6: 'h6',
+};
+
+const HeaderRenderer: React.FC<{
+    component: ReportComponent;
+    exprCtx: ExpressionContext;
+    styleCss: React.CSSProperties;
+}> = ({ component, exprCtx, styleCss }) => {
+    const p = component.props as unknown as HeaderComponentProps;
+    const [content, setContent] = useState<string>(p.content ?? '');
+
+    useEffect(() => {
+        if (String(p.content).startsWith('=')) {
+            evalExprString(p.content, exprCtx).then((v) => setContent(String(v ?? '')));
+        } else {
+            setContent(p.content ?? '');
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [p.content, exprCtx]);
+
+    const level = p.level ?? 'h2';
+    const fontSizes: Record<string, number> = { h1: 28, h2: 22, h3: 18, h4: 16, h5: 14, h6: 12 };
+    const Tag = headerTags[level] ?? 'h2';
+
+    return (
+        <Tag style={{
+            margin: 0,
+            fontSize: fontSizes[level] ?? 18,
+            fontWeight: 700,
+            lineHeight: 1.3,
+            color: 'var(--eui-text)',
+            ...styleCss,
+        }}>
+            {content}
+        </Tag>
+    );
+};
+
+const TextRenderer: React.FC<{
+    component: ReportComponent;
+    exprCtx: ExpressionContext;
+    styleCss: React.CSSProperties;
+}> = ({ component, exprCtx, styleCss }) => {
+    const p = component.props as unknown as TextComponentProps;
+    const [content, setContent] = useState<string>(p.content ?? '');
+
+    useEffect(() => {
+        if (String(p.content).startsWith('=')) {
+            evalExprString(p.content, exprCtx).then((v) => setContent(String(v ?? '')));
+        } else {
+            setContent(p.content ?? '');
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [p.content, exprCtx]);
+
+    return (
+        <p style={{
+            margin: 0, fontSize: 13, lineHeight: 1.6,
+            color: 'var(--eui-text)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+            ...styleCss,
+        }}>
+            {content}
+        </p>
+    );
+};
+
+const ImageRenderer: React.FC<{
+    component: ReportComponent;
+    exprCtx: ExpressionContext;
+    styleCss: React.CSSProperties;
+}> = ({ component, exprCtx, styleCss }) => {
+    const p = component.props as unknown as ImageComponentProps;
+    const [src, setSrc] = useState<string>(p.src ?? '');
+
+    useEffect(() => {
+        if (String(p.src).startsWith('=')) {
+            evalExprString(p.src, exprCtx).then((v) => setSrc(String(v ?? '')));
+        } else {
+            setSrc(p.src ?? '');
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [p.src, exprCtx]);
+
+    if (!src) return null;
+
+    return (
+        <img
+            src={src}
+            alt={p.alt ?? ''}
+            style={{
+                display: 'block',
+                width: (p.width as string | undefined) ?? '100%',
+                height: (p.height as string | undefined) ?? 'auto',
+                objectFit: (p.objectFit as React.CSSProperties['objectFit']) ?? 'contain',
+                ...styleCss,
+            }}
+        />
+    );
+};
+
+const HorizontalLineRenderer: React.FC<{
+    component: ReportComponent;
+    styleCss: React.CSSProperties;
+}> = ({ component, styleCss }) => {
+    const p = component.props as unknown as HorizontalLineComponentProps;
+    return (
+        <div style={{ marginTop: p.marginTop ?? 8, marginBottom: p.marginBottom ?? 8, ...styleCss }}>
+            <hr style={{
+                border: 'none',
+                borderTop: `${p.thickness ?? 1}px solid ${p.color ?? 'var(--eui-border-subtle)'}`,
+                margin: 0,
+            }} />
+        </div>
+    );
+};
+
+const ColumnsRenderer: React.FC<{
+    component: ReportComponent;
+    styleCss: React.CSSProperties;
+    depth: number;
+}> = ({ component, styleCss, depth }) => {
+    const columns = component.children ?? [];
+    const count = columns.length || 1;
+    return (
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${count}, 1fr)`, gap: 16, ...styleCss }}>
+            {columns.map((col) => (
+                <div key={col.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {(col.children ?? []).map((child) => (
+                        <ComponentRenderer key={child.id} component={child} depth={depth + 1} />
+                    ))}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const CanvasRenderer: React.FC<{
+    component: ReportComponent;
+    styleCss: React.CSSProperties;
+    depth: number;
+}> = ({ component, styleCss, depth }) => {
+    const p = component.props as unknown as CanvasComponentProps;
+    const children = component.children ?? [];
+    return (
+        <div style={{
+            position: 'relative',
+            width: p.width ?? '100%',
+            height: p.height ?? '400px',
+            ...styleCss,
+        }}>
+            {children.map((child) => {
+                const layout = (child.props.canvasLayout as CanvasItemLayout | undefined) ?? { x: 0, y: 0, width: 200, height: 100 };
+                return (
+                    <div
+                        key={child.id}
+                        style={{
+                            position: 'absolute',
+                            left: layout.x,
+                            top: layout.y,
+                            width: layout.width,
+                            height: layout.height,
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <ComponentRenderer component={child} depth={depth + 1} />
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
+
+const TabRenderer: React.FC<{
+    component: ReportComponent;
+    styleCss: React.CSSProperties;
+    depth: number;
+}> = ({ component, styleCss, depth }) => {
+    const p = component.props as unknown as TabComponentProps;
+    const tabs = p.tabs ?? [];
+    const panels = component.children ?? [];
+    const [activeTabId, setActiveTabId] = useState<string>(p.defaultTabId ?? tabs[0]?.id ?? '');
+    const activePanel = panels.find((panel) => panel.props.tabId === activeTabId);
+
+    return (
+        <div style={styleCss} className="eui-rv-tab">
+            <div className="eui-rv-tab-tabs" role="tablist">
+                {tabs.map((tab) => (
+                    <button
+                        key={tab.id}
+                        className={`eui-rv-tab-btn${activeTabId === tab.id ? ' active' : ''}`}
+                        role="tab"
+                        aria-selected={activeTabId === tab.id}
+                        onClick={() => setActiveTabId(tab.id)}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+            <div className="eui-rv-tab-panel" role="tabpanel">
+                {activePanel && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {(activePanel.children ?? []).map((child) => (
+                            <ComponentRenderer key={child.id} component={child} depth={depth + 1} />
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};

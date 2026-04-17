@@ -32,6 +32,8 @@ const largeComponents = new Set([
     'Kanban Board',
     'Diff Viewer',
     'Docked Layout',
+    'Report Builder',
+    'Report Viewer',
 ]);
 
 const heavyComponents = new Set(['Drag & Drop', 'Step Tour']);
@@ -313,16 +315,19 @@ const pickerComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Calendar', description: 'Full-featured event calendar', path: '/components/calendar' },
 ];
 
-const dataTableComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+const dataReportComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Table', description: 'Data grid with sort, filter, pagination', path: '/components/table' },
     { title: 'Pivot Table', description: 'Aggregation, pivoting, expand/collapse', path: '/components/pivot-table' },
     { title: 'TreeView', description: 'Hierarchical tree with expand/collapse', path: '/components/tree-view' },
+    { title: 'Report Builder', description: 'Visual report designer with datasource plugins, parameters, and JSON export', path: '/components/report-builder' },
+    { title: 'Report Viewer', description: 'Renders report definitions with sorting, drill-through, PDF export, and parameters', path: '/components/report-viewer' },
 ];
 
 const editorComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Markdown Editor', description: 'Markdown editor and preview with toolbar, upload, and split view', path: '/components/markdown' },
     { title: 'HTML Editor', description: 'WYSIWYG rich text editor with full formatting, tables, images, and sanitized preview', path: '/components/html-editor', badge: 'New' },
     { title: 'JSON Editor', description: 'Interactive JSON viewer and editor', path: '/components/json-editor' },
+    { title: 'Diff Viewer', description: 'High-performance text diff with unified, split, inline variants and large-file virtualization', path: '/components/diff-viewer' },
 ];
 
 const chartBoardComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -364,17 +369,19 @@ const overlayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Context Menu', description: 'Right-click context menus', path: '/components/context-menu' },
 ];
 
+const layoutComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Splitter', description: 'Resizable split panels', path: '/components/splitter' },
+    { title: 'Collapsible Panel', description: 'Expand/collapse sections & accordion', path: '/components/collapsible-panel' },
+    { title: 'Accordion', description: 'Multi-item collapsible panel group with single/multi expand and five visual variants', path: '/components/accordion' },
+    { title: 'Card', description: 'Content container with header, body, footer, cover media, and five visual variants', path: '/components/card' },
+    { title: 'Docked Layout', description: 'VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels', path: '/components/docked-layout' },
+];
+
 const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Button', description: 'Primary action element with variants', path: '/components/button' },
     { title: 'Fab & Speed Dial', description: 'Floating action buttons', path: '/components/fab-speed-dial' },
     { title: 'Drag & Drop', description: 'Draggable and droppable containers', path: '/components/drag-drop' },
     { title: 'Sortable', description: 'Drag-to-reorder lists and grids', path: '/components/sortable' },
-    { title: 'Splitter', description: 'Resizable split panels', path: '/components/splitter' },
-    { title: 'Collapsible Panel', description: 'Expand/collapse sections & accordion', path: '/components/collapsible-panel' },
-    { title: 'Accordion', description: 'Multi-item collapsible panel group with single/multi expand and five visual variants', path: '/components/accordion', badge: 'New' },
-    { title: 'Card', description: 'Content container with header, body, footer, cover media, and five visual variants', path: '/components/card', badge: 'New' },
-    { title: 'Diff Viewer', description: 'High-performance text diff with unified, split, inline variants and large-file virtualization', path: '/components/diff-viewer', badge: 'New' },
-    { title: 'Docked Layout', description: 'VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels', path: '/components/docked-layout', badge: 'New' },
     { title: 'Deferred View', description: 'Lazy-render with visibility detection', path: '/components/deferred-view' },
     { title: 'Infinite Scroll', description: 'Load-more on scroll with indicators', path: '/components/infinite-scroll' },
     { title: 'Animate On View', description: 'Scroll-triggered CSS animations', path: '/components/animate-on-view' },
@@ -472,9 +479,9 @@ const HomePage: React.FC = () => {
                         isDark={isDark}
                     />
                     <CategorySection
-                        title="Data Tables"
+                        title="Data & Reports"
                         icon="&#9638;"
-                        items={dataTableComponents.map((i) => ({ ...i, isDark }))}
+                        items={dataReportComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                     <CategorySection
@@ -511,6 +518,12 @@ const HomePage: React.FC = () => {
                         title="Overlays"
                         icon="&#9671;"
                         items={overlayComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Layout"
+                        icon="&#9638;"
+                        items={layoutComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                     <CategorySection

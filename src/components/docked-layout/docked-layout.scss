@@ -37,6 +37,76 @@
     overflow: hidden;
 }
 
+.eui-dl-content-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--eui-bg-subtle);
+    border-bottom: 1px solid var(--eui-border-subtle);
+    flex-shrink: 0;
+    overflow-x: auto;
+    @include eui-thin-scrollbar;
+}
+
+.eui-dl-content-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--eui-text-muted);
+    border-right: 1px solid var(--eui-border-subtle);
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    position: relative;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover {
+        color: var(--eui-text);
+        background: var(--eui-bg);
+    }
+
+    &.active {
+        color: var(--eui-text);
+        background: var(--eui-bg);
+        border-bottom: 2px solid var(--eui-primary);
+        margin-bottom: -1px;
+    }
+}
+
+.eui-dl-content-tab-label {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eui-dl-content-tab-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: none;
+    background: transparent;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--eui-text-muted);
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+
+    .eui-dl-content-tab:hover &,
+    .eui-dl-content-tab.active & {
+        opacity: 1;
+    }
+
+    &:hover {
+        background: var(--eui-bg-subtle);
+        color: var(--eui-text);
+    }
+}
+
 .eui-dl-content {
     flex: 1 1 0;
     min-height: 0;

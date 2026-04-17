@@ -98,6 +98,9 @@ const AccordionPage = React.lazy(() => import('./story/pages/accordion/Accordion
 const SignaturePadPage = React.lazy(() => import('./story/pages/signature-pad/SignaturePadPage'));
 const DiffViewerPage = React.lazy(() => import('./story/pages/diff-viewer/DiffViewerPage'));
 const DockedLayoutPage = React.lazy(() => import('./story/pages/docked-layout/DockedLayoutPage'));
+const ReportBuilderPlaygroundPage = React.lazy(() => import('./story/pages/report-builder/ReportBuilderPlaygroundPage'));
+const ReportBuilderPage = React.lazy(() => import('./story/pages/report-builder/ReportBuilderPage'));
+const ReportViewerPage = React.lazy(() => import('./story/pages/report-builder/ReportViewerPage'));
 
 const App: React.FC = () => {
     return (
@@ -551,6 +554,9 @@ const App: React.FC = () => {
                     <Route path="/components/signature-pad" element={<LayoutWrapper><SignaturePadPage /></LayoutWrapper>} />
                     <Route path="/components/diff-viewer" element={<LayoutWrapper><DiffViewerPage /></LayoutWrapper>} />
                     <Route path="/components/docked-layout" element={<LayoutWrapper><DockedLayoutPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder" element={<LayoutWrapper><ReportBuilderPage /></LayoutWrapper>} />
+                    <Route path="/components/report-viewer" element={<LayoutWrapper><ReportViewerPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-playground" element={<LayoutWrapper><ReportBuilderPlaygroundPage /></LayoutWrapper>} />
                     <Route path="/components/html-editor" element={<LayoutWrapper><HtmlEditorPage /></LayoutWrapper>} />
                     <Route
                         path="*"
