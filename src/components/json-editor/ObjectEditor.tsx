@@ -17,7 +17,6 @@ const ObjectEditor: React.FC<EditorNodeProps> = ({
     onChange,
     onNameChange,
     onRemove,
-    onInsert,
     allowEditValue,
     allowEditKey,
     allowRemove,
@@ -93,10 +92,6 @@ const ObjectEditor: React.FC<EditorNodeProps> = ({
     const handleSelfRemove = useCallback(() => {
         if (name !== undefined) onRemove?.(name);
     }, [onRemove, name]);
-
-    const handleInsertBefore = useCallback(() => {
-        if (typeof name === 'number') onInsert?.(name);
-    }, [onInsert, name]);
 
     const handleCopy = useCallback(() => {
         copyToClipboard(value);

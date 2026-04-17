@@ -121,6 +121,15 @@ export { default as ShieldIcon } from './icons/shield.svg?react';
 export { default as BlockIcon } from './icons/block.svg?react';
 export { default as PieChartIcon } from './icons/pie-chart.svg?react';
 export { default as UsersIcon } from './icons/users.svg?react';
+export { default as PinIcon } from './icons/pin.svg?react';
+export { default as PanelLeftIcon } from './icons/panel-left.svg?react';
+export { default as PanelRightIcon } from './icons/panel-right.svg?react';
+export { default as PanelBottomIcon } from './icons/panel-bottom.svg?react';
+export { default as PanelFloatIcon } from './icons/panel-float.svg?react';
+export { default as DatabaseIcon } from './icons/database.svg?react';
+export { default as WrenchIcon } from './icons/wrench.svg?react';
+export { default as TerminalIcon } from './icons/terminal.svg?react';
+export { default as LayersIcon } from './icons/layers.svg?react';
 
 export type SVGIcon = React.FunctionComponent<
     React.ComponentProps<'svg'> & { title?: string; titleId?: string; desc?: string; descId?: string }

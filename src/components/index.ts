@@ -113,4 +113,5 @@ export * from './card';
 export * from './accordion';
 export * from './signature-pad';
 export * from './diff-viewer';
+export * from './docked-layout';
 import '../styles/components.css';

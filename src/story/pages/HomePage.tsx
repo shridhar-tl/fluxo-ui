@@ -31,6 +31,7 @@ const largeComponents = new Set([
     'Stepper',
     'Kanban Board',
     'Diff Viewer',
+    'Docked Layout',
 ]);
 
 const heavyComponents = new Set(['Drag & Drop', 'Step Tour']);
@@ -103,6 +104,7 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/diff-viewer': () => import('./diff-viewer/BasicUsage'),
     '/components/kanban-board': () => import('./kanban-board/BasicUsage'),
     '/components/drag-drop': () => import('./drag-drop/BasicDragDrop'),
+    '/components/docked-layout': () => import('./docked-layout/BasicUsage'),
 };
 
 const LazyPreview: React.FC<{ path: string }> = ({ path }) => {
@@ -372,6 +374,7 @@ const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Accordion', description: 'Multi-item collapsible panel group with single/multi expand and five visual variants', path: '/components/accordion', badge: 'New' },
     { title: 'Card', description: 'Content container with header, body, footer, cover media, and five visual variants', path: '/components/card', badge: 'New' },
     { title: 'Diff Viewer', description: 'High-performance text diff with unified, split, inline variants and large-file virtualization', path: '/components/diff-viewer', badge: 'New' },
+    { title: 'Docked Layout', description: 'VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels', path: '/components/docked-layout', badge: 'New' },
     { title: 'Deferred View', description: 'Lazy-render with visibility detection', path: '/components/deferred-view' },
     { title: 'Infinite Scroll', description: 'Load-more on scroll with indicators', path: '/components/infinite-scroll' },
     { title: 'Animate On View', description: 'Scroll-triggered CSS animations', path: '/components/animate-on-view' },

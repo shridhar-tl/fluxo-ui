@@ -12,11 +12,9 @@ const SimpleEditor: React.FC<EditorNodeProps> = ({
     onChange,
     onNameChange,
     onRemove,
-    onInsert,
     allowEditValue,
     allowEditKey,
     allowRemove,
-    allowInsert,
     allowTypeChange,
     allowCopy,
     showDataTypes,
@@ -35,10 +33,6 @@ const SimpleEditor: React.FC<EditorNodeProps> = ({
     const handleRemove = useCallback(() => {
         if (name !== undefined) onRemove?.(name);
     }, [onRemove, name]);
-
-    const handleInsert = useCallback(() => {
-        if (typeof name === 'number') onInsert?.(name);
-    }, [onInsert, name]);
 
     const handleCopy = useCallback(() => {
         copyToClipboard(value);

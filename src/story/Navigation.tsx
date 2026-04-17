@@ -155,6 +155,7 @@ const navSections: NavSection[] = [
             { label: 'Accordion', path: '/components/accordion' },
             { label: 'Card', path: '/components/card' },
             { label: 'Diff Viewer', path: '/components/diff-viewer' },
+            { label: 'Docked Layout', path: '/components/docked-layout' },
             { label: 'Deferred View', path: '/components/deferred-view' },
             { label: 'Infinite Scroll', path: '/components/infinite-scroll' },
             { label: 'Animate On View', path: '/components/animate-on-view' },

@@ -1,0 +1,515 @@
+@use '../eui-vars' as *;
+
+.eui-docked-layout {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    background: var(--eui-bg);
+    font-family: var(--eui-font-family);
+}
+
+// Side containers (left / right)
+.eui-dl-side {
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    height: 100%;
+    min-height: 0;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
+
+    &.eui-dl-side-right {
+        flex-direction: row;
+    }
+}
+
+// Center column (main content + bottom panel)
+.eui-dl-center {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.eui-dl-content {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: auto;
+    @include eui-thin-scrollbar;
+}
+
+// Activity bar (icon strip)
+.eui-dl-activity-bar {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 48px;
+    background: var(--eui-bg-subtle);
+    border-right: 1px solid var(--eui-border-subtle);
+    padding: 4px 0;
+    gap: 2px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    @include eui-thin-scrollbar;
+
+    &.eui-dl-activity-bar-right {
+        border-right: none;
+        border-left: 1px solid var(--eui-border-subtle);
+    }
+
+    &.eui-dl-activity-bar-bottom {
+        flex-direction: row;
+        width: auto;
+        height: 36px;
+        border-right: none;
+        border-left: none;
+        border-top: 1px solid var(--eui-border-subtle);
+        padding: 0 4px;
+        overflow-y: hidden;
+        overflow-x: auto;
+    }
+}
+
+// Activity bar icon button
+.eui-dl-tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    min-height: 40px;
+    margin: 0 4px;
+    padding: 6px 0;
+    border: none;
+    background: transparent;
+    color: var(--eui-text-muted);
+    cursor: pointer;
+    border-radius: var(--eui-radius-sm);
+    transition: color 0.15s, background 0.15s;
+    position: relative;
+    flex-shrink: 0;
+    user-select: none;
+
+    &:hover {
+        color: var(--eui-text);
+        background: var(--eui-bg-hover);
+    }
+
+    &.active {
+        color: var(--eui-primary);
+
+        &::before {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: var(--eui-primary);
+            border-radius: 0 2px 2px 0;
+        }
+    }
+
+    .eui-dl-activity-bar-right &.active::before {
+        left: auto;
+        right: -4px;
+        border-radius: 2px 0 0 2px;
+    }
+
+    .eui-dl-activity-bar-bottom & {
+        flex-direction: row;
+        width: auto;
+        min-height: 28px;
+        height: 28px;
+        padding: 0 10px;
+        margin: 4px 2px;
+        gap: 6px;
+
+        &.active::before {
+            left: 8px;
+            right: 8px;
+            top: auto;
+            bottom: -4px;
+            width: auto;
+            height: 2px;
+            border-radius: 2px 2px 0 0;
+        }
+    }
+
+    svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .eui-dl-tab-label {
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.2;
+
+        .eui-dl-activity-bar-bottom & {
+            font-size: 12px;
+            max-width: none;
+        }
+    }
+}
+
+// Icon + rotated label mode for side bars (VS Code style)
+.eui-dl-activity-bar-icon-label:not(.eui-dl-activity-bar-bottom) {
+    width: 52px;
+
+    .eui-dl-tab-btn {
+        width: 44px;
+        min-height: unset;
+        padding: 12px 0;
+        gap: 8px;
+
+        .eui-dl-tab-label {
+            writing-mode: vertical-rl;
+            text-align: left;
+            line-height: 1;
+            margin-top: 0;
+            max-width: none;
+            max-height: 110px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 11px;
+        }
+    }
+}
+
+// Right side: flip the reading direction so text reads bottom→top
+// (mirrors the left side so both point "inward")
+.eui-dl-activity-bar-right.eui-dl-activity-bar-icon-label {
+    .eui-dl-tab-label {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+    }
+}
+
+// Panel area
+.eui-dl-panel-area {
+    display: flex;
+    flex-direction: column;
+    background: var(--eui-bg);
+    overflow: hidden;
+    flex-shrink: 0;
+
+    &.eui-dl-panel-left {
+        border-right: 1px solid var(--eui-border-subtle);
+    }
+
+    &.eui-dl-panel-right {
+        border-left: 1px solid var(--eui-border-subtle);
+    }
+
+    &.eui-dl-panel-bottom {
+        border-top: 1px solid var(--eui-border-subtle);
+    }
+
+    &.eui-dl-panel-overlay {
+        position: absolute;
+        z-index: 50;
+        box-shadow: var(--eui-shadow);
+        animation: eui-dl-slide-in 0.15s ease;
+    }
+}
+
+@keyframes eui-dl-slide-in {
+    from { opacity: 0; transform: translateX(-6px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.eui-dl-panel-area.eui-dl-panel-right.eui-dl-panel-overlay {
+    animation-name: eui-dl-slide-in-right;
+}
+
+@keyframes eui-dl-slide-in-right {
+    from { opacity: 0; transform: translateX(6px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.eui-dl-panel-area.eui-dl-panel-bottom.eui-dl-panel-overlay {
+    animation-name: eui-dl-slide-in-bottom;
+}
+
+@keyframes eui-dl-slide-in-bottom {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+// Panel header
+.eui-dl-panel-header {
+    display: flex;
+    align-items: center;
+    height: 32px;
+    min-height: 32px;
+    padding: 0 8px 0 12px;
+    border-bottom: 1px solid var(--eui-border-subtle);
+    background: var(--eui-bg-subtle);
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.eui-dl-panel-title {
+    flex: 1;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--eui-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eui-dl-panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: 4px;
+    flex-shrink: 0;
+}
+
+.eui-dl-panel-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: none;
+    background: transparent;
+    color: var(--eui-text-muted);
+    cursor: pointer;
+    border-radius: var(--eui-radius-sm);
+    padding: 0;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover {
+        color: var(--eui-text);
+        background: var(--eui-bg-hover);
+    }
+
+    &.active {
+        color: var(--eui-primary);
+    }
+
+    svg {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+// Panel body
+.eui-dl-panel-body {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: auto;
+    @include eui-thin-scrollbar;
+}
+
+// Resize handles
+.eui-dl-resize-handle {
+    flex-shrink: 0;
+    background: transparent;
+    z-index: 20;
+    transition: background 0.15s;
+
+    &.eui-dl-rh-right {
+        width: 4px;
+        cursor: col-resize;
+        align-self: stretch;
+
+        &:hover, &.dragging {
+            background: var(--eui-primary);
+        }
+    }
+
+    &.eui-dl-rh-left {
+        width: 4px;
+        cursor: col-resize;
+        align-self: stretch;
+
+        &:hover, &.dragging {
+            background: var(--eui-primary);
+        }
+    }
+
+    &.eui-dl-rh-top {
+        height: 4px;
+        cursor: row-resize;
+        align-self: stretch;
+
+        &:hover, &.dragging {
+            background: var(--eui-primary);
+        }
+    }
+}
+
+// Floating panel
+.eui-dl-float {
+    position: absolute;
+    background: var(--eui-bg);
+    border: 1px solid var(--eui-border);
+    box-shadow: var(--eui-shadow);
+    border-radius: var(--eui-radius-md);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 200;
+
+    .eui-dl-panel-header {
+        cursor: move;
+        border-radius: var(--eui-radius-md) var(--eui-radius-md) 0 0;
+    }
+
+    .eui-dl-float-rh-e,
+    .eui-dl-float-rh-w,
+    .eui-dl-float-rh-s,
+    .eui-dl-float-rh-se,
+    .eui-dl-float-rh-sw {
+        position: absolute;
+        z-index: 10;
+    }
+
+    .eui-dl-float-rh-e {
+        top: 14px;
+        right: 0;
+        width: 5px;
+        bottom: 14px;
+        cursor: e-resize;
+    }
+
+    .eui-dl-float-rh-w {
+        top: 14px;
+        left: 0;
+        width: 5px;
+        bottom: 14px;
+        cursor: w-resize;
+    }
+
+    .eui-dl-float-rh-s {
+        left: 14px;
+        right: 14px;
+        bottom: 0;
+        height: 5px;
+        cursor: s-resize;
+    }
+
+    .eui-dl-float-rh-se {
+        bottom: 0;
+        right: 0;
+        width: 14px;
+        height: 14px;
+        cursor: se-resize;
+
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 8px 8px;
+            border-color: transparent transparent var(--eui-border) transparent;
+        }
+    }
+
+    .eui-dl-float-rh-sw {
+        bottom: 0;
+        left: 0;
+        width: 14px;
+        height: 14px;
+        cursor: sw-resize;
+
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 3px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 8px 8px 0;
+            border-color: transparent var(--eui-border) transparent transparent;
+        }
+    }
+}
+
+// Drag-to-dock drop zones overlay
+.eui-dl-drop-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 400;
+    pointer-events: none;
+}
+
+.eui-dl-drop-zone {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed transparent;
+    border-radius: var(--eui-radius-md);
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s, border-color 0.15s;
+    pointer-events: all;
+    cursor: pointer;
+
+    &.active {
+        opacity: 0.6;
+        border-color: var(--eui-border);
+        background: var(--eui-bg-subtle);
+    }
+
+    &.hover {
+        opacity: 1;
+        border-color: var(--eui-primary);
+        background: var(--eui-primary-subtle);
+
+        .eui-dl-dz-label {
+            color: var(--eui-primary);
+        }
+    }
+}
+
+.eui-dl-dz-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--eui-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+// Auto-hide backdrop (dismiss panel by clicking outside)
+.eui-dl-autohide-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    background: transparent;
+}
