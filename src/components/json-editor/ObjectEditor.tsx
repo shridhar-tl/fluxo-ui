@@ -129,11 +129,6 @@ const ObjectEditor: React.FC<EditorNodeProps> = ({
                     onChange={handleSelfNameChange}
                     onToggle={toggleExpand}
                     onRemove={allowRemove && !isRoot ? handleSelfRemove : undefined}
-                    onInsert={allowInsert && typeof name === 'number' ? handleInsertBefore : undefined}
-                    onCopy={allowCopy ? handleCopy : undefined}
-                    allowRemove={allowRemove}
-                    allowInsert={allowInsert}
-                    allowCopy={allowCopy}
                     size={size}
                 />
                 <span
@@ -150,6 +145,9 @@ const ObjectEditor: React.FC<EditorNodeProps> = ({
                     </span>
                     {!expanded && <span className="eui-je-bracket">{'}'}</span>}
                 </span>
+                {allowCopy && (
+                    <span className="eui-je-icon eui-je-copy-icon" onClick={e => { e.stopPropagation(); handleCopy(); }} role="button" tabIndex={0} title="Copy value" aria-label="Copy value" onKeyDown={e => e.key === 'Enter' && handleCopy()} />
+                )}
             </span>
             {expanded && (
                 <div className="eui-je-children">

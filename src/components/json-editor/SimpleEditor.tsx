@@ -99,12 +99,7 @@ const SimpleEditor: React.FC<EditorNodeProps> = ({
                     display={displayName}
                     allowEdit={allowEditKey}
                     onChange={nameChanged}
-                    onRemove={allowRemove ? handleRemove : undefined}
-                    onInsert={allowInsert && typeof name === 'number' ? handleInsert : undefined}
-                    onCopy={allowCopy ? handleCopy : undefined}
-                    allowRemove={allowRemove}
-                    allowInsert={allowInsert}
-                    allowCopy={allowCopy}
+                    onRemove={allowRemove && name !== undefined ? handleRemove : undefined}
                     size={size}
                 />
                 <ItemValueDisplay
@@ -116,6 +111,9 @@ const SimpleEditor: React.FC<EditorNodeProps> = ({
                     onChange={valueChanged}
                     size={size}
                 />
+                {allowCopy && (
+                    <span className="eui-je-icon eui-je-copy-icon" onClick={e => { e.stopPropagation(); handleCopy(); }} role="button" tabIndex={0} title="Copy value" aria-label="Copy value" onKeyDown={e => e.key === 'Enter' && handleCopy()} />
+                )}
             </span>
         </div>
     );

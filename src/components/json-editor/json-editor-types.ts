@@ -69,11 +69,6 @@ export interface ItemNameDisplayProps {
     onChange?: (newName: string, oldName: string) => void;
     onToggle?: () => void;
     onRemove?: () => void;
-    onInsert?: () => void;
-    onCopy?: () => void;
-    allowRemove: boolean;
-    allowInsert: boolean;
-    allowCopy: boolean;
     size: JsonEditorSize;
 }
 

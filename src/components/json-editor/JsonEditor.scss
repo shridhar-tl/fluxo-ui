@@ -106,15 +106,15 @@
 
     .eui-je-node-row {
         display: inline-flex;
-        align-items: flex-start;
+        align-items: center;
         gap: 0.125rem;
         padding: 0;
         width: 100%;
     }
 
     .eui-je-children {
-        margin-left: 0;
-        padding-left: 0.75rem;
+        margin-left: 0.5rem;
+        padding-left: 0.625rem;
         border-left: 1px dashed var(--eui-border);
     }
 
@@ -149,12 +149,12 @@
         margin-right: 0.25rem;
     }
 
-    // Expander arrow
+    // Expander arrow — width defines the indent reference for .eui-je-children
     .eui-je-expander {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 0.875rem;
+        width: 1rem;
         height: 1em;
         cursor: pointer;
         opacity: 0.6;
@@ -178,17 +178,6 @@
         }
     }
 
-    // Action icons
-    .eui-je-actions {
-        display: inline-flex;
-        align-items: center;
-        opacity: 0;
-        transition: opacity 150ms;
-
-        .eui-je-node-row:hover > .eui-je-item-name > & {
-            opacity: 1;
-        }
-    }
 
     .eui-je-icon {
         display: inline-flex;
@@ -233,6 +222,9 @@
     }
 
     .eui-je-copy-icon {
+        position: relative;
+        top: 1px;
+
         &::after {
             content: '\2398';
             color: var(--eui-text-muted);

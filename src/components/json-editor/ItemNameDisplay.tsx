@@ -11,11 +11,6 @@ const ItemNameDisplay: React.FC<ItemNameDisplayProps> = ({
     onChange,
     onToggle,
     onRemove,
-    onInsert,
-    onCopy,
-    allowRemove,
-    allowInsert,
-    allowCopy,
     size,
 }) => {
     const [editing, setEditing] = useState(false);
@@ -44,21 +39,6 @@ const ItemNameDisplay: React.FC<ItemNameDisplayProps> = ({
             setEditing(false);
         }
     }, [endEdit]);
-
-    const handleRemove = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation();
-        onRemove?.();
-    }, [onRemove]);
-
-    const handleInsert = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation();
-        onInsert?.();
-    }, [onInsert]);
-
-    const handleCopy = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation();
-        onCopy?.();
-    }, [onCopy]);
 
     if (editing) {
         return (
@@ -108,41 +88,17 @@ const ItemNameDisplay: React.FC<ItemNameDisplayProps> = ({
                     onKeyDown={e => e.key === 'Enter' && onToggle()}
                 />
             )}
-            <span className="eui-je-actions">
-                {allowInsert && onInsert && (
-                    <span
-                        className="eui-je-icon eui-je-add-icon"
-                        onClick={handleInsert}
-                        role="button"
-                        tabIndex={0}
-                        title="Add new item"
-                        aria-label="Add new item"
-                        onKeyDown={e => e.key === 'Enter' && onInsert()}
-                    />
-                )}
-                {allowRemove && onRemove && (
-                    <span
-                        className="eui-je-icon eui-je-remove-icon"
-                        onClick={handleRemove}
-                        role="button"
-                        tabIndex={0}
-                        title="Remove this item"
-                        aria-label="Remove this item"
-                        onKeyDown={e => e.key === 'Enter' && onRemove()}
-                    />
-                )}
-                {allowCopy && onCopy && (
-                    <span
-                        className="eui-je-icon eui-je-copy-icon"
-                        onClick={handleCopy}
-                        role="button"
-                        tabIndex={0}
-                        title="Copy value"
-                        aria-label="Copy value"
-                        onKeyDown={e => e.key === 'Enter' && onCopy()}
-                    />
-                )}
-            </span>
+            {onRemove && (
+                <span
+                    className="eui-je-icon eui-je-remove-icon"
+                    onClick={e => { e.stopPropagation(); onRemove(); }}
+                    role="button"
+                    tabIndex={0}
+                    title="Remove"
+                    aria-label="Remove"
+                    onKeyDown={e => e.key === 'Enter' && onRemove()}
+                />
+            )}
             <span
                 className="eui-je-name-text"
                 onDoubleClick={beginEdit}
