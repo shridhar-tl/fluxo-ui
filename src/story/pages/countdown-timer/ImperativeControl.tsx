@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
-import { CountdownTimer } from '../../../components/CountdownTimer';
-import type { CountdownTimerHandle } from '../../../components/CountdownTimer';
+import { CountdownTimer } from '../../../components';
+import type { CountdownTimerHandle } from '../../../components';
 import { Button } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';

@@ -16,7 +16,7 @@ import RepeatAndAutoStart from './RepeatAndAutoStart';
 import Sizes from './Sizes';
 import Variants from './Variants';
 
-import _CountdownTimer_props_json from './../../../components/CountdownTimer/CountdownTimer.props.json';
+import _CountdownTimer_props_json from '../../../components/countdown-timer/CountdownTimer.props.json';
 const { timerProps, handleProps } = _CountdownTimer_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'overview', title: 'Overview', description: 'Introduction and feature highlights' },

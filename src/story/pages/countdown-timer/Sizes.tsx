@@ -1,6 +1,6 @@
 import React from 'react';
-import { CountdownTimer } from '../../../components/CountdownTimer';
-import type { CountdownTimerSize } from '../../../components/CountdownTimer';
+import { CountdownTimer } from '../../../components';
+import type { CountdownTimerSize } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 

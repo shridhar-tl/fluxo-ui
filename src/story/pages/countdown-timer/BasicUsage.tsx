@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CountdownTimer } from '../../../components/CountdownTimer';
+import { CountdownTimer } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
@@ -27,8 +27,8 @@ const BasicUsage: React.FC = () => {
                         variant="circular"
                         size="md"
                         onComplete={() => setLog('Timer completed!')}
-                        onTick={(rem) => setLog(`${rem}s remaining`)}
-                        onPause={(rem) => setLog(`Paused at ${rem}s`)}
+                        onTick={(rem: number) => setLog(`${rem}s remaining`)}
+                        onPause={(rem: number) => setLog(`Paused at ${rem}s`)}
                         onReset={() => setLog('Reset')}
                     />
                     <div
