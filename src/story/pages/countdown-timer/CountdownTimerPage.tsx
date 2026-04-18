@@ -16,6 +16,8 @@ import RepeatAndAutoStart from './RepeatAndAutoStart';
 import Sizes from './Sizes';
 import Variants from './Variants';
 
+import _CountdownTimer_props_json from './../../../components/CountdownTimer/CountdownTimer.props.json';
+const { timerProps, handleProps } = _CountdownTimer_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'overview', title: 'Overview', description: 'Introduction and feature highlights' },
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default circular countdown' },
@@ -85,36 +87,7 @@ const features: FeatureItem[] = [
 const importCode = `import { CountdownTimer } from 'fluxo-ui';
 import type { CountdownTimerProps, CountdownTimerHandle } from 'fluxo-ui';`;
 
-const timerProps: Record<string, { type: string; default?: unknown; required?: boolean; description: string }> = {
-    duration: { type: 'number', required: true, description: 'Total duration in seconds.' },
-    variant: { type: "'circular' | 'rounded-square' | 'triangle' | 'linear' | 'segmented' | 'numeric'", default: "'circular'", description: 'Visual display style.' },
-    size: { type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'", default: "'md'", description: 'Size of the timer control.' },
-    autoStart: { type: 'boolean', default: true, description: 'Start the timer immediately on mount.' },
-    repeat: { type: 'boolean', default: false, description: 'Automatically restart when completed.' },
-    countUp: { type: 'boolean', default: false, description: 'Count up from 0 to duration instead of counting down.' },
-    color: { type: "'primary' | 'success' | 'warning' | 'danger' | string", default: "'primary'", description: 'Static color for the progress indicator. Accepts semantic names or any CSS color.' },
-    colorThresholds: { type: 'ColorThreshold[]', description: 'Array of { at: number (%), color } breakpoints for auto color-shifting.' },
-    segmentCount: { type: 'number', default: 20, description: 'Number of segments for the segmented variant.' },
-    showControls: { type: 'boolean', default: true, description: 'Show the built-in pause and reset buttons.' },
-    pauseOnHover: { type: 'boolean', default: false, description: 'Automatically pause when the user hovers over the timer.' },
-    disabled: { type: 'boolean', default: false, description: 'Disable the timer — no interaction, shows disabled badge.' },
-    disabledMessage: { type: 'string', default: "'Off'", description: 'Badge text shown when disabled.' },
-    pulseWhenRunning: { type: 'boolean', default: false, description: 'Apply a subtle pulse animation to the time display while running.' },
-    className: { type: 'string', description: 'Additional CSS class name.' },
-    style: { type: 'React.CSSProperties', description: 'Inline style override.' },
-    onComplete: { type: '() => void', description: 'Called when the timer reaches zero (or duration in count-up mode).' },
-    onTick: { type: '(remaining: number, elapsed: number) => void', description: 'Called every second with remaining and elapsed values.' },
-    onPause: { type: '(remaining: number) => void', description: 'Called when the timer is paused.' },
-    onResume: { type: '(remaining: number) => void', description: 'Called when the timer resumes.' },
-    onReset: { type: '() => void', description: 'Called when the timer is reset.' },
-};
 
-const handleProps: Record<string, { type: string; description: string }> = {
-    'start()': { type: 'function', description: 'Start the timer if not already running.' },
-    'pause()': { type: 'function', description: 'Pause the timer.' },
-    'resume()': { type: 'function', description: 'Resume a paused timer.' },
-    'reset()': { type: 'function', description: 'Reset to initial value. Restarts automatically if autoStart is true.' },
-};
 
 const CountdownTimerPage: React.FC = () => (
     <PageLayout sectionNavItems={sectionNavItems}>

@@ -19,94 +19,9 @@ import States from './States';
 import Variants from './Variants';
 import WithIcons from './WithIcons';
 
-const buttonProps = {
-    variant: {
-        type: "'success' | 'warning' | 'danger' | 'info' | 'default' | 'primary' | 'secondary'",
-        default: "'default'",
-        description: 'Button color variant',
-    },
-    size: {
-        type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
-        default: "'md'",
-        description: 'Button size',
-    },
-    layout: {
-        type: "'rounded' | 'default' | 'outlined' | 'plain' | 'sharp'",
-        default: "'default'",
-        description:
-            'Button layout style (default: filled with rounded corners, outlined: border with rounded corners, sharp: filled with no radius, plain: no background or border, rounded: fully rounded/pill shape)',
-    },
-    disabled: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Disable button interaction',
-    },
-    isLoading: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Show loading spinner and disable interaction',
-    },
-    leftIcon: {
-        type: 'IconComponent | ReactElement',
-        description: 'Icon to display on the left side of the button',
-    },
-    rightIcon: {
-        type: 'IconComponent | ReactElement',
-        description: 'Icon to display on the right side of the button',
-    },
-    label: {
-        type: 'string',
-        description: 'Button label text (alternative to children)',
-    },
-    children: {
-        type: 'ReactNode',
-        description: 'Button content',
-    },
-    onClick: {
-        type: '(e: MouseEvent) => void | Promise<any>',
-        description: 'Click event handler (supports async functions for automatic loading state)',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes',
-    },
-    loadingMessage: {
-        type: 'string',
-        default: "'Loading...'",
-        description: 'Message to display while loading',
-    },
-    waitFor: {
-        type: 'number',
-        description: 'Countdown timer in seconds before button becomes clickable',
-    },
-    href: {
-        type: 'string',
-        description: 'URL to navigate to (renders as link)',
-    },
-    newTab: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Open link in new tab',
-    },
-    type: {
-        type: "'submit' | 'link' | 'button'",
-        default: "'button'",
-        description: 'Button type',
-    },
-    ariaLabel: {
-        type: 'string',
-        description: 'Accessibility label',
-    },
-    title: {
-        type: 'string',
-        description: 'HTML title attribute',
-    },
-    id: {
-        type: 'string',
-        description: 'HTML id attribute',
-    },
-};
 
+import _Button_props_json from './../../../components/Button.props.json';
+const { buttonProps } = _Button_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default button example' },
     { id: 'variants', title: 'Variants', description: 'Color variants' },

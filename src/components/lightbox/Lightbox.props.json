@@ -1,0 +1,104 @@
+{
+  "lightboxProps": {
+    "children": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Trigger element that opens the lightbox."
+    },
+    "content": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Content to display inside the lightbox."
+    },
+    "trigger": {
+      "type": "'hover' | 'click'",
+      "default": "'hover'",
+      "description": "How the lightbox is triggered."
+    },
+    "position": {
+      "type": "'auto' | 'top' | 'bottom' | 'left' | 'right' | 'center'",
+      "default": "'auto'",
+      "description": "Position of the lightbox popover. Center shows as a modal."
+    },
+    "width": {
+      "type": "string | number",
+      "default": "400",
+      "description": "Width of the lightbox panel."
+    },
+    "height": {
+      "type": "string | number",
+      "description": "Height of the lightbox panel."
+    },
+    "zoomOut": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Enable zoomed-out view mode. Content renders at full size but scaled down."
+    },
+    "zoomScale": {
+      "type": "number",
+      "default": "0.5",
+      "description": "Scale factor for zoomed-out view (0.1 to 1)."
+    },
+    "zoomWidth": {
+      "type": "string | number",
+      "default": "'100vw'",
+      "description": "Width of the content container in zoom-out mode."
+    },
+    "zoomHeight": {
+      "type": "string | number",
+      "default": "'100vh'",
+      "description": "Height of the content container in zoom-out mode."
+    },
+    "backdrop": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show backdrop overlay (center position only)."
+    },
+    "closeOnBackdropClick": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Close when clicking the backdrop."
+    },
+    "closeOnEscape": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Close on Escape key press."
+    },
+    "showCloseButton": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show close button in header."
+    },
+    "hoverDelay": {
+      "type": "number",
+      "default": "300",
+      "description": "Delay before opening on hover (ms)."
+    },
+    "hoverCloseDelay": {
+      "type": "number",
+      "default": "200",
+      "description": "Delay before closing after mouse leaves (ms)."
+    },
+    "header": {
+      "type": "ReactNode",
+      "description": "Header content."
+    },
+    "footer": {
+      "type": "ReactNode",
+      "description": "Footer content."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable the lightbox trigger."
+    },
+    "onOpen": {
+      "type": "() => void",
+      "description": "Called when lightbox opens."
+    },
+    "onClose": {
+      "type": "() => void",
+      "description": "Called when lightbox closes."
+    }
+  }
+}

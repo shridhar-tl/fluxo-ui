@@ -12,6 +12,8 @@ import CropOnly from './CropOnly';
 import CustomTools from './CustomTools';
 import ExportOptions from './ExportOptions';
 
+import _ImageEditor_props_json from './../../../components/image-editor/ImageEditor.props.json';
+const { imageEditorProps } = _ImageEditor_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Full editor with all tools' },
     { id: 'crop-only', title: 'Crop Only', description: 'Single tool mode' },
@@ -22,31 +24,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const imageEditorProps = {
-    src: { type: 'string', required: true, description: 'URL of the image to edit.' },
-    alt: { type: 'string', description: 'Alt text for the image.' },
-    width: { type: 'number | string', description: 'Width of the editor container.' },
-    height: { type: 'number | string', description: 'Height of the editor container.' },
-    onSave: { type: '(data: Blob, format: ExportFormat) => void', description: 'Called when the user saves the edited image.' },
-    onCancel: { type: '() => void', description: 'Called when the user cancels editing.' },
-    tools: {
-        type: 'EditorTool[]',
-        default: "['crop', 'rotate', 'flip', 'blur', 'annotate', 'transparency', 'tilt']",
-        description: 'Array of tools to enable in the toolbar.',
-    },
-    defaultTool: { type: 'EditorTool', description: 'Tool to activate on mount.' },
-    maxHistory: { type: 'number', description: 'Maximum number of undo/redo history entries.' },
-    className: { type: 'string', description: 'Additional CSS class for the editor container.' },
-    exportOptions: {
-        type: 'Partial<ExportOptions>',
-        description: 'Export settings: format (png, jpeg, webp), quality (0-1), maxWidth, maxHeight.',
-    },
-    cropModes: {
-        type: 'CropMode[]',
-        default: "['custom', 'square', 'circle', '16:9', '4:3', '3:2', '1:1']",
-        description: 'Available crop aspect ratio presets.',
-    },
-};
 
 const features: FeatureItem[] = [
     {

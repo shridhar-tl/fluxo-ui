@@ -1,0 +1,207 @@
+{
+  "ganttProps": {
+    "tasks": {
+      "type": "GanttTask[]",
+      "required": true,
+      "description": "Array of task objects to display on the chart"
+    },
+    "columns": {
+      "type": "GanttColumn[]",
+      "default": "[{ field: 'name', headerText: 'Task Name', width: 200 }]",
+      "description": "Column definitions for the left fields panel"
+    },
+    "viewMode": {
+      "type": "'day' | 'week' | 'month' | 'quarter' | 'year'",
+      "default": "'day'",
+      "description": "Controls how the timeline is rendered and grouped"
+    },
+    "startDate": {
+      "type": "Date | string",
+      "description": "Override the auto-computed start date of the visible range"
+    },
+    "endDate": {
+      "type": "Date | string",
+      "description": "Override the auto-computed end date of the visible range"
+    },
+    "height": {
+      "type": "number | string",
+      "default": "500",
+      "description": "Total height of the Gantt chart container"
+    },
+    "rowHeight": {
+      "type": "number",
+      "default": "40",
+      "description": "Height of each task row in pixels"
+    },
+    "columnWidth": {
+      "type": "number",
+      "description": "Width of each timeline column. Defaults vary by view mode"
+    },
+    "fieldsPanelWidth": {
+      "type": "number | string",
+      "default": "300",
+      "description": "Width of the left-side fields/columns panel"
+    },
+    "showFieldsPanel": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Toggle the left fields panel visibility"
+    },
+    "showToday": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Highlight today with a vertical line and scroll to it on mount"
+    },
+    "showDependencies": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Render SVG dependency arrows between tasks"
+    },
+    "showProgress": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Render the progress overlay on task bars"
+    },
+    "showTooltip": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show hover tooltip with task details"
+    },
+    "markers": {
+      "type": "GanttMarker[]",
+      "default": "[]",
+      "description": "Vertical date markers (deadlines, milestones, events)"
+    },
+    "isHoliday": {
+      "type": "(date: Date) => boolean",
+      "description": "Callback to determine if a date should be marked as a holiday"
+    },
+    "allowTaskDrag": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow users to drag tasks to new dates"
+    },
+    "allowTaskResize": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow users to resize task bars from either end"
+    },
+    "allowTaskCreate": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Allow users to drag on empty rows to create new tasks"
+    },
+    "readOnly": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable all drag, resize, and create interactions"
+    },
+    "taskBarTemplate": {
+      "type": "(props: TaskBarTemplateProps) => JSX.Element",
+      "description": "Custom render function for task bar content"
+    },
+    "tooltipTemplate": {
+      "type": "(task: GanttTask) => ReactNode",
+      "description": "Custom render function for the hover tooltip"
+    },
+    "onTaskChange": {
+      "type": "(event: GanttTaskChangeEvent) => void",
+      "description": "Fires when a task is moved or resized"
+    },
+    "onTaskClick": {
+      "type": "(event: GanttTaskClickEvent) => void",
+      "description": "Fires when a task bar is clicked"
+    },
+    "onTaskDoubleClick": {
+      "type": "(event: GanttTaskClickEvent) => void",
+      "description": "Fires when a task bar is double-clicked"
+    },
+    "onTaskCreate": {
+      "type": "(event: GanttTaskCreateEvent) => void",
+      "description": "Fires when a new task range is drawn (requires allowTaskCreate)"
+    },
+    "onViewModeChange": {
+      "type": "(mode: GanttViewMode) => void",
+      "description": "Fires when the user switches the view mode"
+    },
+    "onExpandToggle": {
+      "type": "(task: GanttTask, expanded: boolean) => void",
+      "description": "Fires when a group task is expanded or collapsed"
+    }
+  },
+  "taskProps": {
+    "id": {
+      "type": "string",
+      "required": true,
+      "description": "Unique identifier for the task"
+    },
+    "name": {
+      "type": "string",
+      "required": true,
+      "description": "Display name of the task"
+    },
+    "start": {
+      "type": "Date | string",
+      "required": true,
+      "description": "Start date of the task"
+    },
+    "end": {
+      "type": "Date | string",
+      "required": true,
+      "description": "End date of the task"
+    },
+    "progress": {
+      "type": "number",
+      "default": "0",
+      "description": "Completion percentage (0-100)"
+    },
+    "type": {
+      "type": "'task' | 'milestone' | 'group'",
+      "default": "'task'",
+      "description": "Determines visual style and behavior"
+    },
+    "color": {
+      "type": "string",
+      "description": "Custom background color for the task bar"
+    },
+    "textColor": {
+      "type": "string",
+      "description": "Custom text color inside the task bar"
+    },
+    "dependencies": {
+      "type": "GanttDependency[]",
+      "description": "Array of dependency connections to other tasks"
+    },
+    "children": {
+      "type": "GanttTask[]",
+      "description": "Nested child tasks (makes this task a group/parent)"
+    },
+    "collapsed": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Whether this group is initially collapsed"
+    },
+    "assignee": {
+      "type": "string",
+      "description": "Assignee name shown in tooltip and custom columns"
+    },
+    "draggable": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Override draggability for this specific task"
+    },
+    "resizable": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Override resizability for this specific task"
+    },
+    "tooltip": {
+      "type": "ReactNode | ((task: GanttTask) => ReactNode)",
+      "description": "Custom tooltip content for this task"
+    },
+    "data": {
+      "type": "Record<string, unknown>",
+      "description": "Arbitrary extra data accessible in templates"
+    }
+  }
+}

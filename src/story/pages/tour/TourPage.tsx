@@ -13,25 +13,10 @@ import PlacementOptions from './PlacementOptions';
 import StartAtStep from './StartAtStep';
 import DarkModeSection from './DarkModeSection';
 
-const tourProps = {
-    steps: { type: 'TourStep[]', required: true, description: 'Ordered list of tour steps. Each step targets a DOM element via a CSS selector.' },
-    isOpen: { type: 'boolean', required: true, description: 'Controls whether the tour is visible.' },
-    onClose: { type: '() => void', required: true, description: 'Called when the user skips or completes the tour.' },
-    initialStep: { type: 'number', default: '0', description: 'Zero-based index of the step to start from.' },
-    zIndex: { type: 'number', default: '1000', description: 'Base z-index for the tour overlay, highlight, and tooltip layers.' },
-};
 
-const stepProps = {
-    selector: { type: 'string', required: true, description: 'CSS selector that identifies the target DOM element for this step.' },
-    title: { type: 'ReactNode', description: 'Optional heading shown at the top of the tooltip.' },
-    content: { type: 'ReactNode', required: true, description: 'Body content of the step tooltip. Supports JSX.' },
-    placement: { type: "'top' | 'bottom' | 'left' | 'right'", default: "'bottom'", description: 'Preferred side for the tooltip relative to the target element. Falls back automatically if there is not enough space.' },
-    order: { type: 'number', description: 'Explicit sort order for this step (defaults to array index position).' },
-    onNext: { type: '() => void', description: 'Callback fired when the user advances past this step.' },
-    onPrev: { type: '() => void', description: 'Callback fired when the user goes back to this step.' },
-    onSkip: { type: '() => void', description: 'Callback fired when the user skips the tour from this step.' },
-};
 
+import _Tour_props_json from './../../../components/tour/Tour.props.json';
+const { tourProps, stepProps } = _Tour_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-tour', title: 'Basic Tour', description: 'Five-step dashboard tour' },
     { id: 'rich-content', title: 'Rich JSX Content', description: 'JSX inside step content' },

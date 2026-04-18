@@ -1,0 +1,84 @@
+{
+  "colorPickerProps": {
+    "value": {
+      "type": "string",
+      "description": "Controlled hex color value."
+    },
+    "defaultValue": {
+      "type": "string",
+      "default": "'#3b82f6'",
+      "description": "Initial hex color for uncontrolled usage."
+    },
+    "alpha": {
+      "type": "number",
+      "description": "Controlled alpha value between 0 and 1."
+    },
+    "defaultAlpha": {
+      "type": "number",
+      "default": "1",
+      "description": "Initial alpha value."
+    },
+    "format": {
+      "type": "'hex' | 'rgb' | 'rgba'",
+      "default": "'hex'",
+      "description": "Format used for the displayed trigger text."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Trigger size."
+    },
+    "variant": {
+      "type": "'button' | 'input' | 'swatch'",
+      "default": "'button'",
+      "description": "Trigger visual style."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable interaction."
+    },
+    "readOnly": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Display-only mode."
+    },
+    "editable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When used with variant='input', renders a real text input so users can type a hex code manually. Valid hex updates the color live."
+    },
+    "showAlpha": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the alpha slider and input."
+    },
+    "showInputs": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show hex/RGB/alpha input fields."
+    },
+    "showSwatches": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the preset swatches grid."
+    },
+    "swatches": {
+      "type": "string[]",
+      "description": "Custom palette of hex swatches."
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "'Pick a color'",
+      "description": "ARIA label when none is provided."
+    },
+    "onChange": {
+      "type": "(value: string, alpha: number) => void",
+      "description": "Called when the color or alpha changes."
+    },
+    "onOpenChange": {
+      "type": "(open: boolean) => void",
+      "description": "Called when the popover opens or closes."
+    }
+  }
+}

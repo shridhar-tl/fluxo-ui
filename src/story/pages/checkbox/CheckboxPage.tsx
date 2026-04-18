@@ -12,52 +12,9 @@ import CheckboxGroup from './CheckboxGroup';
 import IndeterminateState from './IndeterminateState';
 import States from './States';
 
-const checkboxProps = {
-    checked: {
-        type: 'boolean',
-        description: 'Whether the checkbox is checked (controlled component)',
-    },
-    indeterminate: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Show indeterminate state (partially selected)',
-    },
-    disabled: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Disable the checkbox',
-    },
-    required: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Mark the checkbox as required',
-    },
-    label: {
-        type: 'string',
-        description: 'Label text displayed next to the checkbox',
-    },
-    onChange: {
-        type: '(event: ComponentEvent<boolean>) => void',
-        description: 'Change event handler. Receives event object with value, name, and args properties',
-    },
-    id: {
-        type: 'string',
-        description: 'HTML id attribute for the checkbox input',
-    },
-    name: {
-        type: 'string',
-        description: 'Name attribute for the checkbox input (used in forms)',
-    },
-    args: {
-        type: 'any',
-        description: 'Additional arguments passed to onChange handler',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes for the container',
-    },
-};
 
+import _Checkbox_props_json from './../../../components/Checkbox.props.json';
+const { checkboxProps } = _Checkbox_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default checkbox example' },
     { id: 'group', title: 'Checkbox Group', description: 'Multiple checkboxes together' },

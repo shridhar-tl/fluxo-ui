@@ -11,59 +11,9 @@ import BasicUsage from './BasicUsage';
 import LimitedChips from './LimitedChips';
 import States from './States';
 
-const chipsProps = {
-    value: {
-        type: 'string[]',
-        default: '[]',
-        description: 'Array of chip values',
-    },
-    onChange: {
-        type: 'function',
-        description: 'Callback fired when chips change: (event: ComponentEvent<string[]>) => void',
-    },
-    placeholder: {
-        type: 'string',
-        default: '"Type and press Enter to add"',
-        description: 'Placeholder text for input',
-    },
-    maxItems: {
-        type: 'number',
-        description: 'Maximum number of chips allowed',
-    },
-    allowDuplicates: {
-        type: 'boolean',
-        default: false,
-        description: 'Whether duplicate chips are allowed',
-    },
-    separator: {
-        type: 'string',
-        default: '","',
-        description: 'Separator character for adding multiple chips at once',
-    },
-    disabled: {
-        type: 'boolean',
-        default: false,
-        description: 'Whether the component is disabled',
-    },
-    readonly: {
-        type: 'boolean',
-        default: false,
-        description: 'Whether the component is readonly (no input or removal allowed)',
-    },
-    id: {
-        type: 'string',
-        description: 'HTML id attribute for the container',
-    },
-    name: {
-        type: 'string',
-        description: 'HTML name attribute for the hidden input',
-    },
-    args: {
-        type: 'any',
-        description: 'Custom arguments passed to onChange callback',
-    },
-};
 
+import _Chips_props_json from './../../../components/Chips.props.json';
+const { chipsProps } = _Chips_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple chips with add/remove' },
     { id: 'limited', title: 'Limited Chips', description: 'Maximum items constraint' },

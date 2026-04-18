@@ -13,54 +13,9 @@ import DisabledStates from './DisabledStates';
 import FormIntegration from './FormIntegration';
 import SettingsPanel from './SettingsPanel';
 
-const inputSwitchProps = {
-    checked: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Whether the switch is in the on position',
-    },
-    onChange: {
-        type: '(event: ComponentEvent<boolean>) => void',
-        description: 'Callback fired when switch state changes. Receives event object with value, name, and args properties',
-    },
-    onLabel: {
-        type: 'string',
-        default: "'On'",
-        description: 'Label text displayed when switch is on',
-    },
-    offLabel: {
-        type: 'string',
-        default: "'Off'",
-        description: 'Label text displayed when switch is off',
-    },
-    disabled: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Whether the switch is disabled',
-    },
-    required: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Mark the switch as required',
-    },
-    id: {
-        type: 'string',
-        description: 'HTML id attribute for the switch input',
-    },
-    name: {
-        type: 'string',
-        description: 'Name attribute for the switch input (used in forms)',
-    },
-    args: {
-        type: 'any',
-        description: 'Additional arguments passed to onChange handler',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes for the container',
-    },
-};
 
+import _InputSwitch_props_json from './../../../components/InputSwitch.props.json';
+const { inputSwitchProps } = _InputSwitch_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple on/off toggle' },
     { id: 'settings-panel', title: 'Settings Panel', description: 'Multiple switches in a layout' },

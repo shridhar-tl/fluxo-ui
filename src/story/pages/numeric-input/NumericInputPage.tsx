@@ -12,24 +12,9 @@ import DecimalPrecision from './DecimalPrecision';
 import MinMaxRange from './MinMaxRange';
 import NumericInputStates from './NumericInputStates';
 
-const numericInputProps = {
-    value: { type: 'number', description: 'Current numeric value (controlled)' },
-    min: { type: 'number', description: 'Minimum allowed value' },
-    max: { type: 'number', description: 'Maximum allowed value' },
-    maxDecimals: { type: 'number', default: 2, description: 'Maximum number of decimal places' },
-    placeholder: { type: 'string', description: 'Placeholder text' },
-    label: { type: 'string', description: 'Label text' },
-    error: { type: 'string', description: 'Error message to display' },
-    disabled: { type: 'boolean', default: false, description: 'Disable the input' },
-    readonly: { type: 'boolean', default: false, description: 'Make the input read-only' },
-    required: { type: 'boolean', default: false, description: 'Mark the input as required' },
-    autoFocus: { type: 'boolean', default: false, description: 'Auto focus the input on mount' },
-    id: { type: 'string', description: 'Unique identifier for the input' },
-    name: { type: 'string', description: 'Name attribute for the input' },
-    onChange: { type: 'function', description: 'Change event handler with numeric value' },
-    className: { type: 'string', description: 'Additional CSS classes' },
-};
 
+import _NumericInput_props_json from './../../../components/NumericInput.props.json';
+const { numericInputProps } = _NumericInput_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default numeric input example' },
     { id: 'min-max', title: 'Min/Max Range', description: 'Constrain allowed values' },

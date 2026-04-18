@@ -17,46 +17,10 @@ import StyleVariants from './StyleVariants';
 import WithActions from './WithActions';
 import WithPagination from './WithPagination';
 
-const tableProps = {
-    columns: { type: 'Column[]', required: true, description: 'Array of column definitions' },
-    rows: { type: 'any[]', required: true, description: 'Array of data objects to display' },
-    totalRows: { type: 'number', required: true, description: 'Total number of rows (for pagination)' },
-    id: { type: 'string', description: 'HTML id for the table container' },
-    isLoading: { type: 'boolean', default: 'false', description: 'Show shimmer loading state' },
-    expectedRows: { type: 'number', description: 'Number of shimmer rows when loading' },
-    onSort: { type: '(column: Column, asc: boolean) => void', description: 'Callback when a sortable column is clicked' },
-    onChange: { type: '(params: OnChangeParams) => void', description: 'Callback for sort, pagination, or row count changes' },
-    noRowsMessage: { type: 'string', default: "'No records found.'", description: 'Message when no rows exist' },
-    rowCounts: { type: 'number[]', default: '[10, 20, 25, 50, 75, 100]', description: 'Options for rows per page dropdown' },
-    rowsPerPage: { type: 'number', default: 'rowCounts[0]', description: 'Initial rows per page' },
-    sortColumn: { type: 'Column', description: 'Initially sorted column' },
-    sortAsc: { type: 'boolean', default: 'true', description: 'Initial sort direction' },
-    page: { type: 'number', default: '1', description: 'Initial page number' },
-    pagination: { type: 'boolean', default: 'true', description: 'Show pagination footer' },
-    containerClassName: { type: 'string', description: 'CSS class for the table container' },
-    onRowClick: { type: '(arg: { row, index, event }) => void', description: 'Callback when a row is clicked' },
-    bordered: { type: 'boolean', default: 'false', description: 'Show all cell borders' },
-    striped: { type: 'boolean', default: 'false', description: 'Alternate row background colors' },
-    compact: { type: 'boolean', default: 'false', description: 'Reduced padding for dense display' },
-    comfortable: { type: 'boolean', default: 'false', description: 'Increased padding for readability' },
-    borderless: { type: 'boolean', default: 'false', description: 'Remove all borders and shadow' },
-    hoverable: { type: 'boolean', default: 'false', description: 'Primary-color row hover highlight' },
-    cardStyle: { type: 'boolean', default: 'false', description: 'Render each row as a card' },
-    minimalHeader: { type: 'boolean', default: 'false', description: 'Subtle uppercase header' },
-    stickyHeader: { type: 'boolean', default: 'false', description: 'Fixed header on scroll' },
-};
 
-const columnProps = {
-    title: { type: 'string', required: true, description: 'Column header text' },
-    field: { type: 'string', required: true, description: 'Property name in the data object' },
-    helpText: { type: 'string', description: 'Tooltip text on the column header' },
-    headerClassName: { type: 'string', description: 'CSS class for the column header' },
-    cellClassName: { type: 'string', description: 'CSS class for cells in this column' },
-    sortable: { type: 'boolean', default: 'false', description: 'Enable sorting for this column' },
-    hideBelow: { type: "'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'", description: 'Hide column below breakpoint' },
-    template: { type: '(row: any) => React.ReactNode', description: 'Custom render function for cell content' },
-};
 
+import _Table_props_json from './../../../components/table/Table.props.json';
+const { tableProps, columnProps } = _Table_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple table' },
     { id: 'style-variants', title: 'Style Variants', description: 'Visual styles' },

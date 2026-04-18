@@ -13,51 +13,9 @@ import ComputedProperties from './ComputedProperties';
 import MultipleStores from './MultipleStores';
 import PathSubscriptions from './PathSubscriptions';
 
-const storeApiProps = {
-    'create(initializer, middlewares?)': {
-        type: '(initializer: () => T, middlewares?: Middleware<T>[]) => Store<T>',
-        description: 'Create a new store with initial state and optional middleware',
-        default: '-',
-    },
-    'store.getState()': { type: '() => T', description: 'Get the current state snapshot (includes computed properties)', default: '-' },
-    'store.setState(update)': {
-        type: '(partial: Partial<T>) => void',
-        description: 'Merge partial state into current state (batched via microtask)',
-        default: '-',
-    },
-    'store.setState(updater)': {
-        type: '(fn: (state: T) => Partial<T>) => void',
-        description: 'Update state using an updater function for safe reads',
-        default: '-',
-    },
-    'store.on(event, listener)': {
-        type: "(event: 'init' | 'change', listener) => unsubscribe",
-        description: 'Subscribe to all state changes or initialization',
-        default: '-',
-    },
-    'store.on(event, path, listener)': {
-        type: "(event: 'change', path: string, listener) => unsubscribe",
-        description: 'Subscribe to changes on a specific state path',
-        default: '-',
-    },
-    'store.reset()': { type: '() => void', description: 'Reset state to the initial value from the initializer function', default: '-' },
-    'store.compute(name, fn, deps)': {
-        type: '(name: string, fn: (state: T) => R, deps: string[]) => void',
-        description: 'Register a computed property with dependency tracking',
-        default: '-',
-    },
-    'createHook(store)': {
-        type: '(store: Store<T>) => useStore',
-        description: 'Create a React hook bound to a store for reactive component integration',
-        default: '-',
-    },
-    'useStore(selector?, equalityFn?)': {
-        type: '(selector?, equalityFn?) => T | R',
-        description: 'React hook returned by createHook. Optional selector for derived slices',
-        default: '-',
-    },
-};
 
+import _store_basic_props_json from '../../../store/store.props.json';
+const { storeApiProps } = _store_basic_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic', title: 'Basic Usage', description: 'Counter example' },
     { id: 'computed', title: 'Computed', description: 'Derived state' },

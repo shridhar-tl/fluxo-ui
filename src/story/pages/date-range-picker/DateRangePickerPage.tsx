@@ -20,47 +20,9 @@ import SingleDatePicker from './SingleDatePicker';
 import TodayButton from './TodayButton';
 import { advancedUsageCode, basicUsageCode, quickSelectCode } from './date-range-picker-story-data';
 
-const dateRangePickerProps = {
-    value: { type: 'DateRangeValue | string | number', description: 'Selected date range [Date, Date] or range option key' },
-    ranges: { type: 'RangeOption[]', description: 'Predefined quick range options' },
-    onChange: { type: '(selection: DateSelectedCallbackArg) => void', description: 'Callback fired when date range selection changes' },
-    onClose: { type: '() => void', description: 'Callback fired when date picker closes' },
-    dateFormat: { type: 'string', default: 'MM/dd/yyyy', description: 'Date format string for display' },
-    separator: { type: 'string', default: "' ~ '", description: 'Separator between start and end dates' },
-    minDate: { type: 'Date', description: 'Minimum selectable date' },
-    maxDate: { type: 'Date', description: 'Maximum selectable date' },
-    customLabel: { type: 'string', default: 'Custom', description: 'Label for custom date range option' },
-    showTodayButton: { type: 'boolean', default: false, description: 'Whether to show today button in date picker' },
-    disabled: { type: 'boolean', default: false, description: 'Whether the picker is disabled' },
-    placeholder: { type: 'string', description: 'Placeholder text for empty state' },
-    position: { type: 'PopoverPosition', default: 'auto', description: 'Popover position: bottomStart, bottomEnd, topStart, topEnd, auto' },
-    id: { type: 'string', description: 'HTML id attribute' },
-    name: { type: 'string', description: 'Name attribute for form integration' },
-    className: { type: 'string', description: 'CSS class name for container' },
-    styles: { type: 'React.CSSProperties', description: 'Inline styles for container' },
-    classNames: {
-        type: '{ container?: string; control?: string; popover?: string }',
-        description: 'Object with CSS classes for specific elements',
-    },
-    range: {
-        type: 'boolean',
-        default: 'true',
-        description: 'When false, picker selects a single date instead of a range. Closes immediately on selection.',
-    },
-    selectionMode: {
-        type: "'day' | 'week' | 'month' | 'year'",
-        default: 'day',
-        description: 'Controls what unit is selected: individual days, whole weeks, months, or years',
-    },
-    firstDayOfWeek: {
-        type: 'number',
-        default: '0',
-        description: 'Day the week starts on (0=Sunday, 1=Monday, etc.). Affects calendar grid and week selection.',
-    },
-    args: { type: 'any', description: 'Additional arguments passed in onChange callback' },
-    locale: { type: 'any', description: 'Locale configuration for date formatting' },
-};
 
+import _DateRangePicker_props_json from './../../../components/date-range/DateRangePicker.props.json';
+const { dateRangePickerProps } = _DateRangePicker_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic', title: 'Basic Usage', description: 'Simple date range selection' },
     { id: 'preset', title: 'Preset Dates', description: 'Picker with preset values' },

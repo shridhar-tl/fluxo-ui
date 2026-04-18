@@ -1,0 +1,141 @@
+{
+  "editorProps": {
+    "value": {
+      "type": "string",
+      "description": "Controlled markdown value."
+    },
+    "defaultValue": {
+      "type": "string",
+      "description": "Initial value when uncontrolled."
+    },
+    "onChange": {
+      "type": "(value: string) => void",
+      "description": "Called whenever the markdown changes."
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "'Write markdown...'",
+      "description": "Placeholder shown when empty."
+    },
+    "readOnly": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable all editing while keeping the chrome."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Fully disable the editor."
+    },
+    "minHeight": {
+      "type": "string | number",
+      "default": "'320px'",
+      "description": "Minimum height of the editor body."
+    },
+    "maxHeight": {
+      "type": "string | number",
+      "description": "Optional max height (scrolls beyond)."
+    },
+    "view": {
+      "type": "'edit' | 'split' | 'preview'",
+      "description": "Controlled view mode."
+    },
+    "defaultView": {
+      "type": "'edit' | 'split' | 'preview'",
+      "default": "'edit'",
+      "description": "Initial view when uncontrolled."
+    },
+    "onViewChange": {
+      "type": "(view: EditorViewMode) => void",
+      "description": "Called when the user toggles views."
+    },
+    "allowedViews": {
+      "type": "EditorViewMode[]",
+      "description": "Restrict which view modes appear in the switcher."
+    },
+    "toolbar": {
+      "type": "MarkdownToolbarItem[] | false",
+      "default": "DEFAULT_MARKDOWN_TOOLBAR",
+      "description": "Toolbar configuration or false to hide."
+    },
+    "showToolbar": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Hide the toolbar entirely."
+    },
+    "showStatusBar": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show word/char count footer."
+    },
+    "showWordCount": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Toggle word count in the status bar."
+    },
+    "uploadImage": {
+      "type": "(file: File) => Promise<string>",
+      "description": "Async upload callback — must resolve with the final URL."
+    },
+    "uploadStrategy": {
+      "type": "'immediate' | 'deferred'",
+      "default": "'immediate'",
+      "description": "Upload immediately on selection or defer to flushUploads()."
+    },
+    "maxImageSize": {
+      "type": "number",
+      "description": "Maximum file size in bytes."
+    },
+    "acceptedImageTypes": {
+      "type": "string[]",
+      "description": "Array of MIME types accepted for upload."
+    },
+    "onUploadError": {
+      "type": "(message: string, file?: File) => void",
+      "description": "Called when validation or upload fails."
+    },
+    "openLinksInNewTab": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Open preview links with target=\"_blank\"."
+    },
+    "spellCheck": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Enable browser spellcheck on the textarea."
+    },
+    "autoFocus": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Focus the editor on mount."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Markdown editor'",
+      "description": "Accessible label for the textarea."
+    }
+  },
+  "previewProps": {
+    "value": {
+      "type": "string",
+      "description": "Markdown source to render."
+    },
+    "openLinksInNewTab": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Render links with target=\"_blank\" rel=\"noopener\"."
+    },
+    "sanitizeUrl": {
+      "type": "(url: string) => string | null",
+      "description": "Custom URL sanitizer — return null to block."
+    },
+    "imageResolver": {
+      "type": "(src: string) => string",
+      "description": "Rewrite image URLs before rendering."
+    },
+    "emptyFallback": {
+      "type": "React.ReactNode",
+      "description": "Shown when value is empty."
+    }
+  }
+}

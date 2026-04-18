@@ -32,23 +32,8 @@ const features: FeatureItem[] = [
     { title: 'Canvas Layout', description: 'Absolute-positioned free-form canvas with component rendering.' },
 ];
 
-const viewerProps: Record<string, { type: string; required?: boolean; default?: unknown; description: string }> = {
-    definition: { type: 'ReportDefinition', required: true, description: 'The report definition JSON to render.' },
-    datasourcePlugins: { type: 'DatasourcePlugin[]', required: true, description: 'Plugins used to fetch datasource data.' },
-    parameterValues: { type: 'Record<string, unknown>', description: 'Controlled parameter values.' },
-    onParameterChange: { type: '(values: Record<string, unknown>) => void', description: 'Fires when end-user changes parameter values.' },
-    parameterPanel: { type: '{ mode: "popover" | "docked"; position?: "left" | "right" | "top" }', description: 'Parameter panel display mode and position.' },
-    subReportDefinitions: { type: 'SubReportDefinition[]', description: 'Available sub-report definitions for recursive rendering.' },
-    onColumnResize: { type: '(componentId, columnId, width) => void', description: 'Fires when user resizes a table column.' },
-    onColumnReorder: { type: '(componentId, columnIds) => void', description: 'Fires when user reorders table columns via drag.' },
-    onDrillThrough: { type: '(parameterName, value) => void', description: 'Fires when user clicks a table row or chart element for drill-through.' },
-    onCellEdit: { type: '(componentId, rowIndex, field, value) => void', description: 'Fires when user edits a table cell (double-click to edit).' },
-    syncParamsToHash: { type: 'boolean', default: false, description: 'Sync parameter values to URL hash for bookmarkable state.' },
-    hideToolbar: { type: 'boolean', default: false, description: 'Hide the built-in toolbar. Use with viewerRef to provide your own controls.' },
-    viewerRef: { type: 'React.Ref<ReportViewerHandle>', description: 'Ref to access viewer actions (exportPdf, print, refresh) from external buttons.' },
-    className: { type: 'string', description: 'Additional CSS class.' },
-    style: { type: 'CSSProperties', description: 'Inline styles.' },
-};
+import _ReportBuilder_props_json from '../../../components/report-builder/ReportBuilder.props.json';
+const { viewerProps } = _ReportBuilder_props_json;
 
 const importCode = `// Base styles (once in your app entry)
 import 'fluxo-ui/styles';

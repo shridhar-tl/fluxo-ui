@@ -13,6 +13,8 @@ import ConfigOptions from './ConfigOptions';
 import ScrollDemo from './ScrollDemo';
 import StaggeredAnimations from './StaggeredAnimations';
 
+import _AnimateOnView_props_json from './../../../components/animate-on-view/AnimateOnView.props.json';
+const { animateProps } = _AnimateOnView_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple animate on scroll' },
     { id: 'all-animations', title: 'All Animations', description: '16 animation types' },
@@ -24,35 +26,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const animateProps = {
-    animation: {
-        type: "'fadeIn' | 'fadeInUp' | 'fadeInDown' | 'fadeInLeft' | 'fadeInRight' | 'zoomIn' | 'zoomOut' | 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'flipX' | 'flipY' | 'rotateIn' | 'bounceIn' | 'scaleUp'",
-        default: "'fadeInUp'",
-        description: 'The animation type to apply.',
-    },
-    duration: { type: 'number', default: '600', description: 'Animation duration in milliseconds.' },
-    delay: { type: 'number', default: '0', description: 'Delay before animation starts in milliseconds.' },
-    easing: {
-        type: "'ease' | 'ease-in' | 'ease-out' | 'ease-in-out' | 'linear'",
-        default: "'ease-out'",
-        description: 'CSS animation timing function.',
-    },
-    once: { type: 'boolean', default: 'true', description: 'If true, animate only the first time the element enters the viewport.' },
-    threshold: {
-        type: 'number',
-        default: '0.1',
-        description: 'IntersectionObserver threshold (0-1). How much of the element must be visible.',
-    },
-    rootMargin: { type: 'string', default: "'0px'", description: 'IntersectionObserver root margin.' },
-    as: { type: 'React.ElementType', default: "'div'", description: 'The HTML element or component to render as.' },
-    disabled: { type: 'boolean', default: 'false', description: 'Skip animation and show content immediately.' },
-    onVisible: { type: '() => void', description: 'Called when the element becomes visible.' },
-    onHidden: { type: '() => void', description: 'Called when the element leaves the viewport (if once=false).' },
-    stagger: { type: 'number', default: '0', description: 'Delay increment per item in milliseconds for staggered lists.' },
-    staggerIndex: { type: 'number', default: '0', description: 'Index of this item in a staggered sequence.' },
-    children: { type: 'ReactNode', required: true, description: 'Content to animate.' },
-    className: { type: 'string', description: 'Additional CSS class.' },
-};
 
 const features: FeatureItem[] = [
     {

@@ -11,6 +11,8 @@ import BasicUsage from './BasicUsage';
 import CollapsedItems from './CollapsedItems';
 import CustomSeparator from './CustomSeparator';
 
+import _Breadcrumb_props_json from './../../../components/Breadcrumb.props.json';
+const { breadcrumbProps, itemProps } = _Breadcrumb_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple breadcrumb trail' },
     { id: 'collapsed', title: 'Collapsed Items', description: 'Ellipsis dropdown for long paths' },
@@ -21,20 +23,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const breadcrumbProps = {
-    items: { type: 'BreadcrumbItem[]', required: true, description: 'Array of breadcrumb items to display.' },
-    separator: { type: 'ReactNode', default: "'/'", description: 'Custom separator between items.' },
-    maxItems: { type: 'number', description: 'Maximum visible items before collapsing middle items into ellipsis.' },
-    className: { type: 'string', description: 'Additional CSS class for the nav container.' },
-    onItemClick: { type: '(item: BreadcrumbItem, index: number) => void', description: 'Called when any breadcrumb item is clicked.' },
-};
 
-const itemProps = {
-    label: { type: 'string', required: true, description: 'Display text for the breadcrumb.' },
-    href: { type: 'string', description: 'URL for the breadcrumb link.' },
-    icon: { type: 'ReactNode', description: 'Icon displayed before the label.' },
-    onClick: { type: '() => void', description: 'Click handler for the item.' },
-};
 
 const features: FeatureItem[] = [
     {

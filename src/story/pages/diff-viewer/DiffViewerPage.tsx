@@ -9,6 +9,8 @@ import IgnoreOptions from './IgnoreOptions';
 import LargeFile from './LargeFile';
 import Variants from './Variants';
 
+import _DiffViewer_props_json from './../../../components/diff-viewer/DiffViewer.props.json';
+const { diffProps } = _DiffViewer_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Unified diff' },
     { id: 'variants', title: 'Variants', description: 'Split, inline, minimal, collapse' },
@@ -19,23 +21,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'props', title: 'Props', description: 'Component API' },
 ];
 
-const diffProps = {
-    oldValue: { type: 'string', description: 'The old/before text.' },
-    newValue: { type: 'string', description: 'The new/after text.' },
-    variant: { type: "'unified' | 'split' | 'inline' | 'minimal'", default: "'unified'", description: 'Diff display style.' },
-    oldTitle: { type: 'string', description: 'Header label for the old side.' },
-    newTitle: { type: 'string', description: 'Header label for the new side.' },
-    showLineNumbers: { type: 'boolean', default: 'true', description: 'Show gutter line numbers.' },
-    wordDiff: { type: 'boolean', default: 'true', description: 'Highlight word-level changes inside replaced lines.' },
-    collapseUnchanged: { type: 'boolean | number', default: 'false', description: 'Fold unchanged runs. A number sets the context line count (default 3).' },
-    maxHeight: { type: 'number | string', default: '480', description: 'Max scroll viewport height.' },
-    ignoreWhitespace: { type: 'boolean', default: 'false', description: 'Collapse whitespace runs when comparing.' },
-    ignoreCase: { type: 'boolean', default: 'false', description: 'Case-insensitive comparison.' },
-    ignoreEmptyLines: { type: 'boolean', default: 'false', description: 'Treat blank lines as equal.' },
-    maxLines: { type: 'number', description: 'Stop comparing after N lines. Larger files are truncated with a footer notice.' },
-    rowHeight: { type: 'number', default: '22', description: 'Row pixel height used for virtualization.' },
-    highlight: { type: '(line: string) => ReactNode', description: 'Custom syntax-highlight hook.' },
-};
 
 const headingStyle: React.CSSProperties = { color: 'var(--eui-text)' };
 const subtleStyle: React.CSSProperties = { color: 'var(--eui-text-muted)' };

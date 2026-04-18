@@ -1,0 +1,151 @@
+{
+  "builderProps": {
+    "definition": {
+      "type": "ReportDefinition",
+      "description": "Initial or controlled report definition JSON."
+    },
+    "onChange": {
+      "type": "(def: ReportDefinition) => void",
+      "description": "Fires on every definition change."
+    },
+    "datasourcePlugins": {
+      "type": "DatasourcePlugin[]",
+      "description": "Registered datasource type plugins."
+    },
+    "parameterPlugins": {
+      "type": "CustomParameterPlugin[]",
+      "description": "Optional custom parameter type plugins."
+    },
+    "availableSubReports": {
+      "type": "AvailableSubReport[]",
+      "description": "Sub-reports the designer can reference. Include parameters array for auto-discovery."
+    },
+    "layoutState": {
+      "type": "DockedLayoutState",
+      "description": "Controlled panel layout state for persistence."
+    },
+    "onLayoutChange": {
+      "type": "(state: DockedLayoutState) => void",
+      "description": "Fires on panel layout change."
+    },
+    "panelConfig": {
+      "type": "Record<string, { userCanMove?, userCanClose? }>",
+      "description": "Per-panel move/close overrides (toolbox, datasource, properties, styles, console, parameters)."
+    },
+    "breakpoints": {
+      "type": "ReportBreakpoint[]",
+      "description": "Responsive breakpoints for panel layout."
+    },
+    "templates": {
+      "type": "ReportTemplate[]",
+      "description": "Available report templates."
+    },
+    "onSaveTemplate": {
+      "type": "(template: ReportTemplate) => void",
+      "description": "Called when user saves a template."
+    },
+    "onDeleteTemplate": {
+      "type": "(templateId: string) => void",
+      "description": "Called when user deletes a template."
+    },
+    "onLoadTemplate": {
+      "type": "(template: ReportTemplate) => void",
+      "description": "Called when user loads a template."
+    },
+    "enableMultiTab": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable multi-tab editing mode."
+    },
+    "tabs": {
+      "type": "ReportTab[]",
+      "description": "Array of tabs when multi-tab is enabled."
+    },
+    "activeTabId": {
+      "type": "string",
+      "description": "Currently active tab ID."
+    },
+    "onTabChange": {
+      "type": "(tabId: string) => void",
+      "description": "Called when active tab changes."
+    },
+    "onTabClose": {
+      "type": "(tabId: string) => void",
+      "description": "Called when a tab is closed."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    },
+    "style": {
+      "type": "CSSProperties",
+      "description": "Inline styles."
+    }
+  },
+  "viewerProps": {
+    "definition": {
+      "type": "ReportDefinition",
+      "required": true,
+      "description": "The report definition JSON to render."
+    },
+    "datasourcePlugins": {
+      "type": "DatasourcePlugin[]",
+      "required": true,
+      "description": "Plugins used to fetch datasource data."
+    },
+    "parameterValues": {
+      "type": "Record<string, unknown>",
+      "description": "Controlled parameter values."
+    },
+    "onParameterChange": {
+      "type": "(values: Record<string, unknown>) => void",
+      "description": "Fires when end-user changes parameter values."
+    },
+    "parameterPanel": {
+      "type": "{ mode: \"popover\" | \"docked\"; position?: \"left\" | \"right\" | \"top\" }",
+      "description": "Parameter panel display mode and position."
+    },
+    "subReportDefinitions": {
+      "type": "SubReportDefinition[]",
+      "description": "Available sub-report definitions for recursive rendering."
+    },
+    "onColumnResize": {
+      "type": "(componentId, columnId, width) => void",
+      "description": "Fires when user resizes a table column."
+    },
+    "onColumnReorder": {
+      "type": "(componentId, columnIds) => void",
+      "description": "Fires when user reorders table columns via drag."
+    },
+    "onDrillThrough": {
+      "type": "(parameterName, value) => void",
+      "description": "Fires when user clicks a table row or chart element for drill-through."
+    },
+    "onCellEdit": {
+      "type": "(componentId, rowIndex, field, value) => void",
+      "description": "Fires when user edits a table cell (double-click to edit)."
+    },
+    "syncParamsToHash": {
+      "type": "boolean",
+      "default": false,
+      "description": "Sync parameter values to URL hash for bookmarkable state."
+    },
+    "hideToolbar": {
+      "type": "boolean",
+      "default": false,
+      "description": "Hide the built-in toolbar. Use with viewerRef to provide your own controls."
+    },
+    "viewerRef": {
+      "type": "React.Ref<ReportViewerHandle>",
+      "description": "Ref to access viewer actions (exportPdf, print, refresh) from external buttons."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    },
+    "style": {
+      "type": "CSSProperties",
+      "description": "Inline styles."
+    }
+  }
+}

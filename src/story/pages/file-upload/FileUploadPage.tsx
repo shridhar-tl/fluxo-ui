@@ -11,6 +11,8 @@ import BasicUsage from './BasicUsage';
 import ImagePreview from './ImagePreview';
 import Validation from './Validation';
 
+import _FileUpload_props_json from './../../../components/file-upload/FileUpload.props.json';
+const { fileUploadProps } = _FileUpload_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Drag-and-drop file upload' },
     { id: 'image-preview', title: 'Image Preview', description: 'Thumbnail previews for images' },
@@ -20,23 +22,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const fileUploadProps = {
-    accept: { type: 'string', description: 'Accepted file types (e.g. "image/*", ".pdf,.doc").' },
-    multiple: { type: 'boolean', default: 'false', description: 'Allow multiple file selection.' },
-    maxFileSize: { type: 'number', description: 'Maximum file size in bytes.' },
-    maxFiles: { type: 'number', description: 'Maximum number of files allowed.' },
-    disabled: { type: 'boolean', default: 'false', description: 'Disable the upload zone.' },
-    showPreview: { type: 'boolean', default: 'true', description: 'Show image previews for uploaded files.' },
-    dropzoneContent: { type: 'ReactNode', description: 'Custom content for the dropzone area.' },
-    onFilesSelect: { type: '(files: File[]) => void', description: 'Called when files are selected.' },
-    onFileRemove: { type: '(file: UploadFile) => void', description: 'Called when a file is removed from the list.' },
-    onUpload: {
-        type: '(file: File, onProgress: (percent: number) => void) => Promise<void>',
-        description: 'Upload handler with progress callback.',
-    },
-    customValidator: { type: '(file: File) => string | undefined', description: 'Custom validation function returning an error message.' },
-    className: { type: 'string', description: 'Additional CSS class for the container.' },
-};
 
 const features: FeatureItem[] = [
     {

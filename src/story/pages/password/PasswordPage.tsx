@@ -10,26 +10,9 @@ import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
 import PasswordStates from './PasswordStates';
 
-const passwordProps = {
-    value: { type: 'string', description: 'Current value of the password input (controlled)' },
-    placeholder: { type: 'string', description: 'Placeholder text' },
-    label: { type: 'string', description: 'Label text' },
-    error: { type: 'string', description: 'Error message to display' },
-    disabled: { type: 'boolean', default: false, description: 'Disable the input' },
-    readonly: { type: 'boolean', default: false, description: 'Make the input read-only' },
-    required: { type: 'boolean', default: false, description: 'Mark the input as required' },
-    toggleable: { type: 'boolean', default: true, description: 'Show password visibility toggle button' },
-    showPassword: { type: 'boolean', description: 'Controlled password visibility state' },
-    maxLength: { type: 'number', description: 'Maximum character limit' },
-    minLength: { type: 'number', description: 'Minimum character requirement' },
-    autoComplete: { type: 'string', default: 'current-password', description: 'Auto-complete hint' },
-    autoFocus: { type: 'boolean', default: false, description: 'Auto focus the input on mount' },
-    id: { type: 'string', description: 'Unique identifier for the input' },
-    name: { type: 'string', description: 'Name attribute for the input' },
-    onChange: { type: 'function', description: 'Change event handler' },
-    className: { type: 'string', description: 'Additional CSS classes' },
-};
 
+import _Password_props_json from './../../../components/Password.props.json';
+const { passwordProps } = _Password_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default password input example' },
     { id: 'states', title: 'States', description: 'Normal, disabled, readonly, required' },

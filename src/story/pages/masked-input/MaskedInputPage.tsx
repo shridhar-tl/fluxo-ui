@@ -15,31 +15,9 @@ import { CreditCard, DateInput, Ipv4Address, LicensePlate, PhoneNumber, SsnInput
 import MaskSyntax from './MaskSyntax';
 import PrefilledValue from './PrefilledValue';
 
-const maskedInputProps = {
-    mask: {
-        type: 'string',
-        description: "Mask pattern. Use '9' for digit, 'a' for letter, '*' for alphanumeric, any other char as literal separator",
-    },
-    value: { type: 'string', description: 'Current value (raw or masked — component normalises it)' },
-    onChange: { type: '(event: ComponentEvent<string>) => void', description: 'Called when the value changes' },
-    onRawChange: {
-        type: '(raw: string, masked: string) => void',
-        description: 'Called with the raw (unmasked) value alongside the masked display value',
-    },
-    slotChar: { type: 'string', default: '_', description: 'Character shown for empty mask slots' },
-    includeLiterals: {
-        type: 'boolean',
-        default: true,
-        description: 'Whether to include literal separator characters in the onChange value',
-    },
-    placeholder: { type: 'string', description: 'Placeholder text' },
-    required: { type: 'boolean', default: false, description: 'Mark the input as required' },
-    readonly: { type: 'boolean', default: false, description: 'Make the input read-only' },
-    disabled: { type: 'boolean', default: false, description: 'Disable the input' },
-    autoFocus: { type: 'boolean', default: false, description: 'Auto-focus on mount' },
-    id: { type: 'string', description: 'Unique id for the input element' },
-};
 
+import _MaskedInput_props_json from './../../../components/MaskedInput.props.json';
+const { maskedInputProps } = _MaskedInput_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'mask-syntax', title: 'Mask Syntax', description: 'Reserved characters reference' },
     { id: 'phone', title: 'Phone Number', description: 'US phone format' },

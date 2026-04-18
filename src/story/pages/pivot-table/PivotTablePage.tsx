@@ -14,6 +14,8 @@ import InteractiveDemo from './InteractiveDemo';
 import MultiLevelPivot from './MultiLevelPivot';
 import MultipleFunctions from './MultipleFunctions';
 
+import _PivotTable_props_json from './../../../components/pivot-table/PivotTable.props.json';
+const { pivotTableProps } = _PivotTable_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'interactive', title: 'Interactive', description: 'Drag-drop config, inline editing' },
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple region pivot' },
@@ -26,39 +28,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const pivotTableProps = {
-    data: { type: 'T[]', required: true, description: 'Array of data objects to pivot.' },
-    config: { type: 'PivotConfig', required: true, description: 'Configuration with rows, columns, values, and optional filters.' },
-    fieldDefinitions: { type: 'FieldDefinition[]', description: 'Defines field types, labels, editors, templates, and validators.' },
-    onConfigChange: { type: '(config: PivotConfig) => void', description: 'Called when user changes pivot configuration via drag-drop.' },
-    onDataChange: { type: '(data: T[], rowIndex, field, newValue) => void', description: 'Called after inline cell edits.' },
-    showConfigPanel: { type: 'boolean', default: 'false', description: 'Show the interactive drag-and-drop configuration panel.' },
-    configPanelPosition: { type: "'left' | 'right' | 'top'", default: "'left'", description: 'Position of the config panel.' },
-    configPanelCollapsible: { type: 'boolean', default: 'true', description: 'Allow collapsing the config panel.' },
-    editable: { type: 'boolean', default: 'false', description: 'Enable inline cell editing on double-click.' },
-    onCellEdit: {
-        type: '(row, field, oldVal, newVal) => boolean | void',
-        description: 'Validate or intercept cell edits. Return false to cancel.',
-    },
-    plugins: { type: 'PivotPlugin[]', description: 'Array of plugin objects for custom functions, renderers, and editors.' },
-    disabledFunctions: { type: 'BuiltInAggregateFunction[]', description: 'Remove specific built-in aggregate functions.' },
-    permissions: { type: 'PivotPermissions', description: 'Fine-grained control over what users can do (drag, edit, filter, export).' },
-    cellTemplate: { type: 'ComponentType<CellTemplateProps> | function', description: 'Global custom cell renderer for all value cells.' },
-    headerTemplate: { type: '(field, label) => ReactNode', description: 'Custom renderer for column headers.' },
-    rowHeaderTemplate: { type: '(label, depth, node) => ReactNode', description: 'Custom renderer for row headers.' },
-    exportable: { type: 'boolean', default: 'false', description: 'Show CSV/JSON export buttons in toolbar.' },
-    onExport: { type: "(format: 'csv' | 'json') => void", description: 'Custom export handler.' },
-    loading: { type: 'boolean', default: 'false', description: 'Show loading spinner.' },
-    height: { type: 'string | number', description: 'Max height for scrollable area.' },
-    expandAll: { type: 'boolean', default: 'false', description: 'Expand all row groups on initial render.' },
-    showGrandTotal: { type: 'boolean', default: 'true', description: 'Show a grand total row at the bottom.' },
-    showSubTotals: { type: 'boolean', default: 'true', description: 'Show subtotal rows for expanded groups.' },
-    sortable: { type: 'boolean', default: 'true', description: 'Enable column header sorting.' },
-    striped: { type: 'boolean', default: 'false', description: 'Apply alternating row backgrounds.' },
-    bordered: { type: 'boolean', default: 'true', description: 'Show cell borders.' },
-    compact: { type: 'boolean', default: 'false', description: 'Reduce cell padding for a denser layout.' },
-    showToolbar: { type: 'boolean', default: 'false', description: 'Show toolbar with expand/collapse, export, and record count.' },
-};
 
 const features: FeatureItem[] = [
     {

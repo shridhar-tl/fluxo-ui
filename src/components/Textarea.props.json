@@ -1,0 +1,79 @@
+{
+  "textAreaProps": {
+    "value": {
+      "type": "string",
+      "description": "Current value of the textarea (controlled)"
+    },
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text"
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text"
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message to display"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Disable the textarea"
+    },
+    "readonly": {
+      "type": "boolean",
+      "default": false,
+      "description": "Make the textarea read-only"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Mark the textarea as required"
+    },
+    "autoFocus": {
+      "type": "boolean",
+      "default": false,
+      "description": "Auto focus the textarea on mount"
+    },
+    "rows": {
+      "type": "number",
+      "default": 3,
+      "description": "Number of visible rows"
+    },
+    "autoResize": {
+      "type": "boolean",
+      "default": false,
+      "description": "Auto resize height based on content"
+    },
+    "maxHeight": {
+      "type": "string",
+      "default": "200px",
+      "description": "Maximum height for auto-resizing"
+    },
+    "maxLength": {
+      "type": "number",
+      "description": "Maximum character limit"
+    },
+    "minLength": {
+      "type": "number",
+      "description": "Minimum character requirement"
+    },
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the textarea"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name attribute for the textarea"
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Change event handler"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    }
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "tabViewProps": {
+    "activeIndex": {
+      "type": "number",
+      "default": "0",
+      "description": "Index of the active tab"
+    },
+    "onTabChange": {
+      "type": "(e: TabChangeEvent) => void",
+      "description": "Callback fired when tab changes"
+    },
+    "onBeforeTabChange": {
+      "type": "(e: TabChangeEvent) => boolean | Promise<boolean>",
+      "description": "Callback before tab changes. Return false to prevent change."
+    },
+    "onTabClose": {
+      "type": "(e: TabCloseEvent) => void",
+      "description": "Callback when a closable tab is closed"
+    },
+    "headerEnd": {
+      "type": "React.ReactNode",
+      "description": "Content rendered at the trailing end of the tab header row"
+    },
+    "variant": {
+      "type": "'default' | 'pills' | 'enclosed' | 'segment' | 'editor' | 'thick-border' | 'elevated'",
+      "default": "'default'",
+      "description": "Visual style variant"
+    },
+    "scrollable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show scroll arrows when tabs overflow"
+    },
+    "position": {
+      "type": "'top' | 'bottom' | 'left' | 'right'",
+      "default": "'top'",
+      "description": "Position of tab headers"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class names"
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles"
+    },
+    "children": {
+      "type": "React.ReactNode",
+      "description": "TabPage components"
+    }
+  },
+  "tabPageProps": {
+    "header": {
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "Tab header content"
+    },
+    "leftIcon": {
+      "type": "string | React.ComponentType | React.ReactElement",
+      "description": "Icon on the left side of the header"
+    },
+    "rightIcon": {
+      "type": "string | React.ComponentType | React.ReactElement",
+      "description": "Icon on the right side of the header"
+    },
+    "closable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show a close button on the tab header"
+    },
+    "visible": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Whether the tab is visible"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Whether the tab is disabled"
+    },
+    "className": {
+      "type": "string",
+      "description": "CSS class for tab content panel"
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles for tab content panel"
+    },
+    "children": {
+      "type": "React.ReactNode",
+      "description": "Tab panel content"
+    }
+  }
+}

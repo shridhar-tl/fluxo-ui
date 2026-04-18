@@ -17,29 +17,9 @@ import SizeVariants from './SizeVariants';
 import SortedKeys from './SortedKeys';
 import TypeShowcase from './TypeShowcase';
 
-const jsonEditorProps = {
-    value: { type: 'JsonValue', description: 'The JSON value to display and edit', default: '-' },
-    onChange: { type: '(value: JsonValue) => void', description: 'Callback when the value changes', default: '-' },
-    allowEditValue: { type: 'boolean', default: 'true', description: 'Allow editing values' },
-    allowEditKey: { type: 'boolean', default: 'true', description: 'Allow editing/renaming keys' },
-    allowRemove: { type: 'boolean', default: 'true', description: 'Allow removing properties/items' },
-    allowInsert: { type: 'boolean', default: 'true', description: 'Allow adding new properties/items' },
-    allowTypeChange: { type: 'boolean', default: 'false', description: 'Show type badges with type changing' },
-    allowCopy: { type: 'boolean', default: 'true', description: 'Allow copying values to clipboard' },
-    allowSearch: { type: 'boolean', default: 'true', description: 'Show search in toolbar' },
-    readOnly: { type: 'boolean', default: 'false', description: 'Disable all editing' },
-    expandDepth: { type: 'number', default: '1', description: 'Initial depth to auto-expand' },
-    size: { type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Font and spacing size' },
-    maxHeight: { type: 'string | number', description: 'Max height with scroll overflow', default: '-' },
-    showDataTypes: { type: 'boolean', default: 'false', description: 'Show type labels next to values' },
-    showItemCount: { type: 'boolean', default: 'true', description: 'Show item count for objects/arrays' },
-    showToolbar: { type: 'boolean', default: 'true', description: 'Show the toolbar with search and actions' },
-    sortKeys: { type: 'boolean', default: 'false', description: 'Sort object keys alphabetically' },
-    className: { type: 'string', description: 'Additional CSS class', default: '-' },
-    id: { type: 'string', description: 'HTML id attribute', default: '-' },
-    ariaLabel: { type: 'string', description: 'Accessible label', default: '-' },
-};
 
+import _JsonEditor_props_json from './../../../components/json-editor/JsonEditor.props.json';
+const { jsonEditorProps } = _JsonEditor_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic', title: 'Basic', description: 'Simple editing' },
     { id: 'nested', title: 'Nested', description: 'Deep hierarchies' },

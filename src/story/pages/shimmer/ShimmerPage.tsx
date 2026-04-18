@@ -13,61 +13,11 @@ import ShimmerTableDemo from './ShimmerTableDemo';
 import ShimmerBarChartDemo from './ShimmerBarChartDemo';
 import ShimmerPieChartDemo from './ShimmerPieChartDemo';
 
-const shimmerDivProps = {
-    width: {
-        type: 'string | number',
-        description: 'Width of the shimmer block. Accepts CSS values (e.g. "100%", 200) or a number treated as pixels.',
-    },
-    height: {
-        type: 'string | number',
-        description: 'Height of the shimmer block.',
-    },
-    borderRadius: {
-        type: 'string | number',
-        description: 'Border radius of the shimmer block. Useful for circle avatars or pill shapes.',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes applied to the root element.',
-    },
-};
 
-const shimmerTableProps = {
-    rows: {
-        type: 'number',
-        default: '5',
-        description: 'Number of skeleton rows to render.',
-    },
-    columns: {
-        type: 'number',
-        default: '4',
-        description: 'Number of skeleton columns to render.',
-    },
-    showHeader: {
-        type: 'boolean',
-        default: 'true',
-        description: 'Whether to show the skeleton header row.',
-    },
-};
 
-const shimmerBarChartProps = {
-    bars: {
-        type: 'number',
-        default: '6',
-        description: 'Number of bars to display in the skeleton chart.',
-    },
-    showXAxis: {
-        type: 'boolean',
-        default: 'true',
-        description: 'Whether to render placeholder labels below the bars.',
-    },
-    showYAxis: {
-        type: 'boolean',
-        default: 'true',
-        description: 'Whether to render placeholder labels to the left of the chart.',
-    },
-};
 
+import _Shimmer_props_json from './../../../components/shimmer/Shimmer.props.json';
+const { shimmerDivProps, shimmerTableProps, shimmerBarChartProps } = _Shimmer_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'shimmer-div', title: 'ShimmerDiv', description: 'Basic shimmer block' },
     { id: 'profile-card', title: 'Profile / Card', description: 'Custom card skeleton' },

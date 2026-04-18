@@ -1,0 +1,182 @@
+{
+  "panelProps": {
+    "title": {
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "Header text or element displayed in the panel header."
+    },
+    "children": {
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "Content rendered inside the collapsible body."
+    },
+    "subtitle": {
+      "type": "React.ReactNode",
+      "description": "Secondary text rendered below the title in the header."
+    },
+    "icon": {
+      "type": "React.ReactNode",
+      "description": "Icon element rendered before the title in the header."
+    },
+    "variant": {
+      "type": "'default' | 'bordered' | 'elevated' | 'ghost' | 'separated'",
+      "default": "'default'",
+      "description": "Visual style of the panel. Group-level variant is used as fallback."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Controls header padding, font size, and indicator icon size."
+    },
+    "iconPosition": {
+      "type": "'start' | 'end'",
+      "default": "'end'",
+      "description": "Position of the toggle chevron — before or after the title."
+    },
+    "expandIcon": {
+      "type": "React.ReactNode",
+      "description": "Custom icon shown when the panel is collapsed."
+    },
+    "collapseIcon": {
+      "type": "React.ReactNode",
+      "description": "Custom icon shown when the panel is expanded. Falls back to expandIcon."
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Whether the panel starts open (uncontrolled mode)."
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state. When set, the component is fully controlled."
+    },
+    "onToggle": {
+      "type": "(open: boolean) => void",
+      "description": "Called when the user toggles the panel. Receives the new open state."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Prevents toggling. Header shows not-allowed cursor and hover is suppressed."
+    },
+    "headerActions": {
+      "type": "React.ReactNode",
+      "description": "Interactive elements placed at the end of the header. Click events do not propagate."
+    },
+    "headerTemplate": {
+      "type": "(props: { isOpen, toggle }) => ReactNode",
+      "description": "Fully custom header renderer. When set, title/subtitle/icon/indicator are ignored."
+    },
+    "lazy": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Defers rendering content until the panel is first opened."
+    },
+    "destroyOnCollapse": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Unmounts content from the DOM when the panel is collapsed."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes for the root element."
+    },
+    "headerClassName": {
+      "type": "string",
+      "description": "Additional CSS classes for the header element."
+    },
+    "contentClassName": {
+      "type": "string",
+      "description": "Additional CSS classes for the content wrapper."
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles for the root element."
+    },
+    "id": {
+      "type": "string",
+      "description": "Element ID. Also used as the group key in CollapsiblePanelGroup."
+    }
+  },
+  "groupProps": {
+    "children": {
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "CollapsiblePanel children to manage."
+    },
+    "accordion": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When true, only one panel can be open at a time."
+    },
+    "defaultOpenKeys": {
+      "type": "string[]",
+      "default": "[]",
+      "description": "Array of panel IDs that start open."
+    },
+    "variant": {
+      "type": "'default' | 'bordered' | 'elevated' | 'ghost' | 'separated'",
+      "default": "'default'",
+      "description": "Default variant for all child panels."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Default size for all child panels."
+    },
+    "iconPosition": {
+      "type": "'start' | 'end'",
+      "default": "'end'",
+      "description": "Default icon position for all child panels."
+    },
+    "gap": {
+      "type": "number",
+      "description": "Gap in pixels between panels."
+    },
+    "onChange": {
+      "type": "(openKeys: string[]) => void",
+      "description": "Called when the set of open panels changes."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes for the group container."
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles for the group container."
+    }
+  },
+  "tabsProps": {
+    "tabs": {
+      "type": "CollapsibleTabItem[]",
+      "required": true,
+      "description": "Array of tab objects with id, label, isOpen, and render function."
+    },
+    "height": {
+      "type": "number | string",
+      "description": "Minimum height of the tabs container."
+    },
+    "minOpenTabs": {
+      "type": "number",
+      "default": "1",
+      "description": "Minimum number of tabs that must stay open at any time."
+    },
+    "variant": {
+      "type": "'default' | 'bordered' | 'elevated'",
+      "default": "'default'",
+      "description": "Visual style variant for the tabs layout."
+    },
+    "onTabToggle": {
+      "type": "(tabId: string, isOpen: boolean) => void",
+      "description": "Called when a tab is toggled."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes for the container."
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles for the container."
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "sigProps": {
+    "size": {
+      "type": "'sm' | 'md' | 'lg' | 'full'",
+      "default": "'md'",
+      "description": "Canvas size preset."
+    },
+    "border": {
+      "type": "'solid' | 'dashed' | 'none'",
+      "default": "'solid'",
+      "description": "Border style."
+    },
+    "background": {
+      "type": "'white' | 'transparent' | 'grid' | 'dotted'",
+      "default": "'white'",
+      "description": "Canvas background pattern."
+    },
+    "penColor": {
+      "type": "string",
+      "default": "'#111827'",
+      "description": "Ink color."
+    },
+    "thickness": {
+      "type": "'thin' | 'regular' | 'bold' | number",
+      "default": "'regular'",
+      "description": "Pen thickness."
+    },
+    "showToolbar": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show Undo/Clear buttons."
+    },
+    "showSwatches": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show color swatches in the toolbar."
+    },
+    "swatches": {
+      "type": "string[]",
+      "description": "Custom color swatches."
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "'Sign here'",
+      "description": "Placeholder text shown when empty."
+    },
+    "onBegin": {
+      "type": "() => void",
+      "description": "Called at stroke start."
+    },
+    "onEnd": {
+      "type": "() => void",
+      "description": "Called at stroke end."
+    },
+    "onChange": {
+      "type": "(isEmpty: boolean) => void",
+      "description": "Called whenever empty state flips."
+    }
+  }
+}

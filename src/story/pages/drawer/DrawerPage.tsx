@@ -11,6 +11,8 @@ import BasicUsage from './BasicUsage';
 import CustomContent from './CustomContent';
 import Positions from './Positions';
 
+import _Drawer_props_json from './../../../components/drawer/Drawer.props.json';
+const { drawerProps } = _Drawer_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default right-side drawer' },
     { id: 'positions', title: 'Positions', description: 'Left, right, top, bottom' },
@@ -20,20 +22,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const drawerProps = {
-    open: { type: 'boolean', required: true, description: 'Whether the drawer is visible.' },
-    onClose: { type: '() => void', required: true, description: 'Called when the drawer should close.' },
-    position: { type: "'left' | 'right' | 'top' | 'bottom'", default: "'right'", description: 'Edge from which the drawer slides in.' },
-    size: { type: 'string', default: "'400px'", description: 'Width (horizontal) or height (vertical) of the drawer.' },
-    backdrop: { type: 'boolean', default: 'true', description: 'Show a dark backdrop behind the drawer.' },
-    pushContent: { type: 'boolean', default: 'false', description: 'Push the main content instead of overlaying.' },
-    closeOnEscape: { type: 'boolean', default: 'true', description: 'Close drawer on Escape key press.' },
-    closeOnBackdropClick: { type: 'boolean', default: 'true', description: 'Close drawer when clicking the backdrop.' },
-    header: { type: 'ReactNode', description: 'Header content. When provided, shows a header bar with close button.' },
-    footer: { type: 'ReactNode', description: 'Footer content rendered at the bottom.' },
-    children: { type: 'ReactNode', required: true, description: 'Main body content of the drawer.' },
-    className: { type: 'string', description: 'Additional CSS class for the drawer panel.' },
-};
 
 const features: FeatureItem[] = [
     {

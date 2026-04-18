@@ -1,0 +1,37 @@
+{
+  "fieldLabelProps": {
+    "htmlFor": {
+      "type": "string",
+      "description": "Associates the label with a form control"
+    },
+    "children": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Label content"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Shows required indicator"
+    },
+    "optional": {
+      "type": "boolean",
+      "default": false,
+      "description": "Shows optional indicator"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Disabled state styling"
+    },
+    "error": {
+      "type": "boolean",
+      "default": false,
+      "description": "Error state styling"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    }
+  }
+}

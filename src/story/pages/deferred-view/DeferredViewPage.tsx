@@ -12,41 +12,9 @@ import KeepMountedDemo from './KeepMountedDemo';
 import RootMarginDemo from './RootMarginDemo';
 import LazyImageDemo from './LazyImageDemo';
 
-const deferredViewProps = {
-    children: {
-        type: 'ReactNode',
-        description: 'Content to render once the component enters the viewport.',
-    },
-    placeholder: {
-        type: 'ReactNode',
-        default: 'empty div',
-        description: 'Content to show while the children are deferred. Use a shimmer skeleton, spinner, or any custom placeholder.',
-    },
-    rootMargin: {
-        type: 'string',
-        default: '"0px"',
-        description: 'Margin around the root (viewport) for the IntersectionObserver. Use positive values to preload content before it enters the viewport (e.g. "200px").',
-    },
-    threshold: {
-        type: 'number',
-        default: '0',
-        description: 'Percentage of the element that must be visible before mounting (0 to 1). 0 means any pixel visible triggers mount.',
-    },
-    keepMounted: {
-        type: 'boolean',
-        default: 'true',
-        description: 'When true, children stay mounted after first visibility. When false, children unmount when scrolled out of view.',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes applied to the wrapper element.',
-    },
-    style: {
-        type: 'CSSProperties',
-        description: 'Inline styles applied to the wrapper element.',
-    },
-};
 
+import _DeferredView_props_json from './../../../components/DeferredView.props.json';
+const { deferredViewProps } = _DeferredView_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Defer rendering until visible' },
     { id: 'placeholder', title: 'Placeholder', description: 'Custom loading placeholders' },

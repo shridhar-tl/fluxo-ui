@@ -12,72 +12,9 @@ import SearchableList from './SearchableList';
 import GroupedList from './GroupedList';
 import DisabledState from './DisabledState';
 
-const listBoxProps = {
-    options: {
-        type: 'ListBoxOption[]',
-        required: true,
-        description: 'Array of options to display.',
-    },
-    value: {
-        type: 'T | T[]',
-        description: 'Currently selected value or array of values (for multiple selection).',
-    },
-    onChange: {
-        type: '(value: T | T[]) => void',
-        description: 'Called when selection changes.',
-    },
-    multiple: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Allow selecting multiple items.',
-    },
-    searchable: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Show a search input above the list.',
-    },
-    searchPlaceholder: {
-        type: 'string',
-        description: 'Placeholder text for the search input.',
-    },
-    grouped: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Group items using the groupBy function.',
-    },
-    groupBy: {
-        type: '(option: ListBoxOption) => string',
-        description: 'Returns the group name for each option.',
-    },
-    selectAll: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Show a Select All checkbox (requires multiple).',
-    },
-    clearable: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Show a Clear All button.',
-    },
-    disabled: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Disable all interactions.',
-    },
-    emptyMessage: {
-        type: 'string',
-        description: 'Message shown when the option list is empty.',
-    },
-    maxHeight: {
-        type: 'string | number',
-        description: 'Max height of the scrollable list.',
-    },
-    itemTemplate: {
-        type: '(option: ListBoxOption) => ReactNode',
-        description: 'Custom renderer for each option item.',
-    },
-};
 
+import _ListBox_props_json from './../../../components/ListBox.props.json';
+const { listBoxProps } = _ListBox_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'single-selection', title: 'Single Selection', description: 'Basic single select' },
     { id: 'multiple-selection', title: 'Multiple Selection', description: 'Multi-select with select-all' },

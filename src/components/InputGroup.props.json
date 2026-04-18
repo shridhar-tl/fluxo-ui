@@ -1,0 +1,18 @@
+{
+  "inputGroupProps": {
+    "children": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Input and addon elements. Use TextInput, Button, or span/div for addons."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Disable the entire group"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    }
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "sliderProps": {
+    "value": {
+      "type": "number",
+      "description": "Controlled value of the slider."
+    },
+    "defaultValue": {
+      "type": "number",
+      "default": "0",
+      "description": "Initial value for uncontrolled usage."
+    },
+    "min": {
+      "type": "number",
+      "default": "0",
+      "description": "Minimum value."
+    },
+    "max": {
+      "type": "number",
+      "default": "100",
+      "description": "Maximum value."
+    },
+    "step": {
+      "type": "number",
+      "default": "1",
+      "description": "Step increment between values."
+    },
+    "orientation": {
+      "type": "'horizontal' | 'vertical'",
+      "default": "'horizontal'",
+      "description": "Slider axis direction."
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+      "default": "'md'",
+      "description": "Size of the track and thumb."
+    },
+    "variant": {
+      "type": "'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'",
+      "default": "'primary'",
+      "description": "Color variant."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable interaction."
+    },
+    "range": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Enable dual-thumb range mode."
+    },
+    "rangeValue": {
+      "type": "[number, number]",
+      "description": "Controlled range value (low, high)."
+    },
+    "defaultRangeValue": {
+      "type": "[number, number]",
+      "description": "Initial range value for uncontrolled usage."
+    },
+    "marks": {
+      "type": "SliderMark[] | boolean",
+      "description": "Display marks on the track. Pass true for auto-generated marks or an array for custom marks."
+    },
+    "showTooltip": {
+      "type": "boolean | 'always'",
+      "default": "false",
+      "description": "Show tooltip on hover/drag or always."
+    },
+    "tooltipFormat": {
+      "type": "(value: number) => string",
+      "description": "Custom formatter for tooltip text."
+    },
+    "valueFormat": {
+      "type": "(value: number) => string",
+      "description": "Custom formatter for displayed value."
+    },
+    "showValue": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Display the current value alongside the slider."
+    },
+    "valuePosition": {
+      "type": "'top' | 'bottom' | 'left' | 'right'",
+      "default": "'top'",
+      "description": "Position of the displayed value."
+    },
+    "snap": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Snap the thumb to the nearest step."
+    },
+    "gridStep": {
+      "type": "number",
+      "description": "Coarser step for grid-based snapping."
+    },
+    "gridDuration": {
+      "type": "number",
+      "default": "150",
+      "description": "Animation duration (ms) for grid snap transitions."
+    },
+    "labels": {
+      "type": "string[]",
+      "description": "Map slider positions to string labels. Min/max auto-set from array length."
+    },
+    "showMinMax": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show min and max labels at the ends."
+    },
+    "trackHeight": {
+      "type": "number",
+      "description": "Override the track height/width in pixels."
+    },
+    "thumbSize": {
+      "type": "number",
+      "description": "Override the thumb size in pixels."
+    },
+    "filled": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show a filled track from min to current value."
+    },
+    "onChange": {
+      "type": "(value: number | [number, number]) => void",
+      "description": "Called on every value change during interaction."
+    },
+    "onChangeEnd": {
+      "type": "(value: number | [number, number]) => void",
+      "description": "Called when interaction ends (pointer up or keyboard)."
+    }
+  }
+}

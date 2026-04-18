@@ -18,40 +18,9 @@ import TextOnly from './TextOnly';
 import VerticalOrientation from './VerticalOrientation';
 import WithIcons from './WithIcons';
 
-const stepperProps = {
-    steps: { type: 'StepItem[]', description: 'Array of step definitions with label, description, icon, and status', default: '-' },
-    activeStep: { type: 'number', default: '0', description: 'Index of the currently active step' },
-    variant: {
-        type: "'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'",
-        default: "'primary'",
-        description: 'Color variant',
-    },
-    size: { type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'", default: "'md'", description: 'Size of indicators and text' },
-    layout: {
-        type: "'default' | 'rounded' | 'square' | 'rectangle' | 'dot' | 'minimal'",
-        default: "'default'",
-        description: 'Shape of step indicators',
-    },
-    orientation: { type: "'horizontal' | 'vertical'", default: "'horizontal'", description: 'Layout direction' },
-    labelPlacement: {
-        type: "'bottom' | 'right' | 'alternate'",
-        default: "'bottom'",
-        description: 'Position of labels relative to indicators',
-    },
-    showStepNumbers: { type: 'boolean', default: 'true', description: 'Show step numbers inside indicators' },
-    showConnectors: { type: 'boolean', default: 'true', description: 'Show connector lines between steps' },
-    clickable: { type: 'boolean', default: 'false', description: 'Allow clicking on steps to navigate' },
-    linear: { type: 'boolean', default: 'false', description: 'Only allow clicking the next step' },
-    completedIcon: { type: 'ReactElement | IconComponent', description: 'Custom icon for completed steps' },
-    errorIcon: { type: 'ReactElement | IconComponent', description: 'Custom icon for error steps' },
-    onChange: { type: '(step: number) => void', description: 'Callback when a step is clicked' },
-    connector: { type: 'ReactNode', description: 'Custom connector element' },
-    className: { type: 'string', description: 'Additional CSS class' },
-    disabled: { type: 'boolean', default: 'false', description: 'Disable all interaction' },
-    id: { type: 'string', description: 'HTML id attribute' },
-    ariaLabel: { type: 'string', description: 'Accessible label' },
-};
 
+import _Stepper_props_json from './../../../components/Stepper.props.json';
+const { stepperProps } = _Stepper_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic', title: 'Basic', description: 'Simple stepper' },
     { id: 'layouts', title: 'Layouts', description: 'Indicator shapes' },

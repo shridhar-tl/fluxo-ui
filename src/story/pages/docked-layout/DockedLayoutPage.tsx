@@ -11,6 +11,8 @@ import { FloatingPanels } from './FloatingPanels';
 import { LayoutPersistence } from './LayoutPersistence';
 import { TabModes } from './TabModes';
 
+import _DockedLayout_props_json from './../../../components/docked-layout/DockedLayout.props.json';
+const { dockedLayoutProps, panelConfigProps } = _DockedLayout_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'overview', title: 'Overview', description: 'Introduction and feature highlights' },
     { id: 'basic-usage', title: 'Basic Usage', description: 'Left, right, and bottom panels' },
@@ -66,32 +68,7 @@ const features: FeatureItem[] = [
     },
 ];
 
-const dockedLayoutProps = {
-    panels: { type: 'PanelConfig[]', required: true, description: 'Array of panel configuration objects.' },
-    children: { type: 'React.ReactNode', description: 'The main center content area.' },
-    layoutState: { type: 'DockedLayoutState', description: 'Controlled layout state. Use onChange to keep in sync.' },
-    onChange: { type: '(state: DockedLayoutState) => void', description: 'Fired on every layout change for persistence.' },
-    tabMode: { type: "'icon' | 'icon-label'", default: "'icon'", description: "Activity bar display mode." },
-    className: { type: 'string', description: 'Additional CSS class names.' },
-    style: { type: 'React.CSSProperties', description: 'Inline styles for the outer container.' },
-};
 
-const panelConfigProps = {
-    id: { type: 'string', required: true, description: 'Unique panel identifier.' },
-    title: { type: 'string', required: true, description: 'Panel display title and activity bar tooltip.' },
-    icon: { type: 'SVGIcon', required: true, description: 'Icon rendered in the activity bar. Must be from icons.ts.' },
-    children: { type: 'React.ReactNode', description: 'Panel body content.' },
-    defaultPosition: { type: "'left' | 'right' | 'bottom' | 'float'", default: "'left'", description: 'Initial dock position.' },
-    defaultState: { type: "'pinned' | 'auto-hide'", default: "'pinned'", description: 'Initial pin state.' },
-    defaultSize: { type: 'number', default: '260', description: 'Initial size in pixels.' },
-    minSize: { type: 'number', default: '100', description: 'Minimum size in pixels during resize.' },
-    defaultVisible: { type: 'boolean', default: 'true', description: 'Whether visible in activity bar on initial render.' },
-    defaultFloatPos: { type: 'FloatPos', description: 'Initial position/size for floating: { x, y, width, height }.' },
-    userCanMove: { type: 'boolean', default: 'true', description: 'Whether end user can re-dock the panel.' },
-    userCanResize: { type: 'boolean', default: 'true', description: 'Whether end user can resize the panel.' },
-    userCanClose: { type: 'boolean', default: 'true', description: 'Whether end user can close the panel.' },
-    userCanTogglePin: { type: 'boolean', default: 'true', description: 'Whether end user can toggle pin/auto-hide.' },
-};
 
 const importCode = `import { DockedLayout } from 'fluxo-ui';
 import type { DockedLayoutState, PanelConfig, TabMode } from 'fluxo-ui';`;

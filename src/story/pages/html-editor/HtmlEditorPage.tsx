@@ -13,6 +13,8 @@ import PreviewOnly from './PreviewOnly';
 import ReadOnly from './ReadOnly';
 import ViewModes from './ViewModes';
 
+import _HtmlEditor_props_json from './../../../components/html-editor/HtmlEditor.props.json';
+const { editorProps, previewProps } = _HtmlEditor_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic', title: 'Basic Usage', description: 'WYSIWYG editor with split preview' },
     { id: 'views', title: 'View Modes', description: 'Edit, Split, Preview' },
@@ -27,43 +29,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const editorProps = {
-    value: { type: 'string', description: 'Controlled HTML value.' },
-    defaultValue: { type: 'string', description: 'Initial value when uncontrolled.' },
-    onChange: { type: '(value: string) => void', description: 'Called whenever the HTML changes.' },
-    placeholder: { type: 'string', default: "'Start writing...'", description: 'Placeholder shown when empty.' },
-    readOnly: { type: 'boolean', default: 'false', description: 'Disable all editing while keeping the chrome.' },
-    disabled: { type: 'boolean', default: 'false', description: 'Fully disable the editor.' },
-    minHeight: { type: 'string | number', default: "'320px'", description: 'Minimum height of the editor body.' },
-    maxHeight: { type: 'string | number', description: 'Optional max height (scrolls beyond).' },
-    view: { type: "'edit' | 'split' | 'preview'", description: 'Controlled view mode.' },
-    defaultView: { type: "'edit' | 'split' | 'preview'", default: "'edit'", description: 'Initial view when uncontrolled.' },
-    onViewChange: { type: '(view: EditorViewMode) => void', description: 'Called when the user toggles views.' },
-    allowedViews: { type: 'EditorViewMode[]', description: 'Restrict which view modes appear in the switcher.' },
-    toolbar: { type: 'HtmlToolbarItem[] | false', default: 'DEFAULT_HTML_TOOLBAR', description: 'Toolbar configuration or false to hide.' },
-    showToolbar: { type: 'boolean', default: 'true', description: 'Hide the toolbar entirely.' },
-    showStatusBar: { type: 'boolean', default: 'true', description: 'Show word/char count footer.' },
-    showWordCount: { type: 'boolean', default: 'true', description: 'Toggle word count in the status bar.' },
-    uploadImage: { type: '(file: File) => Promise<string>', description: 'Async upload callback — must resolve with the final URL.' },
-    uploadStrategy: { type: "'immediate' | 'deferred'", default: "'immediate'", description: 'Upload immediately or defer to flushUploads().' },
-    maxImageSize: { type: 'number', description: 'Maximum file size in bytes.' },
-    acceptedImageTypes: { type: 'string[]', description: 'Array of MIME types accepted for upload.' },
-    onUploadError: { type: '(message: string, file?: File) => void', description: 'Called when validation or upload fails.' },
-    sanitize: { type: '(html: string) => string', description: 'Custom sanitizer for paste and preview (defaults to built-in allow-list).' },
-    sanitizerConfig: { type: 'HtmlSanitizerConfig', description: 'Override the allow-list used by the built-in sanitizer.' },
-    openLinksInNewTab: { type: 'boolean', default: 'true', description: 'Open preview links with target="_blank".' },
-    spellCheck: { type: 'boolean', default: 'true', description: 'Enable browser spellcheck on the editable surface.' },
-    autoFocus: { type: 'boolean', default: 'false', description: 'Focus the editor on mount.' },
-    ariaLabel: { type: 'string', default: "'Rich text editor'", description: 'Accessible label for the editor.' },
-};
 
-const previewProps = {
-    value: { type: 'string', description: 'HTML source to render.' },
-    sanitize: { type: '(html: string) => string', description: 'Custom sanitizer — defaults to the built-in allow-list.' },
-    sanitizerConfig: { type: 'HtmlSanitizerConfig', description: 'Override the allow-list used by the built-in sanitizer.' },
-    openLinksInNewTab: { type: 'boolean', default: 'true', description: 'Add target="_blank" rel="noopener" to links.' },
-    emptyFallback: { type: 'React.ReactNode', description: 'Shown when value is empty.' },
-};
 
 const features: FeatureItem[] = [
     {

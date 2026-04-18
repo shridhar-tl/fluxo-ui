@@ -17,6 +17,8 @@ import SelectionStyles from './SelectionStyles';
 import Sizes from './Sizes';
 import ToolbarMode from './ToolbarMode';
 
+import _MenuNav_props_json from './../../../components/menu-nav/MenuNav.props.json';
+const { menuNavProps } = _MenuNav_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple vertical menu' },
     { id: 'horizontal', title: 'Horizontal', description: 'Horizontal menu with submenus' },
@@ -32,33 +34,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const menuNavProps = {
-    items: { type: '(MenuNavItem | MenuNavGroup)[]', required: true, description: 'Array of menu items or groups to render.' },
-    orientation: { type: "'vertical' | 'horizontal'", default: "'vertical'", description: 'Layout orientation of the menu.' },
-    size: { type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'", default: "'md'", description: 'Size of menu items.' },
-    selectedId: { type: 'string', description: 'Controlled selected item ID.' },
-    defaultSelectedId: { type: 'string', default: "''", description: 'Default selected item ID for uncontrolled usage.' },
-    onSelect: { type: '(id: string, item: MenuNavItem) => void', description: 'Callback when a menu item is selected.' },
-    selectionStyle: {
-        type: "'border-left' | 'border-bottom' | 'background' | 'arrow' | 'highlight'",
-        default: "'border-left'",
-        description: 'Visual style for the selected item indicator.',
-    },
-    iconPosition: { type: "'left' | 'right'", default: "'left'", description: 'Position of icons relative to label text.' },
-    collapsed: { type: 'boolean', description: 'Controlled collapsed state (icon-only mode).' },
-    collapsible: { type: 'boolean', default: 'false', description: 'Whether the menu can be collapsed to icon-only mode.' },
-    onCollapsedChange: { type: '(collapsed: boolean) => void', description: 'Callback when collapsed state changes.' },
-    mobileBreakpoint: { type: 'number', default: '768', description: 'Viewport width below which mobile mode activates.' },
-    mobileFullScreen: { type: 'boolean', default: 'true', description: 'Whether mobile menu takes full screen.' },
-    showSearch: { type: 'boolean', default: 'false', description: 'Show a search input to filter menu items.' },
-    searchPlaceholder: { type: 'string', default: "'Search...'", description: 'Placeholder text for the search input.' },
-    headerSlot: { type: 'ReactNode', description: 'Custom content rendered above the menu.' },
-    footerSlot: { type: 'ReactNode', description: 'Custom content rendered below the menu.' },
-    maxSubMenuDepth: { type: 'number', default: '3', description: 'Maximum depth of nested submenus.' },
-    toolbar: { type: 'boolean', default: 'false', description: 'Enable toolbar mode (horizontal with border-bottom selection).' },
-    className: { type: 'string', description: 'Additional CSS class for the nav element.' },
-    ariaLabel: { type: 'string', default: "'Navigation'", description: 'ARIA label for the nav element.' },
-};
 
 const features: FeatureItem[] = [
     {

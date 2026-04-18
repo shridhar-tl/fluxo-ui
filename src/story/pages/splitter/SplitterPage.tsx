@@ -19,66 +19,10 @@ import OnResizeEnd from './OnResizeEnd';
 import PersistingLayout from './PersistingLayout';
 import VerticalSplit from './VerticalSplit';
 
-const splitterProps = {
-    layout: {
-        type: "'horizontal' | 'vertical'",
-        default: "'horizontal'",
-        description: "Direction in which panels are laid out. 'horizontal' places panels side by side; 'vertical' stacks them.",
-    },
-    gutterSize: {
-        type: 'number',
-        default: '4',
-        description: 'Width (or height) in pixels of the drag handle bar between panels.',
-    },
-    onResizeEnd: {
-        type: '(firstPanelSize: number) => void',
-        description: 'Called after the user finishes a drag with the new first-panel size in pixels.',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes for the outer container.',
-    },
-    style: {
-        type: 'React.CSSProperties',
-        description: 'Inline styles for the outer container.',
-    },
-    children: {
-        type: 'React.ReactNode',
-        required: true,
-        description: 'Exactly two SplitterPanel children are required.',
-    },
-};
 
-const splitterPanelProps = {
-    defaultSize: {
-        type: 'string',
-        description:
-            "Initial size of the panel. Accepts px (e.g. '300px') or % (e.g. '40%'). Only one panel should set this — the sibling fills the remaining space.",
-    },
-    minSize: {
-        type: 'string',
-        default: "'0px'",
-        description: 'Minimum size of the panel. Accepts px or %. Prevents the panel from being resized below this threshold.',
-    },
-    fixed: {
-        type: 'boolean',
-        default: 'false',
-        description: 'When true, the panel cannot be resized by the user.',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes for the panel container.',
-    },
-    style: {
-        type: 'React.CSSProperties',
-        description: 'Inline styles for the panel container.',
-    },
-    children: {
-        type: 'React.ReactNode',
-        description: 'Content to render inside the panel.',
-    },
-};
 
+import _Splitter_props_json from './../../../components/splitter/Splitter.props.json';
+const { splitterProps, splitterPanelProps } = _Splitter_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'horizontal-split', title: 'Horizontal Split', description: 'Side-by-side panels' },
     { id: 'vertical-split', title: 'Vertical Split', description: 'Stacked panels' },

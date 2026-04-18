@@ -1,0 +1,153 @@
+{
+  "fabProps": {
+    "icon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Icon displayed in the button",
+      "default": "-"
+    },
+    "label": {
+      "type": "string",
+      "description": "Label text (visible in extended mode)"
+    },
+    "variant": {
+      "type": "'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'secondary'",
+      "default": "'primary'",
+      "description": "Color variant"
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+      "default": "'md'",
+      "description": "Button size"
+    },
+    "position": {
+      "type": "'bottom-right' | 'bottom-left' | 'top-right' | 'top-left' | 'bottom-center' | 'top-center'",
+      "default": "'bottom-right'",
+      "description": "Fixed position on screen (when fixed=true)"
+    },
+    "fixed": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Use fixed positioning on screen"
+    },
+    "extended": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show label text alongside icon"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable the button"
+    },
+    "onClick": {
+      "type": "(e: MouseEvent) => void",
+      "description": "Click handler"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "title": {
+      "type": "string",
+      "description": "Tooltip text"
+    }
+  },
+  "speedDialProps": {
+    "icon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Custom icon for the trigger (default: plus)"
+    },
+    "openIcon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Icon shown when open (default: close/X)"
+    },
+    "items": {
+      "type": "SpeedDialItem[]",
+      "description": "Array of action items with icon, label, variant, onClick",
+      "default": "-"
+    },
+    "variant": {
+      "type": "'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'secondary'",
+      "default": "'primary'",
+      "description": "Trigger button color variant"
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+      "default": "'md'",
+      "description": "Overall size"
+    },
+    "position": {
+      "type": "'bottom-right' | 'bottom-left' | 'top-right' | 'top-left' | 'bottom-center' | 'top-center'",
+      "default": "'bottom-right'",
+      "description": "Fixed position (when fixed=true)"
+    },
+    "direction": {
+      "type": "'up' | 'down' | 'left' | 'right'",
+      "default": "'up'",
+      "description": "Direction actions expand"
+    },
+    "trigger": {
+      "type": "'hover' | 'click'",
+      "default": "'hover'",
+      "description": "How to open the speed dial"
+    },
+    "layout": {
+      "type": "'linear' | 'circle' | 'semi-circle'",
+      "default": "'linear'",
+      "description": "Action layout pattern"
+    },
+    "fixed": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Use fixed positioning"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable the speed dial"
+    },
+    "showLabels": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show text labels next to action icons"
+    },
+    "showTooltip": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show native tooltip on actions"
+    },
+    "mask": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show background overlay when open"
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state"
+    },
+    "onOpenChange": {
+      "type": "(open: boolean) => void",
+      "description": "Callback when open state changes"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    }
+  }
+}

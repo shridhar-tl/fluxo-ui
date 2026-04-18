@@ -16,42 +16,9 @@ import ScrollableContent from './ScrollableContent';
 import Sizes from './Sizes';
 import WithoutTitle from './WithoutTitle';
 
-const modalProps = {
-    isOpen: {
-        type: 'boolean',
-        required: true,
-        description: 'Controls whether the modal is visible',
-    },
-    onClose: {
-        type: '() => void',
-        required: true,
-        description: 'Callback function triggered when modal should close',
-    },
-    title: {
-        type: 'string',
-        description: 'Modal title displayed in the header. If not provided, close button appears in top-right corner',
-    },
-    children: {
-        type: 'React.ReactNode',
-        required: true,
-        description: 'Modal content (scrollable when it overflows)',
-    },
-    footer: {
-        type: 'React.ReactNode',
-        description: 'Footer content rendered below the scrollable area. Always visible on screen regardless of content height',
-    },
-    size: {
-        type: "'sm' | 'md' | 'lg' | 'xl'",
-        default: "'md'",
-        description: 'Modal width size (sm: 28rem, md: 32rem, lg: 42rem, xl: 56rem)',
-    },
-    closeOnBackdrop: {
-        type: 'boolean',
-        default: 'true',
-        description: 'Whether clicking the backdrop (overlay) closes the modal',
-    },
-};
 
+import _Modal_props_json from './../../../components/Modal.props.json';
+const { modalProps } = _Modal_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default modal example' },
     { id: 'sizes', title: 'Sizes', description: 'sm, md, lg, xl width options' },

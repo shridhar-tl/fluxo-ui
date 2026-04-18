@@ -14,35 +14,10 @@ import Placements from './Placements';
 import RichContent from './RichContent';
 import SetupSection from './SetupSection';
 
-const tooltipProps = {
-    content: {
-        type: 'React.ReactNode | string',
-        required: true,
-        description: 'The content displayed inside the tooltip.',
-    },
-    placement: {
-        type: "'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'auto'",
-        default: "'auto'",
-        description: "Preferred placement relative to the target. 'auto' picks the best position based on available viewport space.",
-    },
-    timeout: {
-        type: 'number',
-        default: '1500',
-        description: 'Milliseconds before the tooltip auto-hides after the mouse leaves the target (0 = immediate).',
-    },
-};
 
-const showTooltipProps = {
-    'showTooltip(e, content)': {
-        type: 'function',
-        description: 'Show a tooltip anchored to the hovered element. Pass a string, ReactNode, or TooltipOptions object.',
-    },
-    'hideTooltip({ timeout? })': {
-        type: 'function',
-        description: 'Explicitly hide the tooltip. Defaults to the configured timeout if not specified.',
-    },
-};
 
+import _Tooltip_props_json from './../../../components/tooltip/Tooltip.props.json';
+const { tooltipProps, showTooltipProps } = _Tooltip_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'setup', title: 'Setup', description: 'Mount TooltipManager' },
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple string tooltip' },

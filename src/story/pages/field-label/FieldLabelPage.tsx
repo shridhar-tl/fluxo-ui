@@ -14,42 +14,9 @@ import ErrorState from './ErrorState';
 import OptionalField from './OptionalField';
 import RequiredField from './RequiredField';
 
-const fieldLabelProps = {
-    htmlFor: {
-        type: 'string',
-        description: 'Associates the label with a form control',
-    },
-    children: {
-        type: 'ReactNode',
-        required: true,
-        description: 'Label content',
-    },
-    required: {
-        type: 'boolean',
-        default: false,
-        description: 'Shows required indicator',
-    },
-    optional: {
-        type: 'boolean',
-        default: false,
-        description: 'Shows optional indicator',
-    },
-    disabled: {
-        type: 'boolean',
-        default: false,
-        description: 'Disabled state styling',
-    },
-    error: {
-        type: 'boolean',
-        default: false,
-        description: 'Error state styling',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes',
-    },
-};
 
+import _FieldLabel_props_json from './../../../components/FieldLabel.props.json';
+const { fieldLabelProps } = _FieldLabel_props_json;
 const importCode = `import { FieldLabel } from 'fluxo-ui';`;
 
 const basicUsageCode = `import { FieldLabel, TextInput } from 'fluxo-ui';

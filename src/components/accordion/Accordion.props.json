@@ -1,0 +1,35 @@
+{
+  "accordionProps": {
+    "items": {
+      "type": "AccordionItemDef[]",
+      "description": "Array of { id, title, content, icon?, disabled? }."
+    },
+    "mode": {
+      "type": "'single' | 'multi'",
+      "default": "'single'",
+      "description": "Whether multiple panels can be open at once."
+    },
+    "variant": {
+      "type": "'default' | 'bordered' | 'filled' | 'minimal' | 'separated'",
+      "default": "'default'",
+      "description": "Visual style."
+    },
+    "chevronPosition": {
+      "type": "'left' | 'right'",
+      "default": "'right'",
+      "description": "Where the expand chevron appears in the header."
+    },
+    "defaultOpen": {
+      "type": "string[]",
+      "description": "Initial open item ids (uncontrolled)."
+    },
+    "value": {
+      "type": "string[]",
+      "description": "Controlled open item ids."
+    },
+    "onChange": {
+      "type": "(openIds: string[]) => void",
+      "description": "Called when the set of open items changes."
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "ratingProps": {
+    "value": {
+      "type": "number",
+      "description": "Controlled value of the rating."
+    },
+    "defaultValue": {
+      "type": "number",
+      "default": "0",
+      "description": "Initial value for uncontrolled usage."
+    },
+    "count": {
+      "type": "number",
+      "default": "5",
+      "description": "Total number of rating items."
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+      "default": "'md'",
+      "description": "Icon size."
+    },
+    "variant": {
+      "type": "'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'",
+      "default": "'warning'",
+      "description": "Color variant."
+    },
+    "shape": {
+      "type": "'star' | 'heart' | 'circle' | 'square' | 'thumb'",
+      "default": "'star'",
+      "description": "Built-in icon shape."
+    },
+    "precision": {
+      "type": "1 | 0.5 | 0.1",
+      "default": "1",
+      "description": "Increment precision. Use 0.5 for half-star and 0.1 for decimal ratings."
+    },
+    "readOnly": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Display-only mode."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable interaction."
+    },
+    "allowClear": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Clicking the current value clears it (precision=1 only)."
+    },
+    "showValue": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Display the current value next to the rating."
+    },
+    "valueFormat": {
+      "type": "(value, max) => ReactNode",
+      "description": "Custom formatter for the displayed value."
+    },
+    "tooltips": {
+      "type": "string[]",
+      "description": "Per-star tooltip text shown on hover."
+    },
+    "labels": {
+      "type": "string[]",
+      "description": "Labels shown next to the rating, changing with hover/selection."
+    },
+    "icon": {
+      "type": "ReactNode",
+      "description": "Override the filled icon."
+    },
+    "emptyIcon": {
+      "type": "ReactNode",
+      "description": "Override the empty icon."
+    },
+    "onChange": {
+      "type": "(value: number) => void",
+      "description": "Called when the user selects a new value."
+    },
+    "onHoverChange": {
+      "type": "(value: number) => void",
+      "description": "Called when the hovered value changes."
+    }
+  }
+}

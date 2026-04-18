@@ -17,33 +17,9 @@ import MultiSegment from './MultiSegment';
 import Sizes from './Sizes';
 import Variants from './Variants';
 
-const progressBarProps = {
-    value: { type: 'number', description: 'Current progress value', default: '-' },
-    max: { type: 'number', default: '100', description: 'Maximum value' },
-    min: { type: 'number', default: '0', description: 'Minimum value' },
-    variant: {
-        type: "'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'",
-        default: "'primary'",
-        description: 'Color variant',
-    },
-    size: { type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'", default: "'md'", description: 'Bar height/text size' },
-    layout: { type: "'default' | 'rounded' | 'sharp' | 'striped' | 'animated'", default: "'default'", description: 'Visual layout style' },
-    showValue: { type: 'boolean', default: 'false', description: 'Show the progress value text' },
-    valueTemplate: {
-        type: 'string | ((value, max) => ReactNode)',
-        description: 'Custom value display. Use {value}, {max}, {percent} placeholders or a render function',
-    },
-    label: { type: 'ReactNode', description: 'Label displayed above the bar' },
-    sublabel: { type: 'ReactNode', description: 'Secondary label next to the label' },
-    indeterminate: { type: 'boolean', default: 'false', description: 'Show indeterminate animation' },
-    buffer: { type: 'number', description: 'Buffer value for buffered progress display' },
-    multipleValues: { type: 'ProgressBarSegment[]', description: 'Array of segments for stacked progress' },
-    className: { type: 'string', description: 'Additional CSS class' },
-    disabled: { type: 'boolean', default: 'false', description: 'Disabled state with reduced opacity' },
-    ariaLabel: { type: 'string', description: 'Accessible label' },
-    id: { type: 'string', description: 'HTML id attribute' },
-};
 
+import _ProgressBar_props_json from './../../../components/ProgressBar.props.json';
+const { progressBarProps } = _ProgressBar_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic', title: 'Basic', description: 'Simple progress bars' },
     { id: 'variants', title: 'Variants', description: 'Color variants' },

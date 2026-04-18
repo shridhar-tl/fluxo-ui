@@ -11,6 +11,8 @@ import Formats from './Formats';
 import Sizes from './Sizes';
 import Steps from './Steps';
 
+import _TimePicker_props_json from './../../../components/time-picker/TimePicker.props.json';
+const { timePickerProps } = _TimePicker_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Controlled and uncontrolled usage' },
     { id: 'formats', title: 'Formats', description: '12/24 hour and seconds' },
@@ -22,31 +24,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const timePickerProps = {
-    value: { type: 'Date | string | TimeValue | null', description: 'Controlled time value. Accepts Date, string (HH:mm[:ss]), or object.' },
-    defaultValue: { type: 'Date | string | TimeValue | null', description: 'Initial value for uncontrolled usage.' },
-    format12: { type: 'boolean', default: 'false', description: 'Use 12-hour clock with AM/PM column.' },
-    showSeconds: { type: 'boolean', default: 'false', description: 'Include a seconds column.' },
-    hourStep: { type: 'number', default: '1', description: 'Step between available hour values.' },
-    minuteStep: { type: 'number', default: '1', description: 'Step between available minute values.' },
-    secondStep: { type: 'number', default: '1', description: 'Step between available second values.' },
-    valueType: {
-        type: "'date' | 'string' | 'object'",
-        default: "'string'",
-        description: 'Shape of the value passed to onChange.',
-    },
-    size: { type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Trigger size.' },
-    variant: { type: "'input' | 'inline'", default: "'input'", description: 'Trigger style, or render the panel inline.' },
-    disabled: { type: 'boolean', default: 'false', description: 'Disable interaction.' },
-    readOnly: { type: 'boolean', default: 'false', description: 'Display-only mode.' },
-    clearable: { type: 'boolean', default: 'true', description: 'Show a clear button when a value is set.' },
-    placeholder: { type: 'string', default: "'Select time'", description: 'Placeholder shown when empty.' },
-    showNow: { type: 'boolean', default: 'true', description: 'Show the Now shortcut button.' },
-    showConfirm: { type: 'boolean', default: 'false', description: 'Require an explicit OK click to commit.' },
-    autoClose: { type: 'boolean', description: 'Close the popover immediately on selection. Defaults to the opposite of showConfirm.' },
-    onChange: { type: '(value: Date | string | TimeValue | null) => void', description: 'Called when the time changes.' },
-    onOpenChange: { type: '(open: boolean) => void', description: 'Called when the popover opens or closes.' },
-};
 
 const features: FeatureItem[] = [
     {

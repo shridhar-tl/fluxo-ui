@@ -7,6 +7,8 @@ import BasicUsage from './BasicUsage';
 import Modes from './Modes';
 import Variants from './Variants';
 
+import _Accordion_props_json from './../../../components/accordion/Accordion.props.json';
+const { accordionProps } = _Accordion_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple single-expand accordion' },
     { id: 'variants', title: 'Variants', description: 'Five visual styles' },
@@ -15,15 +17,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'props', title: 'Props', description: 'Component API' },
 ];
 
-const accordionProps = {
-    items: { type: 'AccordionItemDef[]', description: 'Array of { id, title, content, icon?, disabled? }.' },
-    mode: { type: "'single' | 'multi'", default: "'single'", description: 'Whether multiple panels can be open at once.' },
-    variant: { type: "'default' | 'bordered' | 'filled' | 'minimal' | 'separated'", default: "'default'", description: 'Visual style.' },
-    chevronPosition: { type: "'left' | 'right'", default: "'right'", description: 'Where the expand chevron appears in the header.' },
-    defaultOpen: { type: 'string[]', description: 'Initial open item ids (uncontrolled).' },
-    value: { type: 'string[]', description: 'Controlled open item ids.' },
-    onChange: { type: '(openIds: string[]) => void', description: 'Called when the set of open items changes.' },
-};
 
 const headingStyle: React.CSSProperties = { color: 'var(--eui-text)' };
 const subtleStyle: React.CSSProperties = { color: 'var(--eui-text-muted)' };

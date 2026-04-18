@@ -1,0 +1,54 @@
+{
+  "shimmerDivProps": {
+    "width": {
+      "type": "string | number",
+      "description": "Width of the shimmer block. Accepts CSS values (e.g. \"100%\", 200) or a number treated as pixels."
+    },
+    "height": {
+      "type": "string | number",
+      "description": "Height of the shimmer block."
+    },
+    "borderRadius": {
+      "type": "string | number",
+      "description": "Border radius of the shimmer block. Useful for circle avatars or pill shapes."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes applied to the root element."
+    }
+  },
+  "shimmerTableProps": {
+    "rows": {
+      "type": "number",
+      "default": "5",
+      "description": "Number of skeleton rows to render."
+    },
+    "columns": {
+      "type": "number",
+      "default": "4",
+      "description": "Number of skeleton columns to render."
+    },
+    "showHeader": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Whether to show the skeleton header row."
+    }
+  },
+  "shimmerBarChartProps": {
+    "bars": {
+      "type": "number",
+      "default": "6",
+      "description": "Number of bars to display in the skeleton chart."
+    },
+    "showXAxis": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Whether to render placeholder labels below the bars."
+    },
+    "showYAxis": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Whether to render placeholder labels to the left of the chart."
+    }
+  }
+}

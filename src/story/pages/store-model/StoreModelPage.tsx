@@ -13,58 +13,9 @@ import ListManagement from './ListManagement';
 import PersistenceDemo from './PersistenceDemo';
 import ValidationDemo from './ValidationDemo';
 
-const modelConfigProps = {
-    createWithDefaults: {
-        type: '(id: any) => T',
-        description: 'Factory function returning default state for new model instances',
-        default: '-',
-    },
-    selectId: { type: '(state: T) => any', description: 'Extract the unique identifier from the model state', default: '-' },
-    nextId: { type: '() => any', description: 'Generate a new unique ID when creating models', default: '-' },
-    loadItem: {
-        type: '(id: any) => Promise<T>',
-        description: 'Async function to load a single item by ID from a remote source',
-        default: '-',
-    },
-    loadItems: {
-        type: '(options: PageOptions) => Promise<T[]>',
-        description: 'Async function to load a paginated list of items',
-        default: '-',
-    },
-    onCreate: {
-        type: '(data: T, options: ChangeOptions<T>) => Promise<void>',
-        description: 'Handler called when saving a new model (no existing ID)',
-        default: '-',
-    },
-    onUpdate: {
-        type: '(data: T, options: ChangeOptions<T>) => Promise<void>',
-        description: 'Handler called when saving an existing model',
-        default: '-',
-    },
-    onDelete: { type: '(data: T) => Promise<void>', description: 'Handler called when deleting a model', default: '-' },
-    validate: {
-        type: '(state: T) => errors | undefined',
-        description: 'Validation function returning field-level errors or undefined if valid',
-        default: '-',
-    },
-    validateBehavior: {
-        type: "'change' | 'save'",
-        description: 'When to run validation: on every state change or only on save',
-        default: '-',
-    },
-    persist: {
-        type: "boolean | 'local' | 'session' | ((store: T) => void)",
-        description: 'Enable state persistence to localStorage, sessionStorage, or a custom function',
-        default: 'false',
-    },
-    loadFromPersist: {
-        type: '() => T | undefined',
-        description: 'Custom function to load persisted state on initialization',
-        default: '-',
-    },
-    saveOnChange: { type: 'boolean', description: 'Automatically save (debounced 500ms) whenever state changes', default: 'false' },
-};
 
+import _store_model_props_json from '../../../store/store-model.props.json';
+const { modelConfigProps } = _store_model_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-crud', title: 'Basic CRUD', description: 'Create, read, update, delete' },
     { id: 'list-management', title: 'List Management', description: 'Pagination and sorting' },

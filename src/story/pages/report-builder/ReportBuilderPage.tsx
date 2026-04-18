@@ -33,28 +33,8 @@ const features: FeatureItem[] = [
     { title: 'JSON Definition', description: 'Reports stored as pure JSON — serialize, persist, version control, and render anywhere with ReportViewer.' },
 ];
 
-const builderProps: Record<string, { type: string; required?: boolean; default?: unknown; description: string }> = {
-    definition: { type: 'ReportDefinition', description: 'Initial or controlled report definition JSON.' },
-    onChange: { type: '(def: ReportDefinition) => void', description: 'Fires on every definition change.' },
-    datasourcePlugins: { type: 'DatasourcePlugin[]', description: 'Registered datasource type plugins.' },
-    parameterPlugins: { type: 'CustomParameterPlugin[]', description: 'Optional custom parameter type plugins.' },
-    availableSubReports: { type: 'AvailableSubReport[]', description: 'Sub-reports the designer can reference. Include parameters array for auto-discovery.' },
-    layoutState: { type: 'DockedLayoutState', description: 'Controlled panel layout state for persistence.' },
-    onLayoutChange: { type: '(state: DockedLayoutState) => void', description: 'Fires on panel layout change.' },
-    panelConfig: { type: 'Record<string, { userCanMove?, userCanClose? }>', description: 'Per-panel move/close overrides (toolbox, datasource, properties, styles, console, parameters).' },
-    breakpoints: { type: 'ReportBreakpoint[]', description: 'Responsive breakpoints for panel layout.' },
-    templates: { type: 'ReportTemplate[]', description: 'Available report templates.' },
-    onSaveTemplate: { type: '(template: ReportTemplate) => void', description: 'Called when user saves a template.' },
-    onDeleteTemplate: { type: '(templateId: string) => void', description: 'Called when user deletes a template.' },
-    onLoadTemplate: { type: '(template: ReportTemplate) => void', description: 'Called when user loads a template.' },
-    enableMultiTab: { type: 'boolean', default: false, description: 'Enable multi-tab editing mode.' },
-    tabs: { type: 'ReportTab[]', description: 'Array of tabs when multi-tab is enabled.' },
-    activeTabId: { type: 'string', description: 'Currently active tab ID.' },
-    onTabChange: { type: '(tabId: string) => void', description: 'Called when active tab changes.' },
-    onTabClose: { type: '(tabId: string) => void', description: 'Called when a tab is closed.' },
-    className: { type: 'string', description: 'Additional CSS class.' },
-    style: { type: 'CSSProperties', description: 'Inline styles.' },
-};
+import _ReportBuilder_props_json from '../../../components/report-builder/ReportBuilder.props.json';
+const { builderProps } = _ReportBuilder_props_json;
 
 const importCode = `// Base styles (once in your app entry)
 import 'fluxo-ui/styles';

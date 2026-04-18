@@ -14,37 +14,9 @@ import DropdownStates from './DropdownStates';
 import GroupedOptions from './GroupedOptions';
 import SearchableDropdown from './SearchableDropdown';
 
-const dropdownProps = {
-    value: { type: 'any', description: 'Currently selected value (controlled component)' },
-    options: {
-        type: 'ListItem[] | ListItemGroup[]',
-        required: true,
-        description: 'Flat array of items or grouped items. Each group has a label, optional icon, and an items array.',
-    },
-    onChange: { type: 'function', description: 'Change event handler called with {event, value, name, args}' },
-    placeholder: { type: 'string', description: 'Placeholder text when no option is selected' },
-    label: { type: 'string', description: 'Label text for the dropdown' },
-    error: { type: 'string', description: 'Error message to display' },
-    disabled: { type: 'boolean', default: false, description: 'Disable the dropdown' },
-    readonly: { type: 'boolean', default: false, description: 'Make the dropdown read-only' },
-    required: { type: 'boolean', default: false, description: 'Mark the dropdown as required' },
-    searchable: { type: 'boolean', default: false, description: 'Enable search/filter functionality' },
-    loading: { type: 'boolean', default: false, description: 'Show loading state' },
-    emptyMessage: { type: 'string', default: 'No options available', description: 'Message to display when no options are available' },
-    showClear: { type: 'boolean', default: false, description: 'Show clear button to deselect' },
-    renderItem: {
-        type: 'function',
-        description: 'Custom render function for dropdown items: (item, index, isSelected, isHighlighted) => ReactNode',
-    },
-    renderValue: { type: 'function', description: 'Custom render function for selected value: (item) => ReactNode' },
-    id: { type: 'string', description: 'HTML id attribute for the input element' },
-    name: { type: 'string', description: 'HTML name attribute for form submission' },
-    args: { type: 'any', description: 'Custom arguments passed to onChange event' },
-    optionLabel: { type: 'string', default: 'label', description: 'Property name to use as the display label from each option object' },
-    optionValue: { type: 'string', default: 'value', description: 'Property name to use as the value from each option object' },
-    className: { type: 'string', description: 'Additional CSS classes' },
-};
 
+import _Dropdown_props_json from './../../../components/Dropdown.props.json';
+const { dropdownProps } = _Dropdown_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default dropdown example' },
     { id: 'searchable', title: 'Searchable', description: 'Filter options by typing' },

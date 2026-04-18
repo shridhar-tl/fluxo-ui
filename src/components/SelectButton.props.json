@@ -1,0 +1,77 @@
+{
+  "selectButtonProps": {
+    "items": {
+      "type": "ListItem[]",
+      "required": true,
+      "description": "Array of items to display. Each item has { value: any, label: any, disabled?: boolean, icon?: IconComponent | ReactElement }"
+    },
+    "value": {
+      "type": "T | T[]",
+      "description": "Selected value(s). Single value for single selection, array of values for multiple selection"
+    },
+    "onChange": {
+      "type": "(event: ComponentEvent<T>) => void",
+      "description": "Callback fired when selection changes. Receives ComponentEvent with the new value"
+    },
+    "multiple": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Enable multiple selection mode. When true, value should be an array"
+    },
+    "required": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Mark the field as required (affects hidden input)"
+    },
+    "direction": {
+      "type": "'horizontal' | 'vertical'",
+      "default": "'horizontal'",
+      "description": "Layout direction of the button group"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable all buttons in the group"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes for the container"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name attribute for the hidden input field (useful for form submissions)"
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg' | 'xl'",
+      "description": "Size variant (inherited from BaseComponentProps)"
+    },
+    "theme": {
+      "type": "'default' | 'primary' | 'secondary' | 'success' | 'dark'",
+      "description": "Theme variant (inherited from BaseComponentProps)"
+    },
+    "borderRadius": {
+      "type": "string",
+      "description": "Custom border radius (inherited from BaseComponentProps)"
+    },
+    "borderColor": {
+      "type": "string",
+      "description": "Custom border color (inherited from BaseComponentProps)"
+    },
+    "borderWidth": {
+      "type": "string",
+      "description": "Custom border width (inherited from BaseComponentProps)"
+    },
+    "backgroundColor": {
+      "type": "string",
+      "description": "Custom background color (inherited from BaseComponentProps)"
+    },
+    "fontSize": {
+      "type": "string",
+      "description": "Custom font size (inherited from BaseComponentProps)"
+    },
+    "fontColor": {
+      "type": "string",
+      "description": "Custom font color (inherited from BaseComponentProps)"
+    }
+  }
+}

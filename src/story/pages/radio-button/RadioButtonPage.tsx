@@ -12,57 +12,9 @@ import ControlledUncontrolled from './ControlledUncontrolled';
 import HorizontalLayout from './HorizontalLayout';
 import States from './States';
 
-const radioButtonGroupProps = {
-    items: {
-        type: 'ListItem[]',
-        required: true,
-        description: 'Array of radio button items with label, value, and optional disabled property',
-    },
-    value: {
-        type: 'string',
-        description: 'Currently selected value (controlled component)',
-    },
-    onChange: {
-        type: 'function',
-        description: 'Change event handler - receives ComponentEvent with selected value',
-    },
-    name: {
-        type: 'string',
-        description: 'Name attribute for the radio group',
-    },
-    args: {
-        type: 'any',
-        description: 'Custom arguments passed through to onChange event',
-    },
-    label: {
-        type: 'string',
-        description: 'Label for the radio group',
-    },
-    disabled: {
-        type: 'boolean',
-        default: false,
-        description: 'Disable all radio buttons',
-    },
-    required: {
-        type: 'boolean',
-        default: false,
-        description: 'Mark the group as required',
-    },
-    error: {
-        type: 'string',
-        description: 'Error message to display',
-    },
-    orientation: {
-        type: 'string',
-        default: 'vertical',
-        description: 'Layout orientation (vertical or horizontal)',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes',
-    },
-};
 
+import _RadioButton_props_json from './../../../components/RadioButton.props.json';
+const { radioButtonGroupProps } = _RadioButton_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default radio group example' },
     { id: 'horizontal-layout', title: 'Horizontal Layout', description: 'Horizontal orientation' },

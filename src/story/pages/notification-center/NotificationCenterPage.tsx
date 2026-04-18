@@ -11,6 +11,8 @@ import BasicUsage from './BasicUsage';
 import Categories from './Categories';
 import CustomTrigger from './CustomTrigger';
 
+import _NotificationCenter_props_json from './../../../components/notification-center/NotificationCenter.props.json';
+const { notificationCenterProps, itemProps } = _NotificationCenter_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Bell icon with notification panel' },
     { id: 'categories', title: 'Categories', description: 'Tab-based category filtering' },
@@ -21,38 +23,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const notificationCenterProps = {
-    items: { type: 'NotificationItem[]', required: true, description: 'Array of notification items.' },
-    categories: { type: 'string[]', description: 'Category names for tab filtering.' },
-    unreadCount: { type: 'number', description: 'Override the auto-computed unread badge count.' },
-    onItemClick: { type: '(item: NotificationItem) => void', description: 'Called when a notification is clicked.' },
-    onMarkRead: { type: '(id: string) => void', description: 'Called when marking a single notification as read.' },
-    onMarkAllRead: { type: '() => void', description: 'Called when "Mark all read" is clicked.' },
-    onClear: { type: '() => void', description: 'Called when "Clear all" is clicked.' },
-    onLoadMore: { type: '() => Promise<void>', description: 'Called when scrolling near the bottom to load more.' },
-    hasMore: { type: 'boolean', default: 'false', description: 'Whether more notifications can be loaded.' },
-    isLoading: { type: 'boolean', default: 'false', description: 'Show loading indicator at the bottom.' },
-    triggerElement: { type: 'ReactNode', description: 'Custom trigger element (replaces the default bell icon).' },
-    emptyMessage: { type: 'ReactNode', default: "'No notifications'", description: 'Message shown when the list is empty.' },
-    header: { type: 'ReactNode', description: 'Custom header for the notification panel.' },
-    footer: { type: 'ReactNode', description: 'Custom footer for the notification panel.' },
-    width: { type: 'string', default: "'380px'", description: 'Width of the notification panel.' },
-    maxHeight: { type: 'string', default: "'480px'", description: 'Maximum height of the scrollable list.' },
-    itemTemplate: { type: '(item: NotificationItem) => ReactNode', description: 'Custom render function for notification items.' },
-    className: { type: 'string', description: 'Additional CSS class for the panel.' },
-};
 
-const itemProps = {
-    id: { type: 'string', required: true, description: 'Unique identifier.' },
-    title: { type: 'string', required: true, description: 'Notification title.' },
-    description: { type: 'string', description: 'Notification description text.' },
-    timestamp: { type: 'string | Date', description: 'When the notification occurred.' },
-    icon: { type: 'ReactNode', description: 'Icon displayed on the left.' },
-    read: { type: 'boolean', description: 'Whether the notification has been read.' },
-    category: { type: 'string', description: 'Category for tab filtering.' },
-    action: { type: 'ReactNode', description: 'Action button or link for the notification.' },
-    data: { type: 'Record<string, unknown>', description: 'Custom data attached to the notification.' },
-};
 
 const features: FeatureItem[] = [
     {

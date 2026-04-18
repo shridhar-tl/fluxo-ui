@@ -1,0 +1,235 @@
+{
+  "canvasDrawProps": {
+    "background": {
+      "type": "CanvasBackground",
+      "required": true,
+      "description": "Background configuration — image, color, or video reference"
+    },
+    "items": {
+      "type": "DrawItem[]",
+      "description": "Controlled items array. When provided, component is controlled"
+    },
+    "groups": {
+      "type": "DrawGroup[]",
+      "description": "Controlled groups array for annotation grouping"
+    },
+    "currentMs": {
+      "type": "number",
+      "default": "0",
+      "description": "Current playback position in milliseconds (for timed annotations)"
+    },
+    "mediaDurationMs": {
+      "type": "number",
+      "default": "0",
+      "description": "Total media duration in milliseconds"
+    },
+    "isEditing": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Whether the canvas is in edit mode (shows toolbar, allows drawing)"
+    },
+    "toolbarPlacement": {
+      "type": "'top' | 'bottom' | 'left' | 'right' | 'none'",
+      "default": "'top'",
+      "description": "Position of the drawing toolbar relative to the canvas"
+    },
+    "defaultTool": {
+      "type": "DrawTool",
+      "default": "'select'",
+      "description": "Initially active tool when the component mounts"
+    },
+    "defaultToolDefaults": {
+      "type": "Partial<DrawToolDefaults>",
+      "description": "Override default stroke color, fill, font settings, etc."
+    },
+    "features": {
+      "type": "CanvasDrawFeatures",
+      "default": "{}",
+      "description": "Feature flags to enable/disable toolbar sections and tools"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the root element"
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles for the root element"
+    },
+    "onItemsChange": {
+      "type": "(items: DrawItem[]) => void",
+      "description": "Fires whenever items are added, modified, or removed"
+    },
+    "onExport": {
+      "type": "(dataUrl: string, format: ImageExportFormat) => void",
+      "description": "Called when user exports. Enables export buttons when provided"
+    }
+  },
+  "drawItemProps": {
+    "id": {
+      "type": "string",
+      "required": true,
+      "description": "Unique identifier for the item"
+    },
+    "object": {
+      "type": "DrawObject",
+      "required": true,
+      "description": "The drawing object (arrow, rect, circle, text, etc.)"
+    },
+    "showAtMs": {
+      "type": "number",
+      "required": true,
+      "description": "Time in ms when this item should appear"
+    },
+    "hideAtMs": {
+      "type": "number | null",
+      "required": true,
+      "description": "Time in ms when this item should hide (null = never)"
+    },
+    "transition": {
+      "type": "DrawTransition",
+      "required": true,
+      "description": "Animation transition for show/hide (none, fade, scale, slide-*)"
+    },
+    "groupId": {
+      "type": "string | null",
+      "required": true,
+      "description": "Optional group membership for batch timing"
+    },
+    "xPct": {
+      "type": "number",
+      "required": true,
+      "description": "Horizontal position as fraction (0-1) of canvas width"
+    },
+    "yPct": {
+      "type": "number",
+      "required": true,
+      "description": "Vertical position as fraction (0-1) of canvas height"
+    },
+    "wPct": {
+      "type": "number | null",
+      "required": true,
+      "description": "Width as fraction (0-1). Null for point-based items (steps)"
+    },
+    "hPct": {
+      "type": "number | null",
+      "required": true,
+      "description": "Height as fraction (0-1). Null for point-based items (steps)"
+    }
+  },
+  "featuresProps": {
+    "tools": {
+      "type": "ToolConfig",
+      "description": "Enable/disable individual tools (select, arrow, rect, circle, etc.)"
+    },
+    "timing": {
+      "type": "boolean",
+      "description": "Show timing controls (showAt / hideAt) in toolbar"
+    },
+    "groups": {
+      "type": "boolean",
+      "description": "Show group management in toolbar"
+    },
+    "transitions": {
+      "type": "boolean",
+      "description": "Show transition selector in toolbar"
+    },
+    "undo": {
+      "type": "boolean",
+      "description": "Show undo/redo buttons"
+    },
+    "export": {
+      "type": "boolean",
+      "description": "Show export buttons (also requires onExport prop)"
+    },
+    "clearAll": {
+      "type": "boolean",
+      "description": "Show clear all button"
+    },
+    "strokeColor": {
+      "type": "boolean",
+      "description": "Show stroke color picker"
+    },
+    "strokeWidth": {
+      "type": "boolean",
+      "description": "Show stroke width control"
+    },
+    "fillColor": {
+      "type": "boolean",
+      "description": "Show fill color picker"
+    },
+    "fontControls": {
+      "type": "boolean",
+      "description": "Show font family, size, color, bold/italic/underline"
+    },
+    "roundedCorners": {
+      "type": "boolean",
+      "description": "Show rounded corners toggle for rectangles"
+    }
+  },
+  "mediaTimelineProps": {
+    "items": {
+      "type": "TimelineItem[]",
+      "required": true,
+      "description": "Timeline items to display as bars"
+    },
+    "groups": {
+      "type": "TimelineGroup[]",
+      "required": true,
+      "description": "Timeline groups for organizing items"
+    },
+    "durationMs": {
+      "type": "number",
+      "required": true,
+      "description": "Total duration of the media in milliseconds"
+    },
+    "currentMs": {
+      "type": "number",
+      "required": true,
+      "description": "Current playback position in milliseconds"
+    },
+    "selectedItemId": {
+      "type": "string | null",
+      "required": true,
+      "description": "Currently selected item ID"
+    },
+    "tickCount": {
+      "type": "number",
+      "default": "10",
+      "description": "Number of time ticks to display"
+    },
+    "defaultItemColor": {
+      "type": "string",
+      "description": "Default color for items without a group color"
+    },
+    "onSelectItem": {
+      "type": "(id: string | null) => void",
+      "required": true,
+      "description": "Called when an item is selected or deselected"
+    },
+    "onUpdateItem": {
+      "type": "(id: string, patch: Partial<TimelineItem>) => void",
+      "required": true,
+      "description": "Called when an item is dragged/resized on the timeline"
+    },
+    "onUpdateGroup": {
+      "type": "(id: string, patch: Partial<TimelineGroup>) => void",
+      "required": true,
+      "description": "Called when a group is modified"
+    },
+    "onAddGroup": {
+      "type": "() => void",
+      "required": true,
+      "description": "Called when the add group button is clicked"
+    },
+    "onDeleteGroup": {
+      "type": "(id: string) => void",
+      "required": true,
+      "description": "Called when a group is deleted"
+    },
+    "onSeek": {
+      "type": "(ms: number) => void",
+      "required": true,
+      "description": "Called when the user clicks on the timeline to seek"
+    }
+  }
+}

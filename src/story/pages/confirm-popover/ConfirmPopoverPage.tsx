@@ -13,64 +13,10 @@ import InfoOkDemo from './InfoOkDemo';
 import RichJsxDemo from './RichJsxDemo';
 import CustomActionsDemo from './CustomActionsDemo';
 
-const confirmPopoverProps = {
-    target: {
-        type: 'HTMLElement',
-        required: true,
-        description: 'The element the popover is anchored to (typically event.currentTarget)',
-    },
-    message: {
-        type: 'string | ReactNode',
-        required: true,
-        description: 'The body message. Supports plain strings or JSX for rich content.',
-    },
-    title: {
-        type: 'string',
-        description: 'Optional heading displayed at the top of the popover.',
-    },
-    icon: {
-        type: 'ComponentType | ReactElement',
-        description: 'Optional icon shown next to the title.',
-    },
-    placement: {
-        type: "'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft' | 'bottomRight' | 'left' | 'right' | 'auto'",
-        default: 'auto',
-        description: "Where to place the popover relative to the target. 'auto' picks the best position based on available space.",
-    },
-    actions: {
-        type: 'ConfirmPopoverAction[]',
-        required: true,
-        description: 'Buttons rendered in the footer. Each action has label, onClick, variant, and layout.',
-    },
-    onClose: {
-        type: '() => void',
-        description: 'Called when the popover is dismissed via Escape key or an outside click.',
-    },
-};
 
-const staticMethodProps = {
-    'Confirm.yesNo(target, message, onConfirm, onCancel?, options?)': {
-        type: 'method',
-        description: 'Shows a popover with Yes / No buttons. Fires onConfirm on Yes, onCancel on No.',
-    },
-    'Confirm.confirm(target, message, onConfirm, onCancel?, options?)': {
-        type: 'method',
-        description: 'Shows a popover with customisable Confirm / Cancel buttons. options accepts confirmText and cancelText.',
-    },
-    'Confirm.ok(target, message, onOk?, options?)': {
-        type: 'method',
-        description: 'Shows an informational popover with a single OK button. options accepts okText.',
-    },
-    'Confirm.show(options)': {
-        type: 'method',
-        description: 'Low-level method accepting a full ConfirmPopoverOptions object for maximum flexibility.',
-    },
-    'Confirm.close(id?)': {
-        type: 'method',
-        description: 'Programmatically close a specific popover by id, or all popovers when called without arguments.',
-    },
-};
 
+import _ConfirmPopover_props_json from './../../../components/confirm-popover/ConfirmPopover.props.json';
+const { confirmPopoverProps, staticMethodProps } = _ConfirmPopover_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'setup', title: 'Setup', description: 'App root setup' },
     { id: 'yes-no', title: 'Yes / No', description: 'Delete confirmation' },

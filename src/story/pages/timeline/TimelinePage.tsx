@@ -12,6 +12,8 @@ import BasicUsage from './BasicUsage';
 import CustomMarkers from './CustomMarkers';
 import HorizontalLayout from './HorizontalLayout';
 
+import _Timeline_props_json from './../../../components/timeline/Timeline.props.json';
+const { timelineProps, eventProps } = _Timeline_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Vertical left-aligned timeline' },
     { id: 'horizontal', title: 'Horizontal Layout', description: 'Horizontal milestone timeline' },
@@ -23,29 +25,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const timelineProps = {
-    events: { type: 'TimelineEvent[]', required: true, description: 'Array of timeline event data.' },
-    layout: { type: "'vertical' | 'horizontal'", default: "'vertical'", description: 'Timeline orientation.' },
-    align: { type: "'left' | 'right' | 'alternate'", default: "'left'", description: 'Content alignment relative to the timeline axis.' },
-    connectorStyle: {
-        type: "'solid' | 'dashed' | 'dotted'",
-        default: "'solid'",
-        description: 'Style of the connector lines between events.',
-    },
-    markerSize: { type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Size of timeline markers.' },
-    className: { type: 'string', description: 'Additional CSS class for the container.' },
-};
 
-const eventProps = {
-    id: { type: 'string', required: true, description: 'Unique identifier for the event.' },
-    title: { type: 'string', required: true, description: 'Event title text.' },
-    description: { type: 'ReactNode', description: 'Event description or body content.' },
-    timestamp: { type: 'string', description: 'Timestamp or date label.' },
-    icon: { type: 'ReactNode', description: 'Custom icon displayed in the marker.' },
-    color: { type: "'primary' | 'success' | 'warning' | 'danger' | 'info'", description: 'Color theme for the marker.' },
-    marker: { type: 'ReactNode', description: 'Fully custom marker element (overrides icon and dot).' },
-    content: { type: 'ReactNode', description: 'Additional custom content below description.' },
-};
 
 const features: FeatureItem[] = [
     {

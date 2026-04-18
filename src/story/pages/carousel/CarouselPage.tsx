@@ -11,6 +11,8 @@ import Autoplay from './Autoplay';
 import BasicUsage from './BasicUsage';
 import ThumbnailNav from './ThumbnailNav';
 
+import _Carousel_props_json from './../../../components/carousel/Carousel.props.json';
+const { carouselProps, slideProps } = _Carousel_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Image carousel with dots' },
     { id: 'thumbnails', title: 'Thumbnail Navigation', description: 'Thumbnail strip navigation' },
@@ -21,32 +23,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const carouselProps = {
-    slides: { type: 'CarouselSlide[]', required: true, description: 'Array of slide data.' },
-    activeIndex: { type: 'number', description: 'Controlled active slide index.' },
-    onSlideChange: { type: '(index: number) => void', description: 'Called when the active slide changes.' },
-    navigation: { type: "'dots' | 'arrows' | 'thumbnails' | 'none'", default: "'dots'", description: 'Navigation style.' },
-    thumbnailPosition: { type: "'top' | 'bottom' | 'left' | 'right'", default: "'bottom'", description: 'Position of thumbnail strip.' },
-    autoplay: { type: 'boolean', default: 'false', description: 'Enable automatic slide advancement.' },
-    autoplayInterval: { type: 'number', default: '5000', description: 'Autoplay interval in milliseconds.' },
-    loop: { type: 'boolean', default: 'false', description: 'Loop back to first slide after the last.' },
-    showArrows: { type: 'boolean', default: 'true', description: 'Show previous/next arrow buttons.' },
-    showDots: { type: 'boolean', description: 'Show dot indicators (overrides navigation).' },
-    lazyLoad: { type: 'boolean', default: 'false', description: 'Lazy-load images as they become active.' },
-    swipeable: { type: 'boolean', default: 'true', description: 'Enable swipe/drag gesture navigation.' },
-    aspectRatio: { type: 'string', description: 'CSS aspect ratio for slides (e.g. "16/9").' },
-    className: { type: 'string', description: 'Additional CSS class for the container.' },
-    slideClassName: { type: 'string', description: 'Additional CSS class for each slide.' },
-};
 
-const slideProps = {
-    id: { type: 'string', required: true, description: 'Unique identifier for the slide.' },
-    type: { type: "'image' | 'video' | 'custom'", required: true, description: 'Slide content type.' },
-    src: { type: 'string', description: 'Image URL (for image type).' },
-    alt: { type: 'string', description: 'Alt text for the image.' },
-    thumbnail: { type: 'string', description: 'Thumbnail URL for thumbnail navigation.' },
-    content: { type: 'ReactNode', description: 'Custom content (for custom type).' },
-};
 
 const features: FeatureItem[] = [
     {

@@ -13,27 +13,9 @@ import Validation from './Validation';
 import WithIcons from './WithIcons';
 import WithLabel from './WithLabel';
 
-const textInputProps = {
-    value: { type: 'string', description: 'Current value of the input (controlled)' },
-    placeholder: { type: 'string', description: 'Placeholder text' },
-    label: { type: 'string', description: 'Label text' },
-    error: { type: 'string', description: 'Error message to display' },
-    disabled: { type: 'boolean', default: false, description: 'Disable the input' },
-    readonly: { type: 'boolean', default: false, description: 'Make the input read-only' },
-    required: { type: 'boolean', default: false, description: 'Mark the input as required' },
-    autoFocus: { type: 'boolean', default: false, description: 'Auto focus the input on mount' },
-    maxLength: { type: 'number', description: 'Maximum character limit' },
-    minLength: { type: 'number', description: 'Minimum character requirement' },
-    pattern: { type: 'string', description: 'Regex pattern for validation' },
-    autoComplete: { type: 'string', description: 'Auto-complete hint' },
-    leftIcon: { type: 'ReactNode', description: 'Icon to display on the left side' },
-    rightIcon: { type: 'ReactNode', description: 'Icon to display on the right side' },
-    id: { type: 'string', description: 'Unique identifier for the input' },
-    name: { type: 'string', description: 'Name attribute for the input' },
-    onChange: { type: 'function', description: 'Change event handler' },
-    className: { type: 'string', description: 'Additional CSS classes' },
-};
 
+import _TextInput_props_json from './../../../components/TextInput.props.json';
+const { textInputProps } = _TextInput_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default input example' },
     { id: 'with-label', title: 'With Label', description: 'Input with field label' },

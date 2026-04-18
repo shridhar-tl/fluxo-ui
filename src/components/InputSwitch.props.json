@@ -1,0 +1,49 @@
+{
+  "inputSwitchProps": {
+    "checked": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Whether the switch is in the on position"
+    },
+    "onChange": {
+      "type": "(event: ComponentEvent<boolean>) => void",
+      "description": "Callback fired when switch state changes. Receives event object with value, name, and args properties"
+    },
+    "onLabel": {
+      "type": "string",
+      "default": "'On'",
+      "description": "Label text displayed when switch is on"
+    },
+    "offLabel": {
+      "type": "string",
+      "default": "'Off'",
+      "description": "Label text displayed when switch is off"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Whether the switch is disabled"
+    },
+    "required": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Mark the switch as required"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute for the switch input"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name attribute for the switch input (used in forms)"
+    },
+    "args": {
+      "type": "any",
+      "description": "Additional arguments passed to onChange handler"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes for the container"
+    }
+  }
+}

@@ -7,6 +7,8 @@ import BasicUsage from './BasicUsage';
 import Variants from './Variants';
 import WithCover from './WithCover';
 
+import _Card_props_json from './../../../components/card/Card.props.json';
+const { cardProps } = _Card_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Title, subtitle, actions, footer' },
     { id: 'variants', title: 'Variants', description: 'Elevated, outlined, filled, ghost, interactive' },
@@ -15,21 +17,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'props', title: 'Props', description: 'Component API' },
 ];
 
-const cardProps = {
-    variant: { type: "'elevated' | 'outlined' | 'filled' | 'ghost' | 'interactive'", default: "'outlined'", description: 'Visual style.' },
-    padding: { type: "'none' | 'sm' | 'md' | 'lg'", default: "'md'", description: 'Body padding preset.' },
-    orientation: { type: "'vertical' | 'horizontal'", default: "'vertical'", description: 'Layout direction (horizontal puts cover on the left).' },
-    size: { type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Overall size preset.' },
-    title: { type: 'ReactNode', description: 'Header title.' },
-    subtitle: { type: 'ReactNode', description: 'Header subtitle.' },
-    actions: { type: 'ReactNode', description: 'Header right-side actions (usually buttons).' },
-    cover: { type: 'ReactNode', description: 'Top (or left) media slot.' },
-    footer: { type: 'ReactNode', description: 'Footer area.' },
-    loading: { type: 'boolean', default: 'false', description: 'Show shimmer overlay.' },
-    as: { type: "'div' | 'a' | 'button'", description: 'Render as a different element.' },
-    href: { type: 'string', description: 'When set, card renders as a link.' },
-    onClick: { type: '(e) => void', description: 'Click handler (makes the card interactive).' },
-};
 
 const headingStyle: React.CSSProperties = { color: 'var(--eui-text)' };
 const subtleStyle: React.CSSProperties = { color: 'var(--eui-text-muted)' };

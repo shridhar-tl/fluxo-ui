@@ -1,0 +1,70 @@
+{
+  "popoverProps": {
+    "isOpen": {
+      "type": "boolean",
+      "required": true,
+      "description": "Controls whether the popover is visible."
+    },
+    "onClose": {
+      "type": "(e?: MouseEvent) => void",
+      "required": true,
+      "description": "Callback invoked when the popover should close (click outside, Escape key)."
+    },
+    "triggerElement": {
+      "type": "HTMLElement | null",
+      "required": true,
+      "description": "The DOM element the popover is anchored to for positioning."
+    },
+    "items": {
+      "type": "ListItem[]",
+      "required": true,
+      "description": "Array of list items to display inside the popover."
+    },
+    "groups": {
+      "type": "ListItemGroup[]",
+      "description": "Optional grouping of items with labeled section headers."
+    },
+    "onSelect": {
+      "type": "(item: ListItem, index: number) => void",
+      "required": true,
+      "description": "Callback invoked when an item is selected."
+    },
+    "selectedIndex": {
+      "type": "number",
+      "default": "-1",
+      "description": "Index of the currently selected item (shows a check mark)."
+    },
+    "renderItem": {
+      "type": "(item, index, isSelected, isHighlighted) => ReactNode",
+      "description": "Custom render function for each list item."
+    },
+    "maxHeight": {
+      "type": "string",
+      "default": "'300px'",
+      "description": "Maximum height of the popover container before scrolling."
+    },
+    "width": {
+      "type": "string",
+      "description": "Width of the popover. Defaults to the trigger element's width."
+    },
+    "filter": {
+      "type": "string",
+      "default": "''",
+      "description": "Filter string to narrow down displayed items by label."
+    },
+    "loading": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Shows a loading spinner instead of items."
+    },
+    "emptyMessage": {
+      "type": "string",
+      "default": "'No items found'",
+      "description": "Message displayed when no items match the filter."
+    },
+    "children": {
+      "type": "ReactNode",
+      "description": "Content rendered above the item list (e.g., a search input)."
+    }
+  }
+}

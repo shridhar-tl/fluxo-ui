@@ -1,0 +1,46 @@
+{
+  "snackbarProps": {
+    "type": {
+      "type": "'info' | 'success' | 'warning' | 'error'",
+      "default": "info",
+      "description": "Determines the color scheme and default icon of the snackbar."
+    },
+    "timeout": {
+      "type": "number",
+      "default": "4000",
+      "description": "Auto-dismiss delay in milliseconds. Set to 0 to disable auto-dismiss."
+    },
+    "animation": {
+      "type": "'fade' | 'slide' | 'zoom' | 'bounce'",
+      "default": "slide",
+      "description": "Entry and exit animation style."
+    },
+    "position": {
+      "type": "'topLeft' | 'topCenter' | 'topRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight'",
+      "default": "bottomRight",
+      "description": "Screen corner / edge where the snackbar appears."
+    },
+    "showCloseButton": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Whether to render the dismiss (\\u00d7) button."
+    },
+    "onClick": {
+      "type": "() => void",
+      "description": "Callback fired when the user clicks the snackbar body."
+    },
+    "onClose": {
+      "type": "(manual: boolean) => void",
+      "description": "Callback fired when the snackbar closes. manual is true when closed by the user."
+    },
+    "customIcon": {
+      "type": "SVGIcon",
+      "description": "Override the default type icon with a custom SVG icon component."
+    },
+    "lightBg": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Use a light background variant instead of the default colored background."
+    }
+  }
+}

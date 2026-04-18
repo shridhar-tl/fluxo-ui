@@ -1,0 +1,73 @@
+{
+  "pageBannerProps": {
+    "type": {
+      "type": "'info' | 'success' | 'warning' | 'error' | 'default'",
+      "default": "'info'",
+      "description": "The visual style of the banner."
+    },
+    "message": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "The main content of the banner. Accepts text or JSX."
+    },
+    "title": {
+      "type": "string",
+      "description": "An optional bold heading displayed above the message."
+    },
+    "icon": {
+      "type": "ReactNode",
+      "description": "Custom icon to replace the default type-based icon."
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Whether to display an icon in the banner."
+    },
+    "dismissible": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Whether the banner can be dismissed via a close button."
+    },
+    "autoDismiss": {
+      "type": "number",
+      "description": "Auto-dismiss after this many milliseconds. Shows a progress bar."
+    },
+    "onDismiss": {
+      "type": "() => void",
+      "description": "Callback fired when the banner is dismissed."
+    },
+    "visible": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Controls the visibility of the banner externally."
+    },
+    "position": {
+      "type": "'top' | 'inline'",
+      "default": "'inline'",
+      "description": "Position of the banner. Top sticks to viewport top."
+    },
+    "pageLevel": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When true, renders the banner via createPortal to document.body."
+    },
+    "pushContent": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When combined with pageLevel, pushes page content down."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class name for custom styling."
+    },
+    "actions": {
+      "type": "ReactNode",
+      "description": "Action buttons or elements rendered alongside the message."
+    },
+    "bordered": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Adds a left border accent matching the banner type color."
+    }
+  }
+}

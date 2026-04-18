@@ -15,54 +15,9 @@ import ScrollableLongList from './ScrollableLongList';
 import SetupSection from './SetupSection';
 import TypeBasedSortable from './TypeBasedSortable';
 
-const sortableProps = {
-    items: { type: 'T[]', required: true, description: 'Array of items to render' },
-    accept: { type: 'string | string[]', description: 'Type(s) of external draggable items this sortable accepts' },
-    itemType: { type: 'string', default: "'any'", description: 'Default item type for items within this sortable' },
-    itemTypeProp: { type: 'string', description: 'Property name on items to get their type (for mixed item types)' },
-    args: { type: 'any', description: 'Additional arguments passed to callbacks' },
-    allowRemove: { type: 'boolean', default: 'false', description: 'Auto-remove items from source list on cross-container drop (default false — manage removal in destination onDrop)' },
-    showPlaceholder: { type: 'boolean', default: 'false', description: 'Whether to show a placeholder drop zone at the end' },
-    placeholder: { type: 'ReactNode', description: 'Custom placeholder content' },
-    dropIndicator: {
-        type: "'highlight' | 'line' | 'none'",
-        default: "'line'",
-        description: "Drop indicator style — 'line' shows an insertion line between items, 'highlight' glows the slot",
-    },
-    orientation: {
-        type: "'vertical' | 'horizontal'",
-        default: "'vertical'",
-        description: 'Layout direction for items',
-    },
-    gap: {
-        type: 'string',
-        default: "'0.5rem'",
-        description: 'Gap between items (any valid CSS length)',
-    },
-    as: { type: 'ElementType', default: "'div'", description: 'HTML tag name for the container element' },
-    provideDropRef: { type: 'boolean', default: 'false', description: 'Pass drop ref to children render function' },
-    provideDragRef: { type: 'boolean', default: 'false', description: 'Pass drag ref to children render function' },
-    onChange: {
-        type: '(items: T[], args?: any, event?: SortableChangeEvent) => void',
-        required: true,
-        description: 'Callback when items are reordered or changed',
-    },
-    onDrop: {
-        type: '(source: DragItem, target: DropResult, args?: any) => void',
-        description: 'Callback when an external item is dropped',
-    },
-    onRemove: {
-        type: '(removed: { index: number; id?: string | number }, dropResult: DropResult | null) => void',
-        description: 'Callback when an item is removed (dragged out)',
-    },
-    className: { type: 'string', description: 'Additional CSS classes' },
-    children: {
-        type: '(item: T, index: number, refs: { draggable?: DraggableRenderProps; droppable?: DroppableRenderProps }) => ReactNode',
-        required: true,
-        description: 'Render function for each item',
-    },
-};
 
+import _sortable_props_json from '../../../components/drag-drop/Sortable.props.json';
+const { sortableProps } = _sortable_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'setup', title: 'Setup', description: 'Import and use' },
     { id: 'basic', title: 'Basic Sortable', description: 'Simple list reordering' },

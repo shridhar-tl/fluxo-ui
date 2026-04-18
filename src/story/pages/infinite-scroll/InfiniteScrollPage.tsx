@@ -10,6 +10,8 @@ import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
 import ErrorHandling from './ErrorHandling';
 
+import _InfiniteScroll_props_json from './../../../components/InfiniteScroll.props.json';
+const { infiniteScrollProps } = _InfiniteScroll_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Auto-loading scrollable list' },
     { id: 'error-handling', title: 'Error Handling', description: 'Error state with retry button' },
@@ -18,21 +20,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const infiniteScrollProps = {
-    loadMore: { type: '() => Promise<void>', required: true, description: 'Async function to load more data.' },
-    hasMore: { type: 'boolean', required: true, description: 'Whether there is more data to load.' },
-    isLoading: { type: 'boolean', default: 'false', description: 'External loading state control.' },
-    error: { type: 'string | null', description: 'Error message to display.' },
-    onRetry: { type: '() => void', description: 'Called when the retry button is clicked.' },
-    threshold: { type: 'number', default: '200', description: 'Pixel distance from bottom to trigger loading.' },
-    loader: { type: 'ReactNode', description: 'Custom loading indicator.' },
-    endMessage: { type: 'ReactNode', description: 'Message shown when all data is loaded.' },
-    errorMessage: { type: 'ReactNode', description: 'Custom error display (overrides default).' },
-    scrollableTarget: { type: 'string | HTMLElement', description: 'ID or element of the scrollable container.' },
-    inverse: { type: 'boolean', default: 'false', description: 'Load content at the top (chat-style).' },
-    children: { type: 'ReactNode', required: true, description: 'List content to display.' },
-    className: { type: 'string', description: 'Additional CSS class for the container.' },
-};
 
 const features: FeatureItem[] = [
     {

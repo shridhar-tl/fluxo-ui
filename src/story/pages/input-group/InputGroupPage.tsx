@@ -14,23 +14,9 @@ import PriceInput from './PriceInput';
 import SearchInput from './SearchInput';
 import UrlInput from './UrlInput';
 
-const inputGroupProps = {
-    children: {
-        type: 'ReactNode',
-        required: true,
-        description: 'Input and addon elements. Use TextInput, Button, or span/div for addons.',
-    },
-    disabled: {
-        type: 'boolean',
-        default: false,
-        description: 'Disable the entire group',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes',
-    },
-};
 
+import _InputGroup_props_json from './../../../components/InputGroup.props.json';
+const { inputGroupProps } = _InputGroup_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'search-input', title: 'Search Input', description: 'Input grouped with a button' },
     { id: 'url-input', title: 'URL Input', description: 'Prefix text with multiple buttons' },

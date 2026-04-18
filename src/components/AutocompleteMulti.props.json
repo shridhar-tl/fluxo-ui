@@ -1,0 +1,95 @@
+{
+  "autocompleteMultiProps": {
+    "items": {
+      "type": "ListItem[]",
+      "required": true,
+      "description": "Array of items to display in suggestions"
+    },
+    "value": {
+      "type": "T[]",
+      "description": "Array of selected values"
+    },
+    "onChange": {
+      "type": "function",
+      "description": "Callback fired when values change: (event: ComponentEvent<T[]>) => void"
+    },
+    "onFilter": {
+      "type": "function",
+      "description": "Callback fired when filter input changes: (query: string) => void | Promise<void>"
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "Type to search and select...",
+      "description": "Placeholder text for the input field"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the input is disabled"
+    },
+    "readonly": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the input is readonly"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the field is required"
+    },
+    "debounceMs": {
+      "type": "number",
+      "default": 300,
+      "description": "Debounce delay in milliseconds for filter callback"
+    },
+    "minLength": {
+      "type": "number",
+      "default": 1,
+      "description": "Minimum characters before showing suggestions"
+    },
+    "maxSelectedItems": {
+      "type": "number",
+      "description": "Maximum number of items that can be selected"
+    },
+    "loading": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether data is loading"
+    },
+    "emptyMessage": {
+      "type": "string",
+      "default": "No results found",
+      "description": "Message shown when no items match the filter"
+    },
+    "renderItem": {
+      "type": "function",
+      "description": "Custom render function for each item: (item: ListItem, index: number, isSelected: boolean, isHighlighted: boolean) => React.ReactNode"
+    },
+    "renderSelectedTemplate": {
+      "type": "function",
+      "description": "Custom render function for selected items: (selectedItems: ListItem[], onRemove: (value: T) => void) => React.ReactNode"
+    },
+    "showCount": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show count of selected items when more than 3 are selected"
+    },
+    "autoFocus": {
+      "type": "boolean",
+      "default": false,
+      "description": "Auto-focus the input field on mount"
+    },
+    "id": {
+      "type": "string",
+      "description": "ID for the input element"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name attribute for the hidden input field"
+    },
+    "args": {
+      "type": "any",
+      "description": "Additional arguments passed to event callbacks"
+    }
+  }
+}

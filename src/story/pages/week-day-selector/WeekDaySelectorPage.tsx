@@ -9,6 +9,8 @@ import Shapes from './Shapes';
 import Spacing from './Spacing';
 import SizesVariants from './SizesVariants';
 
+import _WeekDaySelector_props_json from './../../../components/week-day-selector/WeekDaySelector.props.json';
+const { weekDayProps } = _WeekDaySelector_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Single and multiple selection' },
     { id: 'fills', title: 'Fill Styles', description: 'Solid, outlined, subtle' },
@@ -19,21 +21,6 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'props', title: 'Props', description: 'Component API' },
 ];
 
-const weekDayProps = {
-    value: { type: 'number | number[] | null', description: 'Controlled value. Single returns number, multiple returns number[].' },
-    defaultValue: { type: 'number | number[] | null', description: 'Uncontrolled default value.' },
-    multiple: { type: 'boolean', default: 'false', description: 'Enable multi-day selection.' },
-    shape: { type: "'rounded' | 'squared' | 'circle'", default: "'rounded'", description: 'Button shape.' },
-    spacing: { type: "'spaced' | 'joined'", default: "'spaced'", description: 'Gap between items (joined shares borders).' },
-    size: { type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Button size.' },
-    variant: { type: "'default' | 'primary' | 'success' | 'danger'", default: "'primary'", description: 'Selected color variant.' },
-    fill: { type: "'solid' | 'outlined' | 'subtle'", default: "'solid'", description: 'How selected items are styled — filled background, border-only, or tinted background.' },
-    firstDayOfWeek: { type: 'number', default: '0', description: 'First day of week (0=Sun, 1=Mon).' },
-    labels: { type: 'string[]', description: 'Custom day labels. Defaults to [Su, Mo, Tu, We, Th, Fr, Sa].' },
-    disabledDays: { type: 'number[]', description: 'Array of disabled day indexes (0–6).' },
-    disabled: { type: 'boolean', default: 'false', description: 'Disable the entire control.' },
-    onChange: { type: '(value) => void', description: 'Called on selection change.' },
-};
 
 const headingStyle: React.CSSProperties = { color: 'var(--eui-text)' };
 const subtleStyle: React.CSSProperties = { color: 'var(--eui-text-muted)' };

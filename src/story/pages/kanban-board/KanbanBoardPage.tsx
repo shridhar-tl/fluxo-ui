@@ -21,6 +21,8 @@ import LockedColumns from './LockedColumns';
 import StickyHeaders from './StickyHeaders';
 import VerticalLayout from './VerticalLayout';
 
+import _KanbanBoard_props_json from './../../../components/kanban-board/KanbanBoard.props.json';
+const { boardProps, cardProps, columnProps } = _KanbanBoard_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'overview', title: 'Overview', description: 'Introduction and feature highlights' },
     { id: 'basic-usage', title: 'Basic Usage', description: 'Standard board with drag-and-drop' },
@@ -105,89 +107,9 @@ const features: FeatureItem[] = [
         icon: 'M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z',
     },
 ];
-
-const boardProps = {
-    columns: {
-        type: 'KanbanColumnData[]',
-        required: true,
-        description: 'Array of column definitions with id, title, color, icon, limit, collapsed, locked.',
-    },
-    cards: {
-        type: 'KanbanCardData[]',
-        required: true,
-        description: 'Array of card data with id, title, columnId, order, priority, labels, assignees, etc.',
-    },
-    layout: { type: '"horizontal" | "vertical"', default: 'horizontal', description: 'Board layout direction.' },
-    cardSize: {
-        type: '"compact" | "default" | "detailed"',
-        default: 'default',
-        description: 'Card display density. Compact hides labels/progress, detailed shows descriptions.',
-    },
-    className: { type: 'string', description: 'Additional CSS class for the board container.' },
-    columnWidth: { type: 'number | string', description: 'Fixed column width (px or CSS value).' },
-    columnMinHeight: { type: 'number | string', description: 'Minimum column body height.' },
-    maxColumnHeight: { type: 'number | string', description: 'Maximum column body scroll height.' },
-    draggable: { type: 'boolean', default: true, description: 'Enable drag-and-drop for cards.' },
-    columnDraggable: { type: 'boolean', default: false, description: 'Enable drag-and-drop reordering of columns.' },
-    allowAddCard: { type: 'boolean', default: false, description: 'Show "Add card" button in each column footer.' },
-    allowAddColumn: { type: 'boolean', default: false, description: 'Show "Add Column" button at the end.' },
-    allowDeleteCard: { type: 'boolean', default: false, description: 'Show delete button on card hover.' },
-    allowDeleteColumn: { type: 'boolean', default: false, description: 'Show delete button in column headers.' },
-    allowEditColumn: { type: 'boolean', default: false, description: 'Enable double-click to edit column title.' },
-    allowCollapse: { type: 'boolean', default: false, description: 'Show collapse/expand toggle in column headers.' },
-    showCardCount: { type: 'boolean', default: false, description: 'Display card count badge in column headers.' },
-    showColumnLimit: { type: 'boolean', default: false, description: 'Display WIP limit alongside card count.' },
-    showSearch: { type: 'boolean', default: false, description: 'Show search input above the board.' },
-    stickyColumnHeaders: { type: 'boolean', default: false, description: 'Make column headers sticky on scroll.' },
-    cardTemplate: { type: '(card, column) => ReactNode', description: 'Custom render function for card content.' },
-    columnHeaderTemplate: { type: '(column, count) => ReactNode', description: 'Custom render function for column headers.' },
-    columnFooterTemplate: { type: '(column, cards) => ReactNode', description: 'Custom render function for column footers.' },
-    emptyColumnTemplate: { type: '(column) => ReactNode', description: 'Custom render function for empty columns.' },
-    cardActionsTemplate: { type: '(card, column) => ReactNode', description: 'Custom actions rendered in card footer area.' },
-    onCardMove: { type: '(event: KanbanCardMoveEvent) => void', description: 'Called when a card is moved between columns.' },
-    onCardReorder: { type: '(event: KanbanCardReorderEvent) => void', description: 'Called when cards are reordered within a column.' },
-    onCardClick: { type: '(event: KanbanCardClickEvent) => void', description: 'Called when a card is clicked.' },
-    onCardDoubleClick: { type: '(event: KanbanCardClickEvent) => void', description: 'Called when a card is double-clicked.' },
-    onCardCreate: { type: '(event: KanbanCardCreateEvent) => void', description: 'Called when a new card is created via the add button.' },
-    onCardDelete: { type: '(event: KanbanCardDeleteEvent) => void', description: 'Called when a card delete button is clicked.' },
-    onColumnReorder: { type: '(event: KanbanColumnReorderEvent) => void', description: 'Called when columns are reordered via drag.' },
-    onColumnCreate: { type: '(event: KanbanColumnCreateEvent) => void', description: 'Called when a new column is created.' },
-    onColumnDelete: { type: '(event: KanbanColumnDeleteEvent) => void', description: 'Called when a column is deleted.' },
-    onColumnUpdate: { type: '(event: KanbanColumnUpdateEvent) => void', description: 'Called when a column title is edited.' },
-    onColumnCollapse: { type: '(columnId, collapsed) => void', description: 'Called when a column is collapsed or expanded.' },
-    onSearchChange: { type: '(filter: KanbanSearchFilter) => void', description: 'Called when the search input changes.' },
-};
-
-const cardProps = {
-    id: { type: 'string | number', required: true, description: 'Unique identifier for the card.' },
-    title: { type: 'string', required: true, description: 'Card title displayed prominently.' },
-    columnId: { type: 'string | number', required: true, description: 'ID of the column this card belongs to.' },
-    order: { type: 'number', required: true, description: 'Sort position within the column.' },
-    description: { type: 'string', description: 'Card description shown in detailed view.' },
-    priority: { type: '"critical" | "high" | "medium" | "low" | "none"', description: 'Priority level with visual indicator.' },
-    labels: { type: 'KanbanLabel[]', description: 'Color-coded labels shown on the card.' },
-    assignee: { type: 'KanbanAssignee', description: 'Single assignee with name and optional avatar.' },
-    assignees: { type: 'KanbanAssignee[]', description: 'Multiple assignees with stacked display.' },
-    dueDate: { type: 'Date | string', description: 'Due date with overdue/soon indicators.' },
-    coverImage: { type: 'string', description: 'Cover image URL shown in detailed mode.' },
-    progress: { type: 'number', description: 'Completion percentage (0-100) shown as a progress bar.' },
-    subtaskCount: { type: 'number', description: 'Total number of subtasks.' },
-    subtaskCompleted: { type: 'number', description: 'Number of completed subtasks.' },
-    commentCount: { type: 'number', description: 'Number of comments shown as a badge.' },
-    attachmentCount: { type: 'number', description: 'Number of attachments shown as a badge.' },
-    blocked: { type: 'boolean', default: false, description: 'Mark the card as blocked with a visual overlay.' },
-    color: { type: 'string', description: 'Left border color for the card.' },
-};
-
-const columnProps = {
-    id: { type: 'string | number', required: true, description: 'Unique identifier for the column.' },
-    title: { type: 'string', required: true, description: 'Column header title.' },
-    color: { type: 'string', description: 'Accent color for the column header indicator.' },
-    icon: { type: 'ReactNode', description: 'Icon displayed next to the column title.' },
-    limit: { type: 'number', description: 'Maximum number of cards (WIP limit). Visual warning when exceeded.' },
-    collapsed: { type: 'boolean', default: false, description: 'Initial collapsed state of the column.' },
-    locked: { type: 'boolean', default: false, description: 'Prevent all interactions (drag, edit, add, delete).' },
-};
+
+
+
 
 const KanbanBoardPage: React.FC = () => {
     const { isDark } = useStoryTheme();

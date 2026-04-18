@@ -14,57 +14,11 @@ import ScrollableMenu from './ScrollableMenu';
 import SetupSection from './SetupSection';
 import TableRowMenu from './TableRowMenu';
 
-const contextMenuManagerProps = {
-    'No props required': {
-        type: '—',
-        description: 'ContextMenuManager is a singleton. Mount it once at the app root; it manages all context menu state internally.',
-    },
-};
 
-const showContextMenuProps = {
-    event: {
-        type: 'React.MouseEvent',
-        required: true,
-        description: 'The mouse event from onContextMenu or onClick. Used to position the menu.',
-    },
-    menus: {
-        type: 'MenuItem[]',
-        required: true,
-        description: 'Array of menu items to display.',
-    },
-    options: {
-        type: 'ContextMenuOptions',
-        description: 'Optional configuration — currently supports placement (PlacementCorners).',
-    },
-};
 
-const menuItemProps = {
-    label: {
-        type: 'string',
-        description: 'Text shown for the menu item.',
-    },
-    icon: {
-        type: 'ReactNode',
-        description: 'Optional icon placed before the label.',
-    },
-    command: {
-        type: '(id?: any) => void',
-        description: 'Callback invoked when the item is clicked.',
-    },
-    seperator: {
-        type: 'boolean',
-        description: 'When true, renders a visual divider instead of a clickable item.',
-    },
-    items: {
-        type: 'MenuItemBase[]',
-        description: 'Nested sub-menu items (one level deep).',
-    },
-    id: {
-        type: 'any',
-        description: 'Optional identifier passed to the command callback.',
-    },
-};
 
+import _ContextMenu_props_json from './../../../components/context-menu/ContextMenu.props.json';
+const { contextMenuManagerProps, showContextMenuProps, menuItemProps } = _ContextMenu_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'setup', title: 'Setup', description: 'Mount ContextMenuManager' },
     { id: 'right-click-menu', title: 'Right-click Menu', description: 'Context menu on right-click' },

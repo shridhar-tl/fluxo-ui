@@ -11,48 +11,9 @@ import BasicUsage from './BasicUsage';
 import ControlledState from './ControlledState';
 import CustomStates from './CustomStates';
 
-const multiStateCheckboxProps = {
-    items: {
-        type: 'ListItem[]',
-        description: 'Array of state items to cycle through. Each item has value, label, and optional icon',
-        required: true,
-    },
-    value: {
-        type: 'any',
-        description: 'Current value of the checkbox (controlled component)',
-    },
-    onChange: {
-        type: '(event: ComponentEvent<T>) => void',
-        description: 'Change event handler. Receives event object with value, name, and args properties',
-    },
-    required: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Mark the hidden input as required for form validation',
-    },
-    disabled: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Disable the checkbox interaction',
-    },
-    id: {
-        type: 'string',
-        description: 'HTML id attribute for the button element',
-    },
-    name: {
-        type: 'string',
-        description: 'Name attribute for the hidden input (used in forms)',
-    },
-    args: {
-        type: 'any',
-        description: 'Additional arguments passed to onChange handler',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes for the container',
-    },
-};
 
+import _MultiStateCheckbox_props_json from './../../../components/MultiStateCheckbox.props.json';
+const { multiStateCheckboxProps } = _MultiStateCheckbox_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default multi-state checkbox example' },
     { id: 'custom-states', title: 'Custom States', description: 'Custom icons and state configurations' },

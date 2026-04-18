@@ -12,6 +12,8 @@ import BasicUsage from './BasicUsage';
 import CheckboxMode from './CheckboxMode';
 import DragDrop from './DragDrop';
 
+import _TreeView_props_json from './../../../components/tree-view/TreeView.props.json';
+const { treeViewProps, nodeProps } = _TreeView_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Standard tree with expand/collapse' },
     { id: 'checkbox-mode', title: 'Checkbox Mode', description: 'Tri-state checkbox selection' },
@@ -23,34 +25,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
-const treeViewProps = {
-    nodes: { type: 'TreeNode[]', required: true, description: 'Array of tree node data.' },
-    expandedKeys: { type: 'Set<string>', description: 'Controlled set of expanded node IDs.' },
-    selectedKeys: { type: 'Set<string>', description: 'Controlled set of selected node IDs.' },
-    checkedKeys: { type: 'Set<string>', description: 'Controlled set of checked node IDs.' },
-    defaultExpandedKeys: { type: 'Set<string>', description: 'Initially expanded node IDs (uncontrolled).' },
-    selectionMode: { type: "'single' | 'multiple' | 'none'", default: "'single'", description: 'Node selection behavior.' },
-    checkboxes: { type: 'boolean', default: 'false', description: 'Show tri-state checkboxes on each node.' },
-    draggable: { type: 'boolean', default: 'false', description: 'Enable drag-and-drop reordering.' },
-    loadChildren: { type: '(node: TreeNode) => Promise<TreeNode[]>', description: 'Async function to load children on expand.' },
-    onExpand: { type: '(keys: Set<string>, node: TreeNode) => void', description: 'Called when a node is expanded or collapsed.' },
-    onSelect: { type: '(keys: Set<string>, node: TreeNode) => void', description: 'Called when a node is selected.' },
-    onCheck: { type: '(keys: Set<string>, node: TreeNode) => void', description: 'Called when a node checkbox is toggled.' },
-    onDragDrop: { type: '(info: DragDropInfo) => void', description: 'Called when a node is dropped after dragging.' },
-    className: { type: 'string', description: 'Additional CSS class for the tree container.' },
-    nodeTemplate: { type: '(node: TreeNode) => ReactNode', description: 'Custom render function for node content.' },
-    filterText: { type: 'string', description: 'Filter string to show only matching nodes.' },
-};
 
-const nodeProps = {
-    id: { type: 'string', required: true, description: 'Unique identifier for the node.' },
-    label: { type: 'string', required: true, description: 'Display text for the node.' },
-    icon: { type: 'ReactNode', description: 'Icon displayed next to the label.' },
-    children: { type: 'TreeNode[]', description: 'Child nodes (makes this a branch node).' },
-    isLeaf: { type: 'boolean', description: 'Mark as leaf to prevent expand toggle when no children.' },
-    disabled: { type: 'boolean', description: 'Disable selection and checkbox for this node.' },
-    data: { type: 'Record<string, unknown>', description: 'Custom data attached to the node.' },
-};
 
 const features: FeatureItem[] = [
     {

@@ -17,57 +17,9 @@ import Sizes from './Sizes';
 import States from './States';
 import Variants from './Variants';
 
-const toggleButtonProps = {
-    checked: {
-        type: 'boolean',
-        default: 'false',
-        description: 'The checked state of the toggle button',
-    },
-    onChange: {
-        type: '(event: ComponentEvent<boolean>) => void',
-        description: 'Callback fired when the toggle state changes. Receives ComponentEvent with value, name, args, and event.',
-    },
-    onLabel: {
-        type: 'string',
-        default: "'On'",
-        description: 'Label to display when button is checked/on',
-    },
-    offLabel: {
-        type: 'string',
-        default: "'Off'",
-        description: 'Label to display when button is unchecked/off',
-    },
-    disabled: {
-        type: 'boolean',
-        default: 'false',
-        description: 'Disable the toggle button interaction',
-    },
-    className: {
-        type: 'string',
-        description: 'Additional CSS classes',
-    },
-    name: {
-        type: 'string',
-        description: 'Name attribute for form submission',
-    },
-    id: {
-        type: 'string',
-        description: 'HTML id attribute (auto-generated if not provided)',
-    },
-    args: {
-        type: 'any',
-        description: 'Additional arguments passed to onChange event',
-    },
-    variant: {
-        type: "'success' | 'warning' | 'danger' | 'info' | 'default' | 'primary' | 'secondary'",
-        description: 'Color variant for the button (from BaseComponentProps)',
-    },
-    size: {
-        type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
-        description: 'Size of the button (from BaseComponentProps)',
-    },
-};
 
+import _ToggleButton_props_json from './../../../components/ToggleButton.props.json';
+const { toggleButtonProps } = _ToggleButton_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default toggle button' },
     { id: 'custom-labels', title: 'Custom Labels', description: 'On/off label text' },
