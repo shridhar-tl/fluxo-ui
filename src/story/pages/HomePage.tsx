@@ -107,6 +107,7 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/kanban-board': () => import('./kanban-board/BasicUsage'),
     '/components/drag-drop': () => import('./drag-drop/BasicDragDrop'),
     '/components/docked-layout': () => import('./docked-layout/BasicUsage'),
+    '/components/countdown-timer': () => import('./countdown-timer/BasicUsage'),
 };
 
 const LazyPreview: React.FC<{ path: string }> = ({ path }) => {
@@ -362,6 +363,7 @@ const chartBoardComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Kanban Board', description: 'Drag-and-drop task board with columns', path: '/components/kanban-board' },
     { title: 'Timeline', description: 'Vertical/horizontal event sequence', path: '/components/timeline' },
     { title: 'Progress Bar', description: 'Determinate and indeterminate progress', path: '/components/progress-bar' },
+    { title: 'Countdown Timer', description: 'Progress-aware countdown with circular, linear, segmented, and numeric variants', path: '/components/countdown-timer', badge: 'New' },
 ];
 
 const mediaComponents: Omit<ComponentCardProps, 'isDark'>[] = [

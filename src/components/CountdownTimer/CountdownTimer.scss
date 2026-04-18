@@ -1,0 +1,441 @@
+@use '../eui-vars' as *;
+@use 'sass:map';
+
+$timer-sizes: (
+    xs: (
+        circular: 64px,
+        font: 11px,
+        label-font: 9px,
+        stroke: 4px,
+        bar-height: 4px,
+        seg-size: 10px,
+        seg-gap: 2px,
+        control-size: 20px,
+        control-icon: 10px,
+        numeric-font: 20px,
+    ),
+    sm: (
+        circular: 88px,
+        font: 13px,
+        label-font: 10px,
+        stroke: 5px,
+        bar-height: 6px,
+        seg-size: 14px,
+        seg-gap: 3px,
+        control-size: 24px,
+        control-icon: 11px,
+        numeric-font: 28px,
+    ),
+    md: (
+        circular: 120px,
+        font: 18px,
+        label-font: 11px,
+        stroke: 6px,
+        bar-height: 8px,
+        seg-size: 18px,
+        seg-gap: 3px,
+        control-size: 28px,
+        control-icon: 12px,
+        numeric-font: 36px,
+    ),
+    lg: (
+        circular: 160px,
+        font: 24px,
+        label-font: 12px,
+        stroke: 8px,
+        bar-height: 12px,
+        seg-size: 24px,
+        seg-gap: 4px,
+        control-size: 32px,
+        control-icon: 14px,
+        numeric-font: 48px,
+    ),
+    xl: (
+        circular: 200px,
+        font: 30px,
+        label-font: 13px,
+        stroke: 10px,
+        bar-height: 16px,
+        seg-size: 30px,
+        seg-gap: 4px,
+        control-size: 36px,
+        control-icon: 16px,
+        numeric-font: 60px,
+    ),
+);
+
+.eui-countdown-timer {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--eui-font-family);
+    position: relative;
+
+    &.eui-countdown-timer-disabled {
+        opacity: 0.55;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    &.eui-countdown-timer-disabled-overlay {
+        .eui-countdown-timer-disabled-badge {
+            display: flex;
+        }
+    }
+}
+
+.eui-countdown-timer-disabled-badge {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    pointer-events: none;
+
+    span {
+        background: var(--eui-bg-subtle);
+        border: 1px solid var(--eui-border);
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--eui-text-disabled);
+        letter-spacing: 0.04em;
+    }
+}
+
+// ───────── CIRCULAR VARIANT ─────────
+.eui-countdown-timer-circular {
+    .eui-countdown-timer-ring-wrap {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .eui-countdown-timer-svg {
+        position: absolute;
+        inset: 0;
+        transform: rotate(-90deg);
+        overflow: visible;
+    }
+
+    .eui-countdown-timer-track {
+        fill: none;
+        stroke: var(--eui-border-subtle);
+    }
+
+    .eui-countdown-timer-progress-arc {
+        fill: none;
+        stroke: var(--eui-primary);
+        stroke-linecap: round;
+        transition: stroke-dashoffset 1s linear, stroke 0.4s ease;
+    }
+
+    .eui-countdown-timer-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .eui-countdown-timer-time {
+        font-weight: 700;
+        color: var(--eui-text);
+        line-height: 1;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .eui-countdown-timer-unit {
+        font-weight: 500;
+        color: var(--eui-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+}
+
+// ───────── LINEAR VARIANT ─────────
+.eui-countdown-timer-linear {
+    width: 100%;
+    min-width: 180px;
+
+    .eui-countdown-timer-linear-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 6px;
+    }
+
+    .eui-countdown-timer-time {
+        font-weight: 700;
+        color: var(--eui-text);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+    }
+
+    .eui-countdown-timer-bar-track {
+        width: 100%;
+        background: var(--eui-border-subtle);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .eui-countdown-timer-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: var(--eui-primary);
+        transition: width 1s linear, background 0.4s ease;
+        transform-origin: left;
+    }
+}
+
+// ───────── TRIANGLE VARIANT — cancel the shared rotate(-90deg) ─────────
+.eui-countdown-timer-triangle {
+    .eui-countdown-timer-svg {
+        transform: none;
+    }
+
+    .eui-countdown-timer-progress-arc {
+        stroke-linecap: round;
+    }
+}
+
+// ───────── SEGMENTED VARIANT ─────────
+.eui-countdown-timer-segmented {
+    .eui-countdown-timer-seg-track {
+        // single-row grid; gridTemplateColumns set inline from JS
+        display: grid;
+    }
+
+    .eui-countdown-timer-seg {
+        border-radius: 3px;
+        background: var(--eui-primary);
+        transition: background 0.3s ease, opacity 0.3s ease;
+
+        &.eui-countdown-timer-seg-empty {
+            background: var(--eui-border-subtle);
+        }
+    }
+
+    .eui-countdown-timer-time {
+        font-weight: 700;
+        color: var(--eui-text);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+        text-align: center;
+        margin-top: 8px;
+    }
+}
+
+// ───────── NUMERIC VARIANT ─────────
+.eui-countdown-timer-numeric {
+    .eui-countdown-timer-digits {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        font-weight: 800;
+        color: var(--eui-text);
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        transition: color 0.4s ease;
+    }
+
+    .eui-countdown-timer-digit-group {
+        display: flex;
+        align-items: baseline;
+        gap: 2px;
+    }
+
+    .eui-countdown-timer-colon {
+        font-weight: 700;
+        color: var(--eui-text-muted);
+        padding-bottom: 2px;
+    }
+
+    .eui-countdown-timer-digit-label {
+        font-weight: 500;
+        color: var(--eui-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        align-self: flex-end;
+    }
+}
+
+// ───────── CONTROLS ─────────
+.eui-countdown-timer-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .eui-countdown-timer-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        border: 1px solid var(--eui-border);
+        background: var(--eui-bg);
+        color: var(--eui-text-muted);
+        cursor: pointer;
+        transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+        padding: 0;
+        flex-shrink: 0;
+
+        &:hover {
+            background: var(--eui-bg-hover);
+            color: var(--eui-primary);
+            border-color: var(--eui-primary-border);
+        }
+
+        &:active {
+            transform: scale(0.92);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--eui-primary);
+            outline-offset: 2px;
+        }
+    }
+}
+
+// ───────── COLOR STATES ─────────
+.eui-countdown-timer-color-warning {
+    .eui-countdown-timer-progress-arc,
+    .eui-countdown-timer-bar-fill,
+    .eui-countdown-timer-seg:not(.eui-countdown-timer-seg-empty) {
+        background: #f59e0b;
+        stroke: #f59e0b;
+    }
+
+    &.eui-countdown-timer-numeric .eui-countdown-timer-digits {
+        color: #f59e0b;
+    }
+}
+
+.eui-countdown-timer-color-danger {
+    .eui-countdown-timer-progress-arc,
+    .eui-countdown-timer-bar-fill,
+    .eui-countdown-timer-seg:not(.eui-countdown-timer-seg-empty) {
+        background: #ef4444;
+        stroke: #ef4444;
+    }
+
+    &.eui-countdown-timer-numeric .eui-countdown-timer-digits {
+        color: #ef4444;
+    }
+}
+
+.eui-countdown-timer-color-success {
+    .eui-countdown-timer-progress-arc,
+    .eui-countdown-timer-bar-fill,
+    .eui-countdown-timer-seg:not(.eui-countdown-timer-seg-empty) {
+        background: #10b981;
+        stroke: #10b981;
+    }
+}
+
+.eui-countdown-timer-color-custom {
+    .eui-countdown-timer-progress-arc,
+    .eui-countdown-timer-bar-fill,
+    .eui-countdown-timer-seg:not(.eui-countdown-timer-seg-empty) {
+        background: var(--eui-timer-custom-color);
+        stroke: var(--eui-timer-custom-color);
+    }
+
+    &.eui-countdown-timer-numeric .eui-countdown-timer-digits {
+        color: var(--eui-timer-custom-color);
+    }
+}
+
+// ───────── PULSE ANIMATION when running ─────────
+@keyframes eui-timer-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.eui-countdown-timer-pulse .eui-countdown-timer-time,
+.eui-countdown-timer-pulse .eui-countdown-timer-digits {
+    animation: eui-timer-pulse 1s ease-in-out infinite;
+}
+
+// ───────── COMPLETED STATE ─────────
+.eui-countdown-timer-completed {
+    .eui-countdown-timer-progress-arc,
+    .eui-countdown-timer-bar-fill {
+        transition: none;
+    }
+}
+
+// ───────── SIZES ─────────
+@each $size, $vals in $timer-sizes {
+    .eui-countdown-timer-#{$size} {
+        &.eui-countdown-timer-circular,
+        &.eui-countdown-timer-rounded-square,
+        &.eui-countdown-timer-triangle {
+            .eui-countdown-timer-ring-wrap {
+                width: map.get($vals, circular);
+                height: map.get($vals, circular);
+            }
+
+            .eui-countdown-timer-svg {
+                width: map.get($vals, circular);
+                height: map.get($vals, circular);
+            }
+
+            .eui-countdown-timer-time {
+                font-size: map.get($vals, font);
+            }
+
+            .eui-countdown-timer-unit {
+                font-size: map.get($vals, label-font);
+            }
+        }
+
+        &.eui-countdown-timer-linear {
+            .eui-countdown-timer-time {
+                font-size: map.get($vals, font);
+            }
+
+            .eui-countdown-timer-bar-track {
+                height: map.get($vals, bar-height);
+            }
+        }
+
+        &.eui-countdown-timer-segmented {
+            .eui-countdown-timer-time {
+                font-size: map.get($vals, font);
+            }
+        }
+
+        &.eui-countdown-timer-numeric {
+            .eui-countdown-timer-digits {
+                font-size: map.get($vals, numeric-font);
+            }
+
+            .eui-countdown-timer-digit-label {
+                font-size: map.get($vals, label-font);
+            }
+
+            .eui-countdown-timer-colon {
+                font-size: map.get($vals, numeric-font);
+            }
+        }
+
+        .eui-countdown-timer-btn {
+            width: map.get($vals, control-size);
+            height: map.get($vals, control-size);
+
+            svg {
+                width: map.get($vals, control-icon);
+                height: map.get($vals, control-icon);
+            }
+        }
+    }
+}

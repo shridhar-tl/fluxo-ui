@@ -99,6 +99,7 @@ const navSections: NavSection[] = [
             { label: 'Kanban Board', path: '/components/kanban-board' },
             { label: 'Timeline', path: '/components/timeline' },
             { label: 'Progress Bar', path: '/components/progress-bar' },
+            { label: 'Countdown Timer', path: '/components/countdown-timer' },
         ],
     },
     {

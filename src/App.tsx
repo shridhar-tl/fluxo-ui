@@ -101,6 +101,7 @@ const DockedLayoutPage = React.lazy(() => import('./story/pages/docked-layout/Do
 const ReportBuilderPlaygroundPage = React.lazy(() => import('./story/pages/report-builder/ReportBuilderPlaygroundPage'));
 const ReportBuilderPage = React.lazy(() => import('./story/pages/report-builder/ReportBuilderPage'));
 const ReportViewerPage = React.lazy(() => import('./story/pages/report-builder/ReportViewerPage'));
+const CountdownTimerPage = React.lazy(() => import('./story/pages/countdown-timer/CountdownTimerPage'));
 
 const App: React.FC = () => {
     return (
@@ -386,6 +387,14 @@ const App: React.FC = () => {
                         element={
                             <LayoutWrapper>
                                 <ProgressBarPage />
+                            </LayoutWrapper>
+                        }
+                    />
+                    <Route
+                        path="/components/countdown-timer"
+                        element={
+                            <LayoutWrapper>
+                                <CountdownTimerPage />
                             </LayoutWrapper>
                         }
                     />
