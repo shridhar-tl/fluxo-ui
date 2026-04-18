@@ -36,7 +36,7 @@ const largeComponents = new Set([
     'Report Viewer',
 ]);
 
-const heavyComponents = new Set(['Drag & Drop', 'Step Tour']);
+const heavyComponents = new Set(['Drag & Drop', 'Step Tour', 'Report Builder', 'Report Viewer']);
 
 const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>> = {
     '/components/textinput': () => import('./text-input/BasicUsage'),
@@ -197,11 +197,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({ title, description, path,
                         <div style={{ fontSize: 13, color: 'var(--eui-text)' }}>
                             Live preview requires user interaction and is not available on hover.
                         </div>
-                        <Link
-                            to={path}
-                            className="text-xs font-medium hover:underline"
-                            style={{ color: 'var(--eui-primary)' }}
-                        >
+                        <Link to={path} className="text-xs font-medium hover:underline" style={{ color: 'var(--eui-primary)' }}>
                             Open full page to explore →
                         </Link>
                     </div>
@@ -290,8 +286,18 @@ const formInputs: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Input Group', description: 'Group inputs with addons and buttons', path: '/components/inputgroup' },
     { title: 'Slider', description: 'Single/range slider with marks and labels', path: '/components/slider' },
     { title: 'Rating', description: 'Star/heart/thumb rating with fractional precision', path: '/components/rating', badge: 'New' },
-    { title: 'Signature Pad', description: 'Canvas signature capture with smooth strokes, color and thickness variants', path: '/components/signature-pad', badge: 'New' },
-    { title: 'Week Day Selector', description: 'Compact weekday picker with single or multi-day selection', path: '/components/week-day-selector', badge: 'New' },
+    {
+        title: 'Signature Pad',
+        description: 'Canvas signature capture with smooth strokes, color and thickness variants',
+        path: '/components/signature-pad',
+        badge: 'New',
+    },
+    {
+        title: 'Week Day Selector',
+        description: 'Compact weekday picker with single or multi-day selection',
+        path: '/components/week-day-selector',
+        badge: 'New',
+    },
 ];
 
 const selectionComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -319,15 +325,36 @@ const dataReportComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Table', description: 'Data grid with sort, filter, pagination', path: '/components/table' },
     { title: 'Pivot Table', description: 'Aggregation, pivoting, expand/collapse', path: '/components/pivot-table' },
     { title: 'TreeView', description: 'Hierarchical tree with expand/collapse', path: '/components/tree-view' },
-    { title: 'Report Builder', description: 'Visual report designer with datasource plugins, parameters, and JSON export', path: '/components/report-builder' },
-    { title: 'Report Viewer', description: 'Renders report definitions with sorting, drill-through, PDF export, and parameters', path: '/components/report-viewer' },
+    {
+        title: 'Report Builder',
+        description: 'Visual report designer with datasource plugins, parameters, and JSON export',
+        path: '/components/report-builder',
+    },
+    {
+        title: 'Report Viewer',
+        description: 'Renders report definitions with sorting, drill-through, PDF export, and parameters',
+        path: '/components/report-viewer',
+    },
 ];
 
 const editorComponents: Omit<ComponentCardProps, 'isDark'>[] = [
-    { title: 'Markdown Editor', description: 'Markdown editor and preview with toolbar, upload, and split view', path: '/components/markdown' },
-    { title: 'HTML Editor', description: 'WYSIWYG rich text editor with full formatting, tables, images, and sanitized preview', path: '/components/html-editor', badge: 'New' },
+    {
+        title: 'Markdown Editor',
+        description: 'Markdown editor and preview with toolbar, upload, and split view',
+        path: '/components/markdown',
+    },
+    {
+        title: 'HTML Editor',
+        description: 'WYSIWYG rich text editor with full formatting, tables, images, and sanitized preview',
+        path: '/components/html-editor',
+        badge: 'New',
+    },
     { title: 'JSON Editor', description: 'Interactive JSON viewer and editor', path: '/components/json-editor' },
-    { title: 'Diff Viewer', description: 'High-performance text diff with unified, split, inline variants and large-file virtualization', path: '/components/diff-viewer' },
+    {
+        title: 'Diff Viewer',
+        description: 'High-performance text diff with unified, split, inline variants and large-file virtualization',
+        path: '/components/diff-viewer',
+    },
 ];
 
 const chartBoardComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -372,9 +399,21 @@ const overlayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
 const layoutComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Splitter', description: 'Resizable split panels', path: '/components/splitter' },
     { title: 'Collapsible Panel', description: 'Expand/collapse sections & accordion', path: '/components/collapsible-panel' },
-    { title: 'Accordion', description: 'Multi-item collapsible panel group with single/multi expand and five visual variants', path: '/components/accordion' },
-    { title: 'Card', description: 'Content container with header, body, footer, cover media, and five visual variants', path: '/components/card' },
-    { title: 'Docked Layout', description: 'VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels', path: '/components/docked-layout' },
+    {
+        title: 'Accordion',
+        description: 'Multi-item collapsible panel group with single/multi expand and five visual variants',
+        path: '/components/accordion',
+    },
+    {
+        title: 'Card',
+        description: 'Content container with header, body, footer, cover media, and five visual variants',
+        path: '/components/card',
+    },
+    {
+        title: 'Docked Layout',
+        description: 'VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels',
+        path: '/components/docked-layout',
+    },
 ];
 
 const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -409,7 +448,7 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                     <p className={cn('text-base md:text-lg leading-relaxed mb-8', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                        A comprehensive, accessible React component library built with TypeScript. Includes 60+ components, a custom state
+                        A comprehensive, accessible React component library built with TypeScript. Includes 70+ components, a custom state
                         management solution, 12 color themes, dark mode support, and full keyboard navigation. Hover over any component card
                         below for a quick interactive preview.
                     </p>
@@ -436,7 +475,7 @@ const HomePage: React.FC = () => {
             <section className="scroll-mt-8" id="highlights">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 py-8">
                     {[
-                        { icon: '60+', label: 'Components', desc: 'Production-ready UI components' },
+                        { icon: '70+', label: 'Components', desc: 'Production-ready UI components' },
                         { icon: 'TS', label: 'TypeScript', desc: 'Full type safety and IntelliSense' },
                         { icon: 'A11Y', label: 'Accessible', desc: 'WAI-ARIA compliant components' },
                         { icon: '12', label: 'Themes', desc: 'Color themes with dark mode' },
@@ -496,12 +535,7 @@ const HomePage: React.FC = () => {
                         items={chartBoardComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
-                    <CategorySection
-                        title="Media"
-                        icon="&#9634;"
-                        items={mediaComponents.map((i) => ({ ...i, isDark }))}
-                        isDark={isDark}
-                    />
+                    <CategorySection title="Media" icon="&#9634;" items={mediaComponents.map((i) => ({ ...i, isDark }))} isDark={isDark} />
                     <CategorySection
                         title="Navigation"
                         icon="&#9776;"
@@ -680,9 +714,9 @@ const HomePage: React.FC = () => {
                     </h2>
                     <p className={cn('text-sm mb-6 max-w-3xl', { 'text-gray-500': true })}>
                         Fluxo UI ships with a bundled Model Context Protocol server so Claude Code, GitHub Copilot, Cursor, and every other
-                        MCP-compatible assistant can generate correct Fluxo UI code on the first try — with accurate component names,
-                        import paths, props, examples, and theme tokens. No extra install, no separate package, always version-locked to
-                        the library you have.
+                        MCP-compatible assistant can generate correct Fluxo UI code on the first try — with accurate component names, import
+                        paths, props, examples, and theme tokens. No extra install, no separate package, always version-locked to the
+                        library you have.
                     </p>
                     <div className="grid sm:grid-cols-3 gap-3 mb-6">
                         {[

@@ -27,8 +27,12 @@ function fluxoUiSource(options: FluxoUiSourcePluginOptions = {}): Plugin {
 
             aliases['fluxo-ui/icons'] = path.resolve(resolvedSourcePath, 'assets/icons.ts');
             aliases['fluxo-ui/hooks'] = path.resolve(resolvedSourcePath, 'hooks/index.ts');
+            aliases['fluxo-ui/store/middlewares'] = path.resolve(resolvedSourcePath, 'store/middlewares/index.ts');
             aliases['fluxo-ui/store'] = path.resolve(resolvedSourcePath, 'store/index.ts');
             aliases['fluxo-ui/utils'] = path.resolve(resolvedSourcePath, 'utils/lib.ts');
+            aliases['fluxo-ui/draw'] = path.resolve(resolvedSourcePath, 'components/canvas-draw/index.ts');
+            aliases['fluxo-ui/services'] = path.resolve(resolvedSourcePath, 'services/index.ts');
+            aliases['fluxo-ui/report-builder'] = path.resolve(resolvedSourcePath, 'components/report-builder/index.ts');
             aliases['fluxo-ui/styles'] = path.resolve(resolvedSourcePath, '../dist/styles/components.css');
             aliases['fluxo-ui'] = path.resolve(resolvedSourcePath, 'components/index.ts');
 

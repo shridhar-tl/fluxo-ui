@@ -1,13 +1,13 @@
 # Fluxo UI
 
-A comprehensive, accessible React component library built with TypeScript. Includes **60+ production-ready UI components**, a custom state management solution, a dependency injection container, 12 color themes, dark mode, and full keyboard navigation.
+A comprehensive, accessible React component library built with TypeScript. Includes **70+ production-ready UI components**, a custom state management solution, a dependency injection container, 12 color themes, dark mode, and full keyboard navigation.
 
 - **Website & Live Demos:** [fluxo-ui.utilsware.com](https://fluxo-ui.utilsware.com/)
 - **Repository:** [github.com/shridhar-tl/fluxo-ui](https://github.com/shridhar-tl/fluxo-ui)
 
 ## Highlights
 
-- 60+ accessible, production-ready components
+- 70+ accessible, production-ready components
 - Full TypeScript support with first-class types
 - 12 built-in color themes + dark mode out of the box
 - Custom state management (batched updates, computed properties, middleware)
@@ -89,9 +89,7 @@ function Root() {
     return (
         <>
             <SnackbarManager />
-            <button onClick={() => showSnackbar({ message: 'Saved!', type: 'success' })}>
-                Save
-            </button>
+            <button onClick={() => showSnackbar({ message: 'Saved!', type: 'success' })}>Save</button>
         </>
     );
 }
@@ -125,145 +123,145 @@ function Counter() {
 
 ### Form Inputs
 
-| Component | Description |
-| --- | --- |
-| Text Input | Single-line text field with validation and icons |
-| Numeric Input | Number input with step buttons and formatting |
-| Masked Input | Input with format masks (phone, date, etc.) |
-| Password | Password field with visibility toggle and strength |
-| Textarea | Multi-line text area with auto-resize |
-| Field Label | Accessible form field labels and hints |
-| Input Group | Group inputs with addons and buttons |
-| Slider | Single/range slider with marks and labels |
-| Rating | Star/heart/thumb rating with fractional precision |
+| Component     | Description                                        |
+| ------------- | -------------------------------------------------- |
+| Text Input    | Single-line text field with validation and icons   |
+| Numeric Input | Number input with step buttons and formatting      |
+| Masked Input  | Input with format masks (phone, date, etc.)        |
+| Password      | Password field with visibility toggle and strength |
+| Textarea      | Multi-line text area with auto-resize              |
+| Field Label   | Accessible form field labels and hints             |
+| Input Group   | Group inputs with addons and buttons               |
+| Slider        | Single/range slider with marks and labels          |
+| Rating        | Star/heart/thumb rating with fractional precision  |
 
 ### Selection
 
-| Component | Description |
-| --- | --- |
-| Checkbox | Standard checkbox with label and indeterminate |
-| MultiState Checkbox | Cycle through multiple states on click |
-| Radio Button | Single-selection radio groups |
-| Input Switch | Toggle switch with on/off states |
-| Select Button | Button-style single/multi selection |
-| Toggle Button | Pressable toggle with icon support |
-| Dropdown | Single select dropdown with search |
-| Multiselect | Multi-item selection with chips |
-| Autocomplete | Input with filtered suggestions |
-| List Box | Scrollable selection list |
-| Chips | Tag-style input for multiple values |
+| Component           | Description                                    |
+| ------------------- | ---------------------------------------------- |
+| Checkbox            | Standard checkbox with label and indeterminate |
+| MultiState Checkbox | Cycle through multiple states on click         |
+| Radio Button        | Single-selection radio groups                  |
+| Input Switch        | Toggle switch with on/off states               |
+| Select Button       | Button-style single/multi selection            |
+| Toggle Button       | Pressable toggle with icon support             |
+| Dropdown            | Single select dropdown with search             |
+| Multiselect         | Multi-item selection with chips                |
+| Autocomplete        | Input with filtered suggestions                |
+| List Box            | Scrollable selection list                      |
+| Chips               | Tag-style input for multiple values            |
 
 ### Date, Time & Color
 
-| Component | Description |
-| --- | --- |
-| Date Range Picker | Date range selection with presets |
-| Time Picker | 12/24 hour time picker with step increments |
-| Color Picker | HSV canvas with hex/RGB inputs and swatches |
-| Calendar | Full-featured event calendar |
+| Component         | Description                                 |
+| ----------------- | ------------------------------------------- |
+| Date Range Picker | Date range selection with presets           |
+| Time Picker       | 12/24 hour time picker with step increments |
+| Color Picker      | HSV canvas with hex/RGB inputs and swatches |
+| Calendar          | Full-featured event calendar                |
 
 ### Data & Reports
 
-| Component | Description |
-| --- | --- |
-| Table | Data grid with sort, filter, pagination |
-| Pivot Table | Aggregation, pivoting, expand/collapse |
-| TreeView | Hierarchical tree with expand/collapse |
-| Report Builder | Visual report designer with datasource plugins, parameters, and JSON export |
-| Report Viewer | Renders report definitions with sorting, drill-through, PDF export, and parameters |
+| Component      | Description                                                                        |
+| -------------- | ---------------------------------------------------------------------------------- |
+| Table          | Data grid with sort, filter, pagination                                            |
+| Pivot Table    | Aggregation, pivoting, expand/collapse                                             |
+| TreeView       | Hierarchical tree with expand/collapse                                             |
+| Report Builder | Visual report designer with datasource plugins, parameters, and JSON export        |
+| Report Viewer  | Renders report definitions with sorting, drill-through, PDF export, and parameters |
 
 ### Editors
 
-| Component | Description |
-| --- | --- |
-| Markdown Editor | Markdown editor and preview with toolbar, upload, and split view |
-| HTML Editor | WYSIWYG rich text editor with full formatting, tables, images, and sanitized preview |
-| JSON Editor | Interactive JSON viewer and editor |
-| Diff Viewer | High-performance text diff with unified, split, inline variants and large-file virtualization |
+| Component       | Description                                                                                   |
+| --------------- | --------------------------------------------------------------------------------------------- |
+| Markdown Editor | Markdown editor and preview with toolbar, upload, and split view                              |
+| HTML Editor     | WYSIWYG rich text editor with full formatting, tables, images, and sanitized preview          |
+| JSON Editor     | Interactive JSON viewer and editor                                                            |
+| Diff Viewer     | High-performance text diff with unified, split, inline variants and large-file virtualization |
 
 ### Charts & Boards
 
-| Component | Description |
-| --- | --- |
-| Gantt Chart | Project timeline and task visualization |
-| Kanban Board | Drag-and-drop task board with columns |
-| Timeline | Vertical/horizontal event sequence |
-| Progress Bar | Determinate and indeterminate progress |
+| Component    | Description                             |
+| ------------ | --------------------------------------- |
+| Gantt Chart  | Project timeline and task visualization |
+| Kanban Board | Drag-and-drop task board with columns   |
+| Timeline     | Vertical/horizontal event sequence      |
+| Progress Bar | Determinate and indeterminate progress  |
 
 ### Media
 
-| Component | Description |
-| --- | --- |
-| Carousel | Image/video slider with thumbnails |
-| Lightbox | Hover/click preview with zoom-out |
+| Component    | Description                         |
+| ------------ | ----------------------------------- |
+| Carousel     | Image/video slider with thumbnails  |
+| Lightbox     | Hover/click preview with zoom-out   |
 | Image Editor | Crop, rotate, blur, annotate images |
-| Canvas Draw | Drawing and annotation overlay |
-| File Upload | Drag-and-drop file upload zone |
+| Canvas Draw  | Drawing and annotation overlay      |
+| File Upload  | Drag-and-drop file upload zone      |
 
 ### Navigation
 
-| Component | Description |
-| --- | --- |
-| Tab View | Tabbed content with multiple variants |
-| Stepper | Multi-step wizard navigation |
-| Breadcrumb | Navigation breadcrumb trail |
-| Menu Nav | Multi-level menu navigation |
-| Step Tour | Guided UI walkthroughs |
+| Component  | Description                           |
+| ---------- | ------------------------------------- |
+| Tab View   | Tabbed content with multiple variants |
+| Stepper    | Multi-step wizard navigation          |
+| Breadcrumb | Navigation breadcrumb trail           |
+| Menu Nav   | Multi-level menu navigation           |
+| Step Tour  | Guided UI walkthroughs                |
 
 ### Feedback
 
-| Component | Description |
-| --- | --- |
-| Snackbar | Toast notifications |
-| Notification Center | Dropdown notification panel |
-| Page Banner | Page-level message banners |
-| Tooltip | Hover/focus information popups |
-| Shimmer / Skeleton | Loading placeholders and skeletons |
+| Component           | Description                        |
+| ------------------- | ---------------------------------- |
+| Snackbar            | Toast notifications                |
+| Notification Center | Dropdown notification panel        |
+| Page Banner         | Page-level message banners         |
+| Tooltip             | Hover/focus information popups     |
+| Shimmer / Skeleton  | Loading placeholders and skeletons |
 
 ### Overlays
 
-| Component | Description |
-| --- | --- |
-| Modal | Dialog overlays with backdrop |
-| Drawer | Slide-in panel from any edge |
-| Popover | Click-triggered content popovers |
-| Confirm Popover | Inline confirmation dialogs |
-| Context Menu | Right-click context menus |
+| Component       | Description                      |
+| --------------- | -------------------------------- |
+| Modal           | Dialog overlays with backdrop    |
+| Drawer          | Slide-in panel from any edge     |
+| Popover         | Click-triggered content popovers |
+| Confirm Popover | Inline confirmation dialogs      |
+| Context Menu    | Right-click context menus        |
 
 ### Layout
 
-| Component | Description |
-| --- | --- |
-| Splitter | Resizable split panels |
-| Collapsible Panel | Expand/collapse sections & accordion |
-| Accordion | Multi-item collapsible panel group with single/multi expand and five visual variants |
-| Card | Content container with header, body, footer, cover media, and five visual variants |
-| Docked Layout | VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels |
+| Component         | Description                                                                          |
+| ----------------- | ------------------------------------------------------------------------------------ |
+| Splitter          | Resizable split panels                                                               |
+| Collapsible Panel | Expand/collapse sections & accordion                                                 |
+| Accordion         | Multi-item collapsible panel group with single/multi expand and five visual variants |
+| Card              | Content container with header, body, footer, cover media, and five visual variants   |
+| Docked Layout     | VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels      |
 
 ### Actions & Interaction
 
-| Component | Description |
-| --- | --- |
-| Button | Primary action element with variants |
-| Fab & Speed Dial | Floating action buttons |
-| Drag & Drop | Draggable and droppable containers |
-| Sortable | Drag-to-reorder lists and grids |
-| Deferred View | Lazy-render with visibility detection |
-| Infinite Scroll | Load-more on scroll with indicators |
-| Animate On View | Scroll-triggered CSS animations |
+| Component        | Description                           |
+| ---------------- | ------------------------------------- |
+| Button           | Primary action element with variants  |
+| Fab & Speed Dial | Floating action buttons               |
+| Drag & Drop      | Draggable and droppable containers    |
+| Sortable         | Drag-to-reorder lists and grids       |
+| Deferred View    | Lazy-render with visibility detection |
+| Infinite Scroll  | Load-more on scroll with indicators   |
+| Animate On View  | Scroll-triggered CSS animations       |
 
 ## Hooks & Utilities
 
-| Name | Description |
-| --- | --- |
-| `useDebounce` | Debounce value changes with configurable delay |
-| `useMobile` | Detect mobile viewport with auto-resize |
-| `useClickOutside` | Detect clicks outside a referenced element |
-| `useKeyboard` | Register global keyboard event handlers |
-| `withFieldLabel` | HOC to add label, error, hint to any input |
-| `showSnackbar` | Trigger toast notifications imperatively |
-| `showTooltip` | Show tooltips programmatically |
-| `showContextMenu` | Open context menus on right-click |
+| Name              | Description                                    |
+| ----------------- | ---------------------------------------------- |
+| `useDebounce`     | Debounce value changes with configurable delay |
+| `useMobile`       | Detect mobile viewport with auto-resize        |
+| `useClickOutside` | Detect clicks outside a referenced element     |
+| `useKeyboard`     | Register global keyboard event handlers        |
+| `withFieldLabel`  | HOC to add label, error, hint to any input     |
+| `showSnackbar`    | Trigger toast notifications imperatively       |
+| `showTooltip`     | Show tooltips programmatically                 |
+| `showContextMenu` | Open context menus on right-click              |
 
 ## State Management
 
