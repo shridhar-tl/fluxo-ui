@@ -85,7 +85,7 @@ const navSections: NavSection[] = [
         key: 'report-builder',
         items: [
             { label: 'Overview', path: '/components/report-builder-examples/overview' },
-            { label: 'Builder Playground', path: '/components/report-builder' },
+            { label: 'Report Builder', path: '/components/report-builder' },
             { label: 'Report Viewer', path: '/components/report-viewer' },
             { label: 'Combined Examples', path: '/components/report-builder-examples' },
             { label: 'Tables', path: '/components/report-builder-examples/tables' },
@@ -241,8 +241,15 @@ interface NavigationProps {
     onNavClick?: () => void;
 }
 
+const normalizePath = (path: string): string => {
+    if (!path) return '/';
+    const trimmed = path.replace(/\/+$/, '');
+    return trimmed === '' ? '/' : trimmed;
+};
+
 const findActiveSectionKey = (pathname: string): string | undefined => {
-    const active = navSections.find((s) => s.items.some((i) => i.path === pathname));
+    const normalized = normalizePath(pathname);
+    const active = navSections.find((s) => s.items.some((i) => normalizePath(i.path) === normalized));
     return active?.key;
 };
 
@@ -418,7 +425,7 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
                             {isExpanded && (
                                 <div className="mt-0.5 mb-3 space-y-0.5">
                                     {section.items.map((item) => {
-                                        const isActive = location.pathname === item.path;
+                                        const isActive = normalizePath(location.pathname) === normalizePath(item.path);
                                         return (
                                             <Link
                                                 key={item.path}
