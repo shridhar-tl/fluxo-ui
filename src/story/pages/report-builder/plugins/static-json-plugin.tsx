@@ -1,64 +1,130 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import type { DatasourcePlugin, DatasetField } from '../../../../components/report-builder';
-
-function inferFields(data: unknown[]): DatasetField[] {
-    if (!data.length) return [];
-    const sample = data[0];
-    if (typeof sample !== 'object' || sample === null) return [{ name: 'value', type: 'string' }];
-
-    return Object.entries(sample as Record<string, unknown>).map(([key, val]): DatasetField => {
-        if (Array.isArray(val)) {
-            return { name: key, type: 'array', children: inferFields(val) };
-        }
-        if (val instanceof Date || (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}/.test(val))) {
-            return { name: key, type: 'date' };
-        }
-        const t = typeof val;
-        return { name: key, type: t === 'number' ? 'number' : t === 'boolean' ? 'boolean' : t === 'object' ? 'object' : 'string' };
-    });
-}
+import { inferFieldsFromRows, parseJsonRows } from '../../../../components/report-builder';
 
 const StaticJsonConfigUI: React.FC<{ config: Record<string, unknown>; onChange: (c: Record<string, unknown>) => void }> = ({ config, onChange }) => {
-    const [error, setError] = useState('');
     const raw = (config.json as string) ?? '[]';
+    const rows = useMemo(() => parseJsonRows(raw), [raw]);
+    const [editing, setEditing] = useState(() => rows.length === 0);
+    const [draft, setDraft] = useState(raw);
+    const [error, setError] = useState('');
 
-    const handleChange = (value: string) => {
-        try {
-            JSON.parse(value);
-            setError('');
-        } catch {
-            setError('Invalid JSON');
-        }
-        onChange({ ...config, json: value });
+    const sampleRow = rows[0] ?? null;
+
+    const openEditor = (): void => {
+        setDraft(raw);
+        setError('');
+        setEditing(true);
     };
 
+    const save = (): void => {
+        try {
+            JSON.parse(draft);
+            setError('');
+        } catch {
+            setError('Invalid JSON — fix the syntax or cancel.');
+            return;
+        }
+        onChange({ ...config, json: draft });
+        setEditing(false);
+    };
+
+    const cancel = (): void => {
+        setDraft(raw);
+        setError('');
+        setEditing(rows.length === 0);
+    };
+
+    if (editing) {
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label style={{ fontSize: 11, color: 'var(--eui-text-muted)', fontWeight: 500 }}>JSON Data (array)</label>
+                <textarea
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    rows={10}
+                    style={{
+                        width: '100%',
+                        fontFamily: 'monospace',
+                        fontSize: 11,
+                        padding: '8px',
+                        border: `1px solid ${error ? 'var(--eui-danger)' : 'var(--eui-border-subtle)'}`,
+                        borderRadius: 4,
+                        background: 'var(--eui-input-bg)',
+                        color: 'var(--eui-text)',
+                        resize: 'vertical',
+                        outline: 'none',
+                    }}
+                    aria-label="JSON data"
+                    aria-invalid={!!error}
+                />
+                {error && <span style={{ fontSize: 11, color: 'var(--eui-danger)' }}>{error}</span>}
+                <div style={{ display: 'flex', gap: 6 }}>
+                    <button type="button" onClick={save} style={btnStyle('primary')}>Save</button>
+                    {rows.length > 0 && (
+                        <button type="button" onClick={cancel} style={btnStyle()}>Cancel</button>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    const sampleKeys = sampleRow && typeof sampleRow === 'object' ? Object.keys(sampleRow) : [];
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <label style={{ fontSize: 11, color: 'var(--eui-text-muted)', fontWeight: 500 }}>JSON Data (array)</label>
-            <textarea
-                value={raw}
-                onChange={(e) => handleChange(e.target.value)}
-                rows={8}
+            <div
                 style={{
-                    width: '100%',
-                    fontFamily: 'monospace',
-                    fontSize: 11,
-                    padding: '8px',
-                    border: `1px solid ${error ? 'var(--eui-danger)' : 'var(--eui-border-subtle)'}`,
-                    borderRadius: 4,
-                    background: 'var(--eui-input-bg)',
-                    color: 'var(--eui-text)',
-                    resize: 'vertical',
-                    outline: 'none',
+                    padding: '10px 12px',
+                    background: 'var(--eui-bg-subtle)',
+                    border: '1px solid var(--eui-border-subtle)',
+                    borderRadius: 6,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 6,
                 }}
-                aria-label="JSON data"
-                aria-invalid={!!error}
-                aria-describedby={error ? 'sjp-error' : undefined}
-            />
-            {error && <span id="sjp-error" style={{ fontSize: 11, color: 'var(--eui-danger)' }}>{error}</span>}
+            >
+                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
+                    <strong style={{ fontSize: 12, color: 'var(--eui-text)' }}>
+                        {rows.length} row{rows.length === 1 ? '' : 's'}
+                    </strong>
+                    {sampleKeys.length > 0 && (
+                        <span style={{ fontSize: 11, color: 'var(--eui-text-muted)' }}>
+                            {sampleKeys.length} field{sampleKeys.length === 1 ? '' : 's'}
+                        </span>
+                    )}
+                </div>
+                {sampleKeys.length > 0 && (
+                    <div style={{ fontSize: 11, color: 'var(--eui-text-muted)', lineHeight: 1.6 }}>
+                        Fields: {sampleKeys.slice(0, 8).join(', ')}
+                        {sampleKeys.length > 8 ? `, +${sampleKeys.length - 8} more` : ''}
+                    </div>
+                )}
+            </div>
+            <button type="button" onClick={openEditor} style={btnStyle()} aria-label="Edit JSON data">
+                Edit JSON…
+            </button>
+            <p style={{ fontSize: 11, color: 'var(--eui-text-muted)', fontStyle: 'italic', margin: 0 }}>
+                Full field list is in the Datasource Explorer — click to expand.
+            </p>
         </div>
     );
 };
+
+function btnStyle(variant?: 'primary'): React.CSSProperties {
+    const isPrimary = variant === 'primary';
+    return {
+        height: 28,
+        padding: '0 12px',
+        fontSize: 12,
+        fontWeight: 500,
+        border: '1px solid var(--eui-border-subtle)',
+        borderRadius: 4,
+        background: isPrimary ? 'var(--eui-primary)' : 'var(--eui-bg)',
+        color: isPrimary ? 'var(--eui-primary-contrast)' : 'var(--eui-text)',
+        cursor: 'pointer',
+        alignSelf: 'flex-start',
+    };
+}
 
 export const staticJsonPlugin: DatasourcePlugin = {
     type: 'static-json',
@@ -72,14 +138,11 @@ export const staticJsonPlugin: DatasourcePlugin = {
     initialConfig: () => ({ json: '[]' }),
     ConfigUI: StaticJsonConfigUI,
     fetch: async (config) => {
-        const raw = (config.json as string) ?? '[]';
-        let parsed: unknown;
-        try {
-            parsed = JSON.parse(raw);
-        } catch {
-            return { rows: [], fields: [] };
-        }
-        const rows = Array.isArray(parsed) ? parsed as Record<string, unknown>[] : [parsed as Record<string, unknown>];
-        return { rows, fields: inferFields(rows) };
+        const rows = parseJsonRows((config.json as string) ?? '[]');
+        return { rows, fields: inferFieldsFromRows(rows) };
+    },
+    inferSchema: (config): DatasetField[] => {
+        const rows = parseJsonRows((config.json as string) ?? '[]');
+        return inferFieldsFromRows(rows);
     },
 };

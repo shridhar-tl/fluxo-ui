@@ -31,6 +31,9 @@ const typeLabels: Record<string, string> = {
     'chart-pie': 'Pie Chart',
     'chart-donut': 'Donut Chart',
     'chart-line': 'Line Chart',
+    repeater: 'Repeater',
+    columns: 'Columns',
+    tab: 'Tabs',
 };
 
 function renderNestedContent(comp: ReportComponent): React.ReactNode {

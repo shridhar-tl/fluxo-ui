@@ -2,7 +2,7 @@ export { default as CanvasDraw } from './CanvasDraw';
 export { default as CanvasDrawOverlay } from './CanvasDrawOverlay';
 export { default as CanvasDrawToolbar } from './CanvasDrawToolbar';
 export { default as MediaTimeline } from './MediaTimeline';
-export type { CanvasDrawProps } from './CanvasDraw';
+export type { CanvasDrawProps, CanvasDrawHandle } from './CanvasDraw';
 export type { CanvasDrawOverlayHandle } from './CanvasDrawOverlay';
 export type { CanvasDrawToolbarProps } from './CanvasDrawToolbar';
 export type { MediaTimelineProps, TimelineItem, TimelineGroup } from './MediaTimeline';

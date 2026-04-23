@@ -7,6 +7,8 @@ import { ParameterDesigner } from './ParameterDesigner';
 import { ParametersListPanel } from './ParametersListPanel';
 import { ReportSettingsPanel } from './ReportSettingsPanel';
 import { StylesPallet } from './StylesPallet';
+import { VariableDesigner } from './VariableDesigner';
+import { VariablesListPanel } from './VariablesListPanel';
 import { CanvasPropsPanel } from './props/CanvasPropsPanel';
 import { HeaderPropsPanel } from './props/HeaderPropsPanel';
 import { TextPropsPanel } from './props/TextPropsPanel';
@@ -17,6 +19,7 @@ import { TabPropsPanel } from './props/TabPropsPanel';
 import { TablePropsPanel } from './props/TablePropsPanel';
 import { SubReportPropsPanel } from './props/SubReportPropsPanel';
 import { ChartPropsPanel } from './props/ChartPropsPanel';
+import { RepeaterPropsPanel } from './props/RepeaterPropsPanel';
 
 type PanelTab = 'properties' | 'styles';
 
@@ -51,6 +54,17 @@ export const PropertiesPallet: React.FC = () => {
                         </div>
                     )
                     : <ParametersListPanel />;
+
+            case 'variable':
+                return selectedItemId
+                    ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 0, height: '100%' }}>
+                            <div style={{ flex: 1, overflowY: 'auto', padding: 12 }}>
+                                <VariableDesigner variableId={selectedItemId} />
+                            </div>
+                        </div>
+                    )
+                    : <VariablesListPanel />;
 
             case 'component': {
                 if (!selectedItemId) return <ReportSettingsPanel />;
@@ -110,12 +124,21 @@ const ComponentPropsPanel: React.FC<{ type: string; component: ReportComponent }
             return <TablePropsPanel component={component} />;
         case 'canvas':
             return <CanvasPropsPanel component={component} />;
+        case 'repeater':
+            return <RepeaterPropsPanel component={component} />;
         case 'sub-report':
             return <SubReportPropsPanel component={component} />;
         case 'chart-bar':
+        case 'chart-horizontal-bar':
+        case 'chart-stacked-bar':
         case 'chart-pie':
         case 'chart-donut':
         case 'chart-line':
+        case 'chart-area':
+        case 'chart-polar-area':
+        case 'chart-radar':
+        case 'chart-scatter':
+        case 'chart-bubble':
             return <ChartPropsPanel component={component} />;
         default:
             return (

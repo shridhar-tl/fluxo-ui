@@ -132,12 +132,13 @@ export const DesignArea: React.FC = () => {
         setDragOverIndex(null);
     }, []);
 
-    const getContainerType = useCallback((containerId: string): 'column' | 'tab-panel' | 'canvas' | null => {
+    const getContainerType = useCallback((containerId: string): 'column' | 'tab-panel' | 'canvas' | 'repeater' | null => {
         const comp = findComponent(components, containerId);
         if (!comp) return null;
         if (comp.type === 'column') return 'column';
         if (comp.type === 'tab-panel') return 'tab-panel';
         if (comp.type === 'canvas') return 'canvas';
+        if (comp.type === 'repeater') return 'repeater';
         return null;
     }, [components]);
 

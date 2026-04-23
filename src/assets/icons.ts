@@ -6,6 +6,13 @@ export { default as ArrowDownIcon } from './icons/arrow-down.svg?react';
 export { default as ArrowUpIcon } from './icons/arrow-up.svg?react';
 export { default as BackIcon } from './icons/back-arrow.svg?react';
 export { default as BarChartIcon } from './icons/bar-chart.svg?react';
+export { default as HorizontalBarChartIcon } from './icons/horizontal-bar-chart.svg?react';
+export { default as StackedBarChartIcon } from './icons/stacked-bar-chart.svg?react';
+export { default as AreaChartIcon } from './icons/area-chart.svg?react';
+export { default as ScatterChartIcon } from './icons/scatter-chart.svg?react';
+export { default as BubbleChartIcon } from './icons/bubble-chart.svg?react';
+export { default as PolarChartIcon } from './icons/polar-chart.svg?react';
+export { default as RadarChartIcon } from './icons/radar-chart.svg?react';
 export { default as BranchIcon } from './icons/branch.svg?react';
 export { default as BrightSunIcon } from './icons/bright-sun.svg?react';
 export { default as BrowserCookieIcon } from './icons/browser-cookie.svg?react';
@@ -134,6 +141,7 @@ export { default as DonutChartIcon } from './icons/donut-chart.svg?react';
 export { default as ColumnsLayoutIcon } from './icons/columns-layout.svg?react';
 export { default as TabViewIcon } from './icons/tab-view.svg?react';
 export { default as CanvasLayoutIcon } from './icons/canvas-layout.svg?react';
+export { default as RepeaterIcon } from './icons/repeater.svg?react';
 
 export type SVGIcon = React.FunctionComponent<
     React.ComponentProps<'svg'> & { title?: string; titleId?: string; desc?: string; descId?: string }

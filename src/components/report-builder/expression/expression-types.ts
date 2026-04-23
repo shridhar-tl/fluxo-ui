@@ -18,12 +18,48 @@ export interface DatasourceRefNode {
 export interface ParameterRefNode {
     type: 'ParameterRef';
     parameter: string;
+    path?: string[];
     returnType: 'any';
 }
 
 export interface FieldRefNode {
     type: 'FieldRef';
     field: string;
+    returnType: 'any';
+}
+
+export type RowOrColGroupProperty =
+    | { kind: 'key' }
+    | { kind: 'keys' }
+    | { kind: 'values' }
+    | { kind: 'field'; field: string }
+    | { kind: 'variable'; name: string };
+
+export interface RowGroupRefNode {
+    type: 'RowGroupRef';
+    groupName: string;
+    property: RowOrColGroupProperty;
+    returnType: 'any';
+}
+
+export interface ColGroupRefNode {
+    type: 'ColGroupRef';
+    groupName: string;
+    property: RowOrColGroupProperty;
+    returnType: 'any';
+}
+
+export interface VariableRefNode {
+    type: 'VariableRef';
+    name: string;
+    path?: string[];
+    returnType: 'any';
+}
+
+export interface BuiltInFieldRefNode {
+    type: 'BuiltInFieldRef';
+    name: string;
+    path?: string[];
     returnType: 'any';
 }
 
@@ -54,6 +90,10 @@ export type ExpressionNode =
     | DatasourceRefNode
     | ParameterRefNode
     | FieldRefNode
+    | RowGroupRefNode
+    | ColGroupRefNode
+    | VariableRefNode
+    | BuiltInFieldRefNode
     | FunctionCallNode
     | BinaryOpNode
     | UnaryOpNode;
@@ -100,11 +140,31 @@ export interface CustomFunction extends BuiltinFunction {
 
 // ── Evaluation Context ────────────────────────────────────────────────────────
 
+export interface GroupFrame {
+    name: string;
+    key?: unknown;
+    keys?: unknown[];
+    values?: Record<string, unknown>[];
+    fields?: Record<string, unknown>;
+    variables?: Record<string, unknown>;
+}
+
 export interface ExpressionContext {
     datasources?: Record<string, Record<string, unknown>[]>;
     currentRow?: Record<string, unknown>;
     parameters?: Record<string, unknown>;
     customFunctions?: CustomFunction[];
+    rowGroups?: Record<string, GroupFrame>;
+    colGroups?: Record<string, GroupFrame>;
+    variables?: Record<string, unknown>;
+    /**
+     * Built-in fields are read-only values made available under the `BuiltInFields.*` namespace
+     * in expressions. They combine:
+     *   1. Values registered via `initReportBuilder({ builtInFields })` (library-wide defaults / host-provided).
+     *   2. Values passed to `ReportBuilder` / `ReportViewer` via the `builtInFields` prop (override per-instance).
+     * Each entry is either a constant or a zero-arg getter; the engine resolves getters lazily per evaluation.
+     */
+    builtInFields?: Record<string, unknown>;
 }
 
 // ── Design-time Type Context ──────────────────────────────────────────────────
@@ -114,6 +174,10 @@ export interface ExpressionTypeContext {
     availableDatasources?: Record<string, string[]>;
     availableParameters?: string[];
     availableFields?: string[];
+    availableRowGroups?: string[];
+    availableColGroups?: string[];
+    availableVariables?: string[];
+    availableBuiltInFields?: string[];
     customFunctions?: CustomFunction[];
 }
 
@@ -127,7 +191,7 @@ export interface ExpressionError {
 
 // ── Autocomplete ──────────────────────────────────────────────────────────────
 
-export type SuggestionKind = 'datasource' | 'field' | 'parameter' | 'function' | 'keyword';
+export type SuggestionKind = 'datasource' | 'field' | 'parameter' | 'function' | 'keyword' | 'builtin';
 
 export interface AutocompleteSuggestion {
     label: string;

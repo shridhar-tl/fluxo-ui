@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ReportBuilder } from '../../../components/report-builder';
-import type { ReportDefinition } from '../../../components/report-builder';
+import type { BuiltInFieldDefinition, ReportDefinition } from '../../../components/report-builder';
 import PageLayout from '../../PageLayout';
 import type { SectionNavItem } from '../../SectionNav';
 import { PropsTable } from '../../PropsTable';
@@ -8,6 +8,15 @@ import { FeatureGrid } from '../../FeatureCard';
 import type { FeatureItem } from '../../FeatureCard';
 import { CodeBlock } from '../../CodeBlock';
 import { sampleReportDefinition, sampleDatasourcePlugins } from './report-builder-story-data';
+
+const playgroundBuiltInFields: BuiltInFieldDefinition[] = [
+    { name: 'CurrentUser', label: 'Current user', description: 'Signed-in user record supplied by the host.', group: 'Identity', value: { id: 'user-42', name: 'Ada Lovelace', email: 'ada@example.com', role: 'Analyst' } },
+    { name: 'CurrentUserId', label: 'Current user id', description: 'Shortcut for Identity.CurrentUser.id.', group: 'Identity', value: 'user-42' },
+    { name: 'Tenant', label: 'Tenant', description: 'Active tenant / workspace record.', group: 'Identity', value: { id: 'acme', name: 'Acme Corp', plan: 'enterprise' } },
+    { name: 'Env', label: 'Environment', description: 'Deployment environment tag.', group: 'Runtime', value: 'production' },
+    { name: 'ServerTime', label: 'Server time', description: 'Host-authoritative timestamp (resolved on each evaluation).', group: 'Runtime', value: () => new Date().toISOString() },
+    { name: 'FeatureFlags', label: 'Feature flags', description: 'Map of flag name → boolean, supplied by the feature-flag service.', group: 'Runtime', value: { newChartDefaults: true, experimentalPivot: false } },
+];
 
 const sectionNavItems: SectionNavItem[] = [
     { id: 'overview', title: 'Overview', description: 'Introduction' },
@@ -92,6 +101,7 @@ export const ReportBuilderPage: React.FC = () => {
                         definition={definition}
                         onChange={setDefinition}
                         datasourcePlugins={sampleDatasourcePlugins}
+                        builtInFields={playgroundBuiltInFields}
                         style={{ height: '100%' }}
                     />
                 </div>

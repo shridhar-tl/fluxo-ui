@@ -440,6 +440,22 @@ body.mode-dark .eui-kanban-column-over-limit .eui-kanban-column-count {
     }
 }
 
+// Actions overlay (for custom cardTemplate)
+.eui-kanban-card-has-actions-overlay {
+    position: relative;
+}
+
+.eui-kanban-card-actions-overlay {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 1;
+    pointer-events: auto;
+}
+
 // Card sizes
 .eui-kanban-card-compact {
     .eui-kanban-card-body {

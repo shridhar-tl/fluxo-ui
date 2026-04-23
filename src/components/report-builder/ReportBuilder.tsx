@@ -1,9 +1,11 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import {
+    CodeIcon,
     DatabaseIcon,
     DownloadIcon,
     FilterIcon,
+    WebsiteIcon,
     PaletteIcon,
     PlayIcon,
     PrintIcon,
@@ -20,17 +22,20 @@ import {
 import { DockedLayout } from '../docked-layout';
 import type { DockedLayoutState, PanelConfig, ContentTab } from '../docked-layout';
 import DragDropProvider from '../drag-drop/DragDropProvider';
+import { mergeBuiltInFields } from './built-in-fields';
 import { ReportBuilderContext, useRBStore } from './report-builder-context';
 import { ReportViewer } from './ReportViewer';
 import { createReportBuilderStore } from './report-builder-store';
 import type { ReportBuilderProps, ReportBuilderState, ReportViewerHandle } from './report-builder-types';
 import { createEmptyDefinition } from './report-definition-types';
+import { BuiltInFieldsPanel } from './components/BuiltInFieldsPanel';
 import { ConsolePanel } from './components/ConsolePanel';
 import { DatasourceExplorer } from './components/DatasourceExplorer';
 import { ParametersListPanel } from './components/ParametersListPanel';
 import { PropertiesPallet } from './components/PropertiesPallet';
 import { StylesPallet } from './components/StylesPallet';
 import { ToolboxPanel } from './components/ToolboxPanel';
+import { VariablesListPanel } from './components/VariablesListPanel';
 import { DesignArea } from './DesignArea';
 import './report-builder.scss';
 
@@ -40,6 +45,8 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
     datasourcePlugins = [],
     parameterPlugins = [],
     availableSubReports = [],
+    builtInFields: builtInFieldOverrides,
+    builderRef,
     breakpoints: propBreakpoints,
     panelConfig,
     layoutState: externalLayoutState,
@@ -172,9 +179,16 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
         [onLayoutChange],
     );
 
+    const mergedBuiltInFields = useMemo(
+        () => mergeBuiltInFields(builtInFieldOverrides),
+        [builtInFieldOverrides],
+    );
+
     const toolboxPc = panelConfig?.toolbox;
     const datasourcePc = panelConfig?.datasource;
     const parametersPc = panelConfig?.parameters;
+    const variablesPc = panelConfig?.variables;
+    const builtInFieldsPc = panelConfig?.builtInFields;
     const propertiesPc = panelConfig?.properties;
     const stylesPc = panelConfig?.styles;
     const consolePc = panelConfig?.console;
@@ -219,13 +233,47 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
             title: 'Parameters',
             icon: FilterIcon,
             defaultPosition: 'left',
-            defaultState: 'auto-hide',
+            defaultState: 'pinned',
             defaultSize: 220,
             minSize: 160,
             userCanMove: parametersPc?.userCanMove,
             userCanClose: parametersPc?.userCanClose,
             userCanTogglePin: true,
             children: <ParametersListPanel />,
+            breakpoints: propBreakpoints ? [
+                { breakpointKey: 'xs', state: 'auto-hide' },
+                { breakpointKey: 'sm', state: 'auto-hide' },
+            ] : undefined,
+        },
+        {
+            id: 'rb-variables',
+            title: 'Variables',
+            icon: CodeIcon,
+            defaultPosition: 'left',
+            defaultState: 'pinned',
+            defaultSize: 220,
+            minSize: 160,
+            userCanMove: variablesPc?.userCanMove,
+            userCanClose: variablesPc?.userCanClose,
+            userCanTogglePin: true,
+            children: <VariablesListPanel />,
+            breakpoints: propBreakpoints ? [
+                { breakpointKey: 'xs', state: 'auto-hide' },
+                { breakpointKey: 'sm', state: 'auto-hide' },
+            ] : undefined,
+        },
+        {
+            id: 'rb-builtinfields',
+            title: 'Global Fields',
+            icon: WebsiteIcon,
+            defaultPosition: 'left',
+            defaultState: 'auto-hide',
+            defaultSize: 240,
+            minSize: 180,
+            userCanMove: builtInFieldsPc?.userCanMove,
+            userCanClose: builtInFieldsPc?.userCanClose,
+            userCanTogglePin: true,
+            children: <BuiltInFieldsPanel />,
             breakpoints: propBreakpoints ? [
                 { breakpointKey: 'xs', state: 'auto-hide' },
                 { breakpointKey: 'sm', state: 'auto-hide' },
@@ -274,12 +322,19 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
             userCanTogglePin: true,
             children: <ConsolePanel />,
         },
-    ], [toolboxPc, datasourcePc, parametersPc, propertiesPc, stylesPc, consolePc, propBreakpoints]);
+    ], [toolboxPc, datasourcePc, parametersPc, variablesPc, builtInFieldsPc, propertiesPc, stylesPc, consolePc, propBreakpoints]);
 
     const contextValue = useMemo(
-        () => ({ store, datasourcePlugins, parameterPlugins, availableSubReports, templates, onSaveTemplate, onDeleteTemplate, onLoadTemplate }),
-        [store, datasourcePlugins, parameterPlugins, availableSubReports, templates, onSaveTemplate, onDeleteTemplate, onLoadTemplate],
+        () => ({ store, datasourcePlugins, parameterPlugins, availableSubReports, builtInFields: mergedBuiltInFields, templates, onSaveTemplate, onDeleteTemplate, onLoadTemplate }),
+        [store, datasourcePlugins, parameterPlugins, availableSubReports, mergedBuiltInFields, templates, onSaveTemplate, onDeleteTemplate, onLoadTemplate],
     );
+
+    useImperativeHandle(builderRef, () => ({
+        getReportDefinition: () => structuredClone(store.getState().definition),
+        setReportDefinition: (definition) => {
+            store.setState((prev: ReportBuilderState) => ({ ...prev, definition }));
+        },
+    }), [store]);
 
     const previewDefinition = store.getState().definition;
 
@@ -295,6 +350,7 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
                             <ReportViewer
                                 definition={previewDefinition}
                                 datasourcePlugins={datasourcePlugins}
+                                builtInFields={builtInFieldOverrides}
                                 hideToolbar
                                 viewerRef={viewerHandleRef}
                                 style={{ flex: 1 }}

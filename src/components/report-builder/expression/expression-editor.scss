@@ -137,6 +137,7 @@
         &.kind-field { background: #fef9c3; color: #854d0e; }
         &.kind-parameter { background: #fae8ff; color: #7e22ce; }
         &.kind-keyword { background: var(--eui-bg-subtle); color: var(--eui-text-muted); }
+        &.kind-builtin { background: #fee2e2; color: #9f1239; }
     }
 
     &-suggestion-label {

@@ -14,6 +14,7 @@ const kindLabels: Record<string, string> = {
     field: 'fd',
     parameter: 'p',
     keyword: 'kw',
+    builtin: 'bi',
 };
 
 interface ExpressionEditorProps {

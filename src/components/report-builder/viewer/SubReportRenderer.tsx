@@ -102,11 +102,21 @@ export const SubReportRenderer: React.FC<Props> = ({ component, styleCss }) => {
     const childCtx: ViewerContext = {
         datasources,
         parameters: resolvedParams,
+        variables: parentCtx.variables,
+        builtInFields: parentCtx.builtInFields,
+        variableScopeChain: parentCtx.variableScopeChain,
+        globalVariableNames: parentCtx.globalVariableNames,
+        componentVariableValues: parentCtx.componentVariableValues,
         loadingDatasources: loading ? new Set(subDef.definition.datasources.map((d) => d.id)) : new Set(),
         errorDatasources: errors,
         datasourceConfigs: subDef.definition.datasources,
         subReportDefinitions: parentCtx.subReportDefinitions,
         datasourcePlugins: parentCtx.datasourcePlugins,
+        onDrillThrough: parentCtx.onDrillThrough,
+        onSetVariable: parentCtx.onSetVariable,
+        notifyVariableChange: parentCtx.notifyVariableChange,
+        writeGlobalVariable: parentCtx.writeGlobalVariable,
+        writeComponentVariable: parentCtx.writeComponentVariable,
     };
 
     return (
@@ -154,16 +164,20 @@ function useResolvedParams(
 
     const mapEntries = useMemo(() => Object.entries(parameterMap), [parameterMap]);
     const exprDs = useMemo(() => buildExpressionDatasources(parentCtx.datasources), [parentCtx.datasources]);
+    const parentParams = parentCtx.parameters;
+    const parentVars = parentCtx.variables;
 
     useEffect(() => {
         let cancelled = false;
         const run = async () => {
             const result: Record<string, unknown> = {};
             for (const [key, value] of mapEntries) {
-                if (value.startsWith('=')) {
+                if (typeof value === 'string' && value.startsWith('=')) {
                     const { result: val } = await evaluateExpression(value.slice(1), {
                         datasources: exprDs,
-                        parameters: parentCtx.parameters,
+                        parameters: parentParams,
+                        variables: parentVars,
+                        builtInFields: parentCtx.builtInFields,
                     });
                     result[key] = val;
                 } else {
@@ -174,7 +188,7 @@ function useResolvedParams(
         };
         run();
         return () => { cancelled = true; };
-    }, [mapEntries, exprDs, parentCtx.parameters]);
+    }, [mapEntries, exprDs, parentParams, parentVars, parentCtx.builtInFields]);
 
     return resolved;
 }

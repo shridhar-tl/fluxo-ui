@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import classnames from 'classnames';
 import type {
     DrawTool,
@@ -32,9 +32,60 @@ export interface CanvasDrawProps {
     onExport?: (dataUrl: string, format: ImageExportFormat) => void;
 }
 
+export interface CanvasDrawHandle {
+    export: (format?: ImageExportFormat) => Promise<string | null>;
+    getItems: () => DrawItem[];
+    clear: () => void;
+}
+
 const maxUndoHistory = 50;
 
-export default function CanvasDraw({
+function loadImageFromUrl(src: string): Promise<HTMLImageElement> {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+    });
+}
+
+async function composeImageExport(bgSrc: string, canvasWrapper: HTMLElement, mime: string): Promise<string | null> {
+    const bg = await loadImageFromUrl(bgSrc);
+    const width = bg.naturalWidth;
+    const height = bg.naturalHeight;
+    if (!width || !height) return null;
+    const out = document.createElement('canvas');
+    out.width = width;
+    out.height = height;
+    const ctx = out.getContext('2d');
+    if (!ctx) return null;
+    ctx.drawImage(bg, 0, 0, width, height);
+    const svg = canvasWrapper.querySelector('svg');
+    if (svg) {
+        const clone = svg.cloneNode(true) as SVGSVGElement;
+        clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        clone.setAttribute('width', String(width));
+        clone.setAttribute('height', String(height));
+        if (!clone.getAttribute('viewBox')) {
+            const vbW = parseFloat(svg.getAttribute('width') || '0') || svg.clientWidth;
+            const vbH = parseFloat(svg.getAttribute('height') || '0') || svg.clientHeight;
+            clone.setAttribute('viewBox', `0 0 ${vbW} ${vbH}`);
+        }
+        const svgStr = new XMLSerializer().serializeToString(clone);
+        const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        try {
+            const overlayImg = await loadImageFromUrl(url);
+            ctx.drawImage(overlayImg, 0, 0, width, height);
+        } finally {
+            setTimeout(() => URL.revokeObjectURL(url), 0);
+        }
+    }
+    return out.toDataURL(mime, 0.92);
+}
+
+function CanvasDrawInner({
     background,
     items: controlledItems,
     groups: controlledGroups,
@@ -49,7 +100,7 @@ export default function CanvasDraw({
     style,
     onItemsChange,
     onExport,
-}: CanvasDrawProps) {
+}: CanvasDrawProps, ref: React.Ref<CanvasDrawHandle>) {
     const mergedDefaults = useMemo<DrawToolDefaults>(
         () => ({ ...defaultToolDefaults, ...partialDefaults }),
         [partialDefaults],
@@ -212,28 +263,56 @@ export default function CanvasDraw({
         }));
     }, [selectedItemId, items, setItems]);
 
-    const handleExport = useCallback(async (format: ImageExportFormat) => {
-        if (!onExport) return;
+    const canvasRef = useRef<HTMLDivElement>(null);
+
+    const runExport = useCallback(async (format: ImageExportFormat): Promise<string | null> => {
         if (format === 'svg') {
             const svgStr = overlayRef.current?.exportSvgString() ?? '';
             const blob = new Blob([svgStr], { type: 'image/svg+xml' });
-            const url = URL.createObjectURL(blob);
-            onExport(url, 'svg');
-            return;
+            return URL.createObjectURL(blob);
         }
 
-        const wrapper = document.querySelector<HTMLElement>('.eui-canvas-draw__canvas');
-        if (!wrapper) return;
+        const wrapper = canvasRef.current;
+        if (!wrapper) return null;
+
+        const mime = format === 'jpg' ? 'image/jpeg' : format === 'webp' ? 'image/webp' : 'image/png';
+
+        if (background.type === 'image') {
+            try {
+                const dataUrl = await composeImageExport(background.src, wrapper, mime);
+                if (dataUrl) return dataUrl;
+            } catch {
+                /* fall through to html2canvas fallback */
+            }
+        }
 
         try {
             const { default: renderToCanvas } = await import(/* @vite-ignore */ 'html2canvas');
             const canvas = await renderToCanvas(wrapper, { useCORS: true, scale: 2 });
-            const mime = format === 'jpg' ? 'image/jpeg' : format === 'webp' ? 'image/webp' : 'image/png';
-            onExport(canvas.toDataURL(mime, 0.92), format);
+            return canvas.toDataURL(mime, 0.92);
         } catch (err) {
-            console.error('[CanvasDraw] Export requires "html2canvas" package. Install it with: npm install html2canvas', err);
+            console.error('[CanvasDraw] Image background export failed and html2canvas fallback is missing. For video/non-image backgrounds install html2canvas.', err);
+            return null;
         }
-    }, [onExport]);
+    }, [background]);
+
+    const handleExport = useCallback(async (format: ImageExportFormat) => {
+        const dataUrl = await runExport(format);
+        if (dataUrl && onExport) onExport(dataUrl, format);
+    }, [runExport, onExport]);
+
+    useImperativeHandle(ref, () => ({
+        export: async (format: ImageExportFormat = 'png') => runExport(format),
+        getItems: () => items,
+        clear: () => {
+            undoStackRef.current = [...undoStackRef.current.slice(-maxUndoHistory + 1), items.slice()];
+            redoStackRef.current = [];
+            setItems([]);
+            setSelectedItemId(null);
+            setCanUndo(true);
+            setCanRedo(false);
+        },
+    }), [runExport, items, setItems]);
 
     const handleDrawComplete = useCallback(() => {
         setActiveTool('select');
@@ -342,7 +421,7 @@ export default function CanvasDraw({
                 />
             )}
 
-            <div className="eui-canvas-draw__canvas">
+            <div ref={canvasRef} className="eui-canvas-draw__canvas">
                 {backgroundEl}
 
                 <CanvasDrawOverlay
@@ -416,3 +495,8 @@ export default function CanvasDraw({
         </div>
     );
 }
+
+const CanvasDraw = forwardRef<CanvasDrawHandle, CanvasDrawProps>(CanvasDrawInner);
+CanvasDraw.displayName = 'CanvasDraw';
+
+export default CanvasDraw;

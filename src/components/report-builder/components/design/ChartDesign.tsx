@@ -6,9 +6,16 @@ interface Props { component: ReportComponent; }
 
 const chartLabels: Record<string, string> = {
     'chart-bar': 'Bar Chart',
+    'chart-horizontal-bar': 'Horizontal Bar',
+    'chart-stacked-bar': 'Stacked Bar',
     'chart-pie': 'Pie Chart',
     'chart-donut': 'Donut Chart',
     'chart-line': 'Line Chart',
+    'chart-area': 'Area Chart',
+    'chart-polar-area': 'Polar Area',
+    'chart-radar': 'Radar Chart',
+    'chart-scatter': 'Scatter Plot',
+    'chart-bubble': 'Bubble Chart',
 };
 
 const BarPreview: React.FC<{ color?: string }> = ({ color = '#4f87f7' }) => (
@@ -91,13 +98,22 @@ export const ChartDesign: React.FC<Props> = ({ component }) => {
     const renderPreview = () => {
         switch (component.type) {
             case 'chart-bar':
+            case 'chart-horizontal-bar':
+            case 'chart-stacked-bar':
                 return <BarPreview color={p.barColor} />;
             case 'chart-line':
-                return <LinePreview color={p.lineColor} fill={p.areaFill} />;
+            case 'chart-scatter':
+                return <LinePreview color={p.lineColor} />;
+            case 'chart-area':
+                return <LinePreview color={p.lineColor} fill />;
             case 'chart-pie':
                 return <PiePreview />;
             case 'chart-donut':
                 return <PiePreview cutout />;
+            case 'chart-polar-area':
+            case 'chart-radar':
+            case 'chart-bubble':
+                return <PiePreview />;
             default:
                 return <BarPreview />;
         }

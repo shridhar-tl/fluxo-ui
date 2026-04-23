@@ -1,7 +1,14 @@
 import React from 'react';
 import type { ReportComponent, TableComponentProps } from '../../report-definition-types';
+import {
+    flattenColumns,
+    getEffectiveColumnTree,
+} from '../../table-helpers';
+import { buildHeaderMatrix } from '../../viewer/TableHeaderRenderer';
 
-interface Props { component: ReportComponent; }
+interface Props {
+    component: ReportComponent;
+}
 
 const skeletonBar = (width: string): React.CSSProperties => ({
     height: 10,
@@ -12,82 +19,126 @@ const skeletonBar = (width: string): React.CSSProperties => ({
 
 export const TableDesign: React.FC<Props> = ({ component }) => {
     const p = component.props as unknown as TableComponentProps;
-    const columns = p.columns ?? [];
+    const tree = getEffectiveColumnTree(p);
+    const leafColumns = flattenColumns(tree);
 
-    if (columns.length === 0) {
+    if (leafColumns.length === 0) {
         return (
-            <div style={{
-                padding: '20px 16px',
-                background: 'var(--eui-bg-subtle)',
-                border: '1px dashed var(--eui-border-subtle)',
-                borderRadius: 6,
-                color: 'var(--eui-text-muted)',
-                fontSize: 12,
-                fontStyle: 'italic',
-                textAlign: 'center',
-            }}>
+            <div
+                style={{
+                    padding: '20px 16px',
+                    background: 'var(--eui-bg-subtle)',
+                    border: '1px dashed var(--eui-border-subtle)',
+                    borderRadius: 6,
+                    color: 'var(--eui-text-muted)',
+                    fontSize: 12,
+                    fontStyle: 'italic',
+                    textAlign: 'center',
+                }}
+            >
                 Configure table in Properties
             </div>
         );
     }
 
+    const headerMatrix = buildHeaderMatrix(tree);
     const skeletonWidths = ['60%', '45%', '70%', '50%', '55%', '40%'];
 
     return (
-        <div style={{
-            border: '1px solid var(--eui-border-subtle)',
-            borderRadius: 6,
-            overflow: 'hidden',
-            fontSize: 12,
-        }}>
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: columns.map((c) => c.width || '1fr').join(' '),
-                background: 'var(--eui-bg-subtle)',
-                borderBottom: '1px solid var(--eui-border-subtle)',
-            }}>
-                {columns.map((col) => (
-                    <div
-                        key={col.id}
-                        style={{
-                            padding: '8px 10px',
-                            fontWeight: 600,
-                            color: 'var(--eui-text)',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            textAlign: col.align ?? 'left',
-                        }}
-                    >
-                        {col.label || col.field || '(untitled)'}
-                    </div>
-                ))}
-            </div>
-
-            {[0, 1, 2].map((rowIdx) => (
+        <div
+            style={{
+                border: '1px solid var(--eui-border-subtle)',
+                borderRadius: 6,
+                overflow: 'hidden',
+                fontSize: 12,
+            }}
+        >
+            <table
+                style={{
+                    width: '100%',
+                    borderCollapse: 'collapse',
+                    fontSize: 12,
+                }}
+            >
+                <thead>
+                    {headerMatrix.map((row, ri) => (
+                        <tr key={ri}>
+                            {row.map((cell) => (
+                                <th
+                                    key={cell.id}
+                                    colSpan={cell.colSpan}
+                                    rowSpan={cell.rowSpan}
+                                    style={{
+                                        padding: '6px 10px',
+                                        background: 'var(--eui-bg-subtle)',
+                                        color: 'var(--eui-text)',
+                                        borderBottom: '1px solid var(--eui-border-subtle)',
+                                        borderRight: '1px solid var(--eui-border-subtle)',
+                                        textAlign: cell.isLeaf ? cell.align ?? 'left' : 'center',
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    {cell.label}
+                                </th>
+                            ))}
+                        </tr>
+                    ))}
+                </thead>
+                <tbody>
+                    {[0, 1, 2].map((rowIdx) => (
+                        <tr key={rowIdx}>
+                            {leafColumns.map((col, colIdx) => (
+                                <td
+                                    key={col.id}
+                                    style={{
+                                        padding: '6px 10px',
+                                        borderBottom:
+                                            rowIdx < 2
+                                                ? '1px solid var(--eui-border-subtle)'
+                                                : undefined,
+                                        textAlign: col.align ?? 'left',
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            justifyContent:
+                                                col.align === 'center'
+                                                    ? 'center'
+                                                    : col.align === 'right'
+                                                        ? 'flex-end'
+                                                        : 'flex-start',
+                                        }}
+                                    >
+                                        <div
+                                            style={skeletonBar(
+                                                skeletonWidths[
+                                                    (rowIdx * leafColumns.length + colIdx) %
+                                                        skeletonWidths.length
+                                                ],
+                                            )}
+                                        />
+                                    </div>
+                                </td>
+                            ))}
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            {p.rowGroups && p.rowGroups.length > 0 && (
                 <div
-                    key={rowIdx}
                     style={{
-                        display: 'grid',
-                        gridTemplateColumns: columns.map((c) => c.width || '1fr').join(' '),
-                        borderBottom: rowIdx < 2 ? '1px solid var(--eui-border-subtle)' : undefined,
+                        padding: '6px 10px',
+                        borderTop: '1px solid var(--eui-border-subtle)',
+                        background: 'var(--eui-bg-subtle)',
+                        fontSize: 10,
+                        color: 'var(--eui-text-muted)',
+                        fontStyle: 'italic',
                     }}
                 >
-                    {columns.map((col, colIdx) => (
-                        <div
-                            key={col.id}
-                            style={{
-                                padding: '8px 10px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: col.align === 'center' ? 'center' : col.align === 'right' ? 'flex-end' : 'flex-start',
-                            }}
-                        >
-                            <div style={skeletonBar(skeletonWidths[(rowIdx * columns.length + colIdx) % skeletonWidths.length])} />
-                        </div>
-                    ))}
+                    Row groups configured: {p.rowGroups.map((g) => g.name).join(', ')}
                 </div>
-            ))}
+            )}
         </div>
     );
 };

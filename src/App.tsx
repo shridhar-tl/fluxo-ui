@@ -11,6 +11,7 @@ const ScrollToTop: React.FC = () => {
     return null;
 };
 
+const HighlightsPage = React.lazy(() => import('./story/pages/HighlightsPage'));
 const HomePage = React.lazy(() => import('./story/pages/HomePage'));
 const InstallationPage = React.lazy(() => import('./story/pages/InstallationPage'));
 const MCPIntegrationPage = React.lazy(() => import('./story/pages/MCPIntegrationPage'));
@@ -100,7 +101,17 @@ const DiffViewerPage = React.lazy(() => import('./story/pages/diff-viewer/DiffVi
 const DockedLayoutPage = React.lazy(() => import('./story/pages/docked-layout/DockedLayoutPage'));
 const ReportBuilderPlaygroundPage = React.lazy(() => import('./story/pages/report-builder/ReportBuilderPlaygroundPage'));
 const ReportBuilderPage = React.lazy(() => import('./story/pages/report-builder/ReportBuilderPage'));
+const ReportBuilderExamplesPage = React.lazy(() => import('./story/pages/report-builder/ReportBuilderExamplesPage'));
 const ReportViewerPage = React.lazy(() => import('./story/pages/report-builder/ReportViewerPage'));
+const ReportBuilderOverviewPage = React.lazy(() => import('./story/pages/report-builder-examples/overview/ReportBuilderOverviewPage'));
+const ReportBuilderTablesPage = React.lazy(() => import('./story/pages/report-builder-examples/tables/ReportBuilderTablesPage'));
+const ReportBuilderChartsPage = React.lazy(() => import('./story/pages/report-builder-examples/charts/ReportBuilderChartsPage'));
+const ReportBuilderMixedChartsPage = React.lazy(() => import('./story/pages/report-builder-examples/mixed-charts/ReportBuilderMixedChartsPage'));
+const ReportBuilderSubReportsPage = React.lazy(() => import('./story/pages/report-builder-examples/sub-reports/ReportBuilderSubReportsPage'));
+const ReportBuilderParametersPage = React.lazy(() => import('./story/pages/report-builder-examples/parameters/ReportBuilderParametersPage'));
+const ReportBuilderVariablesPage = React.lazy(() => import('./story/pages/report-builder-examples/variables/ReportBuilderVariablesPage'));
+const ReportBuilderExpressionsPage = React.lazy(() => import('./story/pages/report-builder-examples/expressions/ReportBuilderExpressionsPage'));
+const ReportBuilderRepeaterPage = React.lazy(() => import('./story/pages/report-builder-examples/repeater/ReportBuilderRepeaterPage'));
 const CountdownTimerPage = React.lazy(() => import('./story/pages/countdown-timer/CountdownTimerPage'));
 
 const App: React.FC = () => {
@@ -112,6 +123,14 @@ const App: React.FC = () => {
                 <Routes>
                     <Route
                         path="/"
+                        element={
+                            <LayoutWrapper>
+                                <HighlightsPage />
+                            </LayoutWrapper>
+                        }
+                    />
+                    <Route
+                        path="/overview"
                         element={
                             <LayoutWrapper>
                                 <HomePage />
@@ -566,6 +585,16 @@ const App: React.FC = () => {
                     <Route path="/components/report-builder" element={<LayoutWrapper><ReportBuilderPage /></LayoutWrapper>} />
                     <Route path="/components/report-viewer" element={<LayoutWrapper><ReportViewerPage /></LayoutWrapper>} />
                     <Route path="/components/report-builder-playground" element={<LayoutWrapper><ReportBuilderPlaygroundPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples" element={<LayoutWrapper><ReportBuilderExamplesPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/overview" element={<LayoutWrapper><ReportBuilderOverviewPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/tables" element={<LayoutWrapper><ReportBuilderTablesPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/charts" element={<LayoutWrapper><ReportBuilderChartsPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/mixed-charts" element={<LayoutWrapper><ReportBuilderMixedChartsPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/sub-reports" element={<LayoutWrapper><ReportBuilderSubReportsPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/parameters" element={<LayoutWrapper><ReportBuilderParametersPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/variables" element={<LayoutWrapper><ReportBuilderVariablesPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/expressions" element={<LayoutWrapper><ReportBuilderExpressionsPage /></LayoutWrapper>} />
+                    <Route path="/components/report-builder-examples/repeater" element={<LayoutWrapper><ReportBuilderRepeaterPage /></LayoutWrapper>} />
                     <Route path="/components/html-editor" element={<LayoutWrapper><HtmlEditorPage /></LayoutWrapper>} />
                     <Route
                         path="*"

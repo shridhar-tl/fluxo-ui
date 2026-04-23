@@ -1,32 +1,58 @@
-import type { ReportComponent, ColumnsComponentProps, TabComponentProps, CanvasItemLayout } from './report-definition-types';
+import type {
+    ReportComponent,
+    ColumnsComponentProps,
+    TabComponentProps,
+    CanvasItemLayout,
+    RepeaterComponentProps,
+} from './report-definition-types';
 
-const columnCellAllowed = new Set([
+const allChartTypes = [
+    'chart-bar',
+    'chart-horizontal-bar',
+    'chart-stacked-bar',
+    'chart-pie',
+    'chart-donut',
+    'chart-line',
+    'chart-area',
+    'chart-polar-area',
+    'chart-radar',
+    'chart-scatter',
+    'chart-bubble',
+] as const;
+
+const columnCellAllowed = new Set<string>([
     'header', 'text', 'image', 'horizontal-line', 'tab', 'table',
-    'sub-report', 'chart-bar', 'chart-pie', 'chart-donut', 'chart-line',
+    'sub-report', 'repeater', ...allChartTypes,
 ]);
-const tabPanelAllowed = new Set([
+const tabPanelAllowed = new Set<string>([
     'header', 'text', 'image', 'horizontal-line', 'columns', 'table',
-    'sub-report', 'chart-bar', 'chart-pie', 'chart-donut', 'chart-line',
+    'sub-report', 'repeater', ...allChartTypes,
 ]);
 
-const canvasAllowed = new Set([
+const canvasAllowed = new Set<string>([
     'header', 'text', 'image', 'horizontal-line', 'table',
-    'sub-report', 'chart-bar', 'chart-pie', 'chart-donut', 'chart-line',
+    'sub-report', ...allChartTypes,
+]);
+
+const repeaterAllowed = new Set<string>([
+    'header', 'text', 'image', 'horizontal-line', 'columns', 'tab', 'table',
+    'sub-report', 'repeater', ...allChartTypes,
 ]);
 
 export function isTypeAllowedInContainer(
     componentType: string,
-    containerType: 'column' | 'tab-panel' | 'canvas',
+    containerType: 'column' | 'tab-panel' | 'canvas' | 'repeater',
 ): boolean {
     if (containerType === 'column') return columnCellAllowed.has(componentType);
     if (containerType === 'tab-panel') return tabPanelAllowed.has(componentType);
     if (containerType === 'canvas') return canvasAllowed.has(componentType);
+    if (containerType === 'repeater') return repeaterAllowed.has(componentType);
     return true;
 }
 
 export function isDragAllowedInContainer(
     dataTransferTypes: readonly string[],
-    containerType: 'column' | 'tab-panel' | 'canvas',
+    containerType: 'column' | 'tab-panel' | 'canvas' | 'repeater',
 ): boolean {
     const typePrefix = 'application/rb-type-';
     const draggedType = dataTransferTypes.find((t) => t.startsWith(typePrefix));
@@ -219,31 +245,121 @@ export function createComponent(type: string): ReportComponent {
                 styles: {},
             };
         case 'chart-bar':
+        case 'chart-horizontal-bar':
+        case 'chart-stacked-bar':
             return {
                 id: crypto.randomUUID(),
                 type,
-                props: { datasourceId: '', title: 'Bar Chart', showLegend: true, xAxisField: '', yAxisField: '', barColor: '#4f87f7' },
+                props: {
+                    datasourceId: '',
+                    title: type === 'chart-horizontal-bar' ? 'Horizontal Bar Chart' : type === 'chart-stacked-bar' ? 'Stacked Bar Chart' : 'Bar Chart',
+                    showLegend: true,
+                    legendPosition: 'top',
+                    xAxisField: '',
+                    yAxisField: '',
+                    barColor: '#4f87f7',
+                    stacked: type === 'chart-stacked-bar',
+                    xAxis: { display: true, gridDisplay: true },
+                    yAxis: { display: true, gridDisplay: true, beginAtZero: true },
+                    tooltipEnabled: true,
+                    animate: true,
+                },
                 styles: {},
             };
         case 'chart-pie':
             return {
                 id: crypto.randomUUID(),
                 type,
-                props: { datasourceId: '', title: 'Pie Chart', showLegend: true, labelField: '', valueField: '', colors: [] },
+                props: {
+                    datasourceId: '', title: 'Pie Chart', showLegend: true, legendPosition: 'right',
+                    labelField: '', valueField: '', colors: [], tooltipEnabled: true, animate: true,
+                },
                 styles: {},
             };
         case 'chart-donut':
             return {
                 id: crypto.randomUUID(),
                 type,
-                props: { datasourceId: '', title: 'Donut Chart', showLegend: true, labelField: '', valueField: '', colors: [] },
+                props: {
+                    datasourceId: '', title: 'Donut Chart', showLegend: true, legendPosition: 'right',
+                    labelField: '', valueField: '', colors: [], cutoutPercent: 50,
+                    tooltipEnabled: true, animate: true,
+                },
                 styles: {},
             };
         case 'chart-line':
             return {
                 id: crypto.randomUUID(),
                 type,
-                props: { datasourceId: '', title: 'Line Chart', showLegend: true, xAxisField: '', yAxisField: '', lineColor: '#4f87f7', lineTension: 0.3, showPoints: true },
+                props: {
+                    datasourceId: '', title: 'Line Chart', showLegend: true, legendPosition: 'top',
+                    xAxisField: '', yAxisField: '',
+                    lineColor: '#4f87f7', lineTension: 0.3, showPoints: true, pointStyle: 'circle',
+                    xAxis: { display: true, gridDisplay: true },
+                    yAxis: { display: true, gridDisplay: true, beginAtZero: true },
+                    tooltipEnabled: true, animate: true,
+                },
+                styles: {},
+            };
+        case 'chart-area':
+            return {
+                id: crypto.randomUUID(),
+                type,
+                props: {
+                    datasourceId: '', title: 'Area Chart', showLegend: true, legendPosition: 'top',
+                    xAxisField: '', yAxisField: '',
+                    lineColor: '#4f87f7', lineTension: 0.3, showPoints: true, areaFill: true,
+                    xAxis: { display: true, gridDisplay: true },
+                    yAxis: { display: true, gridDisplay: true, beginAtZero: true },
+                    tooltipEnabled: true, animate: true,
+                },
+                styles: {},
+            };
+        case 'chart-polar-area':
+            return {
+                id: crypto.randomUUID(),
+                type,
+                props: {
+                    datasourceId: '', title: 'Polar Area Chart', showLegend: true, legendPosition: 'right',
+                    labelField: '', valueField: '', colors: [], tooltipEnabled: true, animate: true,
+                },
+                styles: {},
+            };
+        case 'chart-radar':
+            return {
+                id: crypto.randomUUID(),
+                type,
+                props: {
+                    datasourceId: '', title: 'Radar Chart', showLegend: true, legendPosition: 'top',
+                    labelField: '', xAxisField: '', yAxisField: '', showPoints: true,
+                    tooltipEnabled: true, animate: true,
+                },
+                styles: {},
+            };
+        case 'chart-scatter':
+            return {
+                id: crypto.randomUUID(),
+                type,
+                props: {
+                    datasourceId: '', title: 'Scatter Chart', showLegend: true, legendPosition: 'top',
+                    xAxisField: '', yAxisField: '', pointStyle: 'circle', pointRadius: 5,
+                    xAxis: { display: true, gridDisplay: true },
+                    yAxis: { display: true, gridDisplay: true },
+                    tooltipEnabled: true, animate: true,
+                },
+                styles: {},
+            };
+        case 'chart-bubble':
+            return {
+                id: crypto.randomUUID(),
+                type,
+                props: {
+                    datasourceId: '', title: 'Bubble Chart', showLegend: true, legendPosition: 'top',
+                    xAxisField: '', yAxisField: '', radiusField: '', radiusScale: 1,
+                    xAxis: { display: true, gridDisplay: true },
+                    yAxis: { display: true, gridDisplay: true },
+                    tooltipEnabled: true, animate: true,
+                },
                 styles: {},
             };
         case 'canvas':
@@ -254,6 +370,26 @@ export function createComponent(type: string): ReportComponent {
                 styles: {},
                 children: [],
             };
+        case 'repeater': {
+            const props: RepeaterComponentProps = {
+                datasourceId: '',
+                layout: 'stack',
+                gap: 8,
+                separator: 'none',
+                emptyMessage: 'No items to display.',
+                alternateRowBackground: false,
+                sortDirection: 'asc',
+                gridColumns: 2,
+                inlineWrap: true,
+            };
+            return {
+                id: crypto.randomUUID(),
+                type,
+                props: props as unknown as Record<string, unknown>,
+                styles: {},
+                children: [],
+            };
+        }
         default:
             return {
                 id: crypto.randomUUID(),

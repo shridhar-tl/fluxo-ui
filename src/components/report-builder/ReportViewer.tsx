@@ -1,15 +1,46 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { DownloadIcon, PrintIcon, RefreshIcon, SettingsIcon } from '../../assets/icons';
+import { builtInFieldsToExpressionContext, mergeBuiltInFields } from './built-in-fields';
 import type { Dataset } from './report-builder-types';
 import type { ReportViewerProps } from './report-builder-types';
-import type { DerivedDatasourceConfig } from './report-definition-types';
+import type { DerivedDatasourceConfig, ReportComponent, VariableConfig } from './report-definition-types';
 import { getPageDimensionsPx } from './report-definition-types';
+import { evaluateExpression } from './expression/expression-parser';
+import { ParameterOptionsContext } from './components/ParameterOptionsContext';
+import type { ParameterOptionsContextValue } from './components/ParameterOptionsContext';
 import { ParameterPanel } from './components/ParameterPanel';
 import { ComponentRenderer } from './viewer/ComponentRenderer';
 import { processDerivedDatasource } from './viewer/DerivedDatasourceProcessor';
 import { downloadReportPdf, printReport } from './viewer/pdf-export';
 import { ViewerContext } from './viewer/ViewerExpressionContext';
+
+function collectComponentVariables(
+    components: ReportComponent[],
+    out: Array<{ componentId: string; variables: VariableConfig[] }> = [],
+): Array<{ componentId: string; variables: VariableConfig[] }> {
+    for (const comp of components) {
+        if (comp.variables && comp.variables.length > 0) {
+            out.push({ componentId: comp.id, variables: comp.variables });
+        }
+        if (comp.children && comp.children.length > 0) {
+            collectComponentVariables(comp.children, out);
+        }
+    }
+    return out;
+}
+
+async function evaluateDefaultValue(
+    raw: string | undefined,
+    builtInFields?: Record<string, unknown>,
+): Promise<unknown> {
+    if (raw === undefined || raw === '') return undefined;
+    if (raw.startsWith('=')) {
+        const { result } = await evaluateExpression(raw.slice(1), { parameters: {}, builtInFields });
+        return result;
+    }
+    return raw;
+}
 
 export const ReportViewer: React.FC<ReportViewerProps> = ({
     definition,
@@ -18,6 +49,7 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
     onParameterChange,
     parameterPanel,
     subReportDefinitions,
+    builtInFields,
     onColumnResize,
     onColumnReorder,
     onDrillThrough,
@@ -31,12 +63,90 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
     const [datasources, setDatasources] = useState<Record<string, Dataset>>({});
     const [loadingDs, setLoadingDs] = useState<Set<string>>(new Set());
     const [errorDs, setErrorDs] = useState<Map<string, string>>(new Map());
-    const [paramValues, setParamValues] = useState<Record<string, unknown>>(externalParamValues ?? {});
+    const [paramValues, setParamValues] = useState<Record<string, unknown>>(() => {
+        const seeded: Record<string, unknown> = {};
+        for (const p of definition.parameters) {
+            if (p.defaultValue !== undefined) seeded[p.id] = p.defaultValue;
+        }
+        return { ...seeded, ...(externalParamValues ?? {}) };
+    });
+    const [globalVariableValues, setGlobalVariableValues] = useState<Record<string, unknown>>({});
+    const [componentVariableValues, setComponentVariableValues] = useState<Record<string, Record<string, unknown>>>({});
     const [showParams, setShowParams] = useState(false);
     const [renderKey, setRenderKey] = useState(0);
     const [exporting, setExporting] = useState(false);
     const prevParamRef = useRef(externalParamValues);
     const contentRef = useRef<HTMLDivElement>(null);
+
+    const globalVariables = definition.variables ?? [];
+    const componentScopes = useMemo(
+        () => collectComponentVariables(definition.components),
+        [definition.components],
+    );
+
+    const mergedBuiltInFields = useMemo(
+        () => builtInFieldsToExpressionContext(mergeBuiltInFields(builtInFields)),
+        [builtInFields],
+    );
+
+    const globalVariableNames = useMemo(
+        () => new Set(globalVariables.map((v) => v.name)),
+        [globalVariables],
+    );
+
+    useEffect(() => {
+        let cancelled = false;
+        const seedGlobalDefaults = async () => {
+            const seeded: Record<string, unknown> = {};
+            for (const v of globalVariables) {
+                seeded[v.name] = await evaluateDefaultValue(v.defaultValueExpression, mergedBuiltInFields);
+            }
+            if (cancelled) return;
+            setGlobalVariableValues((prev) => {
+                const next = { ...seeded };
+                for (const k of Object.keys(prev)) {
+                    if (Object.prototype.hasOwnProperty.call(seeded, k)) {
+                        next[k] = prev[k];
+                    }
+                }
+                return next;
+            });
+        };
+        seedGlobalDefaults();
+        return () => { cancelled = true; };
+    }, [globalVariables, mergedBuiltInFields]);
+
+    useEffect(() => {
+        let cancelled = false;
+        const seedComponentDefaults = async () => {
+            const seeded: Record<string, Record<string, unknown>> = {};
+            for (const { componentId, variables } of componentScopes) {
+                const bucket: Record<string, unknown> = {};
+                for (const v of variables) {
+                    bucket[v.name] = await evaluateDefaultValue(v.defaultValueExpression, mergedBuiltInFields);
+                }
+                seeded[componentId] = bucket;
+            }
+            if (cancelled) return;
+            setComponentVariableValues((prev) => {
+                const next: Record<string, Record<string, unknown>> = {};
+                for (const cid of Object.keys(seeded)) {
+                    const seedBucket = seeded[cid];
+                    const prevBucket = prev[cid] ?? {};
+                    const merged: Record<string, unknown> = { ...seedBucket };
+                    for (const name of Object.keys(prevBucket)) {
+                        if (Object.prototype.hasOwnProperty.call(seedBucket, name)) {
+                            merged[name] = prevBucket[name];
+                        }
+                    }
+                    next[cid] = merged;
+                }
+                return next;
+            });
+        };
+        seedComponentDefaults();
+        return () => { cancelled = true; };
+    }, [componentScopes, mergedBuiltInFields]);
 
     useEffect(() => {
         if (externalParamValues && externalParamValues !== prevParamRef.current) {
@@ -75,6 +185,11 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         const dsConfigs = definition.datasources;
         if (dsConfigs.length === 0) return;
 
+        const paramsByName: Record<string, unknown> = {};
+        for (const p of definition.parameters) {
+            paramsByName[p.name] = paramValues[p.id] ?? p.defaultValue;
+        }
+
         const fetchingIds = new Set(dsConfigs.map((d) => d.id));
         setLoadingDs(fetchingIds);
         setErrorDs(new Map());
@@ -93,7 +208,7 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
                     return;
                 }
                 try {
-                    const data = await plugin.fetch(dsConfig.config, paramValues);
+                    const data = await plugin.fetch(dsConfig.config, paramsByName);
                     results[dsConfig.name] = data;
                 } catch (err) {
                     errors.set(dsConfig.id, err instanceof Error ? err.message : String(err));
@@ -109,7 +224,7 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         for (const dsConfig of derivedDs) {
             try {
                 const derivedCfg = dsConfig.config as unknown as DerivedDatasourceConfig;
-                const data = await processDerivedDatasource(derivedCfg, results, nameById, paramValues);
+                const data = await processDerivedDatasource(derivedCfg, results, nameById, paramsByName);
                 results[dsConfig.name] = data;
             } catch (err) {
                 errors.set(dsConfig.id, err instanceof Error ? err.message : String(err));
@@ -119,7 +234,7 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         setDatasources(results);
         setErrorDs(errors);
         setLoadingDs(new Set());
-    }, [definition.datasources, datasourcePlugins, paramValues]);
+    }, [definition.datasources, definition.parameters, datasourcePlugins, paramValues]);
 
     useEffect(() => {
         fetchDatasources();
@@ -155,22 +270,75 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         printReport(contentRef.current, definition.metadata.title, definition.globalStyles.pageSetup);
     }, [definition.metadata.title, definition.globalStyles.pageSetup]);
 
-    const handleDrillThrough = useCallback((parameterName: string, value: unknown) => {
-        const newParams = { ...paramValues, [parameterName]: value };
-        setParamValues(newParams);
-        onParameterChange?.(newParams);
-        onDrillThrough?.(parameterName, value);
-    }, [paramValues, onParameterChange, onDrillThrough]);
+    const writeGlobalVariable = useCallback((variableName: string, value: unknown) => {
+        setGlobalVariableValues((prev) => ({ ...prev, [variableName]: value }));
+    }, []);
+
+    const writeComponentVariable = useCallback((componentId: string, variableName: string, value: unknown) => {
+        setComponentVariableValues((prev) => ({
+            ...prev,
+            [componentId]: { ...(prev[componentId] ?? {}), [variableName]: value },
+        }));
+    }, []);
+
+    const writeVariableByName = useCallback((variableName: string, value: unknown) => {
+        if (globalVariableNames.has(variableName)) {
+            writeGlobalVariable(variableName, value);
+            return;
+        }
+        for (const { componentId, variables } of componentScopes) {
+            if (variables.some((v) => v.name === variableName)) {
+                writeComponentVariable(componentId, variableName, value);
+                return;
+            }
+        }
+        writeGlobalVariable(variableName, value);
+    }, [globalVariableNames, componentScopes, writeGlobalVariable, writeComponentVariable]);
+
+    const handleSetVariable = useCallback((variableName: string, value: unknown) => {
+        writeVariableByName(variableName, value);
+    }, [writeVariableByName]);
+
+    const handleDrillThrough = useCallback((variableName: string, value: unknown) => {
+        writeVariableByName(variableName, value);
+        onDrillThrough?.(variableName, value);
+    }, [writeVariableByName, onDrillThrough]);
+
+    const notifyVariableChange = useCallback((variableName: string, value: unknown) => {
+        onDrillThrough?.(variableName, value);
+    }, [onDrillThrough]);
+
+    const hasAnyParams = definition.parameters.length > 0;
+    const paramValuesRef = useRef(paramValues);
+    paramValuesRef.current = paramValues;
 
     useImperativeHandle(viewerRef, () => ({
         exportPdf: handleExportPdf,
         print: handlePrint,
         refresh: handleRefresh,
-    }), [handleExportPdf, handlePrint, handleRefresh]);
+        showParameters: () => {
+            if (definition.parameters.length > 0) setShowParams(true);
+        },
+        getParameters: () => ({ ...paramValuesRef.current }),
+        hasParameters: () => hasAnyParams,
+    }), [handleExportPdf, handlePrint, handleRefresh, definition.parameters.length, hasAnyParams]);
+
+    const parametersByName = useMemo(() => {
+        const out: Record<string, unknown> = {};
+        for (const p of definition.parameters) {
+            out[p.name] = paramValues[p.id] ?? p.defaultValue;
+        }
+        return out;
+    }, [definition.parameters, paramValues]);
 
     const viewerCtx = useMemo(() => ({
         datasources,
-        parameters: paramValues,
+        parameters: parametersByName,
+        variables: globalVariableValues,
+        builtInFields: mergedBuiltInFields,
+        variableScopeChain: [],
+        globalVariableNames,
+        componentVariableValues,
         loadingDatasources: loadingDs,
         errorDatasources: errorDs,
         datasourceConfigs: definition.datasources,
@@ -179,8 +347,29 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         onColumnResize,
         onColumnReorder,
         onDrillThrough: handleDrillThrough,
+        onSetVariable: handleSetVariable,
+        notifyVariableChange,
+        writeGlobalVariable,
+        writeComponentVariable,
         onCellEdit,
-    }), [datasources, paramValues, loadingDs, errorDs, definition.datasources, subReportDefinitions, datasourcePlugins, onColumnResize, onColumnReorder, handleDrillThrough, onCellEdit]);
+    }), [datasources, parametersByName, globalVariableValues, mergedBuiltInFields, globalVariableNames, componentVariableValues, loadingDs, errorDs, definition.datasources, subReportDefinitions, datasourcePlugins, onColumnResize, onColumnReorder, handleDrillThrough, handleSetVariable, notifyVariableChange, writeGlobalVariable, writeComponentVariable, onCellEdit]);
+
+    const paramOptionsCtx = useMemo<ParameterOptionsContextValue>(() => ({
+        datasources,
+        getOptions: (datasetId, displayField, valueField, staticOptions) => {
+            if (!datasetId) return staticOptions ?? [];
+            const cfg = definition.datasources.find((d) => d.id === datasetId);
+            const ds = cfg ? datasources[cfg.name] : undefined;
+            if (!ds) return staticOptions ?? [];
+            const df = displayField;
+            const vf = valueField ?? displayField;
+            if (!df) return staticOptions ?? [];
+            return ds.rows.map((row) => ({
+                label: String(row[df] ?? ''),
+                value: vf ? row[vf] : row[df],
+            }));
+        },
+    }), [datasources, definition.datasources]);
 
     const hasParams = definition.parameters.length > 0;
     const panelMode = parameterPanel?.mode ?? 'docked';
@@ -288,15 +477,17 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
 
     const paramsPanel = (
         <ViewerContext.Provider value={viewerCtx}>
-            <ParameterPanel
-                parameters={definition.parameters}
-                values={paramValues}
-                onChange={handleParamChange}
-                onApply={(vals) => { handleParamChange(vals); setShowParams(false); }}
-                mode={panelMode === 'docked' ? 'docked' : 'popover'}
-                isOpen={showParams}
-                onClose={() => setShowParams(false)}
-            />
+            <ParameterOptionsContext.Provider value={paramOptionsCtx}>
+                <ParameterPanel
+                    parameters={definition.parameters}
+                    values={paramValues}
+                    onChange={handleParamChange}
+                    onApply={(vals) => { handleParamChange(vals); setShowParams(false); }}
+                    mode={panelMode === 'docked' ? 'docked' : 'popover'}
+                    isOpen={showParams}
+                    onClose={() => setShowParams(false)}
+                />
+            </ParameterOptionsContext.Provider>
         </ViewerContext.Provider>
     );
 

@@ -181,13 +181,13 @@ function Counter() {
 
 ### Charts & Boards
 
-| Component    | Description                             |
-| ------------ | --------------------------------------- |
-| Gantt Chart  | Project timeline and task visualization |
-| Kanban Board | Drag-and-drop task board with columns   |
-| Timeline     | Vertical/horizontal event sequence      |
-| Progress Bar     | Determinate and indeterminate progress                                           |
-| Countdown Timer  | Progress-aware countdown with circular, linear, segmented, and numeric variants  |
+| Component       | Description                                                                     |
+| --------------- | ------------------------------------------------------------------------------- |
+| Gantt Chart     | Project timeline and task visualization                                         |
+| Kanban Board    | Drag-and-drop task board with columns                                           |
+| Timeline        | Vertical/horizontal event sequence                                              |
+| Progress Bar    | Determinate and indeterminate progress                                          |
+| Countdown Timer | Progress-aware countdown with circular, linear, segmented, and numeric variants |
 
 ### Media
 

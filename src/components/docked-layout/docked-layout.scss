@@ -577,9 +577,13 @@
 }
 
 // Auto-hide backdrop (dismiss panel by clicking outside)
+// z-index must sit BELOW `.eui-dl-side` (z-index: 10). The side wrapper creates a stacking
+// context, so the overlay panel (z-index: 50) is effectively 10+ at the root and would be
+// hidden under the backdrop if the backdrop were higher. Clicks on the pin button then
+// land on the backdrop → dismiss fires → the panel disappears mid-pin.
 .eui-dl-autohide-backdrop {
     position: absolute;
     inset: 0;
-    z-index: 40;
+    z-index: 5;
     background: transparent;
 }

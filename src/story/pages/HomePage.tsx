@@ -33,10 +33,11 @@ const largeComponents = new Set([
     'Diff Viewer',
     'Docked Layout',
     'Report Builder',
+    'Report Builder Examples',
     'Report Viewer',
 ]);
 
-const heavyComponents = new Set(['Drag & Drop', 'Step Tour', 'Report Builder', 'Report Viewer']);
+const heavyComponents = new Set(['Drag & Drop', 'Step Tour', 'Report Builder', 'Report Builder Examples', 'Report Viewer']);
 
 const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>> = {
     '/components/textinput': () => import('./text-input/BasicUsage'),
@@ -330,6 +331,12 @@ const dataReportComponents: Omit<ComponentCardProps, 'isDark'>[] = [
         title: 'Report Builder',
         description: 'Visual report designer with datasource plugins, parameters, and JSON export',
         path: '/components/report-builder',
+    },
+    {
+        title: 'Report Builder Examples',
+        description: 'Worked examples: parameter filtering, row/column groups, visibility, cell items, drill-through',
+        path: '/components/report-builder-examples',
+        badge: 'New',
     },
     {
         title: 'Report Viewer',

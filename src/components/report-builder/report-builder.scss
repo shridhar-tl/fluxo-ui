@@ -647,30 +647,40 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+    min-width: 0;
+    height: 100%;
 
     &-form {
         padding: 12px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
+        flex: 1;
+        overflow-y: auto;
+        min-width: 0;
     }
 
     &-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 10px;
+        min-width: 0;
     }
 
     &-field {
         display: flex;
         flex-direction: column;
         gap: 4px;
-        min-width: 120px;
+        min-width: 0;
 
-        label {
+        label,
+        > .eui-rb-param-field-label {
             font-size: 12px;
             font-weight: 500;
             color: var(--eui-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
 
             .required {
                 color: var(--eui-danger);
@@ -682,6 +692,36 @@
             font-size: 11px;
             color: var(--eui-text-muted);
             margin-top: 2px;
+            overflow-wrap: break-word;
+        }
+
+        // Let every form control stretch to the field's width.
+        > input,
+        > textarea,
+        > select,
+        > .eui-text-input,
+        > .eui-textarea,
+        > .eui-numeric-input,
+        > .eui-dropdown,
+        > .eui-multiselect,
+        > .eui-chips,
+        > .eui-masked-input,
+        > .eui-autocomplete,
+        > .eui-date-range-picker,
+        > .eui-file-upload {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+    }
+
+    // When the container is narrow (docked side panel ~280px), collapse all
+    // fields to full rows instead of forcing their configured widths.
+    @container (max-width: 340px) {
+        &-field {
+            flex: 1 1 100% !important;
+            max-width: 100% !important;
         }
     }
 
@@ -690,6 +730,27 @@
         border-top: 1px solid var(--eui-border-subtle);
         display: flex;
         justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 8px;
+        flex-shrink: 0;
+        background: var(--eui-bg);
+    }
+}
+
+// Enable container queries on the side-panel form wrapper.
+.eui-rv-side-panel {
+    container-type: inline-size;
+}
+
+// Prevent date-range label from wrapping into 4 lines inside a narrow param panel.
+.eui-rb-param-panel-field .eui-drp-control {
+    min-width: 0;
+
+    .eui-drp-control-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
     }
 }
 
@@ -1021,6 +1082,134 @@
     &.drag-over {
         background: var(--eui-primary-soft);
         border-radius: 3px;
+    }
+}
+
+// ── Repeater Design ────────────────────────────────────────────────────────────
+.eui-rb-repeater-design {
+    border: 1px dashed var(--eui-border-subtle);
+    border-radius: 4px;
+    background: var(--eui-bg-subtle);
+    overflow: hidden;
+
+    &-header,
+    &-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 6px 10px;
+        font-size: 11px;
+        color: var(--eui-text-muted);
+        background: var(--eui-bg);
+        border-bottom: 1px solid var(--eui-border-subtle);
+    }
+
+    &-footer {
+        border-bottom: none;
+        border-top: 1px solid var(--eui-border-subtle);
+        font-style: italic;
+    }
+
+    &-binding {
+        font-weight: 600;
+        color: var(--eui-text);
+    }
+
+    &-layout {
+        padding: 2px 6px;
+        background: var(--eui-bg-subtle);
+        border: 1px solid var(--eui-border-subtle);
+        border-radius: 10px;
+        text-transform: capitalize;
+    }
+
+    &-body {
+        padding: 8px;
+        min-height: 60px;
+        transition: background 0.12s;
+
+        &.drag-over {
+            background: var(--eui-primary-soft);
+        }
+    }
+
+    &-iter {
+        position: relative;
+        padding: 8px;
+        background: var(--eui-bg);
+        border: 1px solid var(--eui-border-subtle);
+        border-radius: 4px;
+
+        &.alt {
+            background: var(--eui-bg-subtle);
+        }
+
+        &.primary {
+            border-color: var(--eui-primary);
+        }
+
+        &::before {
+            content: attr(data-iter-label);
+            position: absolute;
+            top: -10px;
+            left: 8px;
+            background: var(--eui-bg);
+            border: 1px solid var(--eui-border-subtle);
+            border-radius: 10px;
+            padding: 1px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--eui-text-muted);
+        }
+    }
+
+    &-iter-children {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    &-sep {
+        margin-top: 8px;
+
+        &.line {
+            border-top: 1px solid var(--eui-border-subtle);
+        }
+
+        &.gap {
+            height: 4px;
+        }
+    }
+}
+
+// ── Repeater Viewer ────────────────────────────────────────────────────────────
+.eui-rv-repeater {
+    &-empty {
+        padding: 12px 16px;
+        color: var(--eui-text-muted);
+        font-style: italic;
+        font-size: 12px;
+        border: 1px dashed var(--eui-border-subtle);
+        border-radius: 4px;
+        background: var(--eui-bg-subtle);
+    }
+
+    &-item {
+        &.alt {
+            background: var(--eui-bg-subtle);
+            border-radius: 4px;
+        }
+    }
+
+    &-sep {
+        &.line {
+            border-top: 1px solid var(--eui-border-subtle);
+        }
+
+        &.gap {
+            height: 4px;
+        }
     }
 }
 
@@ -1448,5 +1637,96 @@ select.eui-rb-prop-input {
     &-panel {
         padding: 16px;
         background: var(--eui-bg);
+    }
+}
+
+.eui-rb-props-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+        border-bottom: 1px solid var(--eui-border-subtle);
+        margin-bottom: 4px;
+    }
+
+    &-btn {
+        padding: 5px 10px;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        color: var(--eui-text-muted);
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 500;
+        white-space: nowrap;
+
+        &.active {
+            color: var(--eui-primary);
+            border-bottom-color: var(--eui-primary);
+        }
+
+        &:hover:not(.active) {
+            color: var(--eui-text);
+        }
+    }
+
+    &-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+.eui-rb-param-designer-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--eui-border-subtle);
+    margin-bottom: 12px;
+
+    .eui-rb-param-designer-tab {
+        padding: 6px 12px;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        color: var(--eui-text-muted);
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+
+        &.active {
+            color: var(--eui-primary);
+            border-bottom-color: var(--eui-primary);
+        }
+
+        &:hover:not(.active) {
+            color: var(--eui-text);
+        }
+    }
+}
+
+.eui-rb-param-field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--eui-text);
+    display: block;
+    margin-bottom: 4px;
+}
+
+.eui-rb-param-mandatory-mark {
+    color: var(--eui-danger);
+    margin-left: 2px;
+}
+
+.eui-rb-param-error {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--eui-danger);
+
+    div {
+        line-height: 1.4;
     }
 }

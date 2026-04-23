@@ -1,12 +1,20 @@
 import React, { useCallback } from 'react';
+import { Dropdown } from '../../../Dropdown';
 import { NumericInput } from '../../../NumericInput';
-import { TextInput } from '../../../TextInput';
+import type { ListItem } from '../../../../types';
 import { useReportBuilderContext } from '../../report-builder-context';
 import { updateComponentInTree } from '../../report-component-helpers';
 import type { ReportBuilderState } from '../../report-builder-types';
 import type { HorizontalLineComponentProps, ReportComponent } from '../../report-definition-types';
+import { ExpressionField } from './ExpressionField';
 
 interface Props { component: ReportComponent; }
+
+const styleOptions: ListItem[] = [
+    { value: 'solid', label: 'Solid' },
+    { value: 'dashed', label: 'Dashed' },
+    { value: 'dotted', label: 'Dotted' },
+];
 
 export const HorizontalLinePropsPanel: React.FC<Props> = ({ component }) => {
     const { store } = useReportBuilderContext();
@@ -30,6 +38,14 @@ export const HorizontalLinePropsPanel: React.FC<Props> = ({ component }) => {
         <div className="eui-rb-props-section">
             <div className="eui-rb-props-section-title">Horizontal Line</div>
 
+            <ExpressionField
+                label="Label (optional)"
+                value={String(p.label ?? '')}
+                onChange={(v) => update({ label: v || undefined })}
+                placeholder="Optional text shown inline with the rule"
+                expectedReturnType="string"
+            />
+
             <div className="eui-rb-prop-field">
                 <label className="eui-rb-prop-field-label">Thickness (px)</label>
                 <NumericInput
@@ -42,25 +58,23 @@ export const HorizontalLinePropsPanel: React.FC<Props> = ({ component }) => {
                 />
             </div>
 
+            <ExpressionField
+                label="Color"
+                value={String(p.color ?? '')}
+                onChange={(v) => update({ color: v || undefined })}
+                placeholder="var(--eui-border-subtle)"
+                expectedReturnType="string"
+                inputType="color"
+            />
+
             <div className="eui-rb-prop-field">
-                <label className="eui-rb-prop-field-label">Color</label>
-                <div style={{ display: 'flex', gap: 6 }}>
-                    <input
-                        type="color"
-                        value={p.color || '#cccccc'}
-                        onChange={(e) => update({ color: e.target.value })}
-                        style={{ width: 32, height: 28, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-input-bg)' }}
-                        aria-label="Line color picker"
-                    />
-                    <TextInput
-                        value={p.color ?? ''}
-                        onChange={(e) => update({ color: e.value })}
-                        placeholder="var(--eui-border-subtle)"
-                        size="sm"
-                        style={{ flex: 1 }}
-                        aria-label="Line color"
-                    />
-                </div>
+                <label className="eui-rb-prop-field-label">Style</label>
+                <Dropdown
+                    options={styleOptions}
+                    value={p.style ?? 'solid'}
+                    onChange={(e) => update({ style: e.value as HorizontalLineComponentProps['style'] })}
+                    size="sm"
+                />
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>

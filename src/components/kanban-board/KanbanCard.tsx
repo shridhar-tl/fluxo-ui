@@ -75,10 +75,14 @@ function KanbanCard({ card, column, index }: KanbanCardProps) {
         ? Math.round(((card.subtaskCompleted ?? 0) / card.subtaskCount!) * 100)
         : 0;
 
+    const hasActionsOverlay = !!cardActionsTemplate || !!allowDeleteCard;
+
     if (cardTemplate) {
         return (
             <div
-                className={classNames('eui-kanban-card', `eui-kanban-card-${cardSize}`)}
+                className={classNames('eui-kanban-card', `eui-kanban-card-${cardSize}`, {
+                    'eui-kanban-card-has-actions-overlay': hasActionsOverlay,
+                })}
                 onClick={handleClick}
                 onDoubleClick={handleDoubleClick}
                 onKeyDown={handleKeyDown}
@@ -89,6 +93,24 @@ function KanbanCard({ card, column, index }: KanbanCardProps) {
                 data-card-index={index}
             >
                 {cardTemplate(card, column)}
+                {hasActionsOverlay && (
+                    <div className="eui-kanban-card-actions-overlay">
+                        {cardActionsTemplate && cardActionsTemplate(card, column)}
+                        {allowDeleteCard && (
+                            <button
+                                className="eui-kanban-card-delete"
+                                onClick={handleDelete}
+                                aria-label={`Delete card: ${card.title}`}
+                                title="Delete card"
+                                type="button"
+                            >
+                                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14" aria-hidden="true">
+                                    <path d="M4 4l8 8M12 4l-8 8" />
+                                </svg>
+                            </button>
+                        )}
+                    </div>
+                )}
             </div>
         );
     }

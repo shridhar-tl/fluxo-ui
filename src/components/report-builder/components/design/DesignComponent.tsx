@@ -17,6 +17,7 @@ import { TableDesign } from './TableDesign';
 import { SubReportDesign } from './SubReportDesign';
 import { CanvasDesign } from './CanvasDesign';
 import { ChartDesign } from './ChartDesign';
+import { RepeaterDesign } from './RepeaterDesign';
 
 interface DesignComponentProps {
     component: ReportComponent;
@@ -51,6 +52,7 @@ const typeLabels: Record<string, string> = {
     'chart-donut': 'Donut Chart',
     'chart-line': 'Line Chart',
     canvas: 'Canvas',
+    repeater: 'Repeater',
 };
 
 const UnsupportedDesign: React.FC<{ type: string }> = ({ type }) => (
@@ -98,6 +100,17 @@ function renderDesignContent(
         case 'tab':
             return (
                 <TabDesign
+                    component={comp}
+                    onContainerDrop={onContainerDrop}
+                    selectedId={selectedId}
+                    onSelectNested={onSelectNested}
+                    onDeleteNested={onDeleteNested}
+                    onDuplicateNested={onDuplicateNested}
+                />
+            );
+        case 'repeater':
+            return (
+                <RepeaterDesign
                     component={comp}
                     onContainerDrop={onContainerDrop}
                     selectedId={selectedId}

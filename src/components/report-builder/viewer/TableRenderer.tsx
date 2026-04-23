@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { evaluateExpression } from '../expression/expression-parser';
-import type { ExpressionContext } from '../expression/expression-types';
+import type { ExpressionContext, GroupFrame } from '../expression/expression-types';
 import type {
     ReportComponent,
     TableComponentProps,
@@ -8,7 +8,12 @@ import type {
     GlobalStyles,
     ConditionalFormat,
 } from '../report-definition-types';
+import { flattenColumns, getEffectiveColumnTree } from '../table-helpers';
 import { useViewerContext, buildExpressionDatasources } from './ViewerExpressionContext';
+import { CellItemsRenderer } from './CellItemRenderer';
+import { NestedTableHeader } from './TableHeaderRenderer';
+import { resolveRowGroups } from './row-group-engine';
+import type { ResolvedGroupNode } from './row-group-engine';
 
 interface Props {
     component: ReportComponent;
@@ -60,6 +65,7 @@ async function evalFormatExpr(
     const input = expr.startsWith('=') ? expr.slice(1) : expr;
     const fieldCtx: ExpressionContext = {
         ...ctx,
+        currentRow: row,
         datasources: {
             ...ctx.datasources,
             Field: [row],
@@ -101,7 +107,7 @@ async function evalVisibilityExpr(
     if (typeof expr !== 'string') return true;
     const input = expr.startsWith('=') ? expr.slice(1) : expr;
     const evalCtx: ExpressionContext = row
-        ? { ...ctx, datasources: { ...ctx.datasources, Field: [row] } }
+        ? { ...ctx, currentRow: row, datasources: { ...ctx.datasources, Field: [row] } }
         : ctx;
     const { result, error } = await evaluateExpression(input, evalCtx);
     if (error) return true;
@@ -163,9 +169,9 @@ function aggregate(nums: number[], type: string): number {
 export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyles }) => {
     const viewerCtx = useViewerContext();
     const p = component.props as unknown as TableComponentProps;
-    const drillThroughParam = p.onDrillThrough;
-    const allColumns = p.columns ?? [];
-    const columnGroups = p.columnGroups;
+    const drillThroughVariable = p.onDrillThrough;
+    const columnTree = useMemo(() => getEffectiveColumnTree(p), [p]);
+    const allColumns = useMemo(() => flattenColumns(columnTree), [columnTree]);
     const tableStyle = globalStyles?.table ?? {};
 
     const datasources = viewerCtx.datasources;
@@ -183,7 +189,9 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
     const exprCtx: ExpressionContext = useMemo(() => ({
         datasources: buildExpressionDatasources(datasources),
         parameters: viewerCtx.parameters,
-    }), [datasources, viewerCtx.parameters]);
+        variables: viewerCtx.variables,
+        builtInFields: viewerCtx.builtInFields,
+    }), [datasources, viewerCtx.parameters, viewerCtx.variables, viewerCtx.builtInFields]);
 
     const [visibleColIds, setVisibleColIds] = useState<Set<string> | null>(null);
     const [filteredRows, setFilteredRows] = useState<Row[]>(rawRows);
@@ -283,9 +291,30 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
     }, [viewerCtx.onCellEdit, componentId]);
 
     const groups = useMemo(() => {
-        if (p.groupBy && !p.pivotMode) return groupRows(rows, p.groupBy);
+        if (p.groupBy && !p.pivotMode && (!p.rowGroups || p.rowGroups.length === 0)) {
+            return groupRows(rows, p.groupBy);
+        }
         return null;
-    }, [rows, p.groupBy, p.pivotMode]);
+    }, [rows, p.groupBy, p.pivotMode, p.rowGroups]);
+
+    const [resolvedRowGroups, setResolvedRowGroups] = useState<ResolvedGroupNode[] | null>(null);
+    const rowGroupsConfig = p.rowGroups;
+
+    useEffect(() => {
+        if (p.pivotMode) { setResolvedRowGroups(null); return; }
+        if (!rowGroupsConfig || rowGroupsConfig.length === 0) { setResolvedRowGroups(null); return; }
+        let cancelled = false;
+        resolveRowGroups({
+            rowGroups: rowGroupsConfig,
+            rows,
+            datasourceName: undefined,
+            exprCtx,
+            parentFrames: {},
+        }).then((result) => {
+            if (!cancelled) setResolvedRowGroups(result);
+        });
+        return () => { cancelled = true; };
+    }, [rowGroupsConfig, rows, exprCtx, p.pivotMode]);
 
     const handleColumnResize = useCallback((colId: string, width: number) => {
         setRuntimeWidths((prev) => ({ ...prev, [colId]: width }));
@@ -355,36 +384,57 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
     const altRowColor = tableStyle.alternateRowColor;
     const cellBorder = tableStyle.cellBorder ?? '1px solid var(--eui-border-subtle)';
 
-    const visibleColumnGroups = useMemo(() => {
-        if (!columnGroups || columnGroups.length === 0) return null;
-        const visColSet = new Set(columns.map((c) => c.id));
-        return columnGroups
-            .map((g) => ({
-                ...g,
-                columnIds: g.columnIds.filter((id) => visColSet.has(id)),
-            }))
-            .filter((g) => g.columnIds.length > 0);
-    }, [columnGroups, columns]);
+    const renderLeafHeader = (leafId: string, label: string, _align?: 'left' | 'center' | 'right') => {
+        const col = columns.find((c) => c.id === leafId);
+        if (!col) return null;
+        const frozen = col.frozen && hasFrozen;
+        const frozenStyle: React.CSSProperties = frozen ? {
+            position: 'sticky',
+            left: frozenOffsets.get(col.id) ?? 0,
+            zIndex: 2,
+        } : {};
+        return (
+            <ResizableHeader
+                colId={col.id}
+                width={getColWidth(col, runtimeWidths)}
+                align={col.align}
+                label={label}
+                headerBg={headerBg}
+                headerColor={headerColor}
+                cellBorder={cellBorder}
+                frozenStyle={frozenStyle}
+                onResize={(w) => handleColumnResize(col.id, w)}
+                isDragging={dragColId === col.id}
+                isDragOver={dragOverColId === col.id}
+                onDragStart={handleColumnDragStart}
+                onDragOver={handleColumnDragOver}
+                onDrop={handleColumnDrop}
+                onDragEnd={handleColumnDragEnd}
+                sortable={(p.enableSorting ?? false) && (col.sortable !== false)}
+                sortDir={sortField === col.field ? sortDir : null}
+                onSort={() => handleSort(col.field)}
+            />
+        );
+    };
 
-    const groupHeaderRow = visibleColumnGroups && visibleColumnGroups.length > 0 ? (() => {
-        const groupedColIds = new Set(visibleColumnGroups.flatMap((g) => g.columnIds));
-        const headerCells: Array<{ key: string; label: string; colSpan: number; isGroup: boolean }> = [];
-        let i = 0;
-        while (i < columns.length) {
-            const col = columns[i];
-            const group = visibleColumnGroups.find((g) => g.columnIds[0] === col.id);
-            if (group) {
-                headerCells.push({ key: group.id, label: group.label, colSpan: group.columnIds.length, isGroup: true });
-                i += group.columnIds.length;
-            } else if (!groupedColIds.has(col.id)) {
-                headerCells.push({ key: col.id, label: '', colSpan: 1, isGroup: false });
-                i++;
-            } else {
-                i++;
+    const effectiveColumnTreeForHeader = useMemo(() => {
+        const visSet = new Set(columns.map((c) => c.id));
+        const prune = (nodes: typeof columnTree): typeof columnTree => {
+            const out: typeof columnTree = [];
+            for (const n of nodes) {
+                if ('kind' in n && n.kind === 'group') {
+                    const kids = prune(n.children);
+                    if (kids.length > 0) out.push({ ...n, children: kids });
+                } else if (visSet.has(n.id)) {
+                    out.push(n);
+                }
             }
-        }
-        return headerCells;
-    })() : null;
+            return out;
+        };
+        const pruned = prune(columnTree);
+        if (pruned.length === 0) return columns.map((c) => ({ ...c, kind: 'column' as const }));
+        return pruned;
+    }, [columnTree, columns]);
 
     const tableElement = (
         <table
@@ -398,106 +448,92 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
             role="table"
             aria-label="Data table"
         >
-            <thead>
-                {groupHeaderRow && (
-                    <tr>
-                        {groupHeaderRow.map((cell) => (
-                            <th
-                                key={cell.key}
-                                colSpan={cell.colSpan}
-                                style={{
-                                    padding: '6px 10px',
-                                    fontWeight: 600,
-                                    fontSize: 11,
-                                    background: headerBg,
-                                    color: headerColor,
-                                    borderBottom: cellBorder,
-                                    textAlign: 'center',
-                                }}
-                            >
-                                {cell.label}
-                            </th>
-                        ))}
-                    </tr>
-                )}
-                <tr>
-                    {columns.map((col) => {
-                        const frozen = col.frozen && hasFrozen;
-                        const frozenStyle: React.CSSProperties = frozen ? {
-                            position: 'sticky',
-                            left: frozenOffsets.get(col.id) ?? 0,
-                            zIndex: 2,
-                        } : {};
-                        return (
-                            <ResizableHeader
-                                key={col.id}
-                                colId={col.id}
-                                width={getColWidth(col, runtimeWidths)}
-                                align={col.align}
-                                label={col.label || col.field}
-                                headerBg={headerBg}
-                                headerColor={headerColor}
-                                cellBorder={cellBorder}
-                                frozenStyle={frozenStyle}
-                                onResize={(w) => handleColumnResize(col.id, w)}
-                                isDragging={dragColId === col.id}
-                                isDragOver={dragOverColId === col.id}
-                                onDragStart={handleColumnDragStart}
-                                onDragOver={handleColumnDragOver}
-                                onDrop={handleColumnDrop}
-                                onDragEnd={handleColumnDragEnd}
-                                sortable={(p.enableSorting ?? false) && (col.sortable !== false)}
-                                sortDir={sortField === col.field ? sortDir : null}
-                                onSort={() => handleSort(col.field)}
-                            />
-                        );
-                    })}
-                </tr>
-            </thead>
+            <NestedTableHeader
+                tree={effectiveColumnTreeForHeader}
+                headerBg={headerBg}
+                headerColor={headerColor}
+                cellBorder={cellBorder}
+                renderLeafHeader={renderLeafHeader}
+            />
+            {p.headRows && p.headRows.length > 0 && (
+                <thead>
+                    {p.headRows.map((hr) => (
+                        <ExtraRow
+                            key={hr.id}
+                            row={hr}
+                            columns={columns}
+                            exprCtx={exprCtx}
+                            cellBorder={cellBorder}
+                            isHeader
+                        />
+                    ))}
+                </thead>
+            )}
             <tbody>
-                {groups
-                    ? groups.map((group) => (
-                        <GroupSection
-                            key={`${group.field}-${group.key}`}
-                            group={group}
+                {resolvedRowGroups
+                    ? resolvedRowGroups.map((node, i) => (
+                        <RowGroupSection
+                            key={`${node.group.id}-${i}`}
+                            node={node}
+                            parentFrames={{}}
                             columns={columns}
                             altRowColor={altRowColor}
                             cellBorder={cellBorder}
-                            showFooter={p.showGroupFooter ?? false}
                             exprCtx={exprCtx}
                             tableStyle={tableStyle}
                             frozenOffsets={frozenOffsets}
                             hasFrozen={hasFrozen}
                             runtimeWidths={runtimeWidths}
-                            groupVisibleExpr={p.groupVisibleExpr}
-                            drillThroughParam={drillThroughParam}
+                            drillThroughVariable={drillThroughVariable}
                             onDrillThrough={viewerCtx.onDrillThrough}
                             enableCellEdit={p.enableCellEdit}
                             onCellEdit={handleCellEdit}
+                            depth={0}
                         />
                     ))
-                    : rows.length <= virtualThreshold
-                        ? rows.map((row, idx) => (
-                            <DataRow
-                                key={idx}
-                                row={row}
-                                rowIndex={idx}
+                    : groups
+                        ? groups.map((group) => (
+                            <GroupSection
+                                key={`${group.field}-${group.key}`}
+                                group={group}
                                 columns={columns}
                                 altRowColor={altRowColor}
                                 cellBorder={cellBorder}
+                                showFooter={p.showGroupFooter ?? false}
                                 exprCtx={exprCtx}
+                                tableStyle={tableStyle}
                                 frozenOffsets={frozenOffsets}
                                 hasFrozen={hasFrozen}
                                 runtimeWidths={runtimeWidths}
-                                drillThroughParam={drillThroughParam}
+                                groupVisibleExpr={p.groupVisibleExpr}
+                                drillThroughVariable={drillThroughVariable}
                                 onDrillThrough={viewerCtx.onDrillThrough}
                                 enableCellEdit={p.enableCellEdit}
                                 onCellEdit={handleCellEdit}
                             />
                         ))
-                        : null
+                        : rows.length <= virtualThreshold
+                            ? rows.map((row, idx) => (
+                                <DataRow
+                                    key={idx}
+                                    row={row}
+                                    rowIndex={idx}
+                                    columns={columns}
+                                    altRowColor={altRowColor}
+                                    cellBorder={cellBorder}
+                                    exprCtx={exprCtx}
+                                    frozenOffsets={frozenOffsets}
+                                    hasFrozen={hasFrozen}
+                                    runtimeWidths={runtimeWidths}
+                                    drillThroughVariable={drillThroughVariable}
+                                    onDrillThrough={viewerCtx.onDrillThrough}
+                                    enableCellEdit={p.enableCellEdit}
+                                    onCellEdit={handleCellEdit}
+                                />
+                            ))
+                            : null
                 }
-                {rows.length === 0 && (
+                {!resolvedRowGroups && !groups && rows.length === 0 && (
                     <tr>
                         <td
                             colSpan={columns.length}
@@ -508,10 +544,23 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
                     </tr>
                 )}
             </tbody>
+            {p.footerRows && p.footerRows.length > 0 && (
+                <tfoot>
+                    {p.footerRows.map((fr) => (
+                        <ExtraRow
+                            key={fr.id}
+                            row={fr}
+                            columns={columns}
+                            exprCtx={exprCtx}
+                            cellBorder={cellBorder}
+                        />
+                    ))}
+                </tfoot>
+            )}
         </table>
     );
 
-    const useVirtual = !groups && rows.length > virtualThreshold;
+    const useVirtual = !groups && !resolvedRowGroups && rows.length > virtualThreshold;
 
     const handleCopyData = useCallback(() => {
         const header = columns.map((c) => c.label || c.field).join('\t');
@@ -568,7 +617,7 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
                     frozenOffsets={frozenOffsets}
                     hasFrozen={hasFrozen}
                     runtimeWidths={runtimeWidths}
-                    drillThroughParam={drillThroughParam}
+                    drillThroughVariable={drillThroughVariable}
                     onDrillThrough={viewerCtx.onDrillThrough}
                     enableCellEdit={p.enableCellEdit}
                     onCellEdit={handleCellEdit}
@@ -649,6 +698,136 @@ const PivotTable: React.FC<{
     );
 };
 
+const RowGroupSection: React.FC<{
+    node: ResolvedGroupNode;
+    parentFrames: Record<string, GroupFrame>;
+    columns: TableColumnDef[];
+    altRowColor?: string;
+    cellBorder: string;
+    exprCtx: ExpressionContext;
+    tableStyle: GlobalStyles['table'];
+    frozenOffsets: Map<string, number>;
+    hasFrozen: boolean;
+    runtimeWidths: Record<string, number>;
+    drillThroughVariable?: string;
+    onDrillThrough?: (variableName: string, value: unknown) => void;
+    enableCellEdit?: boolean;
+    onCellEdit?: (rowIndex: number, field: string, value: unknown) => void;
+    depth: number;
+}> = ({ node, parentFrames, columns, altRowColor, cellBorder, exprCtx, tableStyle, frozenOffsets, hasFrozen, runtimeWidths, drillThroughVariable, onDrillThrough, enableCellEdit, onCellEdit, depth }) => {
+    const [collapsed, setCollapsed] = useState(false);
+    const frames = useMemo(
+        () => ({ ...parentFrames, [node.group.name]: node.frame }),
+        [parentFrames, node.frame, node.group.name],
+    );
+    const rowExprCtx = useMemo<ExpressionContext>(
+        () => ({ ...exprCtx, rowGroups: frames, variables: node.frame.variables }),
+        [exprCtx, frames, node.frame.variables],
+    );
+
+    const indent = depth * 16;
+    const keyDisplay = node.keys && node.keys.length > 0
+        ? node.keys.map((k) => String(k ?? '')).join(' / ')
+        : node.values.length > 0
+            ? `${node.values.length} rows`
+            : '';
+
+    const hasChildren = node.children && node.children.length > 0;
+    const leafRows = node.leafRows ?? [];
+    const isParentKind = node.group.groupKind === 'parent';
+
+    return (
+        <>
+            {isParentKind && (
+                <tr
+                    style={{ cursor: 'pointer', background: 'var(--eui-bg-subtle)' }}
+                    onClick={() => setCollapsed((v) => !v)}
+                    role="row"
+                    aria-expanded={!collapsed}
+                >
+                    <td
+                        colSpan={columns.length}
+                        style={{
+                            padding: '6px 10px',
+                            paddingLeft: 10 + indent,
+                            fontWeight: 600,
+                            fontSize: 12,
+                            borderBottom: cellBorder,
+                            color: 'var(--eui-text)',
+                        }}
+                    >
+                        <span style={{ marginRight: 6, display: 'inline-block', transform: collapsed ? 'rotate(-90deg)' : 'rotate(0)', transition: 'transform 0.15s' }}>
+                            ▾
+                        </span>
+                        <span style={{ color: 'var(--eui-text-muted)', fontSize: 10, marginRight: 4 }}>{node.group.name}:</span>
+                        {keyDisplay}
+                    </td>
+                </tr>
+            )}
+            {!collapsed && hasChildren && node.children!.map((child, i) => (
+                <RowGroupSection
+                    key={`${child.group.id}-${i}`}
+                    node={child}
+                    parentFrames={frames}
+                    columns={columns}
+                    altRowColor={altRowColor}
+                    cellBorder={cellBorder}
+                    exprCtx={exprCtx}
+                    tableStyle={tableStyle}
+                    frozenOffsets={frozenOffsets}
+                    hasFrozen={hasFrozen}
+                    runtimeWidths={runtimeWidths}
+                    drillThroughVariable={drillThroughVariable}
+                    onDrillThrough={onDrillThrough}
+                    enableCellEdit={enableCellEdit}
+                    onCellEdit={onCellEdit}
+                    depth={depth + 1}
+                />
+            ))}
+            {!collapsed && !hasChildren && leafRows.map((row, idx) => (
+                <DataRow
+                    key={idx}
+                    row={row}
+                    rowIndex={idx}
+                    columns={columns}
+                    altRowColor={altRowColor}
+                    cellBorder={cellBorder}
+                    exprCtx={rowExprCtx}
+                    frozenOffsets={frozenOffsets}
+                    hasFrozen={hasFrozen}
+                    runtimeWidths={runtimeWidths}
+                    drillThroughVariable={drillThroughVariable}
+                    onDrillThrough={onDrillThrough}
+                    enableCellEdit={enableCellEdit}
+                    onCellEdit={onCellEdit}
+                />
+            ))}
+            {!collapsed && !hasChildren && node.group.showFooter && leafRows.length > 0 && (
+                <tr style={{
+                    background: tableStyle?.footerBackground ?? 'var(--eui-bg-subtle)',
+                    color: tableStyle?.footerColor ?? 'var(--eui-text-muted)',
+                }}>
+                    {columns.map((col) => (
+                        <td
+                            key={col.id}
+                            style={{
+                                padding: '6px 10px',
+                                paddingLeft: 10 + indent,
+                                fontWeight: 600,
+                                fontSize: 11,
+                                borderBottom: cellBorder,
+                                textAlign: col.align ?? 'left',
+                            }}
+                        >
+                            <GroupFooterCell col={col} rows={leafRows} exprCtx={rowExprCtx} />
+                        </td>
+                    ))}
+                </tr>
+            )}
+        </>
+    );
+};
+
 const GroupSection: React.FC<{
     group: GroupedData;
     columns: TableColumnDef[];
@@ -661,11 +840,11 @@ const GroupSection: React.FC<{
     hasFrozen: boolean;
     runtimeWidths: Record<string, number>;
     groupVisibleExpr?: string;
-    drillThroughParam?: string;
-    onDrillThrough?: (parameterName: string, value: unknown) => void;
+    drillThroughVariable?: string;
+    onDrillThrough?: (variableName: string, value: unknown) => void;
     enableCellEdit?: boolean;
     onCellEdit?: (rowIndex: number, field: string, value: unknown) => void;
-}> = ({ group, columns, altRowColor, cellBorder, showFooter, exprCtx, tableStyle, frozenOffsets, hasFrozen, runtimeWidths, groupVisibleExpr, drillThroughParam, onDrillThrough, enableCellEdit, onCellEdit }) => {
+}> = ({ group, columns, altRowColor, cellBorder, showFooter, exprCtx, tableStyle, frozenOffsets, hasFrozen, runtimeWidths, groupVisibleExpr, drillThroughVariable, onDrillThrough, enableCellEdit, onCellEdit }) => {
     const [collapsed, setCollapsed] = useState(false);
     const [groupVisible, setGroupVisible] = useState(true);
 
@@ -723,7 +902,7 @@ const GroupSection: React.FC<{
                     hasFrozen={hasFrozen}
                     runtimeWidths={runtimeWidths}
                     groupVisibleExpr={groupVisibleExpr}
-                    drillThroughParam={drillThroughParam}
+                    drillThroughVariable={drillThroughVariable}
                     onDrillThrough={onDrillThrough}
                     enableCellEdit={enableCellEdit}
                     onCellEdit={onCellEdit}
@@ -741,7 +920,7 @@ const GroupSection: React.FC<{
                     frozenOffsets={frozenOffsets}
                     hasFrozen={hasFrozen}
                     runtimeWidths={runtimeWidths}
-                    drillThroughParam={drillThroughParam}
+                    drillThroughVariable={drillThroughVariable}
                     onDrillThrough={onDrillThrough}
                     enableCellEdit={enableCellEdit}
                     onCellEdit={onCellEdit}
@@ -810,19 +989,19 @@ const DataRow: React.FC<{
     frozenOffsets: Map<string, number>;
     hasFrozen: boolean;
     runtimeWidths: Record<string, number>;
-    drillThroughParam?: string;
-    onDrillThrough?: (parameterName: string, value: unknown) => void;
+    drillThroughVariable?: string;
+    onDrillThrough?: (variableName: string, value: unknown) => void;
     enableCellEdit?: boolean;
     onCellEdit?: (rowIndex: number, field: string, value: unknown) => void;
-}> = ({ row, rowIndex, columns, altRowColor, cellBorder, exprCtx, frozenOffsets, hasFrozen, runtimeWidths, drillThroughParam, onDrillThrough, enableCellEdit, onCellEdit }) => {
+}> = ({ row, rowIndex, columns, altRowColor, cellBorder, exprCtx, frozenOffsets, hasFrozen, runtimeWidths, drillThroughVariable, onDrillThrough, enableCellEdit, onCellEdit }) => {
     const bg = altRowColor && rowIndex % 2 === 1 ? altRowColor : undefined;
-    const clickable = !!drillThroughParam && !!onDrillThrough;
+    const clickable = !!drillThroughVariable && !!onDrillThrough;
 
     const handleClick = useCallback(() => {
-        if (drillThroughParam && onDrillThrough) {
-            onDrillThrough(drillThroughParam, row);
+        if (drillThroughVariable && onDrillThrough) {
+            onDrillThrough(drillThroughVariable, row);
         }
-    }, [drillThroughParam, onDrillThrough, row]);
+    }, [drillThroughVariable, onDrillThrough, row]);
 
     return (
         <tr
@@ -870,8 +1049,12 @@ const CellRenderer: React.FC<{
     const [editValue, setEditValue] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
 
+    const hasCellItems = !!col.cellItems && col.cellItems.length > 0;
+
     const evalFormat = useCallback(async () => {
-        if (col.formatExpr) {
+        if (hasCellItems) {
+            setDisplay('');
+        } else if (col.formatExpr) {
             const result = await evalFormatExpr(col.formatExpr, row, exprCtx);
             setDisplay(result);
         } else {
@@ -879,7 +1062,7 @@ const CellRenderer: React.FC<{
         }
         const cs = await evalConditionalFormats(col.conditionalFormats, row, exprCtx);
         setCondStyle(cs);
-    }, [col.formatExpr, col.conditionalFormats, row, exprCtx, rawValue]);
+    }, [col.formatExpr, col.conditionalFormats, row, exprCtx, rawValue, hasCellItems]);
 
     useEffect(() => {
         evalFormat();
@@ -955,6 +1138,12 @@ const CellRenderer: React.FC<{
                     }}
                     aria-label={`Edit ${col.label}`}
                 />
+            ) : hasCellItems ? (
+                <CellItemsRenderer
+                    items={col.cellItems!}
+                    row={row}
+                    exprCtx={exprCtx}
+                />
             ) : display}
         </td>
     );
@@ -994,6 +1183,66 @@ const virtualRowHeight = 33;
 const virtualThreshold = 100;
 const overscan = 10;
 
+const ExtraRow: React.FC<{
+    row: import('../report-definition-types').TableExtraRow;
+    columns: TableColumnDef[];
+    exprCtx: ExpressionContext;
+    cellBorder: string;
+    isHeader?: boolean;
+}> = ({ row, columns, exprCtx, cellBorder, isHeader }) => {
+    const [cellTexts, setCellTexts] = useState<string[]>(() => row.cells.map(() => ''));
+
+    useEffect(() => {
+        let cancelled = false;
+        Promise.all(
+            row.cells.map(async (cell) => {
+                if (!cell.textExpression) return '';
+                const { result, error } = await evaluateExpression(cell.textExpression, exprCtx);
+                if (error) return `[${error}]`;
+                return formatRaw(result);
+            }),
+        ).then((vals) => {
+            if (!cancelled) setCellTexts(vals);
+        });
+        return () => { cancelled = true; };
+    }, [row, exprCtx]);
+
+    const Cell: 'th' | 'td' = isHeader ? 'th' : 'td';
+    const totalLeaves = columns.length;
+
+    let covered = 0;
+    return (
+        <tr>
+            {row.cells.map((c, i) => {
+                const span = Math.max(1, c.colSpan ?? 1);
+                covered += span;
+                if (covered > totalLeaves) return null;
+                const css: React.CSSProperties = {
+                    padding: '6px 10px',
+                    textAlign: c.align ?? 'left',
+                    borderBottom: cellBorder,
+                    borderRight: cellBorder,
+                    fontWeight: isHeader ? 600 : undefined,
+                    background: isHeader ? 'var(--eui-bg-subtle)' : undefined,
+                };
+                if (c.style) {
+                    if (c.style.textColor) css.color = c.style.textColor;
+                    if (c.style.backgroundColor) css.background = c.style.backgroundColor;
+                    if (c.style.fontWeight) css.fontWeight = c.style.fontWeight;
+                    if (c.style.fontStyle) css.fontStyle = c.style.fontStyle;
+                    if (c.style.textAlign) css.textAlign = c.style.textAlign;
+                    if (c.style.fontSize) css.fontSize = c.style.fontSize;
+                }
+                return (
+                    <Cell key={i} colSpan={span} style={css}>
+                        {cellTexts[i] ?? ''}
+                    </Cell>
+                );
+            })}
+        </tr>
+    );
+};
+
 const VirtualTableBody: React.FC<{
     rows: Row[];
     columns: TableColumnDef[];
@@ -1003,11 +1252,11 @@ const VirtualTableBody: React.FC<{
     frozenOffsets: Map<string, number>;
     hasFrozen: boolean;
     runtimeWidths: Record<string, number>;
-    drillThroughParam?: string;
-    onDrillThrough?: (parameterName: string, value: unknown) => void;
+    drillThroughVariable?: string;
+    onDrillThrough?: (variableName: string, value: unknown) => void;
     enableCellEdit?: boolean;
     onCellEdit?: (rowIndex: number, field: string, value: unknown) => void;
-}> = ({ rows, columns, altRowColor, cellBorder, exprCtx, frozenOffsets, hasFrozen, runtimeWidths, drillThroughParam, onDrillThrough, enableCellEdit, onCellEdit }) => {
+}> = ({ rows, columns, altRowColor, cellBorder, exprCtx, frozenOffsets, hasFrozen, runtimeWidths, drillThroughVariable, onDrillThrough, enableCellEdit, onCellEdit }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scrollTop, setScrollTop] = useState(0);
     const [containerHeight, setContainerHeight] = useState(400);
@@ -1064,7 +1313,7 @@ const VirtualTableBody: React.FC<{
                             frozenOffsets={frozenOffsets}
                             hasFrozen={hasFrozen}
                             runtimeWidths={runtimeWidths}
-                            drillThroughParam={drillThroughParam}
+                            drillThroughVariable={drillThroughVariable}
                             onDrillThrough={onDrillThrough}
                             enableCellEdit={enableCellEdit}
                             onCellEdit={onCellEdit}

@@ -297,20 +297,40 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
 
     const togglePin = useCallback(
         (panelId: string) => {
+            const current = stateRef.current.panels[panelId];
+            if (!current) return;
+            const wasPinned = current.pinState === 'pinned';
+            const newPinState: PinState = wasPinned ? 'auto-hide' : 'pinned';
+            const posKey = current.position as string;
             updateState((prev) => {
                 const r = prev.panels[panelId];
                 if (!r) return prev;
-                const newPinState: PinState = r.pinState === 'pinned' ? 'auto-hide' : 'pinned';
+                const nextActiveTabs = { ...prev.activeTabs };
+                // When pinning, take over the slot so the panel renders via the pinned path —
+                // without this, a panel whose `defaultState` is `'auto-hide'` would lose its
+                // active-tab claim (or never hold it) and the activity bar's fallback to
+                // `leftPanels[0]` would render a different panel in its slot instead.
+                if (newPinState === 'pinned') {
+                    nextActiveTabs[posKey] = panelId;
+                } else if (nextActiveTabs[posKey] === panelId) {
+                    // Unpinning — hand the slot to another pinned sibling if there is one.
+                    const fallback = Object.values(prev.panels).find(
+                        (p) => p.id !== panelId && p.position === r.position && p.visible && p.pinState === 'pinned',
+                    );
+                    nextActiveTabs[posKey] = fallback?.id ?? null;
+                }
                 return {
                     ...prev,
+                    activeTabs: nextActiveTabs,
                     panels: { ...prev.panels, [panelId]: { ...r, pinState: newPinState } },
                 };
             });
-            if (state.panels[panelId]?.pinState === 'pinned') {
-                setAutoHideExpanded((prev) => ({ ...prev, [panelId]: false }));
-            }
+            // `autoHideExpanded` only matters when pinState is 'auto-hide'; reset it regardless
+            // so when unpinning we don't suddenly re-expand the overlay, and when pinning the
+            // old overlay flag is cleanly forgotten.
+            setAutoHideExpanded((prev) => (prev[panelId] ? { ...prev, [panelId]: false } : prev));
         },
-        [updateState, state.panels],
+        [updateState],
     );
 
     const closePanel = useCallback(

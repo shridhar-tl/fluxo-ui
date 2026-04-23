@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
+import { Checkbox } from '../../../Checkbox';
 import { Dropdown } from '../../../Dropdown';
-import { TextInput } from '../../../TextInput';
 import type { ListItem } from '../../../../types';
 import { useReportBuilderContext } from '../../report-builder-context';
 import { updateComponentInTree } from '../../report-component-helpers';
@@ -44,20 +44,26 @@ export const ImagePropsPanel: React.FC<Props> = ({ component }) => {
                 label="Source URL"
                 value={String(p.src ?? '')}
                 onChange={(v) => update({ src: v })}
-                placeholder="https://... or =expression"
+                placeholder="https://... or toggle fx for an expression"
+                expectedReturnType="string"
+                hint="Allowed schemes: https, http, data:image/*, relative paths."
+            />
+
+            <ExpressionField
+                label="Alt Text"
+                value={String(p.alt ?? '')}
+                onChange={(v) => update({ alt: v || undefined })}
+                placeholder="Describe the image"
                 expectedReturnType="string"
             />
 
-            <div className="eui-rb-prop-field">
-                <label className="eui-rb-prop-field-label">Alt Text</label>
-                <TextInput
-                    value={p.alt ?? ''}
-                    onChange={(e) => update({ alt: e.value })}
-                    placeholder="Describe the image"
-                    aria-label="Alt text"
-                    size="sm"
-                />
-            </div>
+            <ExpressionField
+                label="Tooltip"
+                value={String(p.tooltip ?? '')}
+                onChange={(v) => update({ tooltip: v || undefined })}
+                placeholder="Optional hover text"
+                expectedReturnType="string"
+            />
 
             <div className="eui-rb-prop-field">
                 <label className="eui-rb-prop-field-label">Object Fit</label>
@@ -71,26 +77,36 @@ export const ImagePropsPanel: React.FC<Props> = ({ component }) => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                <div className="eui-rb-prop-field">
-                    <label className="eui-rb-prop-field-label">Width</label>
-                    <TextInput
-                        value={p.width ?? '100%'}
-                        onChange={(e) => update({ width: e.value })}
-                        placeholder="100% or 200px"
-                        aria-label="Width"
-                        size="sm"
-                    />
-                </div>
-                <div className="eui-rb-prop-field">
-                    <label className="eui-rb-prop-field-label">Height</label>
-                    <TextInput
-                        value={p.height ?? 'auto'}
-                        onChange={(e) => update({ height: e.value })}
-                        placeholder="auto or 200px"
-                        aria-label="Height"
-                        size="sm"
-                    />
-                </div>
+                <ExpressionField
+                    label="Width"
+                    value={String(p.width ?? '100%')}
+                    onChange={(v) => update({ width: v })}
+                    placeholder="100% or 200px"
+                    expectedReturnType="string"
+                />
+                <ExpressionField
+                    label="Height"
+                    value={String(p.height ?? 'auto')}
+                    onChange={(v) => update({ height: v })}
+                    placeholder="auto or 200px"
+                    expectedReturnType="string"
+                />
+            </div>
+
+            <ExpressionField
+                label="Click URL (optional)"
+                value={String(p.href ?? '')}
+                onChange={(v) => update({ href: v || undefined })}
+                placeholder="https://... to wrap the image in a link"
+                expectedReturnType="string"
+            />
+
+            <div className="eui-rb-prop-field">
+                <Checkbox
+                    checked={p.openInNewTab === true}
+                    onChange={(e) => update({ openInNewTab: e.value })}
+                    label="Open link in new tab"
+                />
             </div>
         </div>
     );

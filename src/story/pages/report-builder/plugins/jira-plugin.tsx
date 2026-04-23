@@ -1,6 +1,51 @@
 import React from 'react';
-import type { DatasourcePlugin } from '../../../../components/report-builder';
+import type { DatasourcePlugin, DatasetField } from '../../../../components/report-builder';
 import { jiraSampleData } from './jira-sample-data';
+
+function buildJiraFields(flattenSubtasks: boolean, includeComments: boolean): DatasetField[] {
+    if (flattenSubtasks) {
+        return [
+            { name: 'issueKey', type: 'string' },
+            { name: 'issueSummary', type: 'string' },
+            { name: 'issueStatus', type: 'string' },
+            { name: 'subtaskKey', type: 'string' },
+            { name: 'subtaskSummary', type: 'string' },
+            { name: 'subtaskStatus', type: 'string' },
+            { name: 'subtaskAssignee', type: 'string' },
+        ];
+    }
+    const base: DatasetField[] = [
+        { name: 'id', type: 'string' },
+        { name: 'key', type: 'string' },
+        { name: 'summary', type: 'string' },
+        { name: 'status', type: 'string' },
+        { name: 'priority', type: 'string' },
+        { name: 'assignee', type: 'string' },
+        { name: 'reporter', type: 'string' },
+        { name: 'created', type: 'date' },
+        { name: 'updated', type: 'date' },
+        { name: 'storyPoints', type: 'number' },
+        { name: 'subtaskCount', type: 'number' },
+        { name: 'commentCount', type: 'number' },
+    ];
+    if (!includeComments) return base;
+    return [
+        ...base,
+        { name: 'subtasks', type: 'array', children: [
+            { name: 'id', type: 'string' },
+            { name: 'key', type: 'string' },
+            { name: 'summary', type: 'string' },
+            { name: 'status', type: 'string' },
+            { name: 'assignee', type: 'string' },
+        ] },
+        { name: 'comments', type: 'array', children: [
+            { name: 'id', type: 'string' },
+            { name: 'author', type: 'string' },
+            { name: 'body', type: 'string' },
+            { name: 'created', type: 'date' },
+        ] },
+    ];
+}
 
 const JiraConfigUI: React.FC<{ config: Record<string, unknown>; onChange: (c: Record<string, unknown>) => void }> = ({ config, onChange }) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -53,18 +98,7 @@ export const jiraPlugin: DatasourcePlugin = {
                     subtaskAssignee: sub.assignee,
                 })),
             );
-            return {
-                rows,
-                fields: [
-                    { name: 'issueKey', type: 'string' },
-                    { name: 'issueSummary', type: 'string' },
-                    { name: 'issueStatus', type: 'string' },
-                    { name: 'subtaskKey', type: 'string' },
-                    { name: 'subtaskSummary', type: 'string' },
-                    { name: 'subtaskStatus', type: 'string' },
-                    { name: 'subtaskAssignee', type: 'string' },
-                ],
-            };
+            return { rows, fields: buildJiraFields(true, includeComments) };
         }
 
         const rows = jiraSampleData.map((issue) => ({
@@ -86,37 +120,10 @@ export const jiraPlugin: DatasourcePlugin = {
             } : {}),
         }));
 
-        return {
-            rows,
-            fields: [
-                { name: 'id', type: 'string' },
-                { name: 'key', type: 'string' },
-                { name: 'summary', type: 'string' },
-                { name: 'status', type: 'string' },
-                { name: 'priority', type: 'string' },
-                { name: 'assignee', type: 'string' },
-                { name: 'reporter', type: 'string' },
-                { name: 'created', type: 'date' },
-                { name: 'updated', type: 'date' },
-                { name: 'storyPoints', type: 'number' },
-                { name: 'subtaskCount', type: 'number' },
-                { name: 'commentCount', type: 'number' },
-                ...(includeComments ? [
-                    { name: 'subtasks', type: 'array' as const, children: [
-                        { name: 'id', type: 'string' as const },
-                        { name: 'key', type: 'string' as const },
-                        { name: 'summary', type: 'string' as const },
-                        { name: 'status', type: 'string' as const },
-                        { name: 'assignee', type: 'string' as const },
-                    ] },
-                    { name: 'comments', type: 'array' as const, children: [
-                        { name: 'id', type: 'string' as const },
-                        { name: 'author', type: 'string' as const },
-                        { name: 'body', type: 'string' as const },
-                        { name: 'created', type: 'date' as const },
-                    ] },
-                ] : []),
-            ],
-        };
+        return { rows, fields: buildJiraFields(false, includeComments) };
     },
+    inferSchema: (config) => buildJiraFields(
+        (config.flattenSubtasks as boolean) ?? false,
+        (config.includeComments as boolean) ?? true,
+    ),
 };

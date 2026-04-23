@@ -1,7 +1,9 @@
 import type {
     AutocompleteSuggestion,
     BinaryOpNode,
+    BuiltInFieldRefNode,
     BuiltinFunction,
+    ColGroupRefNode,
     DatasourceRefNode,
     ExpressionContext,
     ExpressionError,
@@ -12,10 +14,41 @@ import type {
     FunctionCallNode,
     LiteralNode,
     ParameterRefNode,
+    RowGroupRefNode,
+    RowOrColGroupProperty,
     Token,
     TokenType,
     UnaryOpNode,
+    VariableRefNode,
 } from './expression-types';
+
+const FORBIDDEN_PATH_SEGMENTS = new Set(['__proto__', 'constructor', 'prototype']);
+
+function safeGetByPath(obj: unknown, path: string): unknown {
+    if (obj === null || obj === undefined) return null;
+    if (!path) return obj;
+    const parts = path.split('.');
+    let cur: unknown = obj;
+    for (const raw of parts) {
+        if (cur === null || cur === undefined) return null;
+        if (FORBIDDEN_PATH_SEGMENTS.has(raw)) return null;
+        let seg = raw;
+        const arrayMatch = seg.match(/^([^\[]+)\[(\d+)\]$/);
+        let arrayIdx: number | null = null;
+        if (arrayMatch) {
+            seg = arrayMatch[1];
+            arrayIdx = parseInt(arrayMatch[2], 10);
+        }
+        if (typeof cur !== 'object') return null;
+        if (!Object.prototype.hasOwnProperty.call(cur as object, seg)) return null;
+        cur = (cur as Record<string, unknown>)[seg];
+        if (arrayIdx !== null) {
+            if (!Array.isArray(cur)) return null;
+            cur = cur[arrayIdx];
+        }
+    }
+    return cur;
+}
 
 // ── Tokenizer ─────────────────────────────────────────────────────────────────
 
@@ -280,9 +313,17 @@ class Parser {
 
             if (firstName === 'Parameters') {
                 const paramToken = this.consume();
+                const path: string[] = [];
+                while (this.match('Dot')) {
+                    this.consume();
+                    const next = this.consume();
+                    if (next.type === 'Identifier') path.push(next.value);
+                    else break;
+                }
                 const node: ParameterRefNode = {
                     type: 'ParameterRef',
                     parameter: paramToken.value,
+                    path: path.length > 0 ? path : undefined,
                     returnType: 'any',
                 };
                 return node;
@@ -293,6 +334,42 @@ class Parser {
                 const node: FieldRefNode = {
                     type: 'FieldRef',
                     field: fieldToken.value,
+                    returnType: 'any',
+                };
+                return node;
+            }
+
+            if (firstName === 'Variables') {
+                const varToken = this.consume();
+                const path: string[] = [];
+                while (this.match('Dot')) {
+                    this.consume();
+                    const next = this.consume();
+                    if (next.type === 'Identifier') path.push(next.value);
+                    else break;
+                }
+                const node: VariableRefNode = {
+                    type: 'VariableRef',
+                    name: varToken.value,
+                    path: path.length > 0 ? path : undefined,
+                    returnType: 'any',
+                };
+                return node;
+            }
+
+            if (firstName === 'BuiltInFields') {
+                const fieldToken = this.consume();
+                const path: string[] = [];
+                while (this.match('Dot')) {
+                    this.consume();
+                    const next = this.consume();
+                    if (next.type === 'Identifier') path.push(next.value);
+                    else break;
+                }
+                const node: BuiltInFieldRefNode = {
+                    type: 'BuiltInFieldRef',
+                    name: fieldToken.value,
+                    path: path.length > 0 ? path : undefined,
                     returnType: 'any',
                 };
                 return node;
@@ -318,6 +395,10 @@ class Parser {
                 this.consume();
             }
 
+            if (firstName === 'RowGroup' || firstName === 'ColGroup') {
+                return this.buildGroupRefNode(firstName, args, nameToken.start);
+            }
+
             const sig = builtinFunctions.find((f) => f.name.toLowerCase() === firstName.toLowerCase()) ??
                 this.typeCtx.customFunctions?.find((f) => f.name.toLowerCase() === firstName.toLowerCase());
 
@@ -333,16 +414,82 @@ class Parser {
         this.errors.push({ message: `Unknown identifier: "${firstName}"`, position: nameToken.start });
         return { type: 'Literal', value: null, returnType: 'null' };
     }
+
+    private buildGroupRefNode(
+        kind: 'RowGroup' | 'ColGroup',
+        args: ExpressionNode[],
+        startPos: number,
+    ): ExpressionNode {
+        if (args.length === 0 || args[0].type !== 'Literal' || typeof args[0].value !== 'string') {
+            this.errors.push({
+                message: `${kind}() requires a string group name as its first argument`,
+                position: startPos,
+            });
+            return { type: 'Literal', value: null, returnType: 'null' };
+        }
+        const groupName = String(args[0].value);
+
+        let property: RowOrColGroupProperty = { kind: 'key' };
+
+        if (this.match('Dot')) {
+            this.consume();
+            const propToken = this.consume();
+            const propName = propToken.value;
+            if (propName === 'key') property = { kind: 'key' };
+            else if (propName === 'keys') property = { kind: 'keys' };
+            else if (propName === 'values') property = { kind: 'values' };
+            else if (propName === 'Fields') {
+                if (this.match('Dot')) {
+                    this.consume();
+                    const fieldToken = this.consume();
+                    property = { kind: 'field', field: fieldToken.value };
+                } else {
+                    property = { kind: 'field', field: '' };
+                }
+            } else if (propName === 'Variables') {
+                if (this.match('Dot')) {
+                    this.consume();
+                    const varToken = this.consume();
+                    property = { kind: 'variable', name: varToken.value };
+                } else {
+                    property = { kind: 'variable', name: '' };
+                }
+            } else {
+                this.errors.push({
+                    message: `Unknown ${kind} property: ${propName}`,
+                    position: propToken.start,
+                });
+            }
+        }
+
+        if (kind === 'RowGroup') {
+            const node: RowGroupRefNode = {
+                type: 'RowGroupRef',
+                groupName,
+                property,
+                returnType: 'any',
+            };
+            return node;
+        } else {
+            const node: ColGroupRefNode = {
+                type: 'ColGroupRef',
+                groupName,
+                property,
+                returnType: 'any',
+            };
+            return node;
+        }
+    }
 }
 
 // ── Built-in Functions ────────────────────────────────────────────────────────
 
 export const builtinFunctions: BuiltinFunction[] = [
-    { name: 'Sum', description: 'Sum of values in a datasource field', params: [{ name: 'field', type: 'any' }], returnType: 'number' },
-    { name: 'Count', description: 'Count of rows in a datasource field', params: [{ name: 'field', type: 'any' }], returnType: 'number' },
-    { name: 'Avg', description: 'Average of values in a datasource field', params: [{ name: 'field', type: 'any' }], returnType: 'number' },
-    { name: 'Min', description: 'Minimum value in a datasource field', params: [{ name: 'field', type: 'any' }], returnType: 'number' },
-    { name: 'Max', description: 'Maximum value in a datasource field', params: [{ name: 'field', type: 'any' }], returnType: 'number' },
+    { name: 'Sum', description: 'Sum(values) or Sum(rows, "field") — sums a numeric array or a field across rows', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
+    { name: 'Count', description: 'Count(values) or Count(rows, "field") — counts non-null occurrences', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
+    { name: 'Avg', description: 'Avg(values) or Avg(rows, "field") — average of numeric values', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
+    { name: 'Min', description: 'Min(values) or Min(rows, "field") — minimum value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
+    { name: 'Max', description: 'Max(values) or Max(rows, "field") — maximum value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
     { name: 'IIf', description: 'Conditional: IIf(condition, trueValue, falseValue)', params: [{ name: 'condition', type: 'boolean' }, { name: 'trueValue', type: 'any' }, { name: 'falseValue', type: 'any' }], returnType: 'any' },
     { name: 'Switch', description: 'Switch(value, case1, result1, ...)', params: [{ name: 'args', type: 'any', variadic: true }], returnType: 'any' },
     { name: 'Concat', description: 'Concatenate strings', params: [{ name: 'args', type: 'any', variadic: true }], returnType: 'string' },
@@ -369,19 +516,72 @@ export const builtinFunctions: BuiltinFunction[] = [
     { name: 'IsNull', description: 'IsNull(value)', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
     { name: 'IsEmpty', description: 'IsEmpty(value)', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
     { name: 'Coalesce', description: 'Return first non-null value', params: [{ name: 'args', type: 'any', variadic: true }], returnType: 'any' },
+    { name: 'Field', description: "Field('a.b.c') — safely read a nested field path from current row", params: [{ name: 'path', type: 'string' }], returnType: 'any' },
+    { name: 'IfNull', description: 'IfNull(value, fallback) — returns fallback when value is null/undefined', params: [{ name: 'value', type: 'any' }, { name: 'fallback', type: 'any' }], returnType: 'any' },
+    { name: 'InList', description: 'InList(value, array) — true if value is in the array', params: [{ name: 'value', type: 'any' }, { name: 'list', type: 'any' }], returnType: 'boolean' },
+    { name: 'Between', description: 'Between(value, min, max) — true when min <= value <= max', params: [{ name: 'value', type: 'any' }, { name: 'min', type: 'any' }, { name: 'max', type: 'any' }], returnType: 'boolean' },
+    { name: 'Length', description: 'Length of a string or array', params: [{ name: 'value', type: 'any' }], returnType: 'number' },
+    { name: 'Any', description: 'Any(array) — true if array has at least one item', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
+    { name: 'All', description: 'All(array, truthy?) — true if every item is truthy', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
+    { name: 'FormatNumber', description: 'FormatNumber(value, decimals?, thousandsSep?) — 1234.5 → "1,234.50"', params: [{ name: 'value', type: 'any' }, { name: 'decimals', type: 'number' }, { name: 'thousandsSep', type: 'string' }], returnType: 'string' },
+    { name: 'FormatCurrency', description: "FormatCurrency(value, symbol='$', decimals=2)", params: [{ name: 'value', type: 'any' }, { name: 'symbol', type: 'string' }, { name: 'decimals', type: 'number' }], returnType: 'string' },
+    { name: 'FormatPercent', description: 'FormatPercent(value, decimals=0) — 0.25 → "25%"', params: [{ name: 'value', type: 'any' }, { name: 'decimals', type: 'number' }], returnType: 'string' },
+    { name: 'PadLeft', description: 'PadLeft(value, length, char=" ")', params: [{ name: 'value', type: 'any' }, { name: 'length', type: 'number' }, { name: 'char', type: 'string' }], returnType: 'string' },
+    { name: 'PadRight', description: 'PadRight(value, length, char=" ")', params: [{ name: 'value', type: 'any' }, { name: 'length', type: 'number' }, { name: 'char', type: 'string' }], returnType: 'string' },
+    { name: 'Year', description: 'Year of a date string', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
+    { name: 'Month', description: 'Month (1-12) of a date string', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
+    { name: 'Day', description: 'Day-of-month (1-31)', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
+    { name: 'WeekDay', description: 'WeekDay(date) — 0=Sun..6=Sat', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
+    { name: 'Not', description: 'Logical NOT', params: [{ name: 'value', type: 'boolean' }], returnType: 'boolean' },
 ];
 
 // ── Evaluator ─────────────────────────────────────────────────────────────────
 
+function extractNumericArray(values: unknown, field?: unknown): number[] {
+    if (!Array.isArray(values)) return [];
+    if (typeof field === 'string' && field.length > 0) {
+        const out: number[] = [];
+        for (const row of values) {
+            if (row && typeof row === 'object' && field in (row as Record<string, unknown>)) {
+                const v = (row as Record<string, unknown>)[field];
+                const n = Number(v);
+                if (Number.isFinite(n)) out.push(n);
+            }
+        }
+        return out;
+    }
+    const out: number[] = [];
+    for (const v of values) {
+        const n = Number(v);
+        if (Number.isFinite(n)) out.push(n);
+    }
+    return out;
+}
+
 const builtinImpls: Record<string, (...args: unknown[]) => unknown> = {
-    Sum: (values: unknown) => (Array.isArray(values) ? (values as number[]).reduce((a, b) => a + b, 0) : 0),
-    Count: (values: unknown) => (Array.isArray(values) ? values.length : 0),
-    Avg: (values: unknown) => {
-        if (!Array.isArray(values) || values.length === 0) return 0;
-        return (values as number[]).reduce((a, b) => a + b, 0) / values.length;
+    Sum: (values: unknown, field?: unknown) => {
+        const nums = extractNumericArray(values, field);
+        return nums.reduce((a, b) => a + b, 0);
     },
-    Min: (values: unknown) => (Array.isArray(values) ? Math.min(...(values as number[])) : 0),
-    Max: (values: unknown) => (Array.isArray(values) ? Math.max(...(values as number[])) : 0),
+    Count: (values: unknown, field?: unknown) => {
+        if (!Array.isArray(values)) return 0;
+        if (typeof field === 'string' && field.length > 0) {
+            return values.filter((r) => r && typeof r === 'object' && (r as Record<string, unknown>)[field] !== null && (r as Record<string, unknown>)[field] !== undefined).length;
+        }
+        return values.length;
+    },
+    Avg: (values: unknown, field?: unknown) => {
+        const nums = extractNumericArray(values, field);
+        return nums.length === 0 ? 0 : nums.reduce((a, b) => a + b, 0) / nums.length;
+    },
+    Min: (values: unknown, field?: unknown) => {
+        const nums = extractNumericArray(values, field);
+        return nums.length === 0 ? 0 : Math.min(...nums);
+    },
+    Max: (values: unknown, field?: unknown) => {
+        const nums = extractNumericArray(values, field);
+        return nums.length === 0 ? 0 : Math.max(...nums);
+    },
     IIf: (cond: unknown, trueVal: unknown, falseVal: unknown) => (cond ? trueVal : falseVal),
     Switch: (...args: unknown[]) => {
         const val = args[0];
@@ -436,9 +636,112 @@ const builtinImpls: Record<string, (...args: unknown[]) => unknown> = {
     ToString: (v: unknown) => String(v ?? ''),
     ToNumber: (v: unknown) => Number(v),
     IsNull: (v: unknown) => v === null || v === undefined,
-    IsEmpty: (v: unknown) => v === null || v === undefined || v === '',
+    IsEmpty: (v: unknown) => v === null || v === undefined || v === '' || (Array.isArray(v) && v.length === 0),
     Coalesce: (...args: unknown[]) => args.find((a) => a !== null && a !== undefined) ?? null,
+    IfNull: (v: unknown, fallback: unknown) => (v === null || v === undefined ? fallback : v),
+    InList: (v: unknown, list: unknown) => {
+        if (!Array.isArray(list)) return false;
+        for (const x of list) {
+            if (x === v) return true;
+            if (String(x) === String(v)) return true;
+        }
+        return false;
+    },
+    Between: (v: unknown, min: unknown, max: unknown) => {
+        if (v === null || v === undefined) return false;
+        if (typeof v === 'number' && typeof min === 'number' && typeof max === 'number') {
+            return v >= min && v <= max;
+        }
+        const sv = String(v);
+        return sv >= String(min) && sv <= String(max);
+    },
+    Length: (v: unknown) => {
+        if (v === null || v === undefined) return 0;
+        if (Array.isArray(v)) return v.length;
+        return String(v).length;
+    },
+    Any: (v: unknown) => Array.isArray(v) && v.length > 0,
+    All: (v: unknown) => Array.isArray(v) && v.length > 0 && v.every(Boolean),
+    FormatNumber: (v: unknown, decimals: unknown, sep: unknown) => {
+        const n = Number(v);
+        if (!Number.isFinite(n)) return '';
+        const d = typeof decimals === 'number' ? Math.max(0, Math.min(10, decimals)) : 2;
+        const thousands = typeof sep === 'string' ? sep : ',';
+        const [intPart, fracPart] = n.toFixed(d).split('.');
+        const withSep = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousands);
+        return fracPart ? `${withSep}.${fracPart}` : withSep;
+    },
+    FormatCurrency: (v: unknown, symbol: unknown, decimals: unknown) => {
+        const n = Number(v);
+        if (!Number.isFinite(n)) return '';
+        const s = typeof symbol === 'string' ? symbol : '$';
+        const d = typeof decimals === 'number' ? Math.max(0, Math.min(10, decimals)) : 2;
+        const [intPart, fracPart] = n.toFixed(d).split('.');
+        const withSep = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        const body = fracPart ? `${withSep}.${fracPart}` : withSep;
+        return n < 0 ? `-${s}${body.slice(1)}` : `${s}${body}`;
+    },
+    FormatPercent: (v: unknown, decimals: unknown) => {
+        const n = Number(v);
+        if (!Number.isFinite(n)) return '';
+        const d = typeof decimals === 'number' ? Math.max(0, Math.min(10, decimals)) : 0;
+        return `${(n * 100).toFixed(d)}%`;
+    },
+    PadLeft: (v: unknown, len: unknown, char: unknown) => {
+        const str = String(v ?? '');
+        const n = Number(len);
+        if (!Number.isFinite(n) || n <= str.length) return str;
+        const c = typeof char === 'string' && char.length > 0 ? char[0] : ' ';
+        return c.repeat(n - str.length) + str;
+    },
+    PadRight: (v: unknown, len: unknown, char: unknown) => {
+        const str = String(v ?? '');
+        const n = Number(len);
+        if (!Number.isFinite(n) || n <= str.length) return str;
+        const c = typeof char === 'string' && char.length > 0 ? char[0] : ' ';
+        return str + c.repeat(n - str.length);
+    },
+    Year: (v: unknown) => {
+        const d = new Date(String(v));
+        return Number.isNaN(d.getTime()) ? 0 : d.getFullYear();
+    },
+    Month: (v: unknown) => {
+        const d = new Date(String(v));
+        return Number.isNaN(d.getTime()) ? 0 : d.getMonth() + 1;
+    },
+    Day: (v: unknown) => {
+        const d = new Date(String(v));
+        return Number.isNaN(d.getTime()) ? 0 : d.getDate();
+    },
+    WeekDay: (v: unknown) => {
+        const d = new Date(String(v));
+        return Number.isNaN(d.getTime()) ? 0 : d.getDay();
+    },
+    Not: (v: unknown) => !v,
 };
+
+function fieldFunctionImpl(path: unknown, ctx: ExpressionContext): unknown {
+    if (typeof path !== 'string') return null;
+    if (!ctx.currentRow) return null;
+    return safeGetByPath(ctx.currentRow, path);
+}
+
+function readGroupProperty(frame: import('./expression-types').GroupFrame | undefined, property: RowOrColGroupProperty): unknown {
+    if (!frame) return null;
+    switch (property.kind) {
+        case 'key': return frame.key ?? null;
+        case 'keys': return frame.keys ?? null;
+        case 'values': return frame.values ?? null;
+        case 'field':
+            if (!frame.fields) return null;
+            return safeGetByPath(frame.fields, property.field);
+        case 'variable':
+            if (!frame.variables) return null;
+            return Object.prototype.hasOwnProperty.call(frame.variables, property.name)
+                ? frame.variables[property.name]
+                : null;
+    }
+}
 
 async function evalNode(node: ExpressionNode, ctx: ExpressionContext): Promise<unknown> {
     switch (node.type) {
@@ -447,14 +750,52 @@ async function evalNode(node: ExpressionNode, ctx: ExpressionContext): Promise<u
         case 'DatasourceRef': {
             const ds = ctx.datasources?.[node.datasource];
             if (!ds) return null;
+            if (!node.field) return ds;
             return ds.map((row) => row[node.field]);
         }
 
-        case 'ParameterRef':
-            return ctx.parameters?.[node.parameter] ?? null;
+        case 'ParameterRef': {
+            const base = ctx.parameters?.[node.parameter] ?? null;
+            if (!node.path || node.path.length === 0) return base;
+            return safeGetByPath(base, node.path.join('.'));
+        }
 
         case 'FieldRef':
-            return ctx.currentRow?.[node.field] ?? null;
+            if (!ctx.currentRow) return null;
+            return safeGetByPath(ctx.currentRow, node.field);
+
+        case 'RowGroupRef':
+            return readGroupProperty(ctx.rowGroups?.[node.groupName], node.property);
+
+        case 'ColGroupRef':
+            return readGroupProperty(ctx.colGroups?.[node.groupName], node.property);
+
+        case 'VariableRef': {
+            if (!ctx.variables) return null;
+            const base = Object.prototype.hasOwnProperty.call(ctx.variables, node.name)
+                ? ctx.variables[node.name]
+                : null;
+            if (!node.path || node.path.length === 0) return base;
+            return safeGetByPath(base, node.path.join('.'));
+        }
+
+        case 'BuiltInFieldRef': {
+            if (!ctx.builtInFields) return null;
+            if (!Object.prototype.hasOwnProperty.call(ctx.builtInFields, node.name)) return null;
+            let base = ctx.builtInFields[node.name];
+            if (typeof base === 'function') {
+                try {
+                    base = (base as () => unknown)();
+                    if (base && typeof (base as { then?: unknown }).then === 'function') {
+                        base = await (base as Promise<unknown>);
+                    }
+                } catch {
+                    return null;
+                }
+            }
+            if (!node.path || node.path.length === 0) return base;
+            return safeGetByPath(base, node.path.join('.'));
+        }
 
         case 'UnaryOp': {
             const val = await evalNode(node.operand, ctx);
@@ -485,6 +826,9 @@ async function evalNode(node: ExpressionNode, ctx: ExpressionContext): Promise<u
 
         case 'FunctionCall': {
             const args = await Promise.all(node.args.map((a) => evalNode(a, ctx)));
+            if (node.name === 'Field' || node.name.toLowerCase() === 'field') {
+                return fieldFunctionImpl(args[0], ctx);
+            }
             const custom = ctx.customFunctions?.find((f) => f.name.toLowerCase() === node.name.toLowerCase());
             if (custom) return await Promise.resolve(custom.fn(...args));
             const builtin = builtinImpls[node.name] ?? builtinImpls[
@@ -593,13 +937,41 @@ export function getAutocompleteSuggestions(
         return suggestions;
     }
 
+    const varMatch = before.match(/Variables\.(\w*)$/);
+    if (varMatch) {
+        const partial = varMatch[1].toLowerCase();
+        for (const v of typeCtx.availableVariables ?? []) {
+            if (v.toLowerCase().startsWith(partial)) {
+                suggestions.push({ label: v, kind: 'parameter', detail: 'Variable' });
+            }
+        }
+        return suggestions;
+    }
+
+    const builtInMatch = before.match(/BuiltInFields\.(\w*)$/);
+    if (builtInMatch) {
+        const partial = builtInMatch[1].toLowerCase();
+        for (const b of typeCtx.availableBuiltInFields ?? []) {
+            if (b.toLowerCase().startsWith(partial)) {
+                suggestions.push({ label: b, kind: 'builtin', detail: 'Built-in field' });
+            }
+        }
+        return suggestions;
+    }
+
     const identMatch = before.match(/(?:^|[^.\w])(\w+)$/);
     const partial = identMatch?.[1]?.toLowerCase() ?? '';
     if (partial.length > 0) {
-        const namespaces = ['Datasources', 'Parameters', 'Field'];
+        const namespaces = ['Datasources', 'Parameters', 'Field', 'Variables', 'BuiltInFields'];
         for (const ns of namespaces) {
             if (ns.toLowerCase().startsWith(partial)) {
                 suggestions.push({ label: ns, kind: 'keyword', insertText: `${ns}.` });
+            }
+        }
+        const groupFns = ['RowGroup', 'ColGroup'];
+        for (const fn of groupFns) {
+            if (fn.toLowerCase().startsWith(partial)) {
+                suggestions.push({ label: fn, kind: 'function', detail: `${fn}('name') — group context`, insertText: `${fn}('')` });
             }
         }
         const allFns = [...builtinFunctions, ...(typeCtx.customFunctions ?? [])];
@@ -640,7 +1012,7 @@ export function highlightExpression(input: string): Array<{ text: string; classN
         else if (token.type === 'Operator') className = 'eui-expr-operator';
         else if (token.type === 'Identifier') {
             if (['true', 'false', 'null'].includes(token.value)) className = 'eui-expr-keyword';
-            else if (['Datasources', 'Parameters', 'Field'].includes(token.value)) className = 'eui-expr-namespace';
+            else if (['Datasources', 'Parameters', 'Field', 'Variables', 'BuiltInFields', 'RowGroup', 'ColGroup'].includes(token.value)) className = 'eui-expr-namespace';
             else if (builtinFunctions.some((f) => f.name === token.value)) className = 'eui-expr-function';
             else className = 'eui-expr-identifier';
         }

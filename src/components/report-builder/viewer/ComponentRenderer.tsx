@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { evaluateExpression } from '../expression/expression-parser';
 import type { ExpressionContext } from '../expression/expression-types';
 import type {
@@ -13,10 +13,12 @@ import type {
     CanvasItemLayout,
 } from '../report-definition-types';
 import { ComponentErrorBoundary } from './ComponentErrorBoundary';
-import { useViewerContext, buildExpressionDatasources } from './ViewerExpressionContext';
+import { useViewerContext, buildExpressionDatasources, ViewerContext } from './ViewerExpressionContext';
 import { TableRenderer } from './TableRenderer';
 import { SubReportRenderer } from './SubReportRenderer';
 import { ChartRenderer } from './ChartRenderer';
+import { RepeaterRenderer } from './RepeaterRenderer';
+import { useEvaluatedString, sanitizeUrl } from './useExpressionValue';
 
 function toReactCSSProps(styles: ComponentStyleProps): React.CSSProperties {
     const css: React.CSSProperties = {};
@@ -63,13 +65,62 @@ const Shimmer: React.FC<{ height?: number }> = ({ height = 32 }) => (
 );
 
 export const ComponentRenderer: React.FC<{ component: ReportComponent; depth?: number }> = ({ component, depth = 0 }) => {
-    const ctx = useViewerContext();
+    const parentCtx = useViewerContext();
     const [visible, setVisible] = useState(true);
     const [loading, setLoading] = useState(false);
+
+    const hasOwnVariables = !!component.variables && component.variables.length > 0;
+
+    const ctx = useMemo<typeof parentCtx>(() => {
+        if (!hasOwnVariables) return parentCtx;
+        const ownNames = new Set(component.variables!.map((v) => v.name));
+        const ownBucket = parentCtx.componentVariableValues?.[component.id] ?? {};
+        const mergedVariables: Record<string, unknown> = { ...parentCtx.variables };
+        for (const name of ownNames) {
+            mergedVariables[name] = ownBucket[name];
+        }
+        const newFrame = { componentId: component.id, names: ownNames };
+        const newChain = [...parentCtx.variableScopeChain, newFrame];
+
+        const writeGlobal = parentCtx.writeGlobalVariable;
+        const writeComponent = parentCtx.writeComponentVariable;
+        const globalNames = parentCtx.globalVariableNames;
+
+        const scopedSet = (variableName: string, value: unknown) => {
+            for (let i = newChain.length - 1; i >= 0; i--) {
+                if (newChain[i].names.has(variableName)) {
+                    writeComponent?.(newChain[i].componentId, variableName, value);
+                    return;
+                }
+            }
+            if (globalNames.has(variableName)) {
+                writeGlobal?.(variableName, value);
+                return;
+            }
+            writeGlobal?.(variableName, value);
+        };
+
+        const notify = parentCtx.notifyVariableChange;
+        const scopedDrill = (variableName: string, value: unknown) => {
+            scopedSet(variableName, value);
+            notify?.(variableName, value);
+        };
+
+        return {
+            ...parentCtx,
+            variables: mergedVariables,
+            variableScopeChain: newChain,
+            onSetVariable: scopedSet,
+            onDrillThrough: scopedDrill,
+        };
+    }, [parentCtx, hasOwnVariables, component.id, component.variables]);
 
     const exprCtx: ExpressionContext = {
         datasources: buildExpressionDatasources(ctx.datasources),
         parameters: ctx.parameters,
+        variables: ctx.variables,
+        builtInFields: ctx.builtInFields,
+        currentRow: ctx.currentRow,
     };
 
     useEffect(() => {
@@ -81,16 +132,21 @@ export const ComponentRenderer: React.FC<{ component: ReportComponent; depth?: n
                 .catch(() => setLoading(false));
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [component.styles, ctx.datasources, ctx.parameters]);
+    }, [component.styles, ctx.datasources, ctx.parameters, ctx.variables]);
 
     if (loading) return <Shimmer height={32} />;
     if (!visible) return null;
 
-    return (
+    const content = (
         <ComponentErrorBoundary componentId={component.id}>
             <ComponentContent component={component} exprCtx={exprCtx} depth={depth} />
         </ComponentErrorBoundary>
     );
+
+    if (hasOwnVariables) {
+        return <ViewerContext.Provider value={ctx}>{content}</ViewerContext.Provider>;
+    }
+    return content;
 };
 
 const ComponentContent: React.FC<{
@@ -108,21 +164,30 @@ const ComponentContent: React.FC<{
         case 'image':
             return <ImageRenderer component={component} exprCtx={exprCtx} styleCss={styleCss} />;
         case 'horizontal-line':
-            return <HorizontalLineRenderer component={component} styleCss={styleCss} />;
+            return <HorizontalLineRenderer component={component} exprCtx={exprCtx} styleCss={styleCss} />;
         case 'columns':
             return <ColumnsRenderer component={component} styleCss={styleCss} depth={depth} />;
         case 'canvas':
             return <CanvasRenderer component={component} styleCss={styleCss} depth={depth} />;
         case 'tab':
             return <TabRenderer component={component} styleCss={styleCss} depth={depth} />;
+        case 'repeater':
+            return <RepeaterRenderer component={component} styleCss={styleCss} depth={depth} />;
         case 'table':
             return <TableRenderer component={component} styleCss={styleCss} />;
         case 'sub-report':
             return <SubReportRenderer component={component} styleCss={styleCss} />;
         case 'chart-bar':
+        case 'chart-horizontal-bar':
+        case 'chart-stacked-bar':
         case 'chart-pie':
         case 'chart-donut':
         case 'chart-line':
+        case 'chart-area':
+        case 'chart-polar-area':
+        case 'chart-radar':
+        case 'chart-scatter':
+        case 'chart-bubble':
             return <ChartRenderer component={component} styleCss={styleCss} />;
         default:
             return (
@@ -143,30 +208,27 @@ const HeaderRenderer: React.FC<{
     styleCss: React.CSSProperties;
 }> = ({ component, exprCtx, styleCss }) => {
     const p = component.props as unknown as HeaderComponentProps;
-    const [content, setContent] = useState<string>(p.content ?? '');
-
-    useEffect(() => {
-        if (String(p.content).startsWith('=')) {
-            evalExprString(p.content, exprCtx).then((v) => setContent(String(v ?? '')));
-        } else {
-            setContent(p.content ?? '');
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [p.content, exprCtx]);
+    const content = useEvaluatedString(p.content, exprCtx, '');
+    const tooltip = useEvaluatedString(p.tooltip, exprCtx, '');
+    const anchorId = useEvaluatedString(p.anchorId, exprCtx, '');
 
     const level = p.level ?? 'h2';
     const fontSizes: Record<string, number> = { h1: 28, h2: 22, h3: 18, h4: 16, h5: 14, h6: 12 };
     const Tag = headerTags[level] ?? 'h2';
 
     return (
-        <Tag style={{
-            margin: 0,
-            fontSize: fontSizes[level] ?? 18,
-            fontWeight: 700,
-            lineHeight: 1.3,
-            color: 'var(--eui-text)',
-            ...styleCss,
-        }}>
+        <Tag
+            id={anchorId || undefined}
+            title={tooltip || undefined}
+            style={{
+                margin: 0,
+                fontSize: fontSizes[level] ?? 18,
+                fontWeight: 700,
+                lineHeight: 1.3,
+                color: 'var(--eui-text)',
+                ...styleCss,
+            }}
+        >
             {content}
         </Tag>
     );
@@ -178,23 +240,18 @@ const TextRenderer: React.FC<{
     styleCss: React.CSSProperties;
 }> = ({ component, exprCtx, styleCss }) => {
     const p = component.props as unknown as TextComponentProps;
-    const [content, setContent] = useState<string>(p.content ?? '');
-
-    useEffect(() => {
-        if (String(p.content).startsWith('=')) {
-            evalExprString(p.content, exprCtx).then((v) => setContent(String(v ?? '')));
-        } else {
-            setContent(p.content ?? '');
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [p.content, exprCtx]);
+    const content = useEvaluatedString(p.content, exprCtx, '');
+    const tooltip = useEvaluatedString(p.tooltip, exprCtx, '');
 
     return (
-        <p style={{
-            margin: 0, fontSize: 13, lineHeight: 1.6,
-            color: 'var(--eui-text)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
-            ...styleCss,
-        }}>
+        <p
+            title={tooltip || undefined}
+            style={{
+                margin: 0, fontSize: 13, lineHeight: 1.6,
+                color: 'var(--eui-text)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                ...styleCss,
+            }}
+        >
             {content}
         </p>
     );
@@ -206,46 +263,92 @@ const ImageRenderer: React.FC<{
     styleCss: React.CSSProperties;
 }> = ({ component, exprCtx, styleCss }) => {
     const p = component.props as unknown as ImageComponentProps;
-    const [src, setSrc] = useState<string>(p.src ?? '');
+    const src = useEvaluatedString(p.src, exprCtx, '');
+    const alt = useEvaluatedString(p.alt, exprCtx, '');
+    const tooltip = useEvaluatedString(p.tooltip, exprCtx, '');
+    const width = useEvaluatedString(p.width, exprCtx, '100%');
+    const height = useEvaluatedString(p.height, exprCtx, 'auto');
+    const href = useEvaluatedString(p.href, exprCtx, '');
 
-    useEffect(() => {
-        if (String(p.src).startsWith('=')) {
-            evalExprString(p.src, exprCtx).then((v) => setSrc(String(v ?? '')));
-        } else {
-            setSrc(p.src ?? '');
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [p.src, exprCtx]);
+    const safeSrc = sanitizeUrl(src, 'image');
+    const safeHref = sanitizeUrl(href, 'link');
 
-    if (!src) return null;
+    if (!safeSrc) return null;
 
-    return (
+    const img = (
         <img
-            src={src}
-            alt={p.alt ?? ''}
+            src={safeSrc}
+            alt={alt}
+            title={tooltip || undefined}
             style={{
                 display: 'block',
-                width: (p.width as string | undefined) ?? '100%',
-                height: (p.height as string | undefined) ?? 'auto',
+                width: width || '100%',
+                height: height || 'auto',
                 objectFit: (p.objectFit as React.CSSProperties['objectFit']) ?? 'contain',
                 ...styleCss,
             }}
         />
     );
+
+    if (safeHref) {
+        return (
+            <a
+                href={safeHref}
+                target={p.openInNewTab ? '_blank' : undefined}
+                rel={p.openInNewTab ? 'noopener noreferrer' : undefined}
+                style={{ display: 'inline-block' }}
+            >
+                {img}
+            </a>
+        );
+    }
+    return img;
 };
 
 const HorizontalLineRenderer: React.FC<{
     component: ReportComponent;
+    exprCtx: ExpressionContext;
     styleCss: React.CSSProperties;
-}> = ({ component, styleCss }) => {
+}> = ({ component, exprCtx, styleCss }) => {
     const p = component.props as unknown as HorizontalLineComponentProps;
+    const label = useEvaluatedString(p.label, exprCtx, '');
+    const color = useEvaluatedString(p.color, exprCtx, 'var(--eui-border-subtle)');
+    const lineStyle = p.style ?? 'solid';
     return (
-        <div style={{ marginTop: p.marginTop ?? 8, marginBottom: p.marginBottom ?? 8, ...styleCss }}>
-            <hr style={{
-                border: 'none',
-                borderTop: `${p.thickness ?? 1}px solid ${p.color ?? 'var(--eui-border-subtle)'}`,
-                margin: 0,
-            }} />
+        <div
+            style={{
+                marginTop: p.marginTop ?? 8,
+                marginBottom: p.marginBottom ?? 8,
+                ...styleCss,
+            }}
+            role="separator"
+            aria-label={label || undefined}
+        >
+            {label ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <hr style={{
+                        flex: 1,
+                        border: 'none',
+                        borderTop: `${p.thickness ?? 1}px ${lineStyle} ${color}`,
+                        margin: 0,
+                    }} />
+                    <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--eui-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        {label}
+                    </span>
+                    <hr style={{
+                        flex: 1,
+                        border: 'none',
+                        borderTop: `${p.thickness ?? 1}px ${lineStyle} ${color}`,
+                        margin: 0,
+                    }} />
+                </div>
+            ) : (
+                <hr style={{
+                    border: 'none',
+                    borderTop: `${p.thickness ?? 1}px ${lineStyle} ${color}`,
+                    margin: 0,
+                }} />
+            )}
         </div>
     );
 };
