@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { BrightSunIcon, ChevronDownIcon, ChevronRightIcon, ExternalLinkIcon, NightLightIcon, SearchIcon } from '../assets/icons';
 import { ColorTheme, colorThemes, useStoryTheme } from './StoryThemeContext';
@@ -241,27 +241,26 @@ interface NavigationProps {
     onNavClick?: () => void;
 }
 
+const findActiveSectionKey = (pathname: string): string | undefined => {
+    const active = navSections.find((s) => s.items.some((i) => i.path === pathname));
+    return active?.key;
+};
+
 const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
     const location = useLocation();
     const { isDark, toggleTheme, colorTheme, setColorTheme } = useStoryTheme();
     const [search, setSearch] = useState('');
-    const [expandedSections, setExpandedSections] = useState<Set<string>>(() => {
-        const initial = new Set<string>(['getting-started']);
-        const active = navSections.find((s) => s.items.some((i) => i.path === location.pathname));
-        if (active) initial.add(active.key);
-        return initial;
-    });
+    const activeSectionKey = findActiveSectionKey(location.pathname);
+    const [userExpandedSections, setUserExpandedSections] = useState<Set<string>>(() => new Set<string>(['getting-started']));
+    const [collapsedOverrides, setCollapsedOverrides] = useState<Set<string>>(() => new Set<string>());
 
-    useEffect(() => {
-        const active = navSections.find((s) => s.items.some((i) => i.path === location.pathname));
-        if (!active) return;
-        setExpandedSections((prev) => {
-            if (prev.has(active.key)) return prev;
-            const next = new Set(prev);
-            next.add(active.key);
-            return next;
-        });
-    }, [location.pathname]);
+    const expandedSections = useMemo(() => {
+        const combined = new Set(userExpandedSections);
+        if (activeSectionKey && !collapsedOverrides.has(activeSectionKey)) {
+            combined.add(activeSectionKey);
+        }
+        return combined;
+    }, [userExpandedSections, collapsedOverrides, activeSectionKey]);
 
     const filteredSections = useMemo(() => {
         if (!search.trim()) return navSections;
@@ -275,12 +274,38 @@ const Navigation: React.FC<NavigationProps> = ({ onNavClick }) => {
     }, [search]);
 
     const toggleSection = (key: string) => {
-        setExpandedSections((prev) => {
-            const next = new Set(prev);
-            if (next.has(key)) next.delete(key);
-            else next.add(key);
-            return next;
-        });
+        const isCurrentlyExpanded = expandedSections.has(key);
+        if (isCurrentlyExpanded) {
+            setUserExpandedSections((prev) => {
+                if (!prev.has(key)) return prev;
+                const next = new Set(prev);
+                next.delete(key);
+                return next;
+            });
+            if (key === activeSectionKey) {
+                setCollapsedOverrides((prev) => {
+                    if (prev.has(key)) return prev;
+                    const next = new Set(prev);
+                    next.add(key);
+                    return next;
+                });
+            }
+        } else {
+            setUserExpandedSections((prev) => {
+                if (prev.has(key)) return prev;
+                const next = new Set(prev);
+                next.add(key);
+                return next;
+            });
+            if (key === activeSectionKey) {
+                setCollapsedOverrides((prev) => {
+                    if (!prev.has(key)) return prev;
+                    const next = new Set(prev);
+                    next.delete(key);
+                    return next;
+                });
+            }
+        }
     };
 
     return (
