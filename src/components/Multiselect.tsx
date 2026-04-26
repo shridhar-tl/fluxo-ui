@@ -4,6 +4,7 @@ import { ChevronDownIcon, TimesIcon } from '../assets/icons';
 import { useDebounce } from '../hooks';
 import { BaseComponentProps, ComponentEvent, ListItem, ListItemGroup } from '../types';
 import { filterItems, generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { Checkbox } from './Checkbox';
 import Icon from './Icon';
 import './Multiselect.scss';
 import { Popover } from './Popover';
@@ -190,8 +191,8 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                 })}
                 onClick={() => !item.disabled && handleItemSelect(item)}
             >
-                <input type="checkbox" checked={isSelected} readOnly className="eui-multiselect-item-checkbox" />
-                {!!item.icon && <Icon icon={item.icon} className="w-4 h-4 mr-2" />}
+                <Checkbox checked={isSelected} disabled={item.disabled} onChange={() => handleItemSelect(item)} />
+                {!!item.icon && <Icon icon={item.icon} className="eui-multiselect-item-icon" />}
                 <span className="eui-multiselect-item-label">{item.label}</span>
             </div>
         );
@@ -298,15 +299,7 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                                     })}
                                     onClick={handleSelectAll}
                                 >
-                                    <input
-                                        type="checkbox"
-                                        checked={allSelected}
-                                        ref={(ref) => {
-                                            if (ref) ref.indeterminate = someSelected;
-                                        }}
-                                        readOnly
-                                        className="eui-multiselect-item-checkbox"
-                                    />
+                                    <Checkbox checked={allSelected} indeterminate={someSelected} onChange={handleSelectAll} />
                                     <span className="eui-multiselect-item-label">{item.label}</span>
                                 </div>
                             );
@@ -322,6 +315,17 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                     filter=""
                     loading={loading}
                     emptyMessage={emptyMessage}
+                    mobileTitle={placeholder}
+                    mobileSearch={
+                        searchable
+                            ? {
+                                  value: filterValue,
+                                  onChange: setFilterValue,
+                                  placeholder: 'Filter items...',
+                              }
+                            : undefined
+                    }
+                    hideChildrenOnMobile
                     {...baseProps}
                 >
                     {searchable && (

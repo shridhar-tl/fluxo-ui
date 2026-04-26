@@ -149,3 +149,48 @@
         }
     }
 }
+
+.eui-autocomplete-multi-option {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    color: var(--eui-text);
+    font-size: 0.875rem;
+    transition: background-color 0.15s ease;
+
+    &.eui-autocomplete-multi-option-highlighted {
+        background-color: var(--eui-bg-hover);
+    }
+
+    &.eui-autocomplete-multi-option-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .eui-autocomplete-multi-option-label {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.eui-autocomplete-multi-done {
+    appearance: none;
+    border: none;
+    background-color: var(--eui-primary);
+    color: var(--eui-text-on-primary);
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--eui-radius-md);
+    cursor: pointer;
+    min-height: 40px;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+        background-color: var(--eui-primary-hover);
+    }
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames';
-import { registerTooltipHandlers, TooltipData, TooltipOptions, unregisterTooltipHandlers } from './Tooltip';
+import { registerTooltipHandlers, TooltipData, TooltipOptions, unregisterTooltipHandlers } from './tooltip-api';
 import { computeTooltipPosition } from './utils';
 import './tooltip.scss';
 

@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useViewport } from '../../hooks/useMobile';
 import CustomDatePicker from './CustomDatePicker';
 import QuickRangeDropdown from './QuickRangeDropdown';
 import { DatePickerPropsContext, DatePickerStateContext } from './types';
@@ -8,6 +9,7 @@ import { DatePickerPropsContext, DatePickerStateContext } from './types';
 function DatePopover({ controlRef }: { controlRef: React.RefObject<HTMLButtonElement> }) {
     const { ranges, position = 'auto', classNames: propsClassNames } = useContext(DatePickerPropsContext);
     const { closePicker: onClose, activeView } = useContext(DatePickerStateContext);
+    const { isCompact, isMobile, isTablet } = useViewport();
 
     const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>();
     const popoverRef = useRef<HTMLDivElement>(null);
@@ -71,12 +73,13 @@ function DatePopover({ controlRef }: { controlRef: React.RefObject<HTMLButtonEle
                 onClose();
             }
         },
-        [onClose]
+        [onClose],
     );
 
     const isDropdown = ranges?.length && activeView === 'quick';
 
     useEffect(() => {
+        if (isCompact) return;
         document.addEventListener('mousedown', handleClickOutside);
         computePopoverPosition();
         window.addEventListener('resize', computePopoverPosition);
@@ -87,7 +90,59 @@ function DatePopover({ controlRef }: { controlRef: React.RefObject<HTMLButtonEle
             window.removeEventListener('resize', computePopoverPosition);
             document.removeEventListener('scroll', computePopoverPosition, true);
         };
-    }, [isDropdown, handleClickOutside, computePopoverPosition]);
+    }, [isDropdown, handleClickOutside, computePopoverPosition, isCompact]);
+
+    useEffect(() => {
+        if (!isCompact) return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isCompact]);
+
+    useEffect(() => {
+        if (!isCompact) return;
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+        document.addEventListener('keydown', handleKey);
+        return () => document.removeEventListener('keydown', handleKey);
+    }, [isCompact, onClose]);
+
+    if (isCompact) {
+        return createPortal(
+            <div
+                className={classNames('eui-drp-mobile-backdrop', {
+                    'eui-drp-mobile-backdrop-mobile': isMobile,
+                    'eui-drp-mobile-backdrop-tablet': isTablet,
+                })}
+                onClick={onClose}
+            >
+                <div
+                    ref={popoverRef}
+                    className={classNames(
+                        'eui-date-range-popover',
+                        'eui-drp-popover-mobile',
+                        {
+                            'eui-drp-popover-mobile-tablet': isTablet,
+                            'eui-drp-popover-mobile-mobile': isMobile,
+                            'eui-drp-popover-dropdown': isDropdown,
+                            'eui-drp-popover-wide': !isDropdown && ranges?.length,
+                            'eui-drp-popover-medium': !isDropdown && !ranges?.length,
+                        },
+                        propsClassNames?.popover,
+                    )}
+                    onClick={(e) => e.stopPropagation()}
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    {isDropdown ? <QuickRangeDropdown /> : <CustomDatePicker />}
+                </div>
+            </div>,
+            document.body,
+        );
+    }
 
     return createPortal(
         <div
@@ -101,12 +156,12 @@ function DatePopover({ controlRef }: { controlRef: React.RefObject<HTMLButtonEle
                     'eui-drp-popover-wide': !isDropdown && ranges?.length,
                     'eui-drp-popover-medium': !isDropdown && !ranges?.length,
                 },
-                propsClassNames?.popover
+                propsClassNames?.popover,
             )}
         >
             {isDropdown ? <QuickRangeDropdown /> : <CustomDatePicker />}
         </div>,
-        document.body
+        document.body,
     );
 }
 

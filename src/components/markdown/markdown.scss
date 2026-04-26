@@ -375,3 +375,162 @@
         animation: none !important;
     }
 }
+
+.eui-md-table-grid-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    background-color: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5vh 6vw;
+    animation: eui-md-tg-backdrop-in 0.18s ease-out;
+
+    &.eui-md-table-grid-backdrop-tablet { padding: 6vh 18vw; }
+}
+
+@keyframes eui-md-tg-backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes eui-md-tg-sheet-in {
+    from { transform: translateY(8px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+
+.eui-md-table-grid-panel-mobile {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    max-width: 480px;
+    padding: 1.25rem !important;
+    border-radius: 16px;
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    border: 1px solid var(--eui-border-subtle);
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.28);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    animation: eui-md-tg-sheet-in 0.22s ease-out;
+
+    .eui-md-table-grid-mobile-title {
+        font-size: 1.0625rem;
+        font-weight: 600;
+        color: var(--eui-text);
+    }
+
+    .eui-md-table-grid-mobile-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .eui-md-table-grid-mobile-label {
+        font-size: 0.9375rem;
+        color: var(--eui-text);
+        font-weight: 500;
+    }
+
+    .eui-md-table-grid-mobile-stepper {
+        display: inline-flex;
+        align-items: stretch;
+        border: 1px solid var(--eui-border);
+        border-radius: 10px;
+        overflow: hidden;
+        background-color: var(--eui-bg-subtle);
+
+        button {
+            appearance: none;
+            background: transparent;
+            border: none;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--eui-text);
+            cursor: pointer;
+            transition: background-color 0.12s ease;
+
+            &:hover {
+                background-color: var(--eui-bg-hover);
+            }
+
+            &:active {
+                background-color: var(--eui-primary-subtle);
+            }
+        }
+
+        input {
+            width: 60px;
+            border: none;
+            border-left: 1px solid var(--eui-border-subtle);
+            border-right: 1px solid var(--eui-border-subtle);
+            background: var(--eui-bg);
+            color: var(--eui-text);
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            outline: none;
+            -moz-appearance: textfield;
+
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                appearance: none;
+                margin: 0;
+            }
+        }
+    }
+
+    .eui-md-table-grid-mobile-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+
+        .eui-md-table-grid-mobile-cancel,
+        .eui-md-table-grid-mobile-insert {
+            flex: 1;
+            appearance: none;
+            border: 1px solid var(--eui-border);
+            background: var(--eui-bg);
+            color: var(--eui-text);
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            min-height: 44px;
+            transition: background-color 0.12s ease, border-color 0.12s ease;
+
+            &:hover {
+                background-color: var(--eui-bg-hover);
+            }
+        }
+
+        .eui-md-table-grid-mobile-insert {
+            background-color: var(--eui-primary);
+            color: var(--eui-text-on-primary);
+            border-color: var(--eui-primary);
+
+            &:hover {
+                background-color: var(--eui-primary-hover);
+                border-color: var(--eui-primary-hover);
+            }
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-md-table-grid-backdrop,
+    .eui-md-table-grid-panel-mobile {
+        animation: none;
+    }
+}

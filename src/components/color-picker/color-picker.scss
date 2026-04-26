@@ -204,6 +204,65 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
     }
 }
 
+.eui-color-picker-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    background-color: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5vh 6vw;
+    animation: eui-cp-backdrop-in 0.18s ease-out;
+
+    &.eui-color-picker-backdrop-mobile { padding: 5vh 6vw; }
+    &.eui-color-picker-backdrop-tablet { padding: 6vh 18vw; }
+}
+
+@keyframes eui-cp-backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.eui-color-picker-popover-mobile {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid var(--eui-border-subtle);
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.28);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background-color: var(--eui-bg);
+    animation: eui-cp-sheet-in 0.22s ease-out;
+
+    .eui-color-panel {
+        gap: 1rem;
+    }
+
+    .eui-color-sv {
+        height: 200px;
+    }
+}
+
+@keyframes eui-cp-sheet-in {
+    from { transform: translateY(8px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-color-picker-backdrop,
+    .eui-color-picker-popover-mobile {
+        animation: none;
+    }
+}
+
 .eui-color-panel {
     display: flex;
     flex-direction: column;

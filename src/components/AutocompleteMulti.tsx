@@ -5,6 +5,7 @@ import { useDebounce } from '../hooks';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
 import './AutocompleteMulti.scss';
+import { Checkbox } from './Checkbox';
 import { Popover } from './Popover';
 
 interface AutocompleteMultiProps<T = any> extends BaseComponentProps {
@@ -74,8 +75,9 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         }, [debouncedValue, minLength, onFilter]);
 
         useEffect(() => {
-            const shouldOpen = isFocused && inputValue.length >= minLength && items.length > 0;
-            setIsOpen(shouldOpen);
+            if (isFocused && inputValue.length >= minLength && items.length > 0) {
+                setIsOpen(true);
+            }
         }, [isFocused, inputValue.length, minLength, items.length]);
 
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,10 +85,12 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         };
 
         const handleSelect = (item: ListItem) => {
-            if (item.disabled || value.includes(item.value)) return;
+            if (item.disabled) return;
             if (maxSelectedItems && value.length >= maxSelectedItems) return;
 
-            const newValue = [...value, item.value];
+            const isAlreadySelected = value.includes(item.value);
+            const newValue = isAlreadySelected ? value.filter((v) => v !== item.value) : [...value, item.value];
+
             if (onChange) {
                 onChange({
                     event: { target: { value: newValue } } as any,
@@ -95,8 +99,12 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                     args,
                 });
             }
-            setInputValue('');
+        };
+
+        const handleDone = () => {
             setIsOpen(false);
+            setIsFocused(false);
+            setInputValue('');
         };
 
         const handleRemove = (itemValue: any) => {
@@ -115,15 +123,10 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             setIsFocused(true);
         };
 
-        const handleBlur = () => {
-            setTimeout(() => {
-                setIsFocused(false);
-                setIsOpen(false);
-            }, 200);
-        };
-
         const handleClose = () => {
             setIsOpen(false);
+            setIsFocused(false);
+            setInputValue('');
         };
 
         const handleContainerClick = () => {
@@ -225,7 +228,6 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                 value={inputValue}
                                 onChange={handleInputChange}
                                 onFocus={handleFocus}
-                                onBlur={handleBlur}
                                 onKeyDown={handleKeyDown}
                                 placeholder={selectedItems.length === 0 ? placeholder : ''}
                                 disabled={disabled}
@@ -246,13 +248,41 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                         isOpen={isOpen}
                         onClose={handleClose}
                         triggerElement={combinedRef.current}
-                        items={items.filter((item) => !value.includes(item.value))}
+                        items={items}
                         onSelect={handleSelect}
                         selectedIndex={-1}
-                        renderItem={renderItem}
+                        renderItem={(item, index, _isSelected, isHighlighted) => {
+                            const isItemSelected = value.includes(item.value);
+                            if (renderItem) {
+                                return renderItem(item, index, isItemSelected, isHighlighted);
+                            }
+                            return (
+                                <div
+                                    className={classNames('eui-autocomplete-multi-option', {
+                                        'eui-autocomplete-multi-option-highlighted': isHighlighted,
+                                        'eui-autocomplete-multi-option-disabled': item.disabled,
+                                    })}
+                                    onClick={() => !item.disabled && handleSelect(item)}
+                                >
+                                    <Checkbox checked={isItemSelected} disabled={item.disabled} onChange={() => handleSelect(item)} />
+                                    <span className="eui-autocomplete-multi-option-label">{item.label}</span>
+                                </div>
+                            );
+                        }}
                         filter={inputValue}
                         loading={loading}
                         emptyMessage={emptyMessage}
+                        mobileTitle={placeholder}
+                        mobileSearch={{
+                            value: inputValue,
+                            onChange: setInputValue,
+                            placeholder,
+                        }}
+                        footer={
+                            <button type="button" className="eui-autocomplete-multi-done" onClick={handleDone}>
+                                Done {value.length > 0 ? `(${value.length})` : ''}
+                            </button>
+                        }
                         {...baseProps}
                     />
                 )}

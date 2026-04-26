@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { useDebounce } from '../hooks';
+import { useDebounce, useViewport } from '../hooks';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
 import './Autocomplete.scss';
@@ -58,6 +58,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         const [internalValue, setInternalValue] = useState('');
         const inputRef = useRef<HTMLInputElement>(null);
         const combinedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
+        const { isCompact } = useViewport();
 
         const isControlled = value !== undefined;
         const currentValue = isControlled ? value : internalValue;
@@ -106,6 +107,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                 name,
                 args,
             });
+            setIsFocused(false);
             setIsOpen(false);
             combinedRef.current?.blur();
         };
@@ -115,6 +117,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         };
 
         const handleBlur = () => {
+            if (isCompact) return;
             setTimeout(() => {
                 setIsFocused(false);
                 setIsOpen(false);
@@ -123,6 +126,19 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
 
         const handleClose = () => {
             setIsOpen(false);
+            setIsFocused(false);
+        };
+
+        const handleMobileSearchChange = (newValue: string) => {
+            if (!isControlled) {
+                setInternalValue(newValue);
+            }
+            onChange?.({
+                event: { target: { value: newValue } } as any,
+                value: newValue,
+                name,
+                args,
+            });
         };
 
         const resolvedSize = getResolvedSize({ ...baseProps });
@@ -174,6 +190,12 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                         filter={currentValue}
                         loading={loading}
                         emptyMessage={emptyMessage}
+                        mobileTitle={placeholder}
+                        mobileSearch={{
+                            value: currentValue,
+                            onChange: handleMobileSearchChange,
+                            placeholder,
+                        }}
                         {...baseProps}
                     />
                 )}

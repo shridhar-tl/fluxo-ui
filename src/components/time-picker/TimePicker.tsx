@@ -2,6 +2,8 @@ import cn from 'classnames';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ClockIcon } from '../../assets/icons';
+import { useViewport } from '../../hooks/useMobile';
+import MobileTimePanel from './MobileTimePanel';
 import './time-picker.scss';
 import TimePanel from './TimePanel';
 import { dateToTime, formatTime, normalizeValue, parseTimeString, TimeValue, timeToDate } from './utils';
@@ -68,6 +70,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
     const [inputText, setInputText] = useState('');
     const triggerRef = useRef<HTMLDivElement>(null);
     const popRef = useRef<HTMLDivElement>(null);
+    const { isCompact, isMobile, isTablet } = useViewport();
 
     const normalizedControlled = useMemo(() => normalizeValue(controlledValue), [controlledValue]);
     const current = controlledValue !== undefined ? normalizedControlled : internal;
@@ -110,11 +113,23 @@ const TimePicker: React.FC<TimePickerProps> = ({
     }, []);
 
     useLayoutEffect(() => {
-        if (isOpen) computePosition();
-    }, [isOpen, computePosition]);
+        if (isOpen && !isCompact) computePosition();
+    }, [isOpen, computePosition, isCompact]);
 
     useEffect(() => {
         if (!isOpen) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') closePopover(false);
+        };
+        document.addEventListener('keydown', onKey);
+        if (isCompact) {
+            const previousOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            return () => {
+                document.removeEventListener('keydown', onKey);
+                document.body.style.overflow = previousOverflow;
+            };
+        }
         const onResize = () => computePosition();
         const onClickOutside = (e: MouseEvent) => {
             if (
@@ -126,13 +141,9 @@ const TimePicker: React.FC<TimePickerProps> = ({
                 closePopover(false);
             }
         };
-        const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') closePopover(false);
-        };
         window.addEventListener('resize', onResize);
         document.addEventListener('scroll', onResize, true);
         document.addEventListener('mousedown', onClickOutside);
-        document.addEventListener('keydown', onKey);
         return () => {
             window.removeEventListener('resize', onResize);
             document.removeEventListener('scroll', onResize, true);
@@ -140,7 +151,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
             document.removeEventListener('keydown', onKey);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen, computePosition]);
+    }, [isOpen, computePosition, isCompact]);
 
     const openPopover = () => {
         if (!interactive || isOpen) return;
@@ -254,25 +265,60 @@ const TimePicker: React.FC<TimePickerProps> = ({
             )}
             {isOpen &&
                 createPortal(
-                    <div
-                        ref={popRef}
-                        className={cn('eui-time-picker-popover', { 'eui-time-picker-popover-hidden': !popStyle })}
-                        style={popStyle}
-                        role="dialog"
-                    >
-                        <TimePanel
-                            value={draft ?? current ?? DEFAULT_TIME}
-                            format12={format12}
-                            showSeconds={showSeconds}
-                            hourStep={hourStep}
-                            minuteStep={minuteStep}
-                            secondStep={secondStep}
-                            onChange={handlePanelChange}
-                            onNow={showNow ? handleNow : undefined}
-                            onConfirm={showConfirm ? handleConfirm : undefined}
-                            showFooter={showNow || showConfirm}
-                        />
-                    </div>,
+                    isCompact ? (
+                        <div
+                            className={cn('eui-time-picker-backdrop', {
+                                'eui-time-picker-backdrop-mobile': isMobile,
+                                'eui-time-picker-backdrop-tablet': isTablet,
+                            })}
+                            onClick={() => closePopover(false)}
+                        >
+                            <div
+                                ref={popRef}
+                                className={cn('eui-time-picker-popover', 'eui-time-picker-popover-mobile', {
+                                    'eui-time-picker-popover-mobile-mobile': isMobile,
+                                    'eui-time-picker-popover-mobile-tablet': isTablet,
+                                })}
+                                role="dialog"
+                                aria-label="Pick time"
+                                aria-modal="true"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <MobileTimePanel
+                                    value={draft ?? current ?? DEFAULT_TIME}
+                                    format12={format12}
+                                    showSeconds={showSeconds}
+                                    hourStep={hourStep}
+                                    minuteStep={minuteStep}
+                                    secondStep={secondStep}
+                                    onChange={handlePanelChange}
+                                    onNow={showNow ? handleNow : undefined}
+                                    onConfirm={showConfirm ? handleConfirm : undefined}
+                                    showFooter={showNow || showConfirm}
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <div
+                            ref={popRef}
+                            className={cn('eui-time-picker-popover', { 'eui-time-picker-popover-hidden': !popStyle })}
+                            style={popStyle}
+                            role="dialog"
+                        >
+                            <TimePanel
+                                value={draft ?? current ?? DEFAULT_TIME}
+                                format12={format12}
+                                showSeconds={showSeconds}
+                                hourStep={hourStep}
+                                minuteStep={minuteStep}
+                                secondStep={secondStep}
+                                onChange={handlePanelChange}
+                                onNow={showNow ? handleNow : undefined}
+                                onConfirm={showConfirm ? handleConfirm : undefined}
+                                showFooter={showNow || showConfirm}
+                            />
+                        </div>
+                    ),
                     document.body,
                 )}
         </div>

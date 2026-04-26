@@ -187,6 +187,17 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
                     filter={searchable ? filterValue : ''}
                     loading={loading}
                     emptyMessage={emptyMessage}
+                    mobileTitle={placeholder}
+                    mobileSearch={
+                        searchable
+                            ? {
+                                  value: filterValue,
+                                  onChange: setFilterValue,
+                                  placeholder: 'Search...',
+                              }
+                            : undefined
+                    }
+                    hideChildrenOnMobile
                     {...baseProps}
                 >
                     {searchable && (

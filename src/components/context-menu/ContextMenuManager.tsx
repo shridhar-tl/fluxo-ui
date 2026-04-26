@@ -1,6 +1,8 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { TimesIcon } from '../../assets/icons';
+import { useViewport } from '../../hooks/useMobile';
 import './context-menu.scss';
 import { ContextMenuState } from './types';
 import { setContextMenuHandler } from './utils';
@@ -112,6 +114,10 @@ export const ContextMenuManager: React.FC = () => {
         style: { left: 0, top: 0, opacity: 0 },
     });
     const menuRef = useRef<HTMLDivElement>(null);
+    const { isCompact, isMobile, isTablet } = useViewport();
+    const closeMenu = useCallback(() => {
+        setState((prev) => ({ ...prev, visible: false }));
+    }, []);
 
     useEffect(() => {
         setContextMenuHandler((event, menus, options) => {
@@ -130,6 +136,7 @@ export const ContextMenuManager: React.FC = () => {
     }, []);
 
     useLayoutEffect(() => {
+        if (isCompact) return;
         if (state.visible && menuRef.current) {
             const rect = menuRef.current.getBoundingClientRect();
             const sx = window.scrollX;
@@ -170,32 +177,113 @@ export const ContextMenuManager: React.FC = () => {
                 style: { left: left + sx, top: top + sy, opacity: 1 },
             }));
         }
-    }, [state.visible, state.eventX, state.eventY, state.placement]);
+    }, [state.visible, state.eventX, state.eventY, state.placement, isCompact]);
 
     useEffect(() => {
         if (!state.visible) return;
 
         const handleClickOutside = (e: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                setState((prev) => ({ ...prev, visible: false }));
+                closeMenu();
             }
         };
 
         const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
-                setState((prev) => ({ ...prev, visible: false }));
+                closeMenu();
             }
         };
 
-        window.addEventListener('mousedown', handleClickOutside);
+        if (!isCompact) {
+            window.addEventListener('mousedown', handleClickOutside);
+        }
         window.addEventListener('keydown', handleEscape);
+
+        if (isCompact) {
+            const previousOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            return () => {
+                window.removeEventListener('keydown', handleEscape);
+                document.body.style.overflow = previousOverflow;
+            };
+        }
+
         return () => {
             window.removeEventListener('mousedown', handleClickOutside);
             window.removeEventListener('keydown', handleEscape);
         };
-    }, [state.visible]);
+    }, [state.visible, isCompact, closeMenu]);
 
     if (!state.visible) return null;
+
+    if (isCompact) {
+        return ReactDOM.createPortal(
+            <div
+                className={classNames('eui-context-menu-sheet-backdrop', {
+                    'eui-context-menu-sheet-backdrop-mobile': isMobile,
+                    'eui-context-menu-sheet-backdrop-tablet': isTablet,
+                })}
+                onClick={closeMenu}
+            >
+                <div
+                    ref={menuRef}
+                    className={classNames('eui-context-menu-sheet', {
+                        'eui-context-menu-sheet-mobile': isMobile,
+                        'eui-context-menu-sheet-tablet': isTablet,
+                    })}
+                    role="menu"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="eui-context-menu-sheet-header">
+                        <span className="eui-context-menu-sheet-grabber" aria-hidden="true" />
+                        <button
+                            type="button"
+                            className="eui-context-menu-sheet-close"
+                            onClick={closeMenu}
+                            aria-label="Close menu"
+                        >
+                            <TimesIcon />
+                        </button>
+                    </div>
+                    <div className="eui-context-menu-sheet-body">
+                        {state.menus.map((menu, idx) => {
+                            if ('seperator' in menu && menu.seperator) {
+                                return <div key={idx} className="eui-context-menu-separator" />;
+                            }
+                            if ('items' in menu && Array.isArray(menu.items)) {
+                                return (
+                                    <MobileSubMenuItem
+                                        key={idx}
+                                        menu={menu}
+                                        onClose={closeMenu}
+                                    />
+                                );
+                            }
+                            return (
+                                <button
+                                    key={idx}
+                                    role="menuitem"
+                                    tabIndex={0}
+                                    className={classNames('eui-context-menu-item eui-context-menu-item-mobile', {
+                                        'eui-context-menu-item-disabled': menu.disabled,
+                                    })}
+                                    disabled={menu.disabled}
+                                    onClick={() => {
+                                        menu.command?.(menu.id);
+                                        closeMenu();
+                                    }}
+                                >
+                                    {menu.icon && <span className="eui-context-menu-item-icon">{menu.icon}</span>}
+                                    <span className="eui-context-menu-item-label">{menu.label}</span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>,
+            document.body,
+        );
+    }
 
     return ReactDOM.createPortal(
         <div
@@ -215,7 +303,7 @@ export const ContextMenuManager: React.FC = () => {
                         return <div key={idx} className="eui-context-menu-separator" />;
                     }
                     if ('items' in menu && Array.isArray(menu.items)) {
-                        return <SubMenuItem key={idx} menu={menu} onClose={() => setState((prev) => ({ ...prev, visible: false }))} />;
+                        return <SubMenuItem key={idx} menu={menu} onClose={closeMenu} />;
                     }
                     return (
                         <button
@@ -226,12 +314,12 @@ export const ContextMenuManager: React.FC = () => {
                             disabled={menu.disabled}
                             onClick={() => {
                                 menu.command?.(menu.id);
-                                setState((prev) => ({ ...prev, visible: false }));
+                                closeMenu();
                             }}
                             onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === ' ') {
                                     menu.command?.(menu.id);
-                                    setState((prev) => ({ ...prev, visible: false }));
+                                    closeMenu();
                                 }
                             }}
                         >
@@ -243,6 +331,65 @@ export const ContextMenuManager: React.FC = () => {
             </ScrollableMenuList>
         </div>,
         document.body,
+    );
+};
+
+interface MobileSubMenuItemProps {
+    menu: import('./types').MenuItem;
+    onClose: () => void;
+}
+
+const MobileSubMenuItem: React.FC<MobileSubMenuItemProps> = ({ menu, onClose }) => {
+    const [open, setOpen] = useState(false);
+    return (
+        <div className={classNames('eui-context-submenu-mobile', { 'eui-context-submenu-mobile-open': open })}>
+            <button
+                role="menuitem"
+                tabIndex={0}
+                className="eui-context-menu-item eui-context-menu-item-mobile"
+                onClick={() => setOpen((v) => !v)}
+                aria-expanded={open}
+            >
+                {menu.icon && <span className="eui-context-menu-item-icon">{menu.icon}</span>}
+                <span className="eui-context-menu-item-label">{menu.label}</span>
+                <svg
+                    className={classNames('eui-context-menu-item-arrow', 'eui-context-menu-item-arrow-mobile', {
+                        'eui-context-menu-item-arrow-open': open,
+                    })}
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                >
+                    <path
+                        fillRule="evenodd"
+                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                    />
+                </svg>
+            </button>
+            {open && (
+                <div className="eui-context-submenu-mobile-list">
+                    {menu.items?.map((item, i) => (
+                        <button
+                            key={i}
+                            role="menuitem"
+                            tabIndex={0}
+                            className={classNames('eui-context-menu-item eui-context-menu-item-mobile eui-context-menu-item-mobile-nested', {
+                                'eui-context-menu-item-disabled': item.disabled,
+                            })}
+                            disabled={item.disabled}
+                            onClick={() => {
+                                item.command?.(item.id);
+                                onClose();
+                            }}
+                        >
+                            {item.icon && <span className="eui-context-menu-item-icon">{item.icon}</span>}
+                            <span className="eui-context-menu-item-label">{item.label}</span>
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
     );
 };
 

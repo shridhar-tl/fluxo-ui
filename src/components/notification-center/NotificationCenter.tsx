@@ -1,9 +1,10 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AnnouncementIcon } from '../../assets/icons';
+import { AnnouncementIcon, TimesIcon } from '../../assets/icons';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useKeyboard } from '../../hooks/useKeyboard';
+import { useViewport } from '../../hooks/useMobile';
 import { usePosition } from '../../hooks/usePosition';
 import type { NotificationCenterProps } from './notification-center-types';
 import './NotificationCenter.scss';
@@ -39,6 +40,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     const panelRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLDivElement>(null);
     const { calculatePosition } = usePosition();
+    const { isCompact, isMobile, isTablet } = useViewport();
 
     const resolvedUnreadCount = useMemo(() => {
         if (unreadCount !== undefined) return unreadCount;
@@ -63,12 +65,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         setIsOpen(false);
     }, []);
 
-    useClickOutside(panelRef, closePanel, isOpen);
+    useClickOutside(panelRef, closePanel, isOpen && !isCompact);
 
     useKeyboard({ Escape: closePanel }, isOpen);
 
     useLayoutEffect(() => {
-        if (!isOpen) return;
+        if (!isOpen || isCompact) return;
         const reposition = () => {
             if (triggerRef.current && panelRef.current) {
                 calculatePosition(triggerRef.current, panelRef.current);
@@ -81,7 +83,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             window.removeEventListener('scroll', reposition, true);
             window.removeEventListener('resize', reposition);
         };
-    }, [isOpen, calculatePosition]);
+    }, [isOpen, calculatePosition, isCompact]);
+
+    useEffect(() => {
+        if (!isOpen || !isCompact) return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isOpen, isCompact]);
 
     const handleScroll = useCallback(async () => {
         if (!listRef.current || !hasMore || loadingMore || isLoading || !onLoadMore) return;
@@ -115,11 +126,14 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     const panel = isOpen ? (
         <div
             ref={panelRef}
-            className={classNames('eui-notification-center', className)}
-            style={{ width }}
+            className={classNames('eui-notification-center', className, {
+                'eui-notification-center-mobile': isMobile,
+                'eui-notification-center-tablet': isTablet,
+            })}
+            style={isCompact ? undefined : { width }}
             role="dialog"
             aria-label="Notification center"
-            aria-modal="false"
+            aria-modal={isCompact ? 'true' : 'false'}
         >
             {header ?? (
                 <div className="eui-nc-header">
@@ -133,6 +147,16 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         {onClear && items.length > 0 && (
                             <button className="eui-nc-action-btn eui-nc-action-btn-danger" onClick={onClear} type="button">
                                 Clear all
+                            </button>
+                        )}
+                        {isCompact && (
+                            <button
+                                className="eui-nc-close-btn"
+                                onClick={closePanel}
+                                type="button"
+                                aria-label="Close notifications"
+                            >
+                                <TimesIcon />
                             </button>
                         )}
                     </div>
@@ -159,7 +183,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
             <div
                 ref={listRef}
                 className="eui-nc-list"
-                style={{ maxHeight }}
+                style={isCompact ? undefined : { maxHeight }}
                 role="listbox"
                 aria-label="Notifications list"
             >
@@ -210,7 +234,18 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     </span>
                 )}
             </button>
-            {createPortal(panel, document.body)}
+            {createPortal(
+                isOpen && isCompact ? (
+                    <div className="eui-nc-backdrop" onClick={closePanel}>
+                        <div onClick={(e) => e.stopPropagation()} className="eui-nc-backdrop-inner">
+                            {panel}
+                        </div>
+                    </div>
+                ) : (
+                    panel
+                ),
+                document.body,
+            )}
         </>
     );
 };

@@ -1,5 +1,6 @@
 import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useViewport } from '../../hooks/useMobile';
 
 export interface TableGridPickerProps {
     open: boolean;
@@ -27,6 +28,7 @@ const TableGridPickerInner: React.FC<TableGridPickerProps> = ({
     const [colsInput, setColsInput] = useState<number>(defaultCols);
     const [coords, setCoords] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
     const panelRef = useRef<HTMLDivElement>(null);
+    const { isCompact, isMobile, isTablet } = useViewport();
 
     const recompute = useCallback(() => {
         const anchor = anchorRef.current;
@@ -43,11 +45,11 @@ const TableGridPickerInner: React.FC<TableGridPickerProps> = ({
         setHover({ r: defaultRows, c: defaultCols });
         setRowsInput(defaultRows);
         setColsInput(defaultCols);
-        recompute();
-    }, [open, defaultRows, defaultCols, recompute]);
+        if (!isCompact) recompute();
+    }, [open, defaultRows, defaultCols, recompute, isCompact]);
 
     useEffect(() => {
-        if (!open) return;
+        if (!open || isCompact) return;
         const handleScroll = () => recompute();
         const handleResize = () => recompute();
         window.addEventListener('scroll', handleScroll, true);
@@ -56,7 +58,16 @@ const TableGridPickerInner: React.FC<TableGridPickerProps> = ({
             window.removeEventListener('scroll', handleScroll, true);
             window.removeEventListener('resize', handleResize);
         };
-    }, [open, recompute]);
+    }, [open, recompute, isCompact]);
+
+    useEffect(() => {
+        if (!open || !isCompact) return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [open, isCompact]);
 
     useEffect(() => {
         if (!open) return;
@@ -117,6 +128,91 @@ const TableGridPickerInner: React.FC<TableGridPickerProps> = ({
     }, [colsInput, onSelect, rowsInput]);
 
     if (!open) return null;
+
+    if (isCompact) {
+        return createPortal(
+            <div
+                className={
+                    'eui-md-table-grid-backdrop' +
+                    (isMobile ? ' eui-md-table-grid-backdrop-mobile' : '') +
+                    (isTablet ? ' eui-md-table-grid-backdrop-tablet' : '')
+                }
+                onClick={onClose}
+            >
+                <div
+                    ref={panelRef}
+                    className="eui-md-table-grid-panel eui-md-table-grid-panel-mobile"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Insert table"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="eui-md-table-grid-mobile-title">Insert table</div>
+                    <div className="eui-md-table-grid-mobile-row">
+                        <span className="eui-md-table-grid-mobile-label">Rows</span>
+                        <div className="eui-md-table-grid-mobile-stepper">
+                            <button
+                                type="button"
+                                aria-label="Decrease rows"
+                                onClick={() => setRowsInput((v) => Math.max(1, v - 1))}
+                            >
+                                −
+                            </button>
+                            <input
+                                type="number"
+                                min={1}
+                                max={100}
+                                value={rowsInput}
+                                onChange={(e) => setRowsInput(parseInt(e.target.value, 10) || 1)}
+                            />
+                            <button
+                                type="button"
+                                aria-label="Increase rows"
+                                onClick={() => setRowsInput((v) => Math.min(100, v + 1))}
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+                    <div className="eui-md-table-grid-mobile-row">
+                        <span className="eui-md-table-grid-mobile-label">Columns</span>
+                        <div className="eui-md-table-grid-mobile-stepper">
+                            <button
+                                type="button"
+                                aria-label="Decrease columns"
+                                onClick={() => setColsInput((v) => Math.max(1, v - 1))}
+                            >
+                                −
+                            </button>
+                            <input
+                                type="number"
+                                min={1}
+                                max={20}
+                                value={colsInput}
+                                onChange={(e) => setColsInput(parseInt(e.target.value, 10) || 1)}
+                            />
+                            <button
+                                type="button"
+                                aria-label="Increase columns"
+                                onClick={() => setColsInput((v) => Math.min(20, v + 1))}
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+                    <div className="eui-md-table-grid-mobile-actions">
+                        <button type="button" className="eui-md-table-grid-mobile-cancel" onClick={onClose}>
+                            Cancel
+                        </button>
+                        <button type="button" className="eui-md-table-grid-mobile-insert" onClick={handleInsertFromInputs}>
+                            Insert {rowsInput} × {colsInput}
+                        </button>
+                    </div>
+                </div>
+            </div>,
+            document.body,
+        );
+    }
 
     const cells: React.ReactNode[] = [];
     for (let r = 1; r <= maxRows; r += 1) {

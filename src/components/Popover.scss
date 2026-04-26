@@ -9,16 +9,172 @@
     border-radius: var(--eui-radius-md);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     transition: opacity 0.15s ease;
+}
 
-    &.eui-popover-mobile {
-        position: fixed;
-        inset-inline: 1rem;
-        top: 1rem;
-        bottom: 1rem;
-        max-width: none;
-        width: auto;
-        max-height: 90vh;
+.eui-popover-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    background-color: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5vh 12vw;
+    animation: eui-popover-backdrop-in 0.18s ease-out;
+
+    &.eui-popover-backdrop-mobile {
+        padding: 5vh 12vw;
     }
+
+    &.eui-popover-backdrop-tablet {
+        padding: 6vh 20vw;
+    }
+}
+
+@keyframes eui-popover-backdrop-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes eui-popover-sheet-in {
+    from { transform: translateY(8px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.eui-popover-compact {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 14px;
+    border: 1px solid var(--eui-border-subtle);
+    box-shadow: 0 24px 56px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+    animation: eui-popover-sheet-in 0.22s ease-out;
+}
+
+.eui-popover-mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--eui-border-subtle);
+    background-color: var(--eui-bg);
+    flex-shrink: 0;
+}
+
+.eui-popover-mobile-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--eui-text);
+}
+
+.eui-popover-mobile-close {
+    appearance: none;
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--eui-text-muted);
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+        background-color: var(--eui-bg-subtle);
+        color: var(--eui-text);
+    }
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.eui-popover-mobile-search {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--eui-border-subtle);
+    background-color: var(--eui-bg);
+    flex-shrink: 0;
+}
+
+.eui-popover-mobile-search-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--eui-border);
+    border-radius: 8px;
+    background-color: var(--eui-bg-subtle);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    font-size: 1rem;
+    outline: none;
+
+    &::placeholder {
+        color: var(--eui-text-muted);
+    }
+
+    &:focus {
+        border-color: var(--eui-primary);
+        box-shadow: 0 0 0 2px var(--eui-primary-subtle);
+    }
+}
+
+.eui-popover-mobile-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background-color: var(--eui-bg);
+}
+
+.eui-popover-mobile-footer {
+    flex-shrink: 0;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--eui-border-subtle);
+    background-color: var(--eui-bg);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.eui-popover-footer {
+    border-top: 1px solid var(--eui-border-subtle);
+    padding: 0.5rem 0.625rem;
+    background-color: var(--eui-bg);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    position: sticky;
+    bottom: 0;
+}
+
+.eui-popover-compact .eui-popover-item {
+    padding: 0.875rem 1rem;
+    font-size: 0.9375rem;
+    min-height: 44px;
+}
+
+.eui-popover-compact .eui-popover-item-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.eui-popover-compact .eui-popover-item-check {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.eui-popover-compact .eui-popover-group-header {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
 }
 
 .eui-popover-loading {
@@ -120,4 +276,11 @@
     height: 0.875rem;
     margin-left: 0.5rem;
     flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-popover-backdrop,
+    .eui-popover-compact {
+        animation: none;
+    }
 }

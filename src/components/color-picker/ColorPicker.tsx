@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useViewport } from '../../hooks/useMobile';
 import ColorPanel from './ColorPanel';
 import './color-picker.scss';
 import { hexToRgb } from './utils';
@@ -58,6 +59,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     const [popStyle, setPopStyle] = useState<React.CSSProperties>();
     const triggerRef = useRef<HTMLElement>(null);
     const popRef = useRef<HTMLDivElement>(null);
+    const { isCompact, isMobile, isTablet } = useViewport();
 
     const currentValue = controlledValue ?? internalValue;
     const currentAlpha = controlledAlpha ?? internalAlpha;
@@ -85,13 +87,31 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     }, []);
 
     useLayoutEffect(() => {
-        if (isOpen) {
+        if (isOpen && !isCompact) {
             computePosition();
         }
-    }, [isOpen, computePosition]);
+    }, [isOpen, computePosition, isCompact]);
 
     useEffect(() => {
         if (!isOpen) return;
+        const closeAll = () => {
+            setIsOpen(false);
+            onOpenChange?.(false);
+        };
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') closeAll();
+        };
+        document.addEventListener('keydown', onKey);
+
+        if (isCompact) {
+            const previousOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            return () => {
+                document.removeEventListener('keydown', onKey);
+                document.body.style.overflow = previousOverflow;
+            };
+        }
+
         const onResize = () => computePosition();
         const onClickOutside = (e: MouseEvent) => {
             if (
@@ -100,27 +120,19 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
                 triggerRef.current &&
                 !triggerRef.current.contains(e.target as Node)
             ) {
-                setIsOpen(false);
-                onOpenChange?.(false);
-            }
-        };
-        const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                setIsOpen(false);
-                onOpenChange?.(false);
+                closeAll();
             }
         };
         window.addEventListener('resize', onResize);
         document.addEventListener('scroll', onResize, true);
         document.addEventListener('mousedown', onClickOutside);
-        document.addEventListener('keydown', onKey);
         return () => {
             window.removeEventListener('resize', onResize);
             document.removeEventListener('scroll', onResize, true);
             document.removeEventListener('mousedown', onClickOutside);
             document.removeEventListener('keydown', onKey);
         };
-    }, [isOpen, computePosition, onOpenChange]);
+    }, [isOpen, computePosition, onOpenChange, isCompact]);
 
     const handleChange = useCallback(
         (hex: string, a: number) => {
@@ -275,23 +287,58 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             {renderTrigger()}
             {isOpen &&
                 createPortal(
-                    <div
-                        ref={popRef}
-                        className={cn('eui-color-picker-popover', { 'eui-color-picker-popover-hidden': !popStyle })}
-                        style={popStyle}
-                        role="dialog"
-                        aria-label="Color picker"
-                    >
-                        <ColorPanel
-                            value={currentValue}
-                            alpha={currentAlpha}
-                            showAlpha={showAlpha}
-                            showInputs={showInputs}
-                            showSwatches={showSwatches}
-                            swatches={swatches}
-                            onChange={handleChange}
-                        />
-                    </div>,
+                    isCompact ? (
+                        <div
+                            className={cn('eui-color-picker-backdrop', {
+                                'eui-color-picker-backdrop-mobile': isMobile,
+                                'eui-color-picker-backdrop-tablet': isTablet,
+                            })}
+                            onClick={() => {
+                                setIsOpen(false);
+                                onOpenChange?.(false);
+                            }}
+                        >
+                            <div
+                                ref={popRef}
+                                className={cn('eui-color-picker-popover', 'eui-color-picker-popover-mobile', {
+                                    'eui-color-picker-popover-mobile-mobile': isMobile,
+                                    'eui-color-picker-popover-mobile-tablet': isTablet,
+                                })}
+                                role="dialog"
+                                aria-label="Color picker"
+                                aria-modal="true"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <ColorPanel
+                                    value={currentValue}
+                                    alpha={currentAlpha}
+                                    showAlpha={showAlpha}
+                                    showInputs={showInputs}
+                                    showSwatches={showSwatches}
+                                    swatches={swatches}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <div
+                            ref={popRef}
+                            className={cn('eui-color-picker-popover', { 'eui-color-picker-popover-hidden': !popStyle })}
+                            style={popStyle}
+                            role="dialog"
+                            aria-label="Color picker"
+                        >
+                            <ColorPanel
+                                value={currentValue}
+                                alpha={currentAlpha}
+                                showAlpha={showAlpha}
+                                showInputs={showInputs}
+                                showSwatches={showSwatches}
+                                swatches={swatches}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    ),
                     document.body,
                 )}
         </div>

@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React, { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronDownIcon } from '../../assets/icons';
+import { ChevronDownIcon, TimesIcon } from '../../assets/icons';
+import { useViewport } from '../../hooks/useMobile';
 
 export interface ToolbarDropdownOption {
     id: string;
@@ -42,6 +43,7 @@ const ToolbarDropdownInner: React.FC<ToolbarDropdownProps> = ({
     const btnRef = useRef<HTMLButtonElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     const menuId = useRef('eui-dd-' + Math.random().toString(36).slice(2, 8));
+    const { isCompact, isMobile, isTablet } = useViewport();
 
     const recompute = useCallback(() => {
         const btn = btnRef.current;
@@ -55,12 +57,12 @@ const ToolbarDropdownInner: React.FC<ToolbarDropdownProps> = ({
     }, []);
 
     useLayoutEffect(() => {
-        if (!open) return;
+        if (!open || isCompact) return;
         recompute();
-    }, [open, recompute]);
+    }, [open, recompute, isCompact]);
 
     useEffect(() => {
-        if (!open) return;
+        if (!open || isCompact) return;
         const handleScroll = () => recompute();
         const handleResize = () => recompute();
         window.addEventListener('scroll', handleScroll, true);
@@ -69,7 +71,16 @@ const ToolbarDropdownInner: React.FC<ToolbarDropdownProps> = ({
             window.removeEventListener('scroll', handleScroll, true);
             window.removeEventListener('resize', handleResize);
         };
-    }, [open, recompute]);
+    }, [open, recompute, isCompact]);
+
+    useEffect(() => {
+        if (!open || !isCompact) return;
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [open, isCompact]);
 
     useEffect(() => {
         if (!open) return;
@@ -177,38 +188,92 @@ const ToolbarDropdownInner: React.FC<ToolbarDropdownProps> = ({
             </button>
             {open &&
                 createPortal(
-                    <div
-                        ref={menuRef}
-                        id={menuId.current}
-                        role="menu"
-                        aria-label={label}
-                        className={classNames('eui-editor-toolbar-dd-menu', menuClassName)}
-                        style={{
-                            top: coords.top,
-                            left: coords.left,
-                            minWidth: Math.max(coords.minWidth, 160),
-                        }}
-                    >
-                        {options.map((opt, idx) => (
-                            <button
-                                key={opt.id}
-                                type="button"
-                                role="menuitem"
-                                className={classNames('eui-editor-toolbar-dd-item', {
-                                    'is-active': idx === activeIdx,
-                                    'is-disabled': opt.disabled,
+                    isCompact ? (
+                        <div
+                            className={classNames('eui-editor-toolbar-dd-backdrop', {
+                                'eui-editor-toolbar-dd-backdrop-mobile': isMobile,
+                                'eui-editor-toolbar-dd-backdrop-tablet': isTablet,
+                            })}
+                            onClick={() => setOpen(false)}
+                        >
+                            <div
+                                ref={menuRef}
+                                id={menuId.current}
+                                role="menu"
+                                aria-label={label}
+                                className={classNames('eui-editor-toolbar-dd-menu', 'eui-editor-toolbar-dd-menu-mobile', menuClassName, {
+                                    'eui-editor-toolbar-dd-menu-mobile-mobile': isMobile,
+                                    'eui-editor-toolbar-dd-menu-mobile-tablet': isTablet,
                                 })}
-                                onClick={() => handleItemClick(opt)}
-                                onMouseEnter={() => !opt.disabled && setActiveIdx(idx)}
-                                disabled={opt.disabled}
+                                onClick={(e) => e.stopPropagation()}
                             >
-                                <span className="eui-editor-toolbar-dd-item-label">{opt.label}</span>
-                                {opt.shortcut && (
-                                    <span className="eui-editor-toolbar-dd-item-shortcut">{opt.shortcut}</span>
-                                )}
-                            </button>
-                        ))}
-                    </div>,
+                                <div className="eui-editor-toolbar-dd-menu-header">
+                                    <span className="eui-editor-toolbar-dd-menu-title">{label}</span>
+                                    <button
+                                        type="button"
+                                        className="eui-editor-toolbar-dd-menu-close"
+                                        onClick={() => setOpen(false)}
+                                        aria-label="Close"
+                                    >
+                                        <TimesIcon />
+                                    </button>
+                                </div>
+                                <div className="eui-editor-toolbar-dd-menu-body">
+                                    {options.map((opt, idx) => (
+                                        <button
+                                            key={opt.id}
+                                            type="button"
+                                            role="menuitem"
+                                            className={classNames('eui-editor-toolbar-dd-item', 'eui-editor-toolbar-dd-item-mobile', {
+                                                'is-active': idx === activeIdx,
+                                                'is-disabled': opt.disabled,
+                                            })}
+                                            onClick={() => handleItemClick(opt)}
+                                            disabled={opt.disabled}
+                                        >
+                                            <span className="eui-editor-toolbar-dd-item-label">{opt.label}</span>
+                                            {opt.shortcut && (
+                                                <span className="eui-editor-toolbar-dd-item-shortcut">{opt.shortcut}</span>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div
+                            ref={menuRef}
+                            id={menuId.current}
+                            role="menu"
+                            aria-label={label}
+                            className={classNames('eui-editor-toolbar-dd-menu', menuClassName)}
+                            style={{
+                                top: coords.top,
+                                left: coords.left,
+                                minWidth: Math.max(coords.minWidth, 160),
+                            }}
+                        >
+                            {options.map((opt, idx) => (
+                                <button
+                                    key={opt.id}
+                                    type="button"
+                                    role="menuitem"
+                                    className={classNames('eui-editor-toolbar-dd-item', {
+                                        'is-active': idx === activeIdx,
+                                        'is-disabled': opt.disabled,
+                                    })}
+                                    onClick={() => handleItemClick(opt)}
+                                    onMouseEnter={() => !opt.disabled && setActiveIdx(idx)}
+                                    disabled={opt.disabled}
+                                >
+                                    <span className="eui-editor-toolbar-dd-item-label">{opt.label}</span>
+                                    {opt.shortcut && (
+                                        <span className="eui-editor-toolbar-dd-item-shortcut">{opt.shortcut}</span>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    ),
                     document.body,
                 )}
         </>

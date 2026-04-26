@@ -129,3 +129,84 @@
   white-space: nowrap;
   min-width: 0;
 }
+
+.eui-cal-overflow-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  background-color: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5vh 6vw;
+  animation: eui-cal-of-backdrop-in 0.18s ease-out;
+
+  &.eui-cal-overflow-backdrop-tablet { padding: 6vh 18vw; }
+}
+
+@keyframes eui-cal-of-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes eui-cal-of-sheet-in {
+  from { transform: translateY(8px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.eui-cal-overflow-popover.eui-cal-overflow-popover-mobile {
+  position: relative;
+  inset: auto;
+  top: auto;
+  left: auto;
+  width: 100%;
+  max-width: 480px;
+  min-width: 0;
+  max-height: 80vh;
+  border-radius: 16px;
+  border: 1px solid var(--eui-border-subtle);
+  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.28);
+  animation: eui-cal-of-sheet-in 0.22s ease-out;
+
+  .eui-cal-overflow-popover-header {
+    padding: 0.875rem 1rem;
+  }
+
+  .eui-cal-overflow-popover-count {
+    font-size: 0.9375rem;
+  }
+
+  .eui-cal-overflow-popover-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .eui-cal-overflow-popover-list {
+    padding: 0.5rem;
+  }
+
+  .eui-cal-overflow-popover-item {
+    padding: 0.75rem 0.875rem;
+    gap: 0.625rem;
+    min-height: 48px;
+  }
+
+  .eui-cal-overflow-popover-dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .eui-cal-overflow-popover-time {
+    font-size: 0.8125rem;
+  }
+
+  .eui-cal-overflow-popover-title {
+    font-size: 0.9375rem;
+  }
+}

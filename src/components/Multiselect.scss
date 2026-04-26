@@ -159,6 +159,7 @@
 .eui-multiselect-item {
     display: flex;
     align-items: center;
+    gap: 0.625rem;
     padding: 0.5rem 0.75rem;
     cursor: pointer;
     transition: background-color 0.15s ease;
@@ -183,9 +184,14 @@
         font-weight: 500;
     }
 
-    .eui-multiselect-item-checkbox {
-        margin-right: 0.75rem;
-        accent-color: var(--eui-primary);
+    .eui-checkbox {
+        pointer-events: none;
+    }
+
+    .eui-multiselect-item-icon {
+        width: 1rem;
+        height: 1rem;
+        flex-shrink: 0;
     }
 
     .eui-multiselect-item-label {

@@ -323,3 +323,73 @@
         background-color: #ef4444;
     }
 }
+
+@media (max-width: 767px) {
+    .eui-snackbar-container {
+        &.eui-snackbar-top-left,
+        &.eui-snackbar-top-center,
+        &.eui-snackbar-top-right {
+            top: env(safe-area-inset-top, 0.5rem);
+            left: 0.5rem !important;
+            right: 0.5rem !important;
+            margin-left: 0;
+            margin-right: 0;
+            align-items: stretch;
+        }
+
+        &.eui-snackbar-bottom-left,
+        &.eui-snackbar-bottom-center,
+        &.eui-snackbar-bottom-right {
+            bottom: env(safe-area-inset-bottom, 0.5rem);
+            left: 0.5rem !important;
+            right: 0.5rem !important;
+            margin-left: 0;
+            margin-right: 0;
+            align-items: stretch;
+        }
+    }
+
+    .eui-snackbar {
+        max-width: 100%;
+        width: 100%;
+        padding: 1rem 1.125rem;
+        border-radius: 14px;
+        border-left-width: 6px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    .eui-snackbar-icon {
+        margin-right: 0.875rem;
+
+        svg {
+            width: 1.625rem;
+            height: 1.625rem;
+        }
+    }
+
+    .eui-snackbar-title {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .eui-snackbar-message {
+        font-size: 0.9375rem;
+        line-height: 1.5;
+    }
+
+    .eui-snackbar-close {
+        margin-left: 0.625rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+
+        svg {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+    }
+
+    .eui-snackbar-progress {
+        height: 3px;
+    }
+}
