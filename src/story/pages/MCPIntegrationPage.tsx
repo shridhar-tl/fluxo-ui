@@ -16,7 +16,16 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'faq', title: 'FAQ', description: 'Quick answers' },
 ];
 
-const mcpConfigClaudeCmd = 'claude mcp add fluxo-ui -- npx fluxo-ui-mcp';
+const mcpConfigClaudeCmd = 'claude mcp add fluxo-ui --scope project -- npx fluxo-ui-mcp';
+
+const mcpConfigClaudeJson = `{
+  "mcpServers": {
+    "fluxo-ui": {
+      "command": "npx",
+      "args": ["fluxo-ui-mcp"]
+    }
+  }
+}`;
 
 const mcpConfigVsCode = `{
   "servers": {
@@ -200,13 +209,47 @@ const MCPIntegrationPage: React.FC = () => {
             <section className="scroll-mt-8" id="claude-code">
                 <h2 className={headingClass}>Claude Code</h2>
                 <p className={bodyClass}>
-                    Once you have <code className="text-[var(--eui-primary)]">fluxo-ui</code> installed in your project, enable the
-                    integration with a single command:
+                    Install Fluxo UI MCP at the <strong>project scope</strong> so every developer on the team uses the exact version of{' '}
+                    <code className="text-[var(--eui-primary)]">fluxo-ui</code> that's pinned in this repository — not whatever happens to be
+                    installed globally on each machine. This avoids version drift between the AI's suggestions and your actual installed
+                    components.
                 </p>
-                <CodeBlock title="Enable Fluxo UI MCP" code={mcpConfigClaudeCmd} language="bash" />
+                <CodeBlock title="Run from your project root" code={mcpConfigClaudeCmd} language="bash" />
+                <p className={cn('mt-4', bodyClass)}>
+                    This creates a <code className="text-[var(--eui-primary)]">.mcp.json</code> file at the root of your project:
+                </p>
+                <CodeBlock title=".mcp.json (auto-generated)" code={mcpConfigClaudeJson} language="json" />
+                <div
+                    className={cn('mt-4 rounded-md border-l-4 p-4', {
+                        'bg-amber-500/10 border-amber-400 text-amber-100': isDark,
+                        'bg-amber-50 border-amber-500 text-amber-900': !isDark,
+                    })}
+                >
+                    <div className="font-semibold mb-1">Commit .mcp.json to git</div>
+                    <p className="text-sm">
+                        Check <code>.mcp.json</code> into your repository. When teammates clone the project and open it in Claude Code,
+                        they'll be prompted to approve the MCP server and instantly get the same Fluxo UI integration — pointed at the
+                        version of <code>fluxo-ui</code> installed in <em>this</em> project's <code>node_modules</code>, not a global one.
+                    </p>
+                </div>
+                <div
+                    className={cn('mt-3 rounded-md border-l-4 p-4', {
+                        'bg-sky-500/10 border-sky-400 text-sky-100': isDark,
+                        'bg-sky-50 border-sky-500 text-sky-900': !isDark,
+                    })}
+                >
+                    <div className="font-semibold mb-1">Why not user scope?</div>
+                    <p className="text-sm">
+                        A user-scoped MCP install (<code>--scope user</code>) is shared across every project you open. That risks the AI
+                        reading components from one version of Fluxo UI while you're editing a project pinned to a different version —
+                        leading to suggestions with props that don't exist in your installed copy. Project scope keeps the integration tied
+                        to <code>node_modules/fluxo-ui</code> in <em>this</em> repo, so the AI always sees what you actually have installed.
+                    </p>
+                </div>
                 <p className={cn('mt-4', mutedClass)}>
-                    That's it. Ask Claude anything about Fluxo UI — "how do I show a toast?", "build me a kanban board", "what themes are
-                    available?" — and it will answer with real components and real props.
+                    After approving the server in Claude Code, ask anything about Fluxo UI — "how do I show a toast?", "build me a kanban
+                    board", "what themes are available?" — and it will answer with the real components and real props from your installed
+                    version.
                 </p>
             </section>
 
