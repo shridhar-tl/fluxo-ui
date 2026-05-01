@@ -1,6 +1,7 @@
 import classNames from 'classnames';
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '../assets/icons';
+import { PasswordStrengthMeter, PasswordStrengthMeterProps } from './password-strength';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
 import './Password.scss';
@@ -18,7 +19,41 @@ interface PasswordProps extends BaseComponentProps, Omit<React.InputHTMLAttribut
     showPassword?: boolean;
     toggleable?: boolean;
     id?: string;
+    strengthMeter?: boolean | Omit<PasswordStrengthMeterProps, 'value'>;
 }
+
+const isDevEnvironment = (): boolean => {
+    try {
+        if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV) {
+            return process.env.NODE_ENV !== 'production';
+        }
+    } catch {
+        // ignore
+    }
+    return true;
+};
+
+const detectSignupContext = (input: HTMLInputElement | null): boolean => {
+    if (!input) return false;
+    const signupRegex = /confirm|new[-_ ]?password|create[-_ ]?password|signup|sign[-_ ]?up|register/i;
+    const form = input.form;
+    const peers = form ? Array.from(form.querySelectorAll<HTMLElement>('input,button')) : [];
+    for (const el of peers) {
+        if (el === input) continue;
+        if (el instanceof HTMLInputElement && el.type === 'password') {
+            const meta = `${el.name || ''} ${el.id || ''} ${el.getAttribute('aria-label') || ''}`;
+            if (signupRegex.test(meta)) return true;
+        }
+        if (el instanceof HTMLButtonElement) {
+            const text = `${el.textContent || ''} ${el.getAttribute('aria-label') || ''}`;
+            if (/sign\s*up|create\s*account|register/i.test(text)) return true;
+        }
+    }
+    const ownMeta = `${input.name || ''} ${input.id || ''} ${input.getAttribute('aria-label') || ''}`;
+    return signupRegex.test(ownMeta);
+};
+
+const passwordWarningSent = new WeakSet<HTMLInputElement>();
 
 export const Password = forwardRef<HTMLInputElement, PasswordProps>(
     (
@@ -39,6 +74,7 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
             className,
             name,
             args,
+            strengthMeter,
             ...baseProps
         },
         ref,
@@ -47,9 +83,31 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
         const [internalShowPassword, setInternalShowPassword] = useState(false);
         const isControlled = value !== undefined;
         const [internalValue, setInternalValue] = useState(value ?? '');
+        const inputRef = useRef<HTMLInputElement | null>(null);
+
+        useImperativeHandle(ref, () => inputRef.current as HTMLInputElement, []);
 
         const showPassword = controlledShowPassword !== undefined ? controlledShowPassword : internalShowPassword;
         const displayValue = isControlled ? value : internalValue;
+
+        const meterId = strengthMeter ? `${inputId}-strength` : undefined;
+
+        useEffect(() => {
+            if (!isDevEnvironment()) return;
+            const inputEl = inputRef.current;
+            if (!inputEl || passwordWarningSent.has(inputEl)) return;
+            const t = window.setTimeout(() => {
+                if (autoComplete === 'new-password') return;
+                if (detectSignupContext(inputEl)) {
+                    passwordWarningSent.add(inputEl);
+                    // eslint-disable-next-line no-console
+                    console.warn(
+                        '[Fluxo UI Password] This field appears to be in a signup/registration form. Set autoComplete="new-password" so password managers offer to generate a strong password.',
+                    );
+                }
+            }, 200);
+            return () => window.clearTimeout(t);
+        }, [autoComplete]);
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (!isControlled) {
@@ -65,10 +123,14 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
             }
         };
 
-        const togglePasswordVisibility = () => {
+        const togglePasswordVisibility = (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
             if (controlledShowPassword === undefined) {
                 setInternalShowPassword(!internalShowPassword);
             }
+            window.requestAnimationFrame(() => {
+                inputRef.current?.focus();
+            });
         };
 
         const resolvedSize = getResolvedSize({ ...baseProps });
@@ -88,7 +150,7 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
 
         const passwordField = (
             <input
-                ref={ref}
+                ref={inputRef}
                 id={inputId}
                 type={showPassword ? 'text' : 'password'}
                 value={displayValue}
@@ -101,30 +163,50 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
                 autoComplete={autoComplete}
                 autoFocus={autoFocus}
                 disabled={disabled}
+                name={name}
                 className={componentClasses}
                 style={componentStyles}
                 aria-invalid={required && !displayValue ? 'true' : 'false'}
                 aria-required={required}
+                aria-describedby={meterId}
             />
         );
 
-        if (!toggleable) {
-            return passwordField;
-        }
+        const meterProps: Omit<PasswordStrengthMeterProps, 'value'> | null =
+            strengthMeter === true ? {} : typeof strengthMeter === 'object' && strengthMeter ? strengthMeter : null;
 
-        return (
+        const inputBlock = !toggleable ? (
+            passwordField
+        ) : (
             <span className="eui-password-wrap">
                 {passwordField}
                 <button
                     type="button"
                     onClick={togglePasswordVisibility}
+                    onMouseDown={(e) => e.preventDefault()}
                     disabled={disabled}
                     className="eui-password-toggle"
                     aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-pressed={showPassword}
                 >
                     {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
                 </button>
             </span>
+        );
+
+        if (!meterProps) {
+            return inputBlock;
+        }
+
+        return (
+            <div className="eui-password-with-meter">
+                {inputBlock}
+                <PasswordStrengthMeter
+                    {...meterProps}
+                    value={typeof displayValue === 'string' ? displayValue : ''}
+                    id={meterId}
+                />
+            </div>
         );
     },
 );

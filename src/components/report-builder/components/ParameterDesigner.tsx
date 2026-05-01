@@ -147,7 +147,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
             return (
                 <NumericInput
                     value={(value as number | undefined) ?? undefined}
-                    onChange={(e: ComponentEvent<number>) => onChange(e.value ?? undefined)}
+                    onChange={(e: ComponentEvent<number | undefined>) => onChange(e.value ?? undefined)}
                     min={tc.min as number | undefined}
                     max={tc.max as number | undefined}
                     step={tc.step as number | undefined}
@@ -419,7 +419,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                         <NumericInput
                             id={`rb-param-width-${parameterId}`}
                             value={param.width ?? 1}
-                            onChange={(e: ComponentEvent<number>) => updateParam({ width: e.value ?? 1 })}
+                            onChange={(e: ComponentEvent<number | undefined>) => updateParam({ width: e.value ?? 1 })}
                             min={0.1}
                             max={1}
                             step={0.1}
@@ -505,7 +505,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                         <label style={{ textTransform: 'capitalize' }}>{key}</label>
                                         <NumericInput
                                             value={(tc[key] as number) ?? undefined}
-                                            onChange={(e: ComponentEvent<number>) => updateTypeConfig({ [key]: e.value })}
+                                            onChange={(e: ComponentEvent<number | undefined>) => updateTypeConfig({ [key]: e.value })}
                                         />
                                     </div>
                                 ))}
@@ -513,7 +513,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <label>Decimal Places</label>
                                     <NumericInput
                                         value={(tc.decimalPlaces as number) ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateTypeConfig({ decimalPlaces: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateTypeConfig({ decimalPlaces: e.value })}
                                         min={0}
                                         max={10}
                                     />
@@ -619,7 +619,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <label>Min Query Length</label>
                                     <NumericInput
                                         value={(tc.minQueryLength as number) ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateTypeConfig({ minQueryLength: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateTypeConfig({ minQueryLength: e.value })}
                                         min={0}
                                     />
                                 </div>
@@ -627,7 +627,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <label>Max Suggestions</label>
                                     <NumericInput
                                         value={(tc.maxSuggestions as number) ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateTypeConfig({ maxSuggestions: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateTypeConfig({ maxSuggestions: e.value })}
                                         min={1}
                                     />
                                 </div>
@@ -647,7 +647,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <label>Min Length</label>
                                     <NumericInput
                                         value={validation.minLength ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateValidation({ minLength: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ minLength: e.value })}
                                         min={0}
                                     />
                                 </div>
@@ -655,7 +655,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <label>Max Length</label>
                                     <NumericInput
                                         value={validation.maxLength ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateValidation({ maxLength: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ maxLength: e.value })}
                                         min={0}
                                     />
                                 </div>
@@ -695,14 +695,14 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <label>Min Value</label>
                                     <NumericInput
                                         value={validation.minValue ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateValidation({ minValue: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ minValue: e.value })}
                                     />
                                 </div>
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Max Value</label>
                                     <NumericInput
                                         value={validation.maxValue ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateValidation({ maxValue: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ maxValue: e.value })}
                                     />
                                 </div>
                             </div>
@@ -717,7 +717,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <label>Min Items</label>
                                     <NumericInput
                                         value={validation.minItems ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateValidation({ minItems: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ minItems: e.value })}
                                         min={0}
                                     />
                                 </div>
@@ -725,7 +725,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <label>Max Items</label>
                                     <NumericInput
                                         value={validation.maxItems ?? undefined}
-                                        onChange={(e: ComponentEvent<number>) => updateValidation({ maxItems: e.value })}
+                                        onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ maxItems: e.value })}
                                         min={0}
                                     />
                                 </div>
@@ -748,7 +748,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <label>Max File Size (bytes)</label>
                                 <NumericInput
                                     value={validation.maxFileSize ?? undefined}
-                                    onChange={(e: ComponentEvent<number>) => updateValidation({ maxFileSize: e.value })}
+                                    onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ maxFileSize: e.value })}
                                     min={0}
                                 />
                             </div>

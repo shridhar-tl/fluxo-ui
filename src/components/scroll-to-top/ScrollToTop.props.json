@@ -1,0 +1,90 @@
+{
+  "scrollToTopProps": {
+    "target": {
+      "type": "HTMLElement | string",
+      "description": "Scroll target element or selector (default: window)"
+    },
+    "showAfter": {
+      "type": "number",
+      "default": "200",
+      "description": "Pixels of scroll required before the button appears"
+    },
+    "position": {
+      "type": "'bottom-right' | 'bottom-left' | 'top-right' | 'top-left'",
+      "default": "'bottom-right'",
+      "description": "Corner the button anchors to (in 'fixed' mode)"
+    },
+    "offset": {
+      "type": "{ x?: number; y?: number }",
+      "default": "{ x: 24, y: 24 }",
+      "description": "Distance from the chosen corner in px"
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg' | 'xl'",
+      "default": "'md'",
+      "description": "Preset size"
+    },
+    "variant": {
+      "type": "'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'",
+      "default": "'primary'",
+      "description": "Color variant"
+    },
+    "layout": {
+      "type": "'solid' | 'outlined' | 'glass'",
+      "default": "'solid'",
+      "description": "Visual treatment"
+    },
+    "color": {
+      "type": "string",
+      "description": "Override variant color with any CSS color"
+    },
+    "gradient": {
+      "type": "{ from: string; to: string; angle?: number }",
+      "description": "Gradient background overrides variant/color"
+    },
+    "icon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Icon shown inside the button (default: chevron-up)"
+    },
+    "label": {
+      "type": "string",
+      "description": "Optional visible text next to the icon"
+    },
+    "showProgress": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Render a circular progress ring around the icon"
+    },
+    "progressColor": {
+      "type": "string",
+      "description": "Color of the progress ring"
+    },
+    "mode": {
+      "type": "'fixed' | 'inline'",
+      "default": "'fixed'",
+      "description": "'fixed' floats over the viewport; 'inline' renders inside its parent"
+    },
+    "behavior": {
+      "type": "'smooth' | 'auto'",
+      "default": "'smooth'",
+      "description": "Scroll behavior; auto-falls back under prefers-reduced-motion"
+    },
+    "onClick": {
+      "type": "() => void",
+      "description": "Fires after the scroll begins"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Scroll to top'",
+      "description": "Accessible label"
+    }
+  }
+}

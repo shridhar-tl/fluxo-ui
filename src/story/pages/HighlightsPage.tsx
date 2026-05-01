@@ -147,6 +147,24 @@ const extraComponents: FlagshipItem[] = [
         highlights: ['Brushes & colors', 'Undo / redo', 'Export as image'],
         accent: '#06b6d4',
     },
+    {
+        title: 'QR Code',
+        tagline: 'Encode anything. Scan from anywhere.',
+        description:
+            'A pure-TypeScript QR encoder with no runtime dependencies. Auto-picks the smallest version (1–40), supports all four error-correction levels, square/rounded/dot module shapes, centered logo overlays, and a download handle for PNG/JPEG/SVG export.',
+        path: '/components/qr-code',
+        highlights: ['No dependencies', 'Versions 1–40', 'Logo overlay', 'PNG / SVG export'],
+        accent: '#22c55e',
+    },
+    {
+        title: 'Barcode',
+        tagline: 'Generate scannable barcodes inline.',
+        description:
+            'A standards-compliant barcode generator covering Code 128, Code 39, EAN-13, EAN-8, UPC-A, and ITF. Renders crisp SVG with configurable bar width, height, text label, and colors — drop it next to a SKU or ticket number.',
+        path: '/components/barcode',
+        highlights: ['Code 128 / 39 / EAN / UPC', 'SVG output', 'Configurable label', 'Themeable'],
+        accent: '#0891b2',
+    },
 ];
 
 const LazyPreview: React.FC<{ loader: () => Promise<{ default: React.ComponentType }> }> = ({ loader }) => {
@@ -341,7 +359,7 @@ const HighlightsPage: React.FC = () => {
                                 to="/overview"
                                 className="px-6 py-2.5 bg-[var(--eui-primary)] hover:opacity-90 text-white font-semibold rounded-lg transition-all text-sm shadow-lg shadow-[var(--eui-primary)]/25"
                             >
-                                Browse all 70+ components →
+                                Browse all 80+ components →
                             </Link>
                             <Link
                                 to="/installation"
@@ -356,7 +374,7 @@ const HighlightsPage: React.FC = () => {
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-10 max-w-2xl">
                             {[
-                                { label: '70+', sub: 'Components' },
+                                { label: '80+', sub: 'Components' },
                                 { label: 'TS', sub: 'First-class types' },
                                 { label: 'A11y', sub: 'WCAG 2.1 AA' },
                                 { label: '12', sub: 'Brand themes' },
@@ -559,7 +577,7 @@ const HighlightsPage: React.FC = () => {
                         <div className="relative">
                             <h2 className={cn('text-2xl md:text-3xl font-bold mb-2', textPrimary)}>Want the full picture?</h2>
                             <p className={cn('text-sm md:text-base mb-6 max-w-2xl mx-auto', textBody)}>
-                                These are the headliners. The complete library has 70+ components — form inputs, tables, pickers, overlays,
+                                These are the headliners. The complete library has 80+ components — form inputs, tables, pickers, overlays,
                                 charts, navigation, feedback, and more — every one themeable and accessible out of the box.
                             </p>
                             <div className="flex flex-wrap justify-center gap-3">

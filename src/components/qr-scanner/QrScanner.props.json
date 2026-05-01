@@ -1,0 +1,98 @@
+{
+  "qrScannerProps": {
+    "onScan": {
+      "type": "(value: string) => void",
+      "required": true,
+      "description": "Called with the decoded string when a QR code is recognized"
+    },
+    "onError": {
+      "type": "(error: Error) => void",
+      "description": "Called when the camera fails or a decode error occurs"
+    },
+    "facingMode": {
+      "type": "'environment' | 'user'",
+      "default": "'environment'",
+      "description": "Preferred camera direction. 'environment' selects the rear camera on mobile"
+    },
+    "formats": {
+      "type": "string[]",
+      "default": "['qr_code']",
+      "description": "BarcodeDetector formats to recognize. Use ['qr_code'] for QR only, or include other 2D/1D formats supported by the browser"
+    },
+    "continuous": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When true, keeps scanning after each detected code (useful for batch workflows). When false, stops after the first detection"
+    },
+    "autoStart": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When true, requests the camera and starts scanning on mount. Note: iOS Safari may require a user gesture, so a Start button is the safer default"
+    },
+    "showTorchToggle": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the flashlight (torch) toggle button when supported by the device"
+    },
+    "showCameraSwitch": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the front/rear camera switch button when more than one video input is available"
+    },
+    "overlay": {
+      "type": "'frame' | 'mask' | 'none'",
+      "default": "'mask'",
+      "description": "Visual overlay style. 'mask' dims the area around the framing reticle, 'frame' shows just the corner brackets, 'none' hides the overlay"
+    },
+    "width": {
+      "type": "number | string",
+      "default": "'100%'",
+      "description": "Outer container width. Accepts CSS units (e.g. 320, '100%', '24rem')"
+    },
+    "height": {
+      "type": "number | string",
+      "description": "Outer container height. If omitted, the container uses aspectRatio to size itself"
+    },
+    "aspectRatio": {
+      "type": "number",
+      "default": "1",
+      "description": "Aspect ratio used when height is not provided. 1 = square, 1.333 = 4:3, 1.777 = 16:9"
+    },
+    "scanIntervalMs": {
+      "type": "number",
+      "default": "200",
+      "description": "Polling interval in milliseconds. Lower values = faster detection at higher CPU/battery cost"
+    },
+    "pauseAfterScan": {
+      "type": "boolean",
+      "default": "true",
+      "description": "When continuous=false, stop the camera and return to idle after the first successful scan"
+    },
+    "unsupportedMessage": {
+      "type": "ReactNode",
+      "description": "Custom message shown when the browser does not support BarcodeDetector"
+    },
+    "deniedMessage": {
+      "type": "ReactNode",
+      "description": "Custom message shown when the user denies camera permission"
+    },
+    "startLabel": {
+      "type": "ReactNode",
+      "default": "'Start scanning'",
+      "description": "Label for the start button"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'QR code scanner'",
+      "description": "Accessible label for the scanner region"
+    }
+  }
+}

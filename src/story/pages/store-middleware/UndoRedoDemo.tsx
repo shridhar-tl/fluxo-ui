@@ -10,7 +10,7 @@ interface UndoState {
     value: number;
 }
 
-const undoStore = create<UndoState>(() => ({ value: 0 }), [undoRedoMiddleware(20)]);
+const undoStore = create<UndoState>(() => ({ value: 0 }), [undoRedoMiddleware({ maxHistorySize: 20 })]);
 const useUndoStore = createHook<UndoState, UndoState & UndoRedoStateProps>(undoStore);
 const typedStore = undoStore as UndoRedoStore<UndoState>;
 
@@ -22,7 +22,7 @@ interface CounterState { value: number; }
 
 const store = create<CounterState>(
   () => ({ value: 0 }),
-  [undoRedoMiddleware(20)]
+  [undoRedoMiddleware({ maxHistorySize: 20 })]
 );
 const useStore = createHook<CounterState, CounterState & UndoRedoStateProps>(store);
 const typedStore = store as UndoRedoStore<CounterState>;

@@ -1,0 +1,40 @@
+@use '../eui-vars' as *;
+
+.eui-barcode {
+    display: inline-block;
+    line-height: 0;
+    font-family: var(--eui-font-family);
+    color: var(--eui-text);
+    background: var(--eui-bg);
+    padding: 0.5rem;
+    border-radius: var(--eui-radius-sm);
+    border: 1px solid var(--eui-border-subtle);
+
+    svg {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+.eui-barcode-error {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    background: var(--eui-bg-subtle);
+    border-radius: var(--eui-radius-sm);
+    gap: 0.25rem;
+    font-size: 0.75rem;
+
+    span {
+        font-weight: 600;
+    }
+    small {
+        opacity: 0.85;
+        font-size: 0.65rem;
+    }
+}

@@ -22,7 +22,7 @@ const NumericInputStates: React.FC = () => {
                     <NumericInput label="Normal" value={42} onChange={() => {}} />
                     <NumericInput label="Disabled" value={42} onChange={() => {}} disabled />
                     <NumericInput label="Read Only" value={42} readonly />
-                    <NumericInput label="With Error" error={errorMessage} value={errorValue} onChange={(e) => setErrorValue(e.value)} />
+                    <NumericInput label="With Error" error={errorMessage} value={errorValue} onChange={(e) => setErrorValue(e.value ?? 0)} />
                 </div>
             </ComponentDemo>
             <div className="mt-4">

@@ -27,7 +27,7 @@ const BasicUsage: React.FC = () => {
         <>
             <ComponentDemo title="Basic Numeric Input">
                 <div className="w-full max-w-sm">
-                    <NumericInput label="Quantity" value={basicValue} onChange={(e) => setBasicValue(e.value)} />
+                    <NumericInput label="Quantity" value={basicValue} onChange={(e) => setBasicValue(e.value ?? 0)} />
                 </div>
             </ComponentDemo>
             <div className="mt-4">

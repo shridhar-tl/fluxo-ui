@@ -1,0 +1,164 @@
+@use '../eui-vars' as *;
+
+.eui-scroll-to-top {
+    appearance: none;
+    border: 1px solid transparent;
+    background: var(--eui-primary);
+    color: var(--eui-text-on-primary, #ffffff);
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.25), 0 4px 8px -2px rgba(0, 0, 0, 0.1);
+    transition:
+        opacity 200ms ease,
+        transform 220ms cubic-bezier(0.22, 0.61, 0.36, 1),
+        background-color 150ms ease,
+        box-shadow 150ms ease;
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
+    pointer-events: none;
+    font-family: var(--eui-font-family);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;
+    position: relative;
+
+    &.eui-scroll-to-top-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+    }
+
+    &:hover {
+        filter: brightness(1.05);
+        box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.3), 0 6px 12px -2px rgba(0, 0, 0, 0.15);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 3px;
+    }
+
+    &:active:not([aria-hidden='true']) {
+        transform: translateY(0) scale(0.95);
+    }
+
+    &.eui-scroll-to-top-with-label {
+        border-radius: 999px;
+        padding: 0 1rem;
+        gap: 0.45rem;
+    }
+
+    &.eui-scroll-to-top-inline {
+        position: static !important;
+    }
+
+    &.eui-scroll-to-top-reduced-motion {
+        transition: opacity 100ms linear !important;
+    }
+
+    .eui-scroll-to-top-icon {
+        width: 50%;
+        height: 50%;
+        max-width: 24px;
+        max-height: 24px;
+    }
+
+    .eui-scroll-to-top-label {
+        font-size: 0.85em;
+        white-space: nowrap;
+    }
+
+    .eui-scroll-to-top-ring {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+    }
+}
+
+.eui-scroll-to-top-variant-default {
+    background: var(--eui-bg-subtle);
+    color: var(--eui-text);
+    border-color: var(--eui-border);
+}
+.eui-scroll-to-top-variant-secondary {
+    background: var(--eui-bg-hover);
+    color: var(--eui-text);
+    border-color: var(--eui-border);
+}
+.eui-scroll-to-top-variant-success {
+    background: #16a34a;
+    color: #fff;
+}
+.eui-scroll-to-top-variant-warning {
+    background: #f59e0b;
+    color: #fff;
+}
+.eui-scroll-to-top-variant-danger {
+    background: #ef4444;
+    color: #fff;
+}
+.eui-scroll-to-top-variant-info {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.eui-scroll-to-top-layout-outlined {
+    background: var(--eui-bg);
+    color: var(--eui-primary);
+    border-color: currentColor;
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+
+    &.eui-scroll-to-top-variant-default {
+        color: var(--eui-text-muted);
+    }
+    &.eui-scroll-to-top-variant-success {
+        color: #16a34a;
+        background: var(--eui-bg);
+    }
+    &.eui-scroll-to-top-variant-warning {
+        color: #f59e0b;
+        background: var(--eui-bg);
+    }
+    &.eui-scroll-to-top-variant-danger {
+        color: #ef4444;
+        background: var(--eui-bg);
+    }
+    &.eui-scroll-to-top-variant-info {
+        color: #3b82f6;
+        background: var(--eui-bg);
+    }
+    &.eui-scroll-to-top-variant-secondary {
+        color: var(--eui-text);
+        background: var(--eui-bg);
+    }
+}
+
+.eui-scroll-to-top-layout-glass {
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--eui-text);
+    border-color: var(--eui-border-subtle);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+
+body.mode-dark .eui-scroll-to-top-layout-glass {
+    background: rgba(20, 22, 28, 0.55);
+    color: var(--eui-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-scroll-to-top {
+        transition: opacity 100ms linear !important;
+    }
+}
+
+@media (max-width: $bp-sm) {
+    .eui-scroll-to-top {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}

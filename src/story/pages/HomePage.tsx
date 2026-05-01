@@ -37,7 +37,16 @@ const largeComponents = new Set([
     'Report Viewer',
 ]);
 
-const heavyComponents = new Set(['Drag & Drop', 'Step Tour', 'Report Builder', 'Report Builder Examples', 'Report Viewer']);
+const heavyComponents = new Set([
+    'Drag & Drop',
+    'Step Tour',
+    'Report Builder',
+    'Report Builder Examples',
+    'Report Viewer',
+    'Command Palette',
+    'Scroll To Top',
+    'QR Scanner',
+]);
 
 const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>> = {
     '/components/textinput': () => import('./text-input/BasicUsage'),
@@ -109,6 +118,17 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/drag-drop': () => import('./drag-drop/BasicDragDrop'),
     '/components/docked-layout': () => import('./docked-layout/BasicUsage'),
     '/components/countdown-timer': () => import('./countdown-timer/BasicUsage'),
+    '/components/knob': () => import('./knob/BasicUsage'),
+    '/components/activity-gauge': () => import('./activity-gauge/BasicUsage'),
+    '/components/split-button': () => import('./split-button/BasicUsage'),
+    '/components/dock': () => import('./dock/BasicUsage'),
+    '/components/qr-code': () => import('./qr-code/BasicUsage'),
+    '/components/barcode': () => import('./barcode/BasicUsage'),
+    '/components/avatar': () => import('./avatar/BasicUsage'),
+    '/components/empty-state': () => import('./empty-state/BasicUsage'),
+    '/components/password-strength': () => import('./password-strength/BasicUsage'),
+    '/components/password-requirements': () => import('./password-requirements/BasicUsage'),
+    '/components/scroll-to-top': () => import('./scroll-to-top/Variants'),
 };
 
 const LazyPreview: React.FC<{ path: string }> = ({ path }) => {
@@ -300,6 +320,18 @@ const formInputs: Omit<ComponentCardProps, 'isDark'>[] = [
         path: '/components/week-day-selector',
         badge: 'New',
     },
+    {
+        title: 'Password Strength',
+        description: 'Configurable strength meter with allowed-aware tips',
+        path: '/components/password-strength',
+        badge: 'New',
+    },
+    {
+        title: 'Password Requirements',
+        description: 'Live rules checklist with confirm-password and bundled strength meter',
+        path: '/components/password-requirements',
+        badge: 'New',
+    },
 ];
 
 const selectionComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -371,9 +403,18 @@ const chartBoardComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Timeline', description: 'Vertical/horizontal event sequence', path: '/components/timeline' },
     { title: 'Progress Bar', description: 'Determinate and indeterminate progress', path: '/components/progress-bar' },
     { title: 'Countdown Timer', description: 'Progress-aware countdown with circular, linear, segmented, and numeric variants', path: '/components/countdown-timer', badge: 'New' },
+    { title: 'Knob', description: 'Circular value indicator with optional drag editing', path: '/components/knob', badge: 'New' },
+    { title: 'Activity Gauge', description: 'Concentric multi-series ring chart', path: '/components/activity-gauge', badge: 'New' },
+];
+
+const codeComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'QR Code', description: 'Encode any string with optional logo overlay', path: '/components/qr-code', badge: 'New' },
+    { title: 'QR Scanner', description: 'Scan QR codes with the device camera using the native BarcodeDetector API', path: '/components/qr-scanner', badge: 'New' },
+    { title: 'Barcode', description: '6 symbologies with built-in validation', path: '/components/barcode', badge: 'New' },
 ];
 
 const mediaComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Avatar', description: 'Circular image / initials / icon with status dots and group overflow', path: '/components/avatar', badge: 'New' },
     { title: 'Carousel', description: 'Image/video slider with thumbnails', path: '/components/carousel' },
     { title: 'Lightbox', description: 'Hover/click preview with zoom-out', path: '/components/lightbox' },
     { title: 'Image Editor', description: 'Crop, rotate, blur, annotate images', path: '/components/image-editor' },
@@ -395,6 +436,7 @@ const feedbackComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Page Banner', description: 'Page-level message banners', path: '/components/page-banner' },
     { title: 'Tooltip', description: 'Hover/focus information popups', path: '/components/tooltip' },
     { title: 'Shimmer / Skeleton', description: 'Loading placeholders and skeletons', path: '/components/shimmer' },
+    { title: 'Empty State', description: 'Placeholder for empty data, errors, and first-run states', path: '/components/empty-state', badge: 'New' },
 ];
 
 const overlayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -427,7 +469,11 @@ const layoutComponents: Omit<ComponentCardProps, 'isDark'>[] = [
 
 const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Button', description: 'Primary action element with variants', path: '/components/button' },
+    { title: 'Split Button', description: 'Primary action paired with a related-actions menu', path: '/components/split-button', badge: 'New' },
     { title: 'Fab & Speed Dial', description: 'Floating action buttons', path: '/components/fab-speed-dial' },
+    { title: 'Dock', description: 'Floating bar of icons with magnification and auto-hide', path: '/components/dock', badge: 'New' },
+    { title: 'Command Palette', description: 'Modal launcher with fuzzy search and recents', path: '/components/command-palette', badge: 'New' },
+    { title: 'Scroll To Top', description: 'Floating FAB that returns the user to the top', path: '/components/scroll-to-top', badge: 'New' },
     { title: 'Drag & Drop', description: 'Draggable and droppable containers', path: '/components/drag-drop' },
     { title: 'Sortable', description: 'Drag-to-reorder lists and grids', path: '/components/sortable' },
     { title: 'Deferred View', description: 'Lazy-render with visibility detection', path: '/components/deferred-view' },
@@ -457,7 +503,7 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                     <p className={cn('text-base md:text-lg leading-relaxed mb-8', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                        A comprehensive, accessible React component library built with TypeScript. Includes 70+ components, a custom state
+                        A comprehensive, accessible React component library built with TypeScript. Includes 80+ components, a custom state
                         management solution, 12 color themes, dark mode support, and full keyboard navigation. Hover over any component card
                         below for a quick interactive preview.
                     </p>
@@ -484,7 +530,7 @@ const HomePage: React.FC = () => {
             <section className="scroll-mt-8" id="highlights">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 py-8">
                     {[
-                        { icon: '70+', label: 'Components', desc: 'Production-ready UI components' },
+                        { icon: '80+', label: 'Components', desc: 'Production-ready UI components' },
                         { icon: 'TS', label: 'TypeScript', desc: 'Full type safety and IntelliSense' },
                         { icon: 'A11Y', label: 'Accessible', desc: 'WAI-ARIA compliant components' },
                         { icon: '12', label: 'Themes', desc: 'Color themes with dark mode' },
@@ -542,6 +588,12 @@ const HomePage: React.FC = () => {
                         title="Charts & Boards"
                         icon="&#9646;"
                         items={chartBoardComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Codes"
+                        icon="&#9647;"
+                        items={codeComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                     <CategorySection title="Media" icon="&#9634;" items={mediaComponents.map((i) => ({ ...i, isDark }))} isDark={isDark} />
@@ -624,7 +676,7 @@ const HomePage: React.FC = () => {
                         A lightweight, TypeScript-first state management solution with batched updates, computed properties, and middleware
                         support.
                     </p>
-                    <div className="grid sm:grid-cols-3 gap-3">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         <Link
                             to="/store/basic"
                             className={cn('p-5 rounded-lg border transition-all', {
@@ -637,6 +689,20 @@ const HomePage: React.FC = () => {
                             </h4>
                             <p className={cn('text-xs', { 'text-gray-500': true })}>
                                 Simple state container with batched updates, computed properties, and path subscriptions
+                            </p>
+                        </Link>
+                        <Link
+                            to="/store/slice"
+                            className={cn('p-5 rounded-lg border transition-all', {
+                                'bg-white/3 border-white/8 hover:border-white/20': isDark,
+                                'bg-white border-gray-200 hover:shadow-md': !isDark,
+                            })}
+                        >
+                            <h4 className={cn('text-sm font-semibold mb-1', { 'text-gray-200': isDark, 'text-gray-800': !isDark })}>
+                                Slices
+                            </h4>
+                            <p className={cn('text-xs', { 'text-gray-500': true })}>
+                                Compose multiple slices into one store with bidirectional sync — usable standalone too
                             </p>
                         </Link>
                         <Link

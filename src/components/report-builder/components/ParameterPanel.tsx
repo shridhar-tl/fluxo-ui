@@ -167,7 +167,7 @@ function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
                     <NumericInput
                         id={`rb-runtime-param-${param.id}`}
                         value={(value as number) ?? undefined}
-                        onChange={(e: ComponentEvent<number>) => onChange(e.value)}
+                        onChange={(e: ComponentEvent<number | undefined>) => onChange(e.value)}
                         min={tc.min as number | undefined}
                         max={tc.max as number | undefined}
                         step={tc.step as number | undefined}

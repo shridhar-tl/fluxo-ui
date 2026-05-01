@@ -1,0 +1,109 @@
+@use '../eui-vars' as *;
+
+.eui-knob {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    user-select: none;
+
+    svg {
+        display: block;
+        outline: none;
+        overflow: visible;
+        touch-action: none;
+    }
+
+    &.eui-knob-interactive svg {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--eui-primary);
+            outline-offset: 4px;
+            border-radius: 50%;
+        }
+    }
+
+    &.eui-knob-disabled {
+        opacity: 0.55;
+        pointer-events: none;
+    }
+}
+
+.eui-knob-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+    padding: 12%;
+}
+
+.eui-knob-label {
+    font-size: 0.75rem;
+    color: var(--eui-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.15rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.eui-knob-value {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.15rem;
+    font-weight: 700;
+    color: var(--eui-text);
+    line-height: 1;
+}
+
+.eui-knob-value-text {
+    font-size: clamp(0.95rem, 18%, 2rem);
+    font-variant-numeric: tabular-nums;
+}
+
+.eui-knob-value-unit {
+    font-size: 0.65em;
+    font-weight: 600;
+    color: var(--eui-text-muted);
+}
+
+.eui-knob-sublabel {
+    margin-top: 0.2rem;
+    font-size: 0.7rem;
+    color: var(--eui-text-muted);
+    line-height: 1.2;
+}
+
+.eui-knob-xs .eui-knob-value-text {
+    font-size: 0.85rem;
+}
+.eui-knob-sm .eui-knob-value-text {
+    font-size: 1rem;
+}
+.eui-knob-md .eui-knob-value-text {
+    font-size: 1.5rem;
+}
+.eui-knob-lg .eui-knob-value-text {
+    font-size: 2rem;
+}
+.eui-knob-xl .eui-knob-value-text {
+    font-size: 2.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-knob svg circle,
+    .eui-knob svg path {
+        transition: none !important;
+    }
+}

@@ -7,15 +7,49 @@ import { createInterface } from 'node:readline';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const collectPropsJson = (dir) => {
+    const map = {};
+    if (!existsSync(dir)) return map;
+    for (const entry of readdirSync(dir)) {
+        const full = join(dir, entry);
+        if (statSync(full).isDirectory()) {
+            Object.assign(map, collectPropsJson(full));
+        } else if (entry.endsWith('.props.json')) {
+            try {
+                const data = JSON.parse(readFileSync(full, 'utf-8'));
+                const compName = entry.replace('.props.json', '');
+                map[compName] = data;
+            } catch {}
+        }
+    }
+    return map;
+};
+
+const flattenProps = (raw) => {
+    if (!raw || typeof raw !== 'object') return {};
+    const out = {};
+    for (const [groupOrProp, val] of Object.entries(raw)) {
+        if (val && typeof val === 'object' && ('type' in val || 'description' in val)) {
+            out[groupOrProp] = val;
+        } else if (val && typeof val === 'object') {
+            for (const [k, v] of Object.entries(val)) out[k] = v;
+        }
+    }
+    return out;
+};
+
+const slugToTitle = (slug) =>
+    slug.split('-').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join('');
+
 const buildIndexFromSource = (sourcePath) => {
     const rootDir = resolve(sourcePath, '..');
     const pkg = existsSync(resolve(rootDir, 'package.json'))
         ? JSON.parse(readFileSync(resolve(rootDir, 'package.json'), 'utf-8'))
         : {};
 
-    const parseComponentExports = () => {
+    const parseNamedExports = () => {
         const indexPath = resolve(sourcePath, 'components/index.ts');
-        if (!existsSync(indexPath)) return [];
+        if (!existsSync(indexPath)) return new Set();
         const src = readFileSync(indexPath, 'utf-8');
         const names = new Set();
         const namedRe = /export\s*(?:type\s*)?\{\s*([^}]+)\}\s*from/g;
@@ -26,7 +60,7 @@ const buildIndexFromSource = (sourcePath) => {
                 if (clean && /^[A-Z]/.test(clean)) names.add(clean);
             }
         }
-        return Array.from(names).sort();
+        return names;
     };
 
     const parseThemeTokens = () => {
@@ -63,54 +97,49 @@ const buildIndexFromSource = (sourcePath) => {
         return examples;
     };
 
-    // Recursively collect all *.props.json files under componentsDir
-    const collectPropsJson = (dir) => {
-        const map = {};
-        if (!existsSync(dir)) return map;
-        for (const entry of readdirSync(dir)) {
-            const full = join(dir, entry);
-            if (statSync(full).isDirectory()) {
-                Object.assign(map, collectPropsJson(full));
-            } else if (entry.endsWith('.props.json')) {
-                try {
-                    const data = JSON.parse(readFileSync(full, 'utf-8'));
-                    const compName = entry.replace('.props.json', '');
-                    map[compName] = data;
-                } catch {}
-            }
-        }
-        return map;
-    };
-
-    const slugToTitle = (slug) =>
-        slug.split('-').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join('');
-
-    const exportedNames = parseComponentExports();
+    const componentsPropsMap = collectPropsJson(resolve(sourcePath, 'components'));
+    const storePropsMap = collectPropsJson(resolve(sourcePath, 'store'));
+    const namedExports = parseNamedExports();
     const { tokens, breakpoints } = parseThemeTokens();
     const examples = collectExamples();
-    const propsJsonMap = {
-        ...collectPropsJson(resolve(sourcePath, 'components')),
-        ...collectPropsJson(resolve(sourcePath, 'store')),
-    };
 
     const components = {};
-    for (const name of exportedNames) {
+    const componentNames = new Set([...Object.keys(componentsPropsMap), ...namedExports]);
+    for (const name of componentNames) {
         components[name] = {
             name,
             importFrom: 'fluxo-ui',
-            importStatement: `import { ${name} } from 'fluxo-ui';`,
             examples: [],
-            props: propsJsonMap[name] || {},
+            props: componentsPropsMap[name] || {},
         };
     }
+
     for (const [slug, demos] of Object.entries(examples)) {
+        if (slug.startsWith('store-') || slug === 'hooks-utils' || slug === 'services' || slug === 'demo-showcase') continue;
         const candidates = [slugToTitle(slug), slugToTitle(slug).replace(/s$/, '')];
-        let matched = candidates.find((c) => components[c]) || exportedNames.find((n) => n.toLowerCase() === slug.replace(/-/g, '').toLowerCase()) || null;
+        let matched = candidates.find((c) => components[c]) || [...componentNames].find((n) => n.toLowerCase() === slug.replace(/-/g, '').toLowerCase()) || null;
         if (matched) {
             components[matched].storyDir = slug;
             components[matched].examples = demos;
-        } else {
-            components[`__story_${slug}`] = { name: slugToTitle(slug), storyDir: slug, importFrom: 'fluxo-ui', examples: demos, props: {} };
+        }
+    }
+
+    const storeApi = {
+        groups: {},
+        examples: {},
+    };
+    if (storePropsMap['store']) {
+        for (const [groupKey, groupValue] of Object.entries(storePropsMap['store'])) {
+            storeApi.groups[groupKey] = groupValue;
+        }
+    }
+    if (storePropsMap['store-model']) {
+        storeApi.groups.modelApiProps = storePropsMap['store-model'];
+    }
+    for (const [slug, demos] of Object.entries(examples)) {
+        if (slug.startsWith('store-')) {
+            const topic = slug.replace(/^store-/, '');
+            storeApi.examples[topic] = demos.map((d) => ({ title: d.title, code: d.code }));
         }
     }
 
@@ -121,6 +150,7 @@ const buildIndexFromSource = (sourcePath) => {
         library: { name: pkg.name, version: pkg.version, description: pkg.description, homepage: pkg.homepage },
         entryPoints,
         components,
+        storeApi,
         themes: {
             available: ['theme-blue', 'theme-green', 'theme-orange', 'theme-purple', 'theme-lara', 'theme-indigo', 'theme-rose', 'theme-amber', 'theme-teal', 'theme-emerald', 'theme-fuchsia', 'theme-slate'],
             darkModeClass: 'mode-dark',
@@ -197,18 +227,30 @@ const getIndex = () => {
 };
 
 const PROTOCOL_VERSION = '2024-11-05';
-const SERVER_INFO = { name: 'fluxo-ui-mcp', version: index.library?.version || '0.0.0' };
 
 const getServerInfo = () => ({ name: 'fluxo-ui-mcp', version: getIndex().library?.version || '0.0.0' });
 
+const TYPE_ONLY_SUFFIXES = ['Props', 'State', 'Position', 'Variant', 'Size', 'Layout', 'Orientation', 'Mode', 'Direction', 'Item', 'Result', 'Spec', 'Return', 'RenderProps', 'ChangeEvent', 'Type', 'Status', 'Indicator', 'CallbackArg', 'Event', 'Theme'];
+const TYPE_ONLY_NAMES = new Set(['CheckState', 'Column', 'JsonValue', 'JsonObject', 'JsonArray', 'JsonValueType', 'DragItem', 'DragDropInfo', 'DragLayerState', 'DragPreviewProp', 'RangeOption', 'SelectionMode', 'TreeNode', 'ListItem', 'ComponentEvent', 'StepStatus']);
+
+const isLikelyComponent = (c) => {
+    if (Object.keys(c.props || {}).length > 0) return true;
+    if ((c.examples?.length || 0) > 0) return true;
+    if (TYPE_ONLY_NAMES.has(c.name)) return false;
+    for (const suffix of TYPE_ONLY_SUFFIXES) {
+        if (c.name.endsWith(suffix) && c.name !== suffix) return false;
+    }
+    return true;
+};
+
 const componentList = (idx) =>
-    Object.values(idx.components).map((c) => ({
-        name: c.name,
-        importFrom: c.importFrom,
-        hasExamples: (c.examples?.length || 0) > 0,
-    }));
+    Object.values(idx.components)
+        .filter(isLikelyComponent)
+        .map((c) => ({ name: c.name, hasProps: Object.keys(c.props || {}).length > 0, hasExamples: (c.examples?.length || 0) > 0 }))
+        .sort((a, b) => a.name.localeCompare(b.name));
 
 const findComponent = (idx, name) => {
+    if (!name) return null;
     const lower = name.toLowerCase();
     for (const c of Object.values(idx.components)) {
         if (c.name.toLowerCase() === lower) return c;
@@ -219,7 +261,7 @@ const findComponent = (idx, name) => {
     return null;
 };
 
-const searchComponents = (idx, query) => {
+const searchAll = (idx, query) => {
     const q = query.toLowerCase();
     const hits = [];
     for (const c of Object.values(idx.components)) {
@@ -229,20 +271,27 @@ const searchComponents = (idx, query) => {
             if (ex.title.toLowerCase().includes(q)) score += 3;
             if (ex.code.toLowerCase().includes(q)) score += 1;
         }
-        if (score > 0) hits.push({ name: c.name, score, importFrom: c.importFrom });
+        if (score > 0) hits.push({ name: c.name, kind: 'component', score });
     }
-    return hits.sort((a, b) => b.score - a.score).slice(0, 20);
+    if (idx.storeApi?.groups) {
+        for (const [groupKey, groupValue] of Object.entries(idx.storeApi.groups)) {
+            for (const apiKey of Object.keys(groupValue || {})) {
+                if (apiKey.toLowerCase().includes(q)) hits.push({ name: apiKey, kind: 'store-api', group: groupKey, score: 8 });
+            }
+        }
+    }
+    return hits.sort((a, b) => b.score - a.score).slice(0, 25);
 };
 
 const tools = [
     {
         name: 'list_components',
-        description: 'List all components exported by fluxo-ui with their import paths.',
+        description: 'List every fluxo-ui component name (sorted). Use this first, then call get_props for the one you need.',
         inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     },
     {
-        name: 'get_component',
-        description: 'Get details and example code for a specific fluxo-ui component by name.',
+        name: 'get_props',
+        description: 'Get the props table for a fluxo-ui component. Returns a flat map of prop name to { type, default, required, description }.',
         inputSchema: {
             type: 'object',
             properties: { name: { type: 'string', description: 'Component name, e.g. "Button"' } },
@@ -251,18 +300,18 @@ const tools = [
         },
     },
     {
-        name: 'search_components',
-        description: 'Fuzzy-search fluxo-ui components and examples by keyword (e.g. "toast", "date picker").',
+        name: 'list_examples',
+        description: 'List example titles available for a component. Pair with get_example to fetch one.',
         inputSchema: {
             type: 'object',
-            properties: { query: { type: 'string' } },
-            required: ['query'],
+            properties: { name: { type: 'string' } },
+            required: ['name'],
             additionalProperties: false,
         },
     },
     {
         name: 'get_example',
-        description: 'Get a specific example snippet for a component. Omit exampleTitle to get the first example.',
+        description: 'Get the source code of a specific example. Omit exampleTitle to get the first one.',
         inputSchema: {
             type: 'object',
             properties: {
@@ -274,78 +323,156 @@ const tools = [
         },
     },
     {
+        name: 'search',
+        description: 'Fuzzy search across components and store APIs. Returns names + kind so you know which fetcher to call next.',
+        inputSchema: {
+            type: 'object',
+            properties: { query: { type: 'string' } },
+            required: ['query'],
+            additionalProperties: false,
+        },
+    },
+    {
+        name: 'list_store_apis',
+        description: 'List the state-management API surfaces (store, slice, middleware). Returns group names + API keys. Pair with get_store_api.',
+        inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    },
+    {
+        name: 'get_store_api',
+        description: 'Get the description of a state-management API by key (e.g. "createSlice(name, initializer, middlewares?)" or "persistMiddleware(options)").',
+        inputSchema: {
+            type: 'object',
+            properties: { name: { type: 'string', description: 'API key from list_store_apis, or a fragment like "persist" or "createSlice"' } },
+            required: ['name'],
+            additionalProperties: false,
+        },
+    },
+    {
+        name: 'list_store_examples',
+        description: 'List state-management example topics (basic, slice, middleware, model). Pair with get_store_example.',
+        inputSchema: { type: 'object', properties: {}, additionalProperties: false },
+    },
+    {
+        name: 'get_store_example',
+        description: 'Get the source code of a state-management example by topic + title.',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                topic: { type: 'string', description: 'One of: basic, slice, middleware, model' },
+                exampleTitle: { type: 'string' },
+            },
+            required: ['topic'],
+            additionalProperties: false,
+        },
+    },
+    {
         name: 'get_theme_tokens',
         description: 'Get fluxo-ui CSS custom properties (--eui-*), available themes, dark mode class, and SCSS breakpoints.',
         inputSchema: { type: 'object', properties: {}, additionalProperties: false },
     },
     {
         name: 'get_quick_start',
-        description: 'Get install, setup (ThemeProvider + CSS import), and manager mount info for fluxo-ui.',
+        description: 'Get install command, ThemeProvider setup snippet, entry points, and manager mount info.',
         inputSchema: { type: 'object', properties: {}, additionalProperties: false },
-    },
-    {
-        name: 'get_props',
-        description: 'Get the full props table for a fluxo-ui component — name, type, default, required, and description for every prop.',
-        inputSchema: {
-            type: 'object',
-            properties: { name: { type: 'string', description: 'Component name, e.g. "Button"' } },
-            required: ['name'],
-            additionalProperties: false,
-        },
     },
 ];
 
 const asText = (value) => ({
-    content: [{ type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value, null, 2) }],
+    content: [{ type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value) }],
 });
+
+const findStoreApi = (idx, name) => {
+    if (!name || !idx.storeApi?.groups) return null;
+    const lower = name.toLowerCase();
+    for (const [groupKey, group] of Object.entries(idx.storeApi.groups)) {
+        for (const [apiKey, apiValue] of Object.entries(group || {})) {
+            if (apiKey.toLowerCase() === lower) return { group: groupKey, key: apiKey, value: apiValue };
+        }
+    }
+    for (const [groupKey, group] of Object.entries(idx.storeApi.groups)) {
+        for (const [apiKey, apiValue] of Object.entries(group || {})) {
+            if (apiKey.toLowerCase().includes(lower)) return { group: groupKey, key: apiKey, value: apiValue };
+        }
+    }
+    return null;
+};
 
 const callTool = (name, args) => {
     const idx = getIndex();
     switch (name) {
-        case 'list_components':
-            return asText({ count: Object.keys(idx.components).length, components: componentList(idx) });
-        case 'get_component': {
+        case 'list_components': {
+            const list = componentList(idx);
+            return asText({ count: list.length, components: list });
+        }
+
+        case 'get_props': {
             const c = findComponent(idx, args?.name || '');
             if (!c) return asText(`Component "${args?.name}" not found.`);
-            return asText({
-                name: c.name,
-                importStatement: c.importStatement || `import { ${c.name} } from '${c.importFrom}';`,
-                importFrom: c.importFrom,
-                examples: (c.examples || []).map((e) => ({ title: e.title })),
-            });
+            const props = flattenProps(c.props);
+            if (Object.keys(props).length === 0) return asText({ component: c.name, props: {}, note: 'No props metadata available' });
+            return asText({ component: c.name, props });
         }
-        case 'search_components':
-            return asText({ results: searchComponents(idx, args?.query || '') });
+
+        case 'list_examples': {
+            const c = findComponent(idx, args?.name || '');
+            if (!c) return asText(`Component "${args?.name}" not found.`);
+            return asText({ component: c.name, examples: (c.examples || []).map((e) => e.title) });
+        }
+
         case 'get_example': {
             const c = findComponent(idx, args?.name || '');
             if (!c) return asText(`Component "${args?.name}" not found.`);
             const examples = c.examples || [];
-            if (examples.length === 0) return asText(`No examples available for "${c.name}".`);
+            if (examples.length === 0) return asText(`No examples for "${c.name}".`);
             const picked = args?.exampleTitle
                 ? examples.find((e) => e.title.toLowerCase() === args.exampleTitle.toLowerCase()) || examples[0]
                 : examples[0];
             return asText(`// ${c.name} — ${picked.title}\n\n${picked.code}`);
         }
+
+        case 'search':
+            return asText({ results: searchAll(idx, args?.query || '') });
+
+        case 'list_store_apis': {
+            const groups = idx.storeApi?.groups || {};
+            const out = {};
+            for (const [groupKey, group] of Object.entries(groups)) {
+                out[groupKey] = Object.keys(group || {});
+            }
+            return asText({ groups: out });
+        }
+
+        case 'get_store_api': {
+            const hit = findStoreApi(idx, args?.name || '');
+            if (!hit) return asText(`Store API "${args?.name}" not found. Call list_store_apis to see available keys.`);
+            return asText({ group: hit.group, key: hit.key, ...hit.value });
+        }
+
+        case 'list_store_examples': {
+            const examples = idx.storeApi?.examples || {};
+            const out = {};
+            for (const [topic, list] of Object.entries(examples)) {
+                out[topic] = list.map((e) => e.title);
+            }
+            return asText({ topics: out });
+        }
+
+        case 'get_store_example': {
+            const examples = idx.storeApi?.examples || {};
+            const topicList = examples[args?.topic];
+            if (!topicList) return asText(`Topic "${args?.topic}" not found. Call list_store_examples.`);
+            const picked = args?.exampleTitle
+                ? topicList.find((e) => e.title.toLowerCase() === args.exampleTitle.toLowerCase()) || topicList[0]
+                : topicList[0];
+            return asText(`// store/${args?.topic} — ${picked.title}\n\n${picked.code}`);
+        }
+
         case 'get_theme_tokens':
             return asText(idx.themes);
+
         case 'get_quick_start':
             return asText({ ...idx.quickStart, entryPoints: idx.entryPoints, managers: idx.managers });
-        case 'get_props': {
-            const c = findComponent(idx, args?.name || '');
-            if (!c) return asText(`Component "${args?.name}" not found.`);
-            const props = c.props || {};
-            if (Object.keys(props).length === 0) return asText(`No props data available for "${c.name}".`);
-            // Flatten all prop groups (each key in props is either a PropDefinition or a nested group)
-            const flattened = {};
-            for (const [groupOrProp, val] of Object.entries(props)) {
-                if (val && typeof val === 'object' && ('type' in val || 'description' in val)) {
-                    flattened[groupOrProp] = val;
-                } else if (val && typeof val === 'object') {
-                    Object.assign(flattened, val);
-                }
-            }
-            return asText({ component: c.name, props: flattened });
-        }
+
         default:
             throw new Error(`Unknown tool: ${name}`);
     }
@@ -354,13 +481,16 @@ const callTool = (name, args) => {
 const resources = [
     { uri: 'fluxo-ui://index', name: 'Full MCP Index', description: 'Complete fluxo-ui metadata JSON', mimeType: 'application/json' },
     { uri: 'fluxo-ui://components', name: 'Component List', description: 'All exported components', mimeType: 'application/json' },
+    { uri: 'fluxo-ui://store', name: 'Store API', description: 'State-management API surfaces', mimeType: 'application/json' },
 ];
 
 const readResource = (uri) => {
     const idx = getIndex();
-    if (uri === 'fluxo-ui://index') return { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(idx, null, 2) }] };
+    if (uri === 'fluxo-ui://index') return { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(idx) }] };
     if (uri === 'fluxo-ui://components')
-        return { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(componentList(idx), null, 2) }] };
+        return { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(componentList(idx)) }] };
+    if (uri === 'fluxo-ui://store')
+        return { contents: [{ uri, mimeType: 'application/json', text: JSON.stringify(idx.storeApi || {}) }] };
     throw new Error(`Unknown resource: ${uri}`);
 };
 

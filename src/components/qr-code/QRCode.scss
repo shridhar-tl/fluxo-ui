@@ -1,0 +1,49 @@
+@use '../eui-vars' as *;
+
+.eui-qr-code {
+    display: inline-block;
+    line-height: 0;
+    position: relative;
+    border-radius: var(--eui-radius-sm);
+    overflow: hidden;
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+
+    svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.eui-qr-code-loading {
+    background: var(--eui-bg-subtle);
+    border: 1px dashed var(--eui-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--eui-text-muted);
+    font-size: 0.75rem;
+}
+
+.eui-qr-code-error {
+    background: var(--eui-bg-subtle);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 0.7rem;
+    gap: 0.25rem;
+
+    span {
+        font-weight: 600;
+    }
+    small {
+        opacity: 0.85;
+        font-size: 0.65rem;
+    }
+}

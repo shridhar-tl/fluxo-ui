@@ -8,15 +8,34 @@ const __dirname = dirname(__filename);
 const rootDir = resolve(__dirname, '..');
 const distDir = resolve(rootDir, 'dist');
 const mcpOutDir = resolve(distDir, 'mcp');
+const sourcePath = resolve(rootDir, 'src');
 
 const pkg = JSON.parse(readFileSync(resolve(rootDir, 'package.json'), 'utf-8'));
 
-const parseComponentExports = () => {
-    const indexPath = resolve(rootDir, 'src/components/index.ts');
+const collectPropsJson = (dir) => {
+    const map = {};
+    if (!existsSync(dir)) return map;
+    for (const entry of readdirSync(dir)) {
+        const full = join(dir, entry);
+        if (statSync(full).isDirectory()) {
+            Object.assign(map, collectPropsJson(full));
+        } else if (entry.endsWith('.props.json')) {
+            try {
+                const data = JSON.parse(readFileSync(full, 'utf-8'));
+                const compName = entry.replace('.props.json', '');
+                map[compName] = data;
+            } catch {}
+        }
+    }
+    return map;
+};
+
+const parseNamedExports = () => {
+    const indexPath = resolve(sourcePath, 'components/index.ts');
+    if (!existsSync(indexPath)) return new Set();
     const src = readFileSync(indexPath, 'utf-8');
     const names = new Set();
     const namedRe = /export\s*(?:type\s*)?\{\s*([^}]+)\}\s*from/g;
-    const defaultRe = /export\s*\{\s*default\s+as\s+(\w+)\s*\}/g;
     let m;
     while ((m = namedRe.exec(src))) {
         for (const raw of m[1].split(',')) {
@@ -24,12 +43,11 @@ const parseComponentExports = () => {
             if (clean && /^[A-Z]/.test(clean)) names.add(clean);
         }
     }
-    while ((m = defaultRe.exec(src))) names.add(m[1]);
-    return Array.from(names).sort();
+    return names;
 };
 
 const parseThemeTokens = () => {
-    const scssPath = resolve(rootDir, 'src/components/_eui-vars.scss');
+    const scssPath = resolve(sourcePath, 'components/_eui-vars.scss');
     if (!existsSync(scssPath)) return { tokens: [], breakpoints: [] };
     const src = readFileSync(scssPath, 'utf-8');
     const tokens = new Set();
@@ -43,7 +61,7 @@ const parseThemeTokens = () => {
 };
 
 const collectExamples = () => {
-    const pagesDir = resolve(rootDir, 'src/story/pages');
+    const pagesDir = resolve(sourcePath, 'story/pages');
     if (!existsSync(pagesDir)) return {};
     const examples = {};
     for (const entry of readdirSync(pagesDir)) {
@@ -63,72 +81,62 @@ const collectExamples = () => {
 };
 
 const slugToTitle = (slug) =>
-    slug
-        .split('-')
-        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-        .join('');
-
-const buildComponentEntries = (exportedNames, examples) => {
-    const byKey = {};
-    for (const name of exportedNames) {
-        byKey[name] = {
-            name,
-            importFrom: 'fluxo-ui',
-            importStatement: `import { ${name} } from 'fluxo-ui';`,
-            examples: [],
-        };
-    }
-    for (const [slug, demos] of Object.entries(examples)) {
-        const candidates = [slugToTitle(slug), slugToTitle(slug).replace(/s$/, '')];
-        let matched = null;
-        for (const c of candidates) {
-            if (byKey[c]) {
-                matched = c;
-                break;
-            }
-        }
-        if (!matched) {
-            for (const name of exportedNames) {
-                if (name.toLowerCase() === slug.replace(/-/g, '').toLowerCase()) {
-                    matched = name;
-                    break;
-                }
-            }
-        }
-        if (matched) {
-            byKey[matched].storyDir = slug;
-            byKey[matched].examples = demos;
-        } else {
-            byKey[`__story_${slug}`] = {
-                name: slugToTitle(slug),
-                storyDir: slug,
-                importFrom: 'fluxo-ui',
-                examples: demos,
-            };
-        }
-    }
-    return byKey;
-};
+    slug.split('-').map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join('');
 
 const main = () => {
     console.log('[build-mcp-index] extracting library metadata...');
-    const exportedNames = parseComponentExports();
+
+    const componentsPropsMap = collectPropsJson(resolve(sourcePath, 'components'));
+    const storePropsMap = collectPropsJson(resolve(sourcePath, 'store'));
+    const namedExports = parseNamedExports();
     const { tokens, breakpoints } = parseThemeTokens();
     const examples = collectExamples();
-    const components = buildComponentEntries(exportedNames, examples);
+
+    const components = {};
+    const componentNames = new Set([...Object.keys(componentsPropsMap), ...namedExports]);
+    for (const name of componentNames) {
+        components[name] = {
+            name,
+            importFrom: 'fluxo-ui',
+            examples: [],
+            props: componentsPropsMap[name] || {},
+        };
+    }
+
+    for (const [slug, demos] of Object.entries(examples)) {
+        if (slug.startsWith('store-') || slug === 'hooks-utils' || slug === 'services' || slug === 'demo-showcase') continue;
+        const candidates = [slugToTitle(slug), slugToTitle(slug).replace(/s$/, '')];
+        let matched = candidates.find((c) => components[c]) || [...componentNames].find((n) => n.toLowerCase() === slug.replace(/-/g, '').toLowerCase()) || null;
+        if (matched) {
+            components[matched].storyDir = slug;
+            components[matched].examples = demos;
+        }
+    }
+
+    const storeApi = { groups: {}, examples: {} };
+    if (storePropsMap['store']) {
+        for (const [groupKey, groupValue] of Object.entries(storePropsMap['store'])) {
+            storeApi.groups[groupKey] = groupValue;
+        }
+    }
+    if (storePropsMap['store-model']) {
+        storeApi.groups.modelApiProps = storePropsMap['store-model'];
+    }
+    for (const [slug, demos] of Object.entries(examples)) {
+        if (slug.startsWith('store-')) {
+            const topic = slug.replace(/^store-/, '');
+            storeApi.examples[topic] = demos.map((d) => ({ title: d.title, code: d.code }));
+        }
+    }
 
     const entryPoints = Object.keys(pkg.exports || {}).filter((k) => !k.endsWith('.css') && k !== './styles');
 
     const index = {
         generatedAt: new Date().toISOString(),
-        library: {
-            name: pkg.name,
-            version: pkg.version,
-            description: pkg.description,
-            homepage: pkg.homepage,
-        },
+        library: { name: pkg.name, version: pkg.version, description: pkg.description, homepage: pkg.homepage },
         entryPoints,
         components,
+        storeApi,
         themes: {
             available: ['theme-blue', 'theme-green', 'theme-orange', 'theme-purple', 'theme-lara', 'theme-indigo', 'theme-rose', 'theme-amber', 'theme-teal', 'theme-emerald', 'theme-fuchsia', 'theme-slate'],
             darkModeClass: 'mode-dark',
@@ -153,8 +161,11 @@ const main = () => {
     writeFileSync(indexPath, JSON.stringify(index, null, 2), 'utf-8');
     console.log(`[build-mcp-index] wrote ${indexPath}`);
     console.log(`[build-mcp-index]   components: ${Object.keys(components).length}`);
+    console.log(`[build-mcp-index]   props-covered: ${Object.values(components).filter((c) => Object.keys(c.props || {}).length > 0).length}`);
     console.log(`[build-mcp-index]   tokens: ${tokens.length}`);
     console.log(`[build-mcp-index]   examples: ${Object.values(components).reduce((n, c) => n + (c.examples?.length || 0), 0)}`);
+    console.log(`[build-mcp-index]   store API groups: ${Object.keys(storeApi.groups).length}`);
+    console.log(`[build-mcp-index]   store examples: ${Object.values(storeApi.examples).reduce((n, list) => n + list.length, 0)}`);
 
     const serverSrc = resolve(__dirname, 'mcp-server.mjs');
     const serverDest = resolve(mcpOutDir, 'server.mjs');

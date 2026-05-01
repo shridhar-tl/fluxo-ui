@@ -1,0 +1,198 @@
+@use '../eui-vars' as *;
+
+.eui-activity-gauge {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.25rem;
+    font-family: var(--eui-font-family);
+    color: var(--eui-text);
+
+    &.eui-activity-gauge-legend-bottom {
+        flex-direction: column;
+    }
+
+    &.eui-activity-gauge-legend-right {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    &.eui-activity-gauge-legend-pos-start {
+        align-items: flex-start;
+    }
+
+    &.eui-activity-gauge-legend-pos-end {
+        align-items: flex-end;
+    }
+}
+
+.eui-activity-gauge-chart-wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.eui-activity-gauge-svg {
+    display: block;
+}
+
+.eui-activity-gauge-ring {
+    transition: opacity 200ms ease;
+
+    &:focus-visible {
+        outline: none;
+
+        path:last-of-type {
+            filter: drop-shadow(0 0 4px var(--eui-primary));
+        }
+    }
+}
+
+.eui-activity-gauge-interactive .eui-activity-gauge-ring {
+    cursor: pointer;
+}
+
+.eui-activity-gauge-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+    padding: 18%;
+}
+
+.eui-activity-gauge-center-default {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.eui-activity-gauge-center-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--eui-text-muted);
+}
+
+.eui-activity-gauge-center-value {
+    font-size: clamp(1.25rem, 14%, 2.5rem);
+    font-weight: 700;
+    color: var(--eui-text);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.eui-activity-gauge-center-sublabel {
+    font-size: 0.7rem;
+    color: var(--eui-text-muted);
+    margin-top: 0.15rem;
+}
+
+.eui-activity-gauge-legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+
+    .eui-activity-gauge-legend-pos-start & {
+        justify-content: flex-start;
+    }
+    .eui-activity-gauge-legend-pos-center & {
+        justify-content: center;
+    }
+    .eui-activity-gauge-legend-pos-end & {
+        justify-content: flex-end;
+    }
+}
+
+.eui-activity-gauge-legend-right .eui-activity-gauge-legend {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+}
+
+.eui-activity-gauge-legend-item {
+    list-style: none;
+}
+
+.eui-activity-gauge-legend-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.65rem;
+    border-radius: var(--eui-radius-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--eui-text);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 150ms ease, border-color 150ms ease;
+    min-height: 32px;
+    text-align: left;
+
+    &:hover {
+        background: var(--eui-bg-hover);
+    }
+
+    &:focus-visible {
+        outline: none;
+        border-color: var(--eui-primary);
+        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+    }
+
+    &.eui-activity-gauge-legend-active {
+        background: var(--eui-bg-subtle);
+        border-color: var(--eui-border);
+    }
+}
+
+.eui-activity-gauge-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.eui-activity-gauge-legend-name {
+    font-weight: 500;
+    color: var(--eui-text);
+}
+
+.eui-activity-gauge-legend-value {
+    color: var(--eui-text-muted);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.eui-activity-gauge-legend-divider {
+    margin: 0 1px;
+}
+
+.eui-activity-gauge-legend-pct {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--eui-text);
+    background: var(--eui-bg-subtle);
+    padding: 1px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--eui-border-subtle);
+}
+
+@media (max-width: $bp-sm) {
+    .eui-activity-gauge.eui-activity-gauge-legend-right {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-activity-gauge-ring {
+        transition: none !important;
+    }
+}

@@ -1,0 +1,59 @@
+{
+  "qrCodeProps": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "description": "Data to encode (URL, text, vCard, etc.)"
+    },
+    "size": {
+      "type": "number",
+      "default": "160",
+      "description": "Output pixel size of the QR code (square)"
+    },
+    "errorCorrection": {
+      "type": "'L' | 'M' | 'Q' | 'H'",
+      "default": "'M'",
+      "description": "Error correction level. Auto-bumped to 'H' when a logo is provided"
+    },
+    "margin": {
+      "type": "number",
+      "default": "4",
+      "description": "Quiet-zone width in modules (≥ 4 recommended)"
+    },
+    "foreground": {
+      "type": "string",
+      "default": "'#000000'",
+      "description": "Color of filled modules. Default is black for maximum scannability — use a dark hex/named color when overriding (CSS variables that flip with dark mode are NOT recommended, as most phone scanners reject light-on-dark QR codes)"
+    },
+    "background": {
+      "type": "string",
+      "default": "'#ffffff'",
+      "description": "Color of the quiet zone and gaps. Default is white for maximum scannability. Use 'transparent' to omit"
+    },
+    "moduleShape": {
+      "type": "'square' | 'dots' | 'rounded'",
+      "default": "'square'",
+      "description": "Shape of each module"
+    },
+    "logo": {
+      "type": "{ src: string; size?: number; padding?: number; rounded?: boolean }",
+      "description": "Optional centered logo overlay"
+    },
+    "onError": {
+      "type": "(err: Error) => void",
+      "description": "Fired when input is too long for the chosen error-correction level"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Accessible label (defaults to the value, truncated if long)"
+    }
+  }
+}

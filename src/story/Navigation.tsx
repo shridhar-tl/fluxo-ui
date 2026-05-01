@@ -34,6 +34,8 @@ const navSections: NavSection[] = [
             { label: 'Numeric Input', path: '/components/numericinput' },
             { label: 'Masked Input', path: '/components/maskedinput' },
             { label: 'Password', path: '/components/password' },
+            { label: 'Password Strength', path: '/components/password-strength' },
+            { label: 'Password Requirements', path: '/components/password-requirements' },
             { label: 'Textarea', path: '/components/textarea' },
             { label: 'Field Label', path: '/components/fieldlabel' },
             { label: 'Input Group', path: '/components/inputgroup' },
@@ -117,12 +119,24 @@ const navSections: NavSection[] = [
             { label: 'Timeline', path: '/components/timeline' },
             { label: 'Progress Bar', path: '/components/progress-bar' },
             { label: 'Countdown Timer', path: '/components/countdown-timer' },
+            { label: 'Knob', path: '/components/knob' },
+            { label: 'Activity Gauge', path: '/components/activity-gauge' },
+        ],
+    },
+    {
+        title: 'Codes',
+        key: 'codes',
+        items: [
+            { label: 'QR Code', path: '/components/qr-code' },
+            { label: 'QR Scanner', path: '/components/qr-scanner' },
+            { label: 'Barcode', path: '/components/barcode' },
         ],
     },
     {
         title: 'Media',
         key: 'media',
         items: [
+            { label: 'Avatar', path: '/components/avatar' },
             { label: 'Carousel', path: '/components/carousel' },
             { label: 'Lightbox', path: '/components/lightbox' },
             { label: 'Image Editor', path: '/components/image-editor' },
@@ -150,6 +164,7 @@ const navSections: NavSection[] = [
             { label: 'Page Banner', path: '/components/page-banner' },
             { label: 'Tooltip', path: '/components/tooltip' },
             { label: 'Shimmer', path: '/components/shimmer' },
+            { label: 'Empty State', path: '/components/empty-state' },
         ],
     },
     {
@@ -179,7 +194,11 @@ const navSections: NavSection[] = [
         key: 'interactive',
         items: [
             { label: 'Button', path: '/components/button' },
+            { label: 'Split Button', path: '/components/split-button' },
             { label: 'Fab & Speed Dial', path: '/components/fab-speed-dial' },
+            { label: 'Dock', path: '/components/dock' },
+            { label: 'Command Palette', path: '/components/command-palette' },
+            { label: 'Scroll To Top', path: '/components/scroll-to-top' },
             { label: 'Drag & Drop', path: '/components/drag-drop' },
             { label: 'Sortable', path: '/components/sortable' },
             { label: 'Deferred View', path: '/components/deferred-view' },
@@ -192,6 +211,7 @@ const navSections: NavSection[] = [
         key: 'state-management',
         items: [
             { label: 'Basic Store', path: '/store/basic' },
+            { label: 'Slices', path: '/store/slice' },
             { label: 'Middleware', path: '/store/middleware' },
             { label: 'Model Store', path: '/store/model' },
         ],

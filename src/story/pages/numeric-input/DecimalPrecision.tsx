@@ -24,7 +24,7 @@ const DecimalPrecision: React.FC = () => {
                     <NumericInput
                         label="Price ($)"
                         value={decimalValue}
-                        onChange={(e) => setDecimalValue(e.value)}
+                        onChange={(e) => setDecimalValue(e.value ?? 0)}
                         maxDecimals={2}
                         min={0}
                     />

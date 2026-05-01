@@ -6,22 +6,26 @@ import { FeatureGrid } from '../../FeatureCard';
 import PageLayout from '../../PageLayout';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
-import BroadcastDemo from './BroadcastDemo';
+import AuthoringMiddleware from './AuthoringMiddleware';
 import DebounceDemo from './DebounceDemo';
 import LoggingDemo from './LoggingDemo';
+import OptimisticDemo from './OptimisticDemo';
 import PersistDemo from './PersistDemo';
+import SyncDemo from './SyncDemo';
 import ThrottleDemo from './ThrottleDemo';
 import UndoRedoDemo from './UndoRedoDemo';
 import ValidationDemo from './ValidationDemo';
 
 const sectionNavItems: SectionNavItem[] = [
-    { id: 'undo-redo', title: 'Undo / Redo', description: 'History navigation' },
-    { id: 'persist', title: 'Persistence', description: 'localStorage/sessionStorage' },
-    { id: 'validation', title: 'Validation', description: 'Reject invalid state' },
+    { id: 'undo-redo', title: 'Undo / Redo', description: 'Scoped, grouped, capped history' },
+    { id: 'persist', title: 'Persistence', description: 'Scoped, versioned, debounced' },
+    { id: 'optimistic', title: 'Optimistic', description: 'Apply locally, rollback on error' },
+    { id: 'validation', title: 'Validation', description: 'Function, schema, or async' },
+    { id: 'sync', title: 'Sync', description: 'Cross-tab + WS + custom transport' },
     { id: 'logging', title: 'Logger', description: 'Console logging' },
     { id: 'throttle', title: 'Throttle', description: 'Rate-limit updates' },
     { id: 'debounce', title: 'Debounce', description: 'Delay until idle' },
-    { id: 'broadcast', title: 'Broadcast', description: 'Cross-tab sync' },
+    { id: 'authoring', title: 'Build Your Own', description: 'Middleware contract' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
@@ -58,9 +62,14 @@ const features: FeatureItem[] = [
         icon: 'M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
     },
     {
-        title: 'Broadcast',
-        description: 'Sync state across browser tabs in real-time using the BroadcastChannel API',
-        icon: 'M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z',
+        title: 'Optimistic Updates',
+        description: 'Apply changes locally, await an async commit, and roll back automatically when the commit rejects',
+        icon: 'M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+    },
+    {
+        title: 'Pluggable Sync',
+        description: 'syncMiddleware accepts any transport — BroadcastChannel, storage event, WebSocket, or your own',
+        icon: 'M3 8l4-4m0 0 4 4M7 4v16m10-4 4 4m0 0-4 4m4-4H7',
     },
     {
         title: 'Composable',
@@ -94,9 +103,21 @@ const StoreMiddlewarePage: React.FC = () => {
                 <PersistDemo />
             </section>
 
+            <section id="optimistic" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Optimistic Updates
+                </h2>
+                <OptimisticDemo />
+            </section>
+
             <section id="validation" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Validation</h2>
                 <ValidationDemo />
+            </section>
+
+            <section id="sync" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Sync</h2>
+                <SyncDemo />
             </section>
 
             <section id="logging" className="scroll-mt-8">
@@ -114,15 +135,17 @@ const StoreMiddlewarePage: React.FC = () => {
                 <DebounceDemo />
             </section>
 
-            <section id="broadcast" className="scroll-mt-8">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Broadcast</h2>
-                <BroadcastDemo />
+            <section id="authoring" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Build Your Own Middleware
+                </h2>
+                <AuthoringMiddleware />
             </section>
 
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
                 <CodeBlock
-                    code={`import {\n  persistMiddleware,\n  undoRedoMiddleware,\n  validationMiddleware,\n  loggerMiddleware,\n  throttleMiddleware,\n  debounceMiddleware,\n  broadcastMiddleware,\n  devToolsMiddleware,\n  immerMiddleware,\n} from 'fluxo-ui/store/middlewares';`}
+                    code={`import {\n  persistMiddleware,\n  undoRedoMiddleware,\n  optimisticMiddleware,\n  validationMiddleware,\n  syncMiddleware,\n  broadcastChannelTransport,\n  webSocketTransport,\n  storageEventTransport,\n  loggerMiddleware,\n  throttleMiddleware,\n  debounceMiddleware,\n  devToolsMiddleware,\n  immerMiddleware,\n} from 'fluxo-ui/store/middlewares';`}
                 />
             </section>
 

@@ -1,0 +1,77 @@
+{
+  "splitButtonProps": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Primary action text"
+    },
+    "onClick": {
+      "type": "(e: MouseEvent) => void | Promise<unknown>",
+      "description": "Primary action handler (supports async loading state)"
+    },
+    "items": {
+      "type": "Array<SplitButtonItem>",
+      "required": true,
+      "description": "Menu items: { label, icon?, onClick?, disabled?, danger?, divider?, shortcut? }"
+    },
+    "variant": {
+      "type": "'success' | 'warning' | 'danger' | 'info' | 'default' | 'primary' | 'secondary'",
+      "default": "'primary'",
+      "description": "Color variant applied to both halves"
+    },
+    "layout": {
+      "type": "'default' | 'outlined' | 'plain' | 'rounded' | 'sharp'",
+      "default": "'default'",
+      "description": "Shared button layout"
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+      "default": "'md'",
+      "description": "Shared button size"
+    },
+    "leftIcon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Icon on the left side of the primary button"
+    },
+    "rightIcon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Icon on the right side of the primary button"
+    },
+    "loading": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show loading spinner on the primary button"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable both halves"
+    },
+    "menuPlacement": {
+      "type": "'bottom-start' | 'bottom-end' | 'top-start' | 'top-end' | 'auto'",
+      "default": "'bottom-end'",
+      "description": "Preferred menu placement (auto-flips when out of viewport)"
+    },
+    "menuWidth": {
+      "type": "'trigger' | 'auto' | number",
+      "default": "'auto'",
+      "description": "Menu width: 'trigger' matches the SplitButton, 'auto' fits content, or a px number"
+    },
+    "triggerIcon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Icon used on the secondary trigger (default chevron-down)"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the trigger (default: 'More {label} actions')"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    }
+  }
+}

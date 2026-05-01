@@ -1,0 +1,62 @@
+{
+  "commandPaletteProps": {
+    "commands": {
+      "type": "Array<CommandPaletteCommand>",
+      "required": true,
+      "description": "Registered commands: { id, title, subtitle?, group?, keywords?, icon?, shortcut?, onSelect, disabled?, danger? }"
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state"
+    },
+    "onOpenChange": {
+      "type": "(open: boolean) => void",
+      "description": "Called when the palette opens or closes"
+    },
+    "hotkey": {
+      "type": "string",
+      "default": "'mod+k'",
+      "description": "Global hotkey to toggle the palette ('mod' = Cmd on Mac, Ctrl elsewhere)"
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "'Type a command or search...'",
+      "description": "Search input placeholder"
+    },
+    "emptyMessage": {
+      "type": "string | ReactNode",
+      "default": "'No commands found'",
+      "description": "Shown when no commands match the query"
+    },
+    "recents": {
+      "type": "{ storageKey?: string; limit?: number }",
+      "description": "When provided, persists recently selected ids to localStorage"
+    },
+    "groupOrder": {
+      "type": "string[]",
+      "description": "Explicit ordering of group headings"
+    },
+    "maxResults": {
+      "type": "number",
+      "default": "50",
+      "description": "Maximum number of items to show"
+    },
+    "filterFn": {
+      "type": "(command, query: string) => number",
+      "description": "Custom scorer; return 0 to hide. Default: subsequence match on title/keywords/group"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Command palette'",
+      "description": "Accessible label for the dialog"
+    }
+  }
+}

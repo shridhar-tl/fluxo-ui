@@ -1,0 +1,118 @@
+{
+  "knobProps": {
+    "value": {
+      "type": "number",
+      "required": true,
+      "description": "Current numeric value"
+    },
+    "min": {
+      "type": "number",
+      "default": "0",
+      "description": "Minimum value"
+    },
+    "max": {
+      "type": "number",
+      "default": "100",
+      "description": "Maximum value"
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number",
+      "default": "'md'",
+      "description": "Preset size or arbitrary pixel diameter"
+    },
+    "strokeWidth": {
+      "type": "number",
+      "description": "Arc thickness in px (default scales with size)"
+    },
+    "variant": {
+      "type": "'solid' | 'gradient' | 'striped' | 'dashed' | 'pie'",
+      "default": "'solid'",
+      "description": "Visual treatment of the filled arc"
+    },
+    "color": {
+      "type": "'primary' | 'success' | 'warning' | 'danger' | 'info' | string",
+      "default": "'primary'",
+      "description": "Preset color or any CSS color"
+    },
+    "gradient": {
+      "type": "{ from: string; to: string }",
+      "description": "Gradient stops, used when variant is 'gradient'"
+    },
+    "trackColor": {
+      "type": "string",
+      "default": "var(--eui-border-subtle)",
+      "description": "Color of the unfilled portion of the arc"
+    },
+    "arcStart": {
+      "type": "number",
+      "default": "0",
+      "description": "Start angle in degrees (0 = top)"
+    },
+    "arcEnd": {
+      "type": "number",
+      "default": "360",
+      "description": "End angle in degrees. Use values like 135-405 for a 3/4 gauge"
+    },
+    "roundedCaps": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Round vs flat stroke caps"
+    },
+    "showValue": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the numeric value in the center"
+    },
+    "valueFormatter": {
+      "type": "(v: number) => string",
+      "description": "Custom formatter for the displayed value"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Unit suffix shown next to the value (e.g. '%', '°C')"
+    },
+    "label": {
+      "type": "string",
+      "description": "Text rendered above the value"
+    },
+    "subLabel": {
+      "type": "string",
+      "description": "Text rendered below the value"
+    },
+    "renderCenter": {
+      "type": "() => ReactNode",
+      "description": "Override the default center content"
+    },
+    "interactive": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Enable pointer drag and keyboard editing"
+    },
+    "step": {
+      "type": "number",
+      "default": "1",
+      "description": "Increment step (interactive mode)"
+    },
+    "onChange": {
+      "type": "(v: number) => void",
+      "description": "Called in interactive mode on drag and arrow keys"
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable interaction and dim the knob"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for screen readers"
+    }
+  }
+}

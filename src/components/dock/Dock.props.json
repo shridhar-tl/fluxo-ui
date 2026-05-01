@@ -1,0 +1,94 @@
+{
+  "dockProps": {
+    "items": {
+      "type": "Array<DockItem>",
+      "required": true,
+      "description": "Dock items: { id, icon, label?, href?, onClick?, disabled?, badge?, separatorAfter? }"
+    },
+    "position": {
+      "type": "'bottom' | 'top' | 'left' | 'right'",
+      "default": "'bottom'",
+      "description": "Edge of the viewport the dock attaches to"
+    },
+    "align": {
+      "type": "'start' | 'center' | 'end'",
+      "default": "'center'",
+      "description": "Alignment along the dock axis"
+    },
+    "layout": {
+      "type": "'pill' | 'rectangle' | 'floating' | 'attached'",
+      "default": "'pill'",
+      "description": "Visual treatment of the dock container"
+    },
+    "background": {
+      "type": "'glass' | 'solid' | 'gradient' | 'transparent'",
+      "default": "'glass'",
+      "description": "Background treatment"
+    },
+    "gradient": {
+      "type": "{ from: string; to: string; angle?: number }",
+      "description": "Gradient stops, used when background is 'gradient'"
+    },
+    "magnification": {
+      "type": "number",
+      "default": "1.6",
+      "description": "Peak scale factor of hovered/focused item; 1 disables magnification"
+    },
+    "magnificationDistance": {
+      "type": "number",
+      "default": "80",
+      "description": "Radius (px) over which magnification falls off"
+    },
+    "iconSize": {
+      "type": "number",
+      "default": "40",
+      "description": "Base icon container size in px"
+    },
+    "gap": {
+      "type": "number",
+      "default": "8",
+      "description": "Base gap between dock items in px"
+    },
+    "autoHide": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Slide off-screen and reveal on edge hover/focus"
+    },
+    "autoHideDelay": {
+      "type": "number",
+      "default": "500",
+      "description": "Milliseconds before hiding after pointer leaves"
+    },
+    "triggerZone": {
+      "type": "number",
+      "default": "12",
+      "description": "Px-thick hot zone along the edge that reveals an auto-hidden dock"
+    },
+    "showTooltips": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show item labels as tooltips on hover/focus"
+    },
+    "mode": {
+      "type": "'fixed' | 'inline'",
+      "default": "'fixed'",
+      "description": "'fixed' attaches the dock to the viewport edge; 'inline' renders it inside its parent layout"
+    },
+    "onItemClick": {
+      "type": "(id: string) => void",
+      "description": "Fired when a dock item is activated"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the dock toolbar (default: 'Dock')"
+    }
+  }
+}

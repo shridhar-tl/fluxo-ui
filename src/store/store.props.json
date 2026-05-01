@@ -50,5 +50,89 @@
       "description": "React hook returned by createHook. Optional selector for derived slices",
       "default": "-"
     }
+  },
+  "sliceApiProps": {
+    "createSlice(name, initializer, middlewares?)": {
+      "type": "(name: string, initializer: () => T, middlewares?: Middleware<T>[]) => Slice<T>",
+      "description": "Create a named slice. Usable directly as a Store<T> in standalone mode, or adopted by combineSlices() for composition",
+      "default": "-"
+    },
+    "combineSlices(slices, middlewares?)": {
+      "type": "(slices: Record<string, Slice>, middlewares?) => CombinedStore",
+      "description": "Compose multiple slices into a single store. Bidirectional sync: slice writes notify the combined store, combined writes notify the relevant slice's subscribers",
+      "default": "-"
+    },
+    "slice.sliceName": {
+      "type": "string",
+      "description": "The name passed to createSlice. Used as the key in combined state",
+      "default": "-"
+    },
+    "slice.getState() / setState() / on() / reset()": {
+      "type": "Same as Store<T>",
+      "description": "Slices implement the full Store<T> interface — works identically standalone or after being combined",
+      "default": "-"
+    },
+    "combinedStore.slices": {
+      "type": "Record<string, Slice>",
+      "description": "The slices passed to combineSlices, exposed for direct slice access",
+      "default": "-"
+    },
+    "isSlice(value) / isCombinedStore(value)": {
+      "type": "(value: unknown) => boolean",
+      "description": "Type guards for runtime checks",
+      "default": "-"
+    }
+  },
+  "middlewareApiProps": {
+    "persistMiddleware(options)": {
+      "type": "(options: PersistOptions<T>) => Middleware<T>",
+      "description": "Persist state. Options: storage ('local' | 'session' | Storage | AsyncStorageAdapter), key, include/exclude paths, version + migrate, debounceMs, custom serialize/deserialize, onError",
+      "default": "-"
+    },
+    "undoRedoMiddleware(options)": {
+      "type": "(options: UndoRedoOptions) => Middleware<T>",
+      "description": "Undo/redo history. Options: maxHistorySize, paths (scoped undo), coalesceMs (group rapid edits), maxBytes (memory cap). Returned store gets undo, redo, beginGroup, endGroup, clearHistory, canUndo, canRedo",
+      "default": "-"
+    },
+    "optimisticMiddleware(options)": {
+      "type": "(options: OptimisticOptions<T>) => Middleware<T>",
+      "description": "Apply state changes locally, run an async commit, and roll back automatically on rejection. Returned store gets optimistic(setStateLike), isPending(), pendingCount()",
+      "default": "-"
+    },
+    "syncMiddleware(options)": {
+      "type": "(options: SyncOptions<T>) => Middleware<T>",
+      "description": "Sync state across instances via a pluggable transport (BroadcastChannel, storage event, WebSocket, custom). Conflict resolve modes: 'remote-wins' | 'local-wins' | 'merge' | custom resolver",
+      "default": "-"
+    },
+    "broadcastChannelTransport / storageEventTransport / webSocketTransport": {
+      "type": "(...) => SyncTransport",
+      "description": "Built-in transports for syncMiddleware. Implement SyncTransport ({ send, onReceive, close? }) to add your own",
+      "default": "-"
+    },
+    "validationMiddleware(options)": {
+      "type": "(options: ValidationOptions<T>) => Middleware<T>",
+      "description": "Reject or warn on invalid state. Options accept either a function validator, a Zod/Valibot-style schema (parse / safeParse), and/or an asyncValidator for server-side checks. behavior: 'reject' | 'warn'",
+      "default": "-"
+    },
+    "throttleMiddleware / debounceMiddleware": {
+      "type": "(delay: number) => Middleware<T>",
+      "description": "Rate-limit setState calls. Throttle fires on leading + trailing edges; debounce only after activity stops",
+      "default": "-"
+    },
+    "loggerMiddleware(predicate?)": {
+      "type": "(predicate?: (state, prev?) => boolean) => Middleware<T>",
+      "description": "Console-log init and change events. Optional predicate filters which changes are logged",
+      "default": "-"
+    },
+    "devToolsMiddleware": {
+      "type": "Middleware<T>",
+      "description": "Send state changes to window.__FLUXO_DEVTOOLS__ if present",
+      "default": "-"
+    },
+    "Authoring middleware": {
+      "type": "(store: Store<T>) => Store<T>",
+      "description": "A middleware is just a function. Common patterns: wrap setState (throttle, debounce), subscribe via store.on() (logger, persist), augment the returned store with new methods (undoRedo). Order in create(init, [a, b, c]) is left-to-right wrapping",
+      "default": "-"
+    }
   }
 }

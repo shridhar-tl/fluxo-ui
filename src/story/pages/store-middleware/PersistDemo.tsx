@@ -13,7 +13,7 @@ interface PersistState {
     count: number;
 }
 
-const persistStore = create<PersistState>(() => ({ count: 0 }), [persistMiddleware('local', persistStorageKey)]);
+const persistStore = create<PersistState>(() => ({ count: 0 }), [persistMiddleware({ storage: 'local', key: persistStorageKey })]);
 const usePersistStore = createHook(persistStore);
 
 function getStoredValue(): number | null {
@@ -34,7 +34,7 @@ import { persistMiddleware } from 'fluxo-ui/store/middlewares';
 
 const store = create<{ count: number }>(
   () => ({ count: 0 }),
-  [persistMiddleware('local', 'my-app-counter')]
+  [persistMiddleware({ storage: 'local', key: 'my-app-counter' })]
 );
 const useStore = createHook(store);
 

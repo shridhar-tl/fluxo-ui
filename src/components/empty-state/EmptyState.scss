@@ -1,0 +1,188 @@
+@use '../eui-vars' as *;
+
+.eui-empty-state {
+    display: flex;
+    align-items: center;
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    text-align: center;
+
+    &.eui-empty-state-layout-vertical {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 2rem 1.25rem;
+    }
+
+    &.eui-empty-state-layout-horizontal {
+        flex-direction: row;
+        text-align: left;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+
+    &.eui-empty-state-size-sm {
+        .eui-empty-state-title {
+            font-size: 1rem;
+        }
+        .eui-empty-state-description {
+            font-size: 0.8rem;
+        }
+        .eui-empty-state-icon-wrap {
+            width: 56px;
+            height: 56px;
+            padding: 14px;
+        }
+        .eui-empty-state-illustration {
+            max-width: 96px;
+        }
+    }
+
+    &.eui-empty-state-size-md {
+        .eui-empty-state-title {
+            font-size: 1.15rem;
+        }
+        .eui-empty-state-description {
+            font-size: 0.9rem;
+        }
+        .eui-empty-state-icon-wrap {
+            width: 80px;
+            height: 80px;
+            padding: 20px;
+        }
+        .eui-empty-state-illustration {
+            max-width: 200px;
+        }
+    }
+
+    &.eui-empty-state-size-lg {
+        .eui-empty-state-title {
+            font-size: 1.45rem;
+        }
+        .eui-empty-state-description {
+            font-size: 1rem;
+        }
+        .eui-empty-state-icon-wrap {
+            width: 112px;
+            height: 112px;
+            padding: 28px;
+        }
+        .eui-empty-state-illustration {
+            max-width: 320px;
+        }
+    }
+}
+
+.eui-empty-state-icon-wrap {
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--eui-bg-subtle);
+    border: 1px solid var(--eui-border-subtle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .eui-empty-state-icon {
+        width: 100%;
+        height: 100%;
+        color: var(--eui-text-muted);
+    }
+
+    &.eui-empty-state-tone-error {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.25);
+
+        .eui-empty-state-icon {
+            color: #ef4444;
+        }
+    }
+    &.eui-empty-state-tone-success {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.25);
+
+        .eui-empty-state-icon {
+            color: #16a34a;
+        }
+    }
+    &.eui-empty-state-tone-restricted {
+        background: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.25);
+
+        .eui-empty-state-icon {
+            color: #d97706;
+        }
+    }
+    &.eui-empty-state-tone-info {
+        background: var(--eui-primary-subtle);
+        border-color: var(--eui-primary-border);
+
+        .eui-empty-state-icon {
+            color: var(--eui-primary);
+        }
+    }
+}
+
+.eui-empty-state-illustration {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > svg,
+    > img {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+    }
+}
+
+.eui-empty-state-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+    align-items: center;
+
+    .eui-empty-state-layout-horizontal & {
+        align-items: flex-start;
+    }
+}
+
+.eui-empty-state-title {
+    margin: 0;
+    font-weight: 700;
+    color: var(--eui-text);
+    line-height: 1.2;
+}
+
+.eui-empty-state-description {
+    color: var(--eui-text-muted);
+    line-height: 1.5;
+    max-width: 56ch;
+}
+
+.eui-empty-state-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.4rem;
+    justify-content: center;
+
+    .eui-empty-state-layout-horizontal & {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: $bp-sm) {
+    .eui-empty-state.eui-empty-state-layout-horizontal {
+        flex-direction: column;
+        text-align: center;
+
+        .eui-empty-state-content {
+            align-items: center;
+        }
+
+        .eui-empty-state-actions {
+            justify-content: center;
+        }
+    }
+}

@@ -1,0 +1,75 @@
+{
+  "barcodeProps": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "description": "Value to encode (numeric for EAN/UPC/ITF, alphanumeric for CODE39/CODE128)"
+    },
+    "format": {
+      "type": "'CODE128' | 'CODE39' | 'EAN13' | 'EAN8' | 'UPC' | 'ITF'",
+      "required": true,
+      "description": "Barcode symbology"
+    },
+    "width": {
+      "type": "number",
+      "default": "2",
+      "description": "Width of the narrowest bar in px"
+    },
+    "height": {
+      "type": "number",
+      "default": "80",
+      "description": "Bar height in px"
+    },
+    "displayValue": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the human-readable text below the bars"
+    },
+    "font": {
+      "type": "string",
+      "default": "'inherit'",
+      "description": "Font family for the human-readable text"
+    },
+    "fontSize": {
+      "type": "number",
+      "default": "14",
+      "description": "Font size for the human-readable text"
+    },
+    "textMargin": {
+      "type": "number",
+      "default": "6",
+      "description": "Vertical gap between bars and text"
+    },
+    "foreground": {
+      "type": "string",
+      "default": "'#000000'",
+      "description": "Bar and text color. Default is black for maximum scannability — CSS variables that flip with dark mode are NOT recommended (most barcode scanners reject light-on-dark)"
+    },
+    "background": {
+      "type": "string",
+      "default": "'#ffffff'",
+      "description": "Background color. Default is white for maximum scannability. Use 'transparent' to omit"
+    },
+    "margin": {
+      "type": "number",
+      "default": "10",
+      "description": "Quiet zone in px on each side"
+    },
+    "onError": {
+      "type": "(err: Error) => void",
+      "description": "Fired when input is invalid for the chosen format"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Accessible label override"
+    }
+  }
+}

@@ -118,7 +118,7 @@ const ExtraRowEditor: React.FC<{
                             <label style={{ fontSize: 10, color: 'var(--eui-text-muted)' }}>Col Span</label>
                             <NumericInput
                                 value={cell.colSpan ?? 1}
-                                onChange={(e: ComponentEvent<number>) => updateCell(i, { colSpan: e.value ?? 1 })}
+                                onChange={(e: ComponentEvent<number | undefined>) => updateCell(i, { colSpan: e.value ?? 1 })}
                                 min={1}
                                 max={Math.max(1, totalLeafColumns)}
                                 size="sm"

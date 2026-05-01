@@ -1,0 +1,57 @@
+{
+  "emptyStateProps": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Heading text"
+    },
+    "description": {
+      "type": "string | ReactNode",
+      "description": "Supporting text below the title"
+    },
+    "icon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Small leading icon (overrides the variant default)"
+    },
+    "illustration": {
+      "type": "ReactNode",
+      "description": "Large slot for an illustration or image. Replaces the icon when both are set"
+    },
+    "action": {
+      "type": "{ label, onClick?, variant?, loading?, disabled?, href? }",
+      "description": "Primary action rendered as a Button"
+    },
+    "secondaryAction": {
+      "type": "{ label, onClick?, variant?, href? }",
+      "description": "Secondary action rendered as a plain Button"
+    },
+    "layout": {
+      "type": "'vertical' | 'horizontal'",
+      "default": "'vertical'",
+      "description": "Vertical centers content; horizontal places illustration left and text/action right (collapses on narrow viewports)"
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Controls overall scale (font sizes, illustration max-width, padding)"
+    },
+    "variant": {
+      "type": "'default' | 'noResults' | 'error' | 'success' | 'restricted' | 'info'",
+      "default": "'default'",
+      "description": "Picks default icons and colors when neither icon nor illustration is provided"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "headingLevel": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "3",
+      "description": "Controls the heading tag for the title to fit the document outline"
+    }
+  }
+}

@@ -1,13 +1,13 @@
 # Fluxo UI
 
-A comprehensive, accessible React component library built with TypeScript. Includes **70+ production-ready UI components**, a custom state management solution, a dependency injection container, 12 color themes, dark mode, and full keyboard navigation.
+A comprehensive, accessible React component library built with TypeScript. Includes **80+ production-ready UI components**, a custom state management solution, a dependency injection container, 12 color themes, dark mode, and full keyboard navigation.
 
 - **Website & Live Demos:** [fluxo-ui.utilsware.com](https://fluxo-ui.utilsware.com/)
 - **Repository:** [github.com/shridhar-tl/fluxo-ui](https://github.com/shridhar-tl/fluxo-ui)
 
 ## Highlights
 
-- 70+ accessible, production-ready components
+- 80+ accessible, production-ready components
 - Full TypeScript support with first-class types
 - 12 built-in color themes + dark mode out of the box
 - Custom state management (batched updates, computed properties, middleware)
@@ -123,17 +123,21 @@ function Counter() {
 
 ### Form Inputs
 
-| Component     | Description                                        |
-| ------------- | -------------------------------------------------- |
-| Text Input    | Single-line text field with validation and icons   |
-| Numeric Input | Number input with step buttons and formatting      |
-| Masked Input  | Input with format masks (phone, date, etc.)        |
-| Password      | Password field with visibility toggle and strength |
-| Textarea      | Multi-line text area with auto-resize              |
-| Field Label   | Accessible form field labels and hints             |
-| Input Group   | Group inputs with addons and buttons               |
-| Slider        | Single/range slider with marks and labels          |
-| Rating        | Star/heart/thumb rating with fractional precision  |
+| Component             | Description                                                                |
+| --------------------- | -------------------------------------------------------------------------- |
+| Text Input            | Single-line text field with validation and icons                           |
+| Numeric Input         | Number input with step buttons and formatting                              |
+| Masked Input          | Input with format masks (phone, date, etc.)                                |
+| Password              | Password field with visibility toggle and optional strength meter          |
+| Password Strength     | Configurable strength meter with allowed-aware tips                        |
+| Password Requirements | Live rules checklist with confirm-password and bundled strength meter      |
+| Textarea              | Multi-line text area with auto-resize                                      |
+| Field Label           | Accessible form field labels and hints                                     |
+| Input Group           | Group inputs with addons and buttons                                       |
+| Slider                | Single/range slider with marks and labels                                  |
+| Rating                | Star/heart/thumb rating with fractional precision                          |
+| Signature Pad         | Canvas signature capture with smooth strokes, color and thickness variants |
+| Week Day Selector     | Compact weekday picker with single or multi-day selection                  |
 
 ### Selection
 
@@ -188,16 +192,27 @@ function Counter() {
 | Timeline        | Vertical/horizontal event sequence                                              |
 | Progress Bar    | Determinate and indeterminate progress                                          |
 | Countdown Timer | Progress-aware countdown with circular, linear, segmented, and numeric variants |
+| Knob            | Circular value indicator with optional drag editing                             |
+| Activity Gauge  | Concentric multi-series ring chart                                              |
+
+### Codes
+
+| Component  | Description                                                                  |
+| ---------- | ---------------------------------------------------------------------------- |
+| QR Code    | Encode any string with optional logo overlay                                 |
+| QR Scanner | Scan QR codes with the device camera using the native BarcodeDetector API   |
+| Barcode    | Six 1D symbologies with built-in validation                                  |
 
 ### Media
 
-| Component    | Description                         |
-| ------------ | ----------------------------------- |
-| Carousel     | Image/video slider with thumbnails  |
-| Lightbox     | Hover/click preview with zoom-out   |
-| Image Editor | Crop, rotate, blur, annotate images |
-| Canvas Draw  | Drawing and annotation overlay      |
-| File Upload  | Drag-and-drop file upload zone      |
+| Component    | Description                                                          |
+| ------------ | -------------------------------------------------------------------- |
+| Avatar       | Circular image / initials / icon with status dots and group overflow |
+| Carousel     | Image/video slider with thumbnails                                   |
+| Lightbox     | Hover/click preview with zoom-out                                    |
+| Image Editor | Crop, rotate, blur, annotate images                                  |
+| Canvas Draw  | Drawing and annotation overlay                                       |
+| File Upload  | Drag-and-drop file upload zone                                       |
 
 ### Navigation
 
@@ -211,13 +226,14 @@ function Counter() {
 
 ### Feedback
 
-| Component           | Description                        |
-| ------------------- | ---------------------------------- |
-| Snackbar            | Toast notifications                |
-| Notification Center | Dropdown notification panel        |
-| Page Banner         | Page-level message banners         |
-| Tooltip             | Hover/focus information popups     |
-| Shimmer / Skeleton  | Loading placeholders and skeletons |
+| Component           | Description                                                       |
+| ------------------- | ----------------------------------------------------------------- |
+| Snackbar            | Toast notifications                                               |
+| Notification Center | Dropdown notification panel                                       |
+| Page Banner         | Page-level message banners                                        |
+| Tooltip             | Hover/focus information popups                                    |
+| Shimmer / Skeleton  | Loading placeholders and skeletons                                |
+| Empty State         | Placeholder for empty data, errors, success, and first-run states |
 
 ### Overlays
 
@@ -241,15 +257,19 @@ function Counter() {
 
 ### Actions & Interaction
 
-| Component        | Description                           |
-| ---------------- | ------------------------------------- |
-| Button           | Primary action element with variants  |
-| Fab & Speed Dial | Floating action buttons               |
-| Drag & Drop      | Draggable and droppable containers    |
-| Sortable         | Drag-to-reorder lists and grids       |
-| Deferred View    | Lazy-render with visibility detection |
-| Infinite Scroll  | Load-more on scroll with indicators   |
-| Animate On View  | Scroll-triggered CSS animations       |
+| Component        | Description                                                  |
+| ---------------- | ------------------------------------------------------------ |
+| Button           | Primary action element with variants                         |
+| Split Button     | Primary action paired with a related-actions menu            |
+| Fab & Speed Dial | Floating action buttons                                      |
+| Dock             | Floating bar of icons with magnification and auto-hide       |
+| Command Palette  | Modal launcher with fuzzy search, recents, and global hotkey |
+| Scroll To Top    | Floating FAB that returns the user to the top of the page    |
+| Drag & Drop      | Draggable and droppable containers                           |
+| Sortable         | Drag-to-reorder lists and grids                              |
+| Deferred View    | Lazy-render with visibility detection                        |
+| Infinite Scroll  | Load-more on scroll with indicators                          |
+| Animate On View  | Scroll-triggered CSS animations                              |
 
 ## Hooks & Utilities
 
@@ -269,8 +289,9 @@ function Counter() {
 Fluxo UI ships with a lightweight, TypeScript-first state management solution:
 
 - **Basic Store** — simple state container with batched updates, computed properties, and path subscriptions
+- **Slices** — compose multiple independent slices into one store with bidirectional sync; each slice is fully usable standalone
 - **Model Store** — entity-based store with built-in CRUD, persistence, validation, and list management
-- **Middleware** — undo/redo, persistence, validation, throttle, debounce, broadcast, logging, devtools
+- **Middleware** — undo/redo (scoped, grouped, byte-capped), persistence (versioned, scoped, debounced), optimistic updates with rollback, sync (BroadcastChannel / WebSocket / custom transport), schema validation (Zod / Valibot), throttle, debounce, logger, devtools
 
 ## Dependency Injection
 

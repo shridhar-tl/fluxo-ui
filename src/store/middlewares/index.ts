@@ -1,11 +1,15 @@
-export { broadcastMiddleware } from './broadcast';
-export type { BroadcastMiddlewareOptions } from './broadcast';
 export { debounceMiddleware } from './debounce';
 export { devToolsMiddleware } from './devtools';
 export { immerMiddleware } from './immer';
 export { loggerMiddleware } from './logging';
+export { optimisticMiddleware } from './optimistic';
+export type { OptimisticOptions, OptimisticStore } from './optimistic';
 export { persistMiddleware } from './persist';
+export type { AsyncStorageAdapter, PersistMigration, PersistOptions, PersistStorageOption } from './persist';
+export { broadcastChannelTransport, storageEventTransport, syncMiddleware, webSocketTransport } from './sync';
+export type { ConflictResolver, SyncOptions, SyncTransport } from './sync';
 export { throttleMiddleware } from './throttle';
 export { undoRedoMiddleware } from './undo-redo';
-export type { UndoRedoStore, UndoRedoStateProps } from './undo-redo';
+export type { UndoRedoOptions, UndoRedoStateProps, UndoRedoStore } from './undo-redo';
 export { validationMiddleware } from './validation';
+export type { ParseSchema, SafeParseSchema, SchemaLike, ValidationErrors, ValidationFn, ValidationOptions } from './validation';

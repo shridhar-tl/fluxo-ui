@@ -57,6 +57,7 @@ const HtmlEditorPage = React.lazy(() => import('./story/pages/html-editor/HtmlEd
 const StoreBasicPage = React.lazy(() => import('./story/pages/store-basic/StoreBasicPage'));
 const StoreMiddlewarePage = React.lazy(() => import('./story/pages/store-middleware/StoreMiddlewarePage'));
 const StoreModelPage = React.lazy(() => import('./story/pages/store-model/StoreModelPage'));
+const StoreSlicePage = React.lazy(() => import('./story/pages/store-slice/StoreSlicePage'));
 
 const PopoverPage = React.lazy(() => import('./story/pages/popover/PopoverPage'));
 const ContextMenuPage = React.lazy(() => import('./story/pages/context-menu/ContextMenuPage'));
@@ -113,6 +114,19 @@ const ReportBuilderVariablesPage = React.lazy(() => import('./story/pages/report
 const ReportBuilderExpressionsPage = React.lazy(() => import('./story/pages/report-builder-examples/expressions/ReportBuilderExpressionsPage'));
 const ReportBuilderRepeaterPage = React.lazy(() => import('./story/pages/report-builder-examples/repeater/ReportBuilderRepeaterPage'));
 const CountdownTimerPage = React.lazy(() => import('./story/pages/countdown-timer/CountdownTimerPage'));
+const KnobPage = React.lazy(() => import('./story/pages/knob/KnobPage'));
+const ActivityGaugePage = React.lazy(() => import('./story/pages/activity-gauge/ActivityGaugePage'));
+const SplitButtonPage = React.lazy(() => import('./story/pages/split-button/SplitButtonPage'));
+const DockPage = React.lazy(() => import('./story/pages/dock/DockPage'));
+const QRCodePage = React.lazy(() => import('./story/pages/qr-code/QRCodePage'));
+const QrScannerPage = React.lazy(() => import('./story/pages/qr-scanner/QrScannerPage'));
+const BarcodePage = React.lazy(() => import('./story/pages/barcode/BarcodePage'));
+const CommandPalettePage = React.lazy(() => import('./story/pages/command-palette/CommandPalettePage'));
+const AvatarPage = React.lazy(() => import('./story/pages/avatar/AvatarPage'));
+const EmptyStatePage = React.lazy(() => import('./story/pages/empty-state/EmptyStatePage'));
+const PasswordStrengthPage = React.lazy(() => import('./story/pages/password-strength/PasswordStrengthPage'));
+const PasswordRequirementsPage = React.lazy(() => import('./story/pages/password-requirements/PasswordRequirementsPage'));
+const ScrollToTopPage = React.lazy(() => import('./story/pages/scroll-to-top/ScrollToTopPage'));
 
 const App: React.FC = () => {
     return (
@@ -514,6 +528,14 @@ const App: React.FC = () => {
                         }
                     />
                     <Route
+                        path="/store/slice"
+                        element={
+                            <LayoutWrapper>
+                                <StoreSlicePage />
+                            </LayoutWrapper>
+                        }
+                    />
+                    <Route
                         path="/components/calendar"
                         element={
                             <LayoutWrapper>
@@ -596,6 +618,19 @@ const App: React.FC = () => {
                     <Route path="/components/report-builder-examples/expressions" element={<LayoutWrapper><ReportBuilderExpressionsPage /></LayoutWrapper>} />
                     <Route path="/components/report-builder-examples/repeater" element={<LayoutWrapper><ReportBuilderRepeaterPage /></LayoutWrapper>} />
                     <Route path="/components/html-editor" element={<LayoutWrapper><HtmlEditorPage /></LayoutWrapper>} />
+                    <Route path="/components/knob" element={<LayoutWrapper><KnobPage /></LayoutWrapper>} />
+                    <Route path="/components/activity-gauge" element={<LayoutWrapper><ActivityGaugePage /></LayoutWrapper>} />
+                    <Route path="/components/split-button" element={<LayoutWrapper><SplitButtonPage /></LayoutWrapper>} />
+                    <Route path="/components/dock" element={<LayoutWrapper><DockPage /></LayoutWrapper>} />
+                    <Route path="/components/qr-code" element={<LayoutWrapper><QRCodePage /></LayoutWrapper>} />
+                    <Route path="/components/qr-scanner" element={<LayoutWrapper><QrScannerPage /></LayoutWrapper>} />
+                    <Route path="/components/barcode" element={<LayoutWrapper><BarcodePage /></LayoutWrapper>} />
+                    <Route path="/components/command-palette" element={<LayoutWrapper><CommandPalettePage /></LayoutWrapper>} />
+                    <Route path="/components/avatar" element={<LayoutWrapper><AvatarPage /></LayoutWrapper>} />
+                    <Route path="/components/empty-state" element={<LayoutWrapper><EmptyStatePage /></LayoutWrapper>} />
+                    <Route path="/components/password-strength" element={<LayoutWrapper><PasswordStrengthPage /></LayoutWrapper>} />
+                    <Route path="/components/password-requirements" element={<LayoutWrapper><PasswordRequirementsPage /></LayoutWrapper>} />
+                    <Route path="/components/scroll-to-top" element={<LayoutWrapper><ScrollToTopPage /></LayoutWrapper>} />
                     <Route
                         path="*"
                         element={

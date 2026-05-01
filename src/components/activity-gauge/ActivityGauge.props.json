@@ -1,0 +1,108 @@
+{
+  "activityGaugeProps": {
+    "series": {
+      "type": "Array<{ name: string; value: number; max?: number; color?: string }>",
+      "required": true,
+      "description": "Series rendered outermost to innermost as concentric rings"
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg' | 'xl' | number",
+      "default": "'md'",
+      "description": "Overall diameter (preset or pixel value)"
+    },
+    "ringThickness": {
+      "type": "number",
+      "description": "Width of each ring in px (auto-scaled with size when omitted)"
+    },
+    "ringGap": {
+      "type": "number",
+      "default": "6",
+      "description": "Gap between rings in px"
+    },
+    "roundedCaps": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Round vs flat stroke caps"
+    },
+    "arcStart": {
+      "type": "number",
+      "default": "0",
+      "description": "Start angle in degrees (applied to all rings)"
+    },
+    "arcEnd": {
+      "type": "number",
+      "default": "360",
+      "description": "End angle in degrees (applied to all rings)"
+    },
+    "trackColor": {
+      "type": "string",
+      "default": "var(--eui-border-subtle)",
+      "description": "Color of the unfilled portion of every ring"
+    },
+    "defaultColors": {
+      "type": "string[]",
+      "description": "Palette used when a series omits color"
+    },
+    "centerContent": {
+      "type": "ReactNode",
+      "description": "Custom slot for arbitrary center content"
+    },
+    "centerTitle": {
+      "type": "string",
+      "description": "Convenience title text shown in the center"
+    },
+    "centerValue": {
+      "type": "string | number",
+      "description": "Convenience big value shown in the center"
+    },
+    "centerSubLabel": {
+      "type": "string",
+      "description": "Convenience sub-label shown in the center"
+    },
+    "legend": {
+      "type": "'bottom' | 'right' | 'none'",
+      "default": "'bottom'",
+      "description": "Legend placement"
+    },
+    "legendPosition": {
+      "type": "'start' | 'center' | 'end'",
+      "default": "'center'",
+      "description": "Legend alignment along its axis"
+    },
+    "interactive": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Hover/focus highlights a series and dims the others"
+    },
+    "onSeriesClick": {
+      "type": "(index: number) => void",
+      "description": "Fired when a ring or legend item is activated"
+    },
+    "animate": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Sweep animation on mount; honors prefers-reduced-motion"
+    },
+    "tooltip": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show tooltip with series details on hover/focus"
+    },
+    "valueFormatter": {
+      "type": "(s: { name: string; value: number; max: number }) => string",
+      "description": "Custom formatter for tooltip and ARIA description"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label override (defaults to series summary)"
+    }
+  }
+}

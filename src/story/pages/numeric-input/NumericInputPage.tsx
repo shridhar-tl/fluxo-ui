@@ -8,9 +8,12 @@ import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
+import ClearableValue from './ClearableValue';
 import DecimalPrecision from './DecimalPrecision';
+import KeyboardStepping from './KeyboardStepping';
 import MinMaxRange from './MinMaxRange';
 import NumericInputStates from './NumericInputStates';
+import Steppers from './Steppers';
 
 
 import _NumericInput_props_json from './../../../components/NumericInput.props.json';
@@ -19,6 +22,9 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default numeric input example' },
     { id: 'min-max', title: 'Min/Max Range', description: 'Constrain allowed values' },
     { id: 'decimals', title: 'Decimal Precision', description: 'Control decimal places' },
+    { id: 'steppers', title: 'Stepper Buttons', description: 'Inline up/down stepper UI' },
+    { id: 'keyboard', title: 'Keyboard Stepping', description: 'ArrowUp/Down with optional Shift large step' },
+    { id: 'clearable', title: 'Empty / Cleared', description: 'Receive undefined when the field is cleared' },
     { id: 'states', title: 'States', description: 'Normal, disabled, readonly, error' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'props', title: 'Props', description: 'Component API reference' },
@@ -87,6 +93,27 @@ const NumericInputPage: React.FC = () => {
                     Decimal Precision
                 </h2>
                 <DecimalPrecision />
+            </section>
+
+            <section id="steppers" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Stepper Buttons
+                </h2>
+                <Steppers />
+            </section>
+
+            <section id="keyboard" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Keyboard Stepping
+                </h2>
+                <KeyboardStepping />
+            </section>
+
+            <section id="clearable" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Empty / Cleared
+                </h2>
+                <ClearableValue />
             </section>
 
             <section id="states" className="scroll-mt-8">

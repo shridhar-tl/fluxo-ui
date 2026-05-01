@@ -12,14 +12,15 @@ interface UndoState {
     value: number;
 }
 
-const undoStore = create<UndoState>(() => ({ value: 0 }), [undoRedoMiddleware(20)]);
+const undoStore = create<UndoState>(() => ({ value: 0 }), [undoRedoMiddleware({ maxHistorySize: 20 })]);
 const useUndoStore = createHook<UndoState, UndoState & UndoRedoStateProps>(undoStore);
 
-const undoRedoCode = `import { create, createHook, undoRedoMiddleware } from 'fluxo-ui/store';
+const undoRedoCode = `import { create, createHook } from 'fluxo-ui/store';
+import { undoRedoMiddleware } from 'fluxo-ui/store/middlewares';
 
 const store = create<{ value: number }>(
   () => ({ value: 0 }),
-  [undoRedoMiddleware(20)]
+  [undoRedoMiddleware({ maxHistorySize: 20 })]
 );
 const useStore = createHook(store);
 
@@ -44,14 +45,15 @@ interface PersistState {
     count: number;
 }
 
-const persistStore = create<PersistState>(() => ({ count: 0 }), [persistMiddleware('local', persistStorageKey)]);
+const persistStore = create<PersistState>(() => ({ count: 0 }), [persistMiddleware({ storage: 'local', key: persistStorageKey })]);
 const usePersistStore = createHook(persistStore);
 
-const persistCode = `import { create, createHook, persistMiddleware } from 'fluxo-ui/store';
+const persistCode = `import { create, createHook } from 'fluxo-ui/store';
+import { persistMiddleware } from 'fluxo-ui/store/middlewares';
 
 const store = create<{ count: number }>(
   () => ({ count: 0 }),
-  [persistMiddleware('local', 'my-app-counter')]
+  [persistMiddleware({ storage: 'local', key: 'my-app-counter' })]
 );
 const useStore = createHook(store);
 
@@ -70,8 +72,8 @@ const validationErrors: Record<string, string>[] = [];
 const validatedStore = create<ValidatedState>(
     () => ({ amount: 10 }),
     [
-        validationMiddleware(
-            (state: ValidatedState) => {
+        validationMiddleware<ValidatedState>({
+            validator: (state) => {
                 const errors: Record<string, string> = {};
                 if (state.amount < 0) {
                     errors.amount = 'Amount cannot be negative';
@@ -81,26 +83,27 @@ const validatedStore = create<ValidatedState>(
                 }
                 return Object.keys(errors).length > 0 ? errors : undefined;
             },
-            (errors) => {
+            onValidationError: (errors) => {
                 validationErrors.length = 0;
                 validationErrors.push(errors);
             },
-        ),
+        }),
     ],
 );
 const useValidatedStore = createHook(validatedStore);
 
-const validationCode = `import { create, createHook, validationMiddleware } from 'fluxo-ui/store';
+const validationCode = `import { create, createHook } from 'fluxo-ui/store';
+import { validationMiddleware } from 'fluxo-ui/store/middlewares';
 
 const store = create<{ amount: number }>(
   () => ({ amount: 10 }),
-  [validationMiddleware(
-    (state) => {
+  [validationMiddleware<{ amount: number }>({
+    validator: (state) => {
       if (state.amount < 0) return { amount: 'Cannot be negative' };
       if (state.amount > 100) return { amount: 'Cannot exceed 100' };
     },
-    (errors) => console.log('Validation failed:', errors)
-  )]
+    onValidationError: (errors) => console.log('Validation failed:', errors)
+  })]
 );
 
 // setState is rejected if validation fails

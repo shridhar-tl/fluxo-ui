@@ -20,8 +20,8 @@ const formValidationErrors: { current: FormErrors } = { current: {} };
 const formStore = create<FormState>(
     () => ({ name: '', email: '', age: 0 }),
     [
-        validationMiddleware(
-            (state: FormState) => {
+        validationMiddleware<FormState>({
+            validator: (state) => {
                 const errors: FormErrors = {};
                 if (state.name.length > 0 && state.name.length < 2) {
                     errors.name = 'Name must be at least 2 characters';
@@ -40,10 +40,10 @@ const formStore = create<FormState>(
                 }
                 return Object.keys(errors).length > 0 ? errors : undefined;
             },
-            (errors) => {
+            onValidationError: (errors) => {
                 formValidationErrors.current = errors as FormErrors;
             },
-        ),
+        }),
     ],
 );
 const useFormStore = createHook(formStore);
@@ -57,8 +57,8 @@ const simpleValidationError: { current: string } = { current: '' };
 const simpleValidatedStore = create<SimpleValidatedState>(
     () => ({ amount: 10 }),
     [
-        validationMiddleware(
-            (state: SimpleValidatedState) => {
+        validationMiddleware<SimpleValidatedState>({
+            validator: (state) => {
                 const errors: Record<string, string> = {};
                 if (state.amount < 0) {
                     errors.amount = 'Amount cannot be negative';
@@ -68,10 +68,10 @@ const simpleValidatedStore = create<SimpleValidatedState>(
                 }
                 return Object.keys(errors).length > 0 ? errors : undefined;
             },
-            (errors) => {
+            onValidationError: (errors) => {
                 simpleValidationError.current = errors.amount || 'Validation failed';
             },
-        ),
+        }),
     ],
 );
 const useSimpleValidatedStore = createHook(simpleValidatedStore);
@@ -91,8 +91,8 @@ const validationErrors: { current: FormErrors } = { current: {} };
 
 const formStore = create<FormState>(
   () => ({ name: '', email: '', age: 0 }),
-  [validationMiddleware(
-    (state) => {
+  [validationMiddleware<FormState>({
+    validator: (state) => {
       const errors: FormErrors = {};
       if (state.name.length > 0 && state.name.length < 2) {
         errors.name = 'Name must be at least 2 characters';
@@ -105,10 +105,10 @@ const formStore = create<FormState>(
       if (state.age > 150) errors.age = 'Age cannot exceed 150';
       return Object.keys(errors).length > 0 ? errors : undefined;
     },
-    (errors) => {
+    onValidationError: (errors) => {
       validationErrors.current = errors as FormErrors;
     }
-  )]
+  })]
 );
 
 const useFormStore = createHook(formStore);

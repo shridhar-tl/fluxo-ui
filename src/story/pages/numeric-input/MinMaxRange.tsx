@@ -25,7 +25,7 @@ const MinMaxRange: React.FC = () => {
                     <NumericInput
                         label="Score (0-100)"
                         value={rangeValue}
-                        onChange={(e) => setRangeValue(e.value)}
+                        onChange={(e) => setRangeValue(e.value ?? 0)}
                         min={0}
                         max={100}
                         placeholder="Enter score..."

@@ -1,0 +1,119 @@
+{
+  "avatarProps": {
+    "src": {
+      "type": "string",
+      "description": "Image URL"
+    },
+    "name": {
+      "type": "string",
+      "description": "Used to derive initials and a deterministic background color when no src is provided or when the image fails"
+    },
+    "icon": {
+      "type": "IconComponent | ReactElement",
+      "description": "Fallback when neither src nor name is available"
+    },
+    "alt": {
+      "type": "string",
+      "description": "Accessible image alt text (defaults to name)"
+    },
+    "shape": {
+      "type": "'circle' | 'rounded' | 'square'",
+      "default": "'circle'",
+      "description": "Avatar shape"
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number",
+      "default": "'md'",
+      "description": "Preset size or pixel value"
+    },
+    "status": {
+      "type": "'online' | 'offline' | 'busy' | 'away'",
+      "description": "Status indicator dot"
+    },
+    "statusPosition": {
+      "type": "'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'",
+      "default": "'bottom-right'",
+      "description": "Status dot placement"
+    },
+    "colorFromName": {
+      "type": "boolean",
+      "default": "true",
+      "description": "When no src, derive a stable background color from the name"
+    },
+    "loading": {
+      "type": "'lazy' | 'eager'",
+      "default": "'lazy'",
+      "description": "Image loading strategy"
+    },
+    "onClick": {
+      "type": "(e: MouseEvent) => void",
+      "description": "When provided, renders as a focusable button"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label override"
+    }
+  },
+  "avatarGroupProps": {
+    "children": {
+      "type": "ReactNode",
+      "description": "Multiple Avatar children"
+    },
+    "items": {
+      "type": "Array<AvatarProps>",
+      "description": "Alternative array prop instead of children"
+    },
+    "max": {
+      "type": "number",
+      "description": "Cap visible avatars; the rest collapse into a +N chip"
+    },
+    "overlap": {
+      "type": "number",
+      "default": "8",
+      "description": "Pixels of overlap between adjacent avatars"
+    },
+    "direction": {
+      "type": "'ltr' | 'rtl'",
+      "default": "'ltr'",
+      "description": "Visual stack order"
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | number",
+      "default": "'md'",
+      "description": "Applied to all children"
+    },
+    "shape": {
+      "type": "'circle' | 'rounded' | 'square'",
+      "default": "'circle'",
+      "description": "Applied to all children"
+    },
+    "onAvatarClick": {
+      "type": "(item: AvatarProps, index: number, e: MouseEvent) => void",
+      "description": "Fires when any avatar inside the group is clicked, including avatars revealed via the overflow popover. The index reflects the avatar's position in the original full list."
+    },
+    "onOverflowClick": {
+      "type": "() => void",
+      "description": "Custom handler for the +N chip; when omitted, opens a popover with the hidden avatars"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the group"
+    }
+  }
+}
