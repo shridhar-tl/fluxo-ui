@@ -2,6 +2,16 @@ name: Publish to npm
 
 on:
     workflow_dispatch:
+        inputs:
+            target:
+                description: 'Which package to publish'
+                required: true
+                default: 'both'
+                type: choice
+                options:
+                    - both
+                    - library
+                    - cli
 
 jobs:
     publish:
@@ -24,10 +34,23 @@ jobs:
               run: npm install --no-package-lock --force
 
             - name: Build library
+              if: ${{ inputs.target == 'both' || inputs.target == 'library' }}
               run: npm run build-lib
 
-            - name: Publish to npm
+            - name: Build CLI
+              if: ${{ inputs.target == 'both' || inputs.target == 'cli' }}
+              run: npm run build-cli
+
+            - name: Publish library to npm
+              if: ${{ inputs.target == 'both' || inputs.target == 'library' }}
               working-directory: ./dist
+              run: npm publish --access public
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Publish CLI to npm
+              if: ${{ inputs.target == 'both' || inputs.target == 'cli' }}
+              working-directory: ./cli
               run: npm publish --access public
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
