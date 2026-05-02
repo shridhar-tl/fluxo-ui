@@ -55,6 +55,13 @@ const writeDistPackageJson = (): Plugin => ({
         for (const key of keepKeys) {
             if (rootPkg[key] !== undefined) distPkg[key] = rootPkg[key];
         }
+        const libraryRuntimeDeps = ['classnames', 'date-fns'];
+        const rootDeps = (rootPkg.dependencies ?? {}) as Record<string, string>;
+        const libDeps: Record<string, string> = {};
+        for (const dep of libraryRuntimeDeps) {
+            if (rootDeps[dep]) libDeps[dep] = rootDeps[dep];
+        }
+        if (Object.keys(libDeps).length > 0) distPkg.dependencies = libDeps;
         distPkg.main = stripDistPrefix(rootPkg.main);
         distPkg.module = stripDistPrefix(rootPkg.module);
         distPkg.types = stripDistPrefix(rootPkg.types);
@@ -155,7 +162,7 @@ export default defineConfig({
             tsconfigPath: './tsconfig.app.json',
             copyDtsFiles: false,
             include: ['src/**/*'],
-            exclude: ['src/App.tsx', 'src/main.tsx', 'src/IconShowcase.tsx'],
+            exclude: ['src/App.tsx', 'src/main.tsx', 'src/IconShowcase.tsx', 'src/cli/**'],
             rollupTypes: false,
             outDir: 'dist',
             entryRoot: 'src',

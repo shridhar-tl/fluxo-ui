@@ -1,0 +1,3082 @@
+{
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-05-02T16:19:40.128Z",
+  "sourceRoot": "src",
+  "components": [
+    {
+      "id": "accordion",
+      "name": "Accordion",
+      "kind": "directory",
+      "sourcePath": "components/accordion",
+      "entryFile": "components/accordion/index.ts",
+      "files": [
+        "Accordion.scss",
+        "Accordion.tsx",
+        "index.ts"
+      ],
+      "category": "Layout",
+      "label": "Accordion",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "activity-gauge",
+      "name": "ActivityGauge",
+      "kind": "directory",
+      "sourcePath": "components/activity-gauge",
+      "entryFile": "components/activity-gauge/index.ts",
+      "files": [
+        "ActivityGauge.scss",
+        "ActivityGauge.tsx",
+        "index.ts"
+      ],
+      "category": "Charts & Boards",
+      "label": "Activity Gauge",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "tooltip"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "animate-on-view",
+      "name": "AnimateOnView",
+      "kind": "directory",
+      "sourcePath": "components/animate-on-view",
+      "entryFile": "components/animate-on-view/index.ts",
+      "files": [
+        "AnimateOnView.scss",
+        "AnimateOnView.tsx",
+        "index.ts"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Animate On View",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useReducedMotion"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "autocomplete",
+      "name": "Autocomplete",
+      "kind": "flat",
+      "sourcePath": "components/Autocomplete.tsx",
+      "entryFile": "components/Autocomplete.tsx",
+      "files": [
+        "Autocomplete.scss",
+        "Autocomplete.tsx"
+      ],
+      "category": "Selection",
+      "label": "Autocomplete",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "popover"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "autocomplete-multi",
+      "name": "AutocompleteMulti",
+      "kind": "flat",
+      "sourcePath": "components/AutocompleteMulti.tsx",
+      "entryFile": "components/AutocompleteMulti.tsx",
+      "files": [
+        "AutocompleteMulti.scss",
+        "AutocompleteMulti.tsx"
+      ],
+      "category": "Selection",
+      "label": "AutocompleteMulti",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "checkbox",
+          "popover"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "avatar",
+      "name": "Avatar",
+      "kind": "directory",
+      "sourcePath": "components/avatar",
+      "entryFile": "components/avatar/index.ts",
+      "files": [
+        "Avatar.scss",
+        "Avatar.tsx",
+        "AvatarGroup.tsx",
+        "index.ts"
+      ],
+      "category": "Media",
+      "label": "Avatar",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "icon"
+        ],
+        "hooks": [
+          "useClickOutside"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "barcode",
+      "name": "Barcode",
+      "kind": "directory",
+      "sourcePath": "components/barcode",
+      "entryFile": "components/barcode/index.ts",
+      "files": [
+        "Barcode.scss",
+        "Barcode.tsx",
+        "barcode-encoder.ts",
+        "index.ts"
+      ],
+      "category": "Codes",
+      "label": "Barcode",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "breadcrumb",
+      "name": "Breadcrumb",
+      "kind": "flat",
+      "sourcePath": "components/Breadcrumb.tsx",
+      "entryFile": "components/Breadcrumb.tsx",
+      "files": [
+        "Breadcrumb.scss",
+        "Breadcrumb.tsx"
+      ],
+      "category": "Navigation",
+      "label": "Breadcrumb",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "button",
+      "name": "Button",
+      "kind": "flat",
+      "sourcePath": "components/Button.tsx",
+      "entryFile": "components/Button.tsx",
+      "files": [
+        "Button.scss",
+        "Button.tsx"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Button",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "confirm-popover",
+          "link",
+          "tooltip"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "calendar",
+      "name": "Calendar",
+      "kind": "directory",
+      "sourcePath": "components/calendar",
+      "entryFile": "components/calendar/index.ts",
+      "files": [
+        "Calendar.scss",
+        "Calendar.tsx",
+        "CalendarContext.ts",
+        "calendar-constants.ts",
+        "calendar-types.ts",
+        "calendar-utils.ts",
+        "entries/CalendarEntry.tsx",
+        "entries/DefaultEntry.tsx",
+        "entries/EntryContainer.tsx",
+        "entries/OverflowPopover.tsx",
+        "entries/index.ts",
+        "hooks/index.ts",
+        "hooks/useCalendarEntries.ts",
+        "hooks/useCalendarNavigation.ts",
+        "hooks/useNowIndicator.ts",
+        "hooks/useViewTitle.ts",
+        "index.ts",
+        "interactions/index.ts",
+        "interactions/useDragMove.ts",
+        "interactions/useDragResize.ts",
+        "interactions/useSelection.ts",
+        "plugin-registry.ts",
+        "plugins/agenda-plugin.ts",
+        "plugins/create-plugin.ts",
+        "plugins/day-grid-plugin.ts",
+        "plugins/default-plugins.ts",
+        "plugins/index.ts",
+        "plugins/list-view-plugin.ts",
+        "plugins/month-grid-plugin.ts",
+        "plugins/multi-month-plugin.ts",
+        "plugins/scroll-month-plugin.ts",
+        "plugins/time-grid-custom-plugin.ts",
+        "plugins/time-grid-plugin.ts",
+        "plugins/year-grid-plugin.ts",
+        "styles/_agenda.scss",
+        "styles/_day-grid.scss",
+        "styles/_entries.scss",
+        "styles/_list-view.scss",
+        "styles/_month-grid.scss",
+        "styles/_multi-month.scss",
+        "styles/_overflow-popover.scss",
+        "styles/_scroll-month.scss",
+        "styles/_time-grid.scss",
+        "styles/_toolbar.scss",
+        "styles/_variables.scss",
+        "styles/_year-grid.scss",
+        "toolbar/CalendarToolbar.tsx",
+        "toolbar/ToolbarNavigation.tsx",
+        "toolbar/ToolbarTitle.tsx",
+        "toolbar/ToolbarViewSwitcher.tsx",
+        "toolbar/index.ts",
+        "views/ViewRenderer.tsx",
+        "views/agenda/AgendaView.tsx",
+        "views/agenda/index.ts",
+        "views/day-grid/DayGrid.tsx",
+        "views/day-grid/DayGridCell.tsx",
+        "views/day-grid/index.ts",
+        "views/index.ts",
+        "views/list-view/ListView.tsx",
+        "views/list-view/ListViewGroup.tsx",
+        "views/list-view/ListViewItem.tsx",
+        "views/list-view/index.ts",
+        "views/month-grid/MonthGrid.tsx",
+        "views/month-grid/MonthGridCell.tsx",
+        "views/month-grid/MonthGridHeader.tsx",
+        "views/month-grid/index.ts",
+        "views/multi-month/MultiMonthGrid.tsx",
+        "views/multi-month/index.ts",
+        "views/scroll-month/ScrollMonthView.tsx",
+        "views/scroll-month/index.ts",
+        "views/time-grid-custom/TimeGridCustomDays.tsx",
+        "views/time-grid-custom/index.ts",
+        "views/time-grid/NowIndicator.tsx",
+        "views/time-grid/TimeGrid.tsx",
+        "views/time-grid/TimeGridAllDay.tsx",
+        "views/time-grid/TimeGridBody.tsx",
+        "views/time-grid/TimeGridColumn.tsx",
+        "views/time-grid/TimeGridHeader.tsx",
+        "views/time-grid/TimeGridSlot.tsx",
+        "views/time-grid/index.ts",
+        "views/year-grid/YearGrid.tsx",
+        "views/year-grid/index.ts"
+      ],
+      "category": "Date, Time & Color",
+      "label": "Calendar",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "date-range"
+        ],
+        "hooks": [
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "date-fns",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "canvas-draw",
+      "name": "CanvasDraw",
+      "kind": "directory",
+      "sourcePath": "components/canvas-draw",
+      "entryFile": "components/canvas-draw/index.ts",
+      "files": [
+        "CanvasDraw.scss",
+        "CanvasDraw.tsx",
+        "CanvasDrawOverlay.tsx",
+        "CanvasDrawToolbar.scss",
+        "CanvasDrawToolbar.tsx",
+        "MediaTimeline.scss",
+        "MediaTimeline.tsx",
+        "canvas-draw-types.ts",
+        "index.ts"
+      ],
+      "category": "Media",
+      "label": "Canvas Draw",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "html2canvas",
+          "react"
+        ],
+        "optionalPeers": [
+          "html2canvas"
+        ]
+      }
+    },
+    {
+      "id": "card",
+      "name": "Card",
+      "kind": "directory",
+      "sourcePath": "components/card",
+      "entryFile": "components/card/index.ts",
+      "files": [
+        "Card.scss",
+        "Card.tsx",
+        "index.ts"
+      ],
+      "category": "Layout",
+      "label": "Card",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "carousel",
+      "name": "Carousel",
+      "kind": "directory",
+      "sourcePath": "components/carousel",
+      "entryFile": "components/carousel/index.ts",
+      "files": [
+        "Carousel.scss",
+        "Carousel.tsx",
+        "CarouselSlide.tsx",
+        "CarouselThumbnails.tsx",
+        "index.ts"
+      ],
+      "category": "Media",
+      "label": "Carousel",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "checkbox",
+      "name": "Checkbox",
+      "kind": "flat",
+      "sourcePath": "components/Checkbox.tsx",
+      "entryFile": "components/Checkbox.tsx",
+      "files": [
+        "Checkbox.scss",
+        "Checkbox.tsx"
+      ],
+      "category": "Selection",
+      "label": "Checkbox",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "chips",
+      "name": "Chips",
+      "kind": "flat",
+      "sourcePath": "components/Chips.tsx",
+      "entryFile": "components/Chips.tsx",
+      "files": [
+        "Chips.scss",
+        "Chips.tsx"
+      ],
+      "category": "Selection",
+      "label": "Chips",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "collapsible-panel",
+      "name": "CollapsiblePanel",
+      "kind": "directory",
+      "sourcePath": "components/collapsible-panel",
+      "entryFile": "components/collapsible-panel/index.ts",
+      "files": [
+        "CollapsiblePanel.tsx",
+        "CollapsibleTabs.tsx",
+        "collapsible-panel.scss",
+        "index.ts"
+      ],
+      "category": "Layout",
+      "label": "Collapsible Panel",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "color-picker",
+      "name": "ColorPicker",
+      "kind": "directory",
+      "sourcePath": "components/color-picker",
+      "entryFile": "components/color-picker/index.ts",
+      "files": [
+        "ColorPanel.tsx",
+        "ColorPicker.tsx",
+        "color-picker.scss",
+        "index.ts",
+        "utils.ts"
+      ],
+      "category": "Date, Time & Color",
+      "label": "Color Picker",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "command-palette",
+      "name": "CommandPalette",
+      "kind": "directory",
+      "sourcePath": "components/command-palette",
+      "entryFile": "components/command-palette/index.ts",
+      "files": [
+        "CommandPalette.scss",
+        "CommandPalette.tsx",
+        "index.ts"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Command Palette",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "icon"
+        ],
+        "hooks": [
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "confirm-popover",
+      "name": "ConfirmPopover",
+      "kind": "directory",
+      "sourcePath": "components/confirm-popover",
+      "entryFile": "components/confirm-popover/index.ts",
+      "files": [
+        "ConfirmPopoverManager.tsx",
+        "ConfirmPopoverPanel.tsx",
+        "confirm-popover.scss",
+        "index.ts",
+        "types.ts",
+        "useConfirmPopoverPosition.ts"
+      ],
+      "category": "Overlays",
+      "label": "Confirm Popover",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "button",
+          "icon"
+        ],
+        "hooks": [
+          "useClickOutside",
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "context",
+      "name": "ThemeContext",
+      "kind": "directory",
+      "sourcePath": "components/context",
+      "entryFile": "components/context/ThemeContext.tsx",
+      "files": [
+        "ThemeContext.tsx"
+      ],
+      "category": "Internal",
+      "label": "Theme Context",
+      "description": "",
+      "private": true,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "themes",
+          "types"
+        ],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "context-menu",
+      "name": "ContextMenu",
+      "kind": "directory",
+      "sourcePath": "components/context-menu",
+      "entryFile": "components/context-menu/index.tsx",
+      "files": [
+        "ContextMenuManager.tsx",
+        "context-menu.scss",
+        "index.tsx",
+        "types.ts",
+        "utils.ts"
+      ],
+      "category": "Overlays",
+      "label": "Context Menu",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "countdown-timer",
+      "name": "CountdownTimer",
+      "kind": "directory",
+      "sourcePath": "components/countdown-timer",
+      "entryFile": "components/countdown-timer/index.ts",
+      "files": [
+        "CountdownTimer.scss",
+        "CountdownTimer.tsx",
+        "index.ts"
+      ],
+      "category": "Charts & Boards",
+      "label": "Countdown Timer",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "date-range",
+      "name": "DateRange",
+      "kind": "directory",
+      "sourcePath": "components/date-range",
+      "entryFile": "components/date-range/index.ts",
+      "files": [
+        "Calendar.tsx",
+        "CustomDatePicker.tsx",
+        "DatePopover.tsx",
+        "DateRangePicker.tsx",
+        "Footer.tsx",
+        "MonthPicker.tsx",
+        "QuickRangeDropdown.tsx",
+        "QuickRangeList.tsx",
+        "YearPicker.tsx",
+        "date-range.scss",
+        "index.ts",
+        "types.ts",
+        "utils.ts"
+      ],
+      "category": "Date, Time & Color",
+      "label": "Date Range Picker",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "date-fns",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "deferred-view",
+      "name": "DeferredView",
+      "kind": "flat",
+      "sourcePath": "components/DeferredView.tsx",
+      "entryFile": "components/DeferredView.tsx",
+      "files": [
+        "DeferredView.scss",
+        "DeferredView.tsx"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Deferred View",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "diff-viewer",
+      "name": "DiffViewer",
+      "kind": "directory",
+      "sourcePath": "components/diff-viewer",
+      "entryFile": "components/diff-viewer/index.ts",
+      "files": [
+        "DiffViewer.scss",
+        "DiffViewer.tsx",
+        "diff-algo.ts",
+        "index.ts"
+      ],
+      "category": "Editors",
+      "label": "Diff Viewer",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "dock",
+      "name": "Dock",
+      "kind": "directory",
+      "sourcePath": "components/dock",
+      "entryFile": "components/dock/index.ts",
+      "files": [
+        "Dock.scss",
+        "Dock.tsx",
+        "index.ts"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Dock",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "icon",
+          "tooltip"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "docked-layout",
+      "name": "DockedLayout",
+      "kind": "directory",
+      "sourcePath": "components/docked-layout",
+      "entryFile": "components/docked-layout/index.ts",
+      "files": [
+        "DockedLayout.tsx",
+        "docked-layout-types.ts",
+        "docked-layout.scss",
+        "index.ts"
+      ],
+      "category": "Layout",
+      "label": "Docked Layout",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "drag-drop",
+      "name": "DragDrop",
+      "kind": "directory",
+      "sourcePath": "components/drag-drop",
+      "entryFile": "components/drag-drop/index.tsx",
+      "files": [
+        "DragDropProvider.tsx",
+        "Draggable.tsx",
+        "Droppable.tsx",
+        "Sortable.tsx",
+        "core/autoScroll.ts",
+        "core/dispatcher.ts",
+        "core/dragPreview.ts",
+        "core/hitTest.ts",
+        "core/html5Path.ts",
+        "core/index.ts",
+        "core/install.ts",
+        "core/pointerPath.ts",
+        "core/positioning.ts",
+        "core/registry.ts",
+        "core/types.ts",
+        "drag-drop.scss",
+        "hooks/index.ts",
+        "hooks/useDrag.ts",
+        "hooks/useDragLayer.ts",
+        "hooks/useDrop.ts",
+        "hooks/useSyncExternal.ts",
+        "index.tsx"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Drag & Drop",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "drawer",
+      "name": "Drawer",
+      "kind": "directory",
+      "sourcePath": "components/drawer",
+      "entryFile": "components/drawer/index.ts",
+      "files": [
+        "Drawer.scss",
+        "Drawer.tsx",
+        "index.ts"
+      ],
+      "category": "Overlays",
+      "label": "Drawer",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "dropdown",
+      "name": "Dropdown",
+      "kind": "flat",
+      "sourcePath": "components/Dropdown.tsx",
+      "entryFile": "components/Dropdown.tsx",
+      "files": [
+        "Dropdown.scss",
+        "Dropdown.tsx"
+      ],
+      "category": "Selection",
+      "label": "Dropdown",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "popover"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "editor-core",
+      "name": "EditorCore",
+      "kind": "directory",
+      "sourcePath": "components/editor-core",
+      "entryFile": "components/editor-core/index.ts",
+      "files": [
+        "ImageDialog.tsx",
+        "LinkDialog.tsx",
+        "TextEditorShell.tsx",
+        "ToolbarButton.tsx",
+        "ToolbarDropdown.tsx",
+        "editor-core.scss",
+        "index.ts",
+        "textareaCommands.ts",
+        "useFocusTrap.ts",
+        "useImageUpload.ts",
+        "useUndoHistory.ts"
+      ],
+      "category": "Internal",
+      "label": "Editor Core",
+      "description": "",
+      "private": true,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "empty-state",
+      "name": "EmptyState",
+      "kind": "directory",
+      "sourcePath": "components/empty-state",
+      "entryFile": "components/empty-state/index.ts",
+      "files": [
+        "EmptyState.scss",
+        "EmptyState.tsx",
+        "index.ts"
+      ],
+      "category": "Feedback",
+      "label": "Empty State",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "button",
+          "icon"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "fab",
+      "name": "Fab",
+      "kind": "flat",
+      "sourcePath": "components/Fab.tsx",
+      "entryFile": "components/Fab.tsx",
+      "files": [
+        "Fab.scss",
+        "Fab.tsx"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Fab & Speed Dial",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "field-label",
+      "name": "FieldLabel",
+      "kind": "flat",
+      "sourcePath": "components/FieldLabel.tsx",
+      "entryFile": "components/FieldLabel.tsx",
+      "files": [
+        "FieldLabel.scss",
+        "FieldLabel.tsx"
+      ],
+      "category": "Form Inputs",
+      "label": "Field Label",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "file-upload",
+      "name": "FileUpload",
+      "kind": "directory",
+      "sourcePath": "components/file-upload",
+      "entryFile": "components/file-upload/index.ts",
+      "files": [
+        "FilePreview.tsx",
+        "FileUpload.scss",
+        "FileUpload.tsx",
+        "file-upload-types.ts",
+        "index.ts"
+      ],
+      "category": "Media",
+      "label": "File Upload",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "gantt-chart",
+      "name": "GanttChart",
+      "kind": "directory",
+      "sourcePath": "components/gantt-chart",
+      "entryFile": "components/gantt-chart/index.ts",
+      "files": [
+        "DependencyLines.tsx",
+        "FieldsPanel.tsx",
+        "GanttChart.scss",
+        "GanttChart.tsx",
+        "GanttContext.ts",
+        "Markers.tsx",
+        "TaskBar.tsx",
+        "TimelineGrid.tsx",
+        "TimelineHeader.tsx",
+        "TimelinePanel.tsx",
+        "gantt-types.ts",
+        "gantt-utils.ts",
+        "index.ts"
+      ],
+      "category": "Charts & Boards",
+      "label": "Gantt Chart",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "splitter"
+        ],
+        "hooks": [],
+        "utils": [
+          "common-fns"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "html-editor",
+      "name": "HtmlEditor",
+      "kind": "directory",
+      "sourcePath": "components/html-editor",
+      "entryFile": "components/html-editor/index.ts",
+      "files": [
+        "HtmlEditor.tsx",
+        "HtmlPreview.tsx",
+        "html-editor.scss",
+        "htmlSanitizer.ts",
+        "htmlToolbarConfig.ts",
+        "index.ts"
+      ],
+      "category": "Editors",
+      "label": "HTML Editor",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "editor-core"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "icon",
+      "name": "Icon",
+      "kind": "flat",
+      "sourcePath": "components/Icon.tsx",
+      "entryFile": "components/Icon.tsx",
+      "files": [
+        "Icon.tsx"
+      ],
+      "category": "Internal",
+      "label": "Icon",
+      "description": "",
+      "private": true,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "image-editor",
+      "name": "ImageEditor",
+      "kind": "directory",
+      "sourcePath": "components/image-editor",
+      "entryFile": "components/image-editor/index.ts",
+      "files": [
+        "ImageEditor.scss",
+        "ImageEditor.tsx",
+        "image-editor-types.ts",
+        "index.ts"
+      ],
+      "category": "Media",
+      "label": "Image Editor",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "infinite-scroll",
+      "name": "InfiniteScroll",
+      "kind": "flat",
+      "sourcePath": "components/InfiniteScroll.tsx",
+      "entryFile": "components/InfiniteScroll.tsx",
+      "files": [
+        "InfiniteScroll.scss",
+        "InfiniteScroll.tsx"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Infinite Scroll",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "input-group",
+      "name": "InputGroup",
+      "kind": "flat",
+      "sourcePath": "components/InputGroup.tsx",
+      "entryFile": "components/InputGroup.tsx",
+      "files": [
+        "InputGroup.scss",
+        "InputGroup.tsx"
+      ],
+      "category": "Form Inputs",
+      "label": "Input Group",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "input-switch",
+      "name": "InputSwitch",
+      "kind": "flat",
+      "sourcePath": "components/InputSwitch.tsx",
+      "entryFile": "components/InputSwitch.tsx",
+      "files": [
+        "InputSwitch.scss",
+        "InputSwitch.tsx"
+      ],
+      "category": "Selection",
+      "label": "Input Switch",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "json-editor",
+      "name": "JsonEditor",
+      "kind": "directory",
+      "sourcePath": "components/json-editor",
+      "entryFile": "components/json-editor/index.ts",
+      "files": [
+        "AddEntry.tsx",
+        "ArrayEditor.tsx",
+        "ItemNameDisplay.tsx",
+        "ItemValueDisplay.tsx",
+        "JsonEditor.scss",
+        "JsonEditor.tsx",
+        "NodeSelector.tsx",
+        "ObjectEditor.tsx",
+        "SimpleEditor.tsx",
+        "Toolbar.tsx",
+        "index.ts",
+        "json-editor-types.ts",
+        "json-editor-utils.ts"
+      ],
+      "category": "Editors",
+      "label": "JSON Editor",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "kanban-board",
+      "name": "KanbanBoard",
+      "kind": "directory",
+      "sourcePath": "components/kanban-board",
+      "entryFile": "components/kanban-board/index.ts",
+      "files": [
+        "KanbanBoard.scss",
+        "KanbanBoard.tsx",
+        "KanbanCard.tsx",
+        "KanbanColumn.tsx",
+        "KanbanColumnHeader.tsx",
+        "KanbanContext.ts",
+        "index.ts",
+        "kanban-types.ts",
+        "kanban-utils.ts"
+      ],
+      "category": "Charts & Boards",
+      "label": "Kanban Board",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "drag-drop"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "knob",
+      "name": "Knob",
+      "kind": "directory",
+      "sourcePath": "components/knob",
+      "entryFile": "components/knob/index.ts",
+      "files": [
+        "Knob.scss",
+        "Knob.tsx",
+        "index.ts"
+      ],
+      "category": "Charts & Boards",
+      "label": "Knob",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "lightbox",
+      "name": "Lightbox",
+      "kind": "directory",
+      "sourcePath": "components/lightbox",
+      "entryFile": "components/lightbox/index.ts",
+      "files": [
+        "Lightbox.scss",
+        "Lightbox.tsx",
+        "index.ts"
+      ],
+      "category": "Media",
+      "label": "Lightbox",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "link",
+      "name": "Link",
+      "kind": "flat",
+      "sourcePath": "components/Link.tsx",
+      "entryFile": "components/Link.tsx",
+      "files": [
+        "Link.scss",
+        "Link.tsx"
+      ],
+      "category": "Internal",
+      "label": "Link",
+      "description": "",
+      "private": true,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "list-box",
+      "name": "ListBox",
+      "kind": "flat",
+      "sourcePath": "components/ListBox.tsx",
+      "entryFile": "components/ListBox.tsx",
+      "files": [
+        "ListBox.scss",
+        "ListBox.tsx"
+      ],
+      "category": "Selection",
+      "label": "List Box",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "markdown",
+      "name": "Markdown",
+      "kind": "directory",
+      "sourcePath": "components/markdown",
+      "entryFile": "components/markdown/index.ts",
+      "files": [
+        "MarkdownEditor.tsx",
+        "MarkdownPreview.tsx",
+        "TableGridPicker.tsx",
+        "index.ts",
+        "markdown.scss",
+        "markdownCommands.ts",
+        "markdownToolbarConfig.ts",
+        "parser.ts",
+        "renderer.tsx"
+      ],
+      "category": "Editors",
+      "label": "Markdown Editor",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "editor-core"
+        ],
+        "hooks": [
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "masked-input",
+      "name": "MaskedInput",
+      "kind": "flat",
+      "sourcePath": "components/MaskedInput.tsx",
+      "entryFile": "components/MaskedInput.tsx",
+      "files": [
+        "MaskedInput.scss",
+        "MaskedInput.tsx"
+      ],
+      "category": "Form Inputs",
+      "label": "Masked Input",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "menu-nav",
+      "name": "MenuNav",
+      "kind": "directory",
+      "sourcePath": "components/menu-nav",
+      "entryFile": "components/menu-nav/index.ts",
+      "files": [
+        "MenuNav.scss",
+        "MenuNav.tsx",
+        "MenuNavItem.tsx",
+        "index.ts",
+        "menu-nav-types.ts"
+      ],
+      "category": "Navigation",
+      "label": "Menu Nav",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "modal",
+      "name": "Modal",
+      "kind": "flat",
+      "sourcePath": "components/Modal.tsx",
+      "entryFile": "components/Modal.tsx",
+      "files": [
+        "Modal.scss",
+        "Modal.tsx"
+      ],
+      "category": "Overlays",
+      "label": "Modal",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "multi-state-checkbox",
+      "name": "MultiStateCheckbox",
+      "kind": "flat",
+      "sourcePath": "components/MultiStateCheckbox.tsx",
+      "entryFile": "components/MultiStateCheckbox.tsx",
+      "files": [
+        "MultiStateCheckbox.scss",
+        "MultiStateCheckbox.tsx"
+      ],
+      "category": "Selection",
+      "label": "MultiState Checkbox",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "icon"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "multiselect",
+      "name": "Multiselect",
+      "kind": "flat",
+      "sourcePath": "components/Multiselect.tsx",
+      "entryFile": "components/Multiselect.tsx",
+      "files": [
+        "Multiselect.scss",
+        "Multiselect.tsx"
+      ],
+      "category": "Selection",
+      "label": "Multiselect",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "checkbox",
+          "icon",
+          "popover"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "notification-center",
+      "name": "NotificationCenter",
+      "kind": "directory",
+      "sourcePath": "components/notification-center",
+      "entryFile": "components/notification-center/index.ts",
+      "files": [
+        "NotificationCenter.scss",
+        "NotificationCenter.tsx",
+        "NotificationItemRow.tsx",
+        "index.ts",
+        "notification-center-types.ts"
+      ],
+      "category": "Feedback",
+      "label": "Notification Center",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useClickOutside",
+          "useMobile",
+          "usePosition"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "numeric-input",
+      "name": "NumericInput",
+      "kind": "flat",
+      "sourcePath": "components/NumericInput.tsx",
+      "entryFile": "components/NumericInput.tsx",
+      "files": [
+        "NumericInput.scss",
+        "NumericInput.tsx"
+      ],
+      "category": "Form Inputs",
+      "label": "Numeric Input",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "page-banner",
+      "name": "PageBanner",
+      "kind": "directory",
+      "sourcePath": "components/page-banner",
+      "entryFile": "components/page-banner/index.ts",
+      "files": [
+        "PageBanner.scss",
+        "PageBanner.tsx",
+        "index.ts"
+      ],
+      "category": "Feedback",
+      "label": "Page Banner",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "password",
+      "name": "Password",
+      "kind": "flat",
+      "sourcePath": "components/Password.tsx",
+      "entryFile": "components/Password.tsx",
+      "files": [
+        "Password.scss",
+        "Password.tsx"
+      ],
+      "category": "Form Inputs",
+      "label": "Password",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "password-strength"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "password-requirements",
+      "name": "PasswordRequirements",
+      "kind": "directory",
+      "sourcePath": "components/password-requirements",
+      "entryFile": "components/password-requirements/index.ts",
+      "files": [
+        "PasswordRequirements.scss",
+        "PasswordRequirements.tsx",
+        "index.ts",
+        "password-requirements.ts"
+      ],
+      "category": "Form Inputs",
+      "label": "Password Requirements",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "password-strength"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "password-strength",
+      "name": "PasswordStrength",
+      "kind": "directory",
+      "sourcePath": "components/password-strength",
+      "entryFile": "components/password-strength/index.ts",
+      "files": [
+        "PasswordStrengthMeter.scss",
+        "PasswordStrengthMeter.tsx",
+        "index.ts",
+        "password-strength.ts"
+      ],
+      "category": "Form Inputs",
+      "label": "Password Strength",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "pivot-table",
+      "name": "PivotTable",
+      "kind": "directory",
+      "sourcePath": "components/pivot-table",
+      "entryFile": "components/pivot-table/index.ts",
+      "files": [
+        "PivotCellEditor.tsx",
+        "PivotConfigPanel.tsx",
+        "PivotFilterEditor.tsx",
+        "PivotTable.scss",
+        "PivotTable.tsx",
+        "index.ts",
+        "pivot-engine.ts",
+        "pivot-table-types.ts"
+      ],
+      "category": "Data & Reports",
+      "label": "Pivot Table",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "checkbox",
+          "drag-drop",
+          "dropdown",
+          "numeric-input",
+          "text-input"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "popover",
+      "name": "Popover",
+      "kind": "flat",
+      "sourcePath": "components/Popover.tsx",
+      "entryFile": "components/Popover.tsx",
+      "files": [
+        "Popover.scss",
+        "Popover.tsx"
+      ],
+      "category": "Overlays",
+      "label": "Popover",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "icon"
+        ],
+        "hooks": [
+          "useClickOutside",
+          "useKeyboard",
+          "useMobile",
+          "usePosition"
+        ],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "progress-bar",
+      "name": "ProgressBar",
+      "kind": "flat",
+      "sourcePath": "components/ProgressBar.tsx",
+      "entryFile": "components/ProgressBar.tsx",
+      "files": [
+        "ProgressBar.scss",
+        "ProgressBar.tsx"
+      ],
+      "category": "Charts & Boards",
+      "label": "Progress Bar",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "qr-code",
+      "name": "QrCode",
+      "kind": "directory",
+      "sourcePath": "components/qr-code",
+      "entryFile": "components/qr-code/index.ts",
+      "files": [
+        "QRCode.scss",
+        "QRCode.tsx",
+        "index.ts",
+        "qr-encoder.ts"
+      ],
+      "category": "Codes",
+      "label": "QR Code",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "qr-scanner",
+      "name": "QrScanner",
+      "kind": "directory",
+      "sourcePath": "components/qr-scanner",
+      "entryFile": "components/qr-scanner/index.ts",
+      "files": [
+        "QrScanner.scss",
+        "QrScanner.tsx",
+        "index.ts"
+      ],
+      "category": "Codes",
+      "label": "QR Scanner",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [
+          "qr-scanner"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "radio-button",
+      "name": "RadioButton",
+      "kind": "flat",
+      "sourcePath": "components/RadioButton.tsx",
+      "entryFile": "components/RadioButton.tsx",
+      "files": [
+        "RadioButton.scss",
+        "RadioButton.tsx"
+      ],
+      "category": "Selection",
+      "label": "Radio Button",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "rating",
+      "name": "Rating",
+      "kind": "directory",
+      "sourcePath": "components/rating",
+      "entryFile": "components/rating/index.ts",
+      "files": [
+        "Rating.scss",
+        "Rating.tsx",
+        "index.ts"
+      ],
+      "category": "Form Inputs",
+      "label": "Rating",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "report-builder",
+      "name": "ReportBuilder",
+      "kind": "directory",
+      "sourcePath": "components/report-builder",
+      "entryFile": "components/report-builder/index.ts",
+      "files": [
+        "DesignArea.tsx",
+        "ReportBuilder.tsx",
+        "ReportViewer.tsx",
+        "built-in-fields.ts",
+        "components/BuiltInFieldsPanel.tsx",
+        "components/ConsolePanel.tsx",
+        "components/DatasourceConfigPanel.tsx",
+        "components/DatasourceExplorer.tsx",
+        "components/DatasourcePluginPicker.tsx",
+        "components/DerivedDatasourceConfigPanel.tsx",
+        "components/ParameterDesigner.tsx",
+        "components/ParameterOptionsContext.ts",
+        "components/ParameterPanel.tsx",
+        "components/ParametersListPanel.tsx",
+        "components/PropertiesPallet.tsx",
+        "components/ReportSettingsPanel.tsx",
+        "components/StylesPallet.tsx",
+        "components/ToolboxPanel.tsx",
+        "components/VariableDesigner.tsx",
+        "components/VariablesListPanel.tsx",
+        "components/design/CanvasDesign.tsx",
+        "components/design/ChartDesign.tsx",
+        "components/design/ColumnsDesign.tsx",
+        "components/design/DesignComponent.tsx",
+        "components/design/HeaderDesign.tsx",
+        "components/design/HorizontalLineDesign.tsx",
+        "components/design/ImageDesign.tsx",
+        "components/design/NestedDesignComponent.tsx",
+        "components/design/RepeaterDesign.tsx",
+        "components/design/SubReportDesign.tsx",
+        "components/design/TabDesign.tsx",
+        "components/design/TableDesign.tsx",
+        "components/design/TextDesign.tsx",
+        "components/props/CanvasPropsPanel.tsx",
+        "components/props/ChartPropsPanel.tsx",
+        "components/props/ColumnsPropsPanel.tsx",
+        "components/props/ComponentVariablesEditor.tsx",
+        "components/props/ExpressionField.tsx",
+        "components/props/HeaderPropsPanel.tsx",
+        "components/props/HorizontalLinePropsPanel.tsx",
+        "components/props/ImagePropsPanel.tsx",
+        "components/props/PropsTabs.tsx",
+        "components/props/RepeaterPropsPanel.tsx",
+        "components/props/SubReportPropsPanel.tsx",
+        "components/props/TabPropsPanel.tsx",
+        "components/props/TableCellItemsEditor.tsx",
+        "components/props/TableColumnTreeEditor.tsx",
+        "components/props/TableExtraRowsEditor.tsx",
+        "components/props/TablePropsPanel.tsx",
+        "components/props/TableRowGroupsEditor.tsx",
+        "components/props/TextPropsPanel.tsx",
+        "dataset-schema.ts",
+        "expression/ExpressionEditor.tsx",
+        "expression/expression-editor.scss",
+        "expression/expression-parser.ts",
+        "expression/expression-types.ts",
+        "expression/index.ts",
+        "index.ts",
+        "parameter-validation.ts",
+        "report-builder-context.ts",
+        "report-builder-store.ts",
+        "report-builder-types.ts",
+        "report-builder.scss",
+        "report-component-helpers.ts",
+        "report-definition-types.ts",
+        "table-helpers.ts",
+        "viewer/CellItemRenderer.tsx",
+        "viewer/ChartRenderer.tsx",
+        "viewer/ComponentErrorBoundary.tsx",
+        "viewer/ComponentRenderer.tsx",
+        "viewer/DerivedDatasourceProcessor.ts",
+        "viewer/RepeaterRenderer.tsx",
+        "viewer/SubReportRenderer.tsx",
+        "viewer/TableHeaderRenderer.tsx",
+        "viewer/TableRenderer.tsx",
+        "viewer/ViewerExpressionContext.tsx",
+        "viewer/pdf-export.ts",
+        "viewer/row-group-engine.ts",
+        "viewer/useExpressionValue.ts"
+      ],
+      "category": "Report Builder",
+      "label": "Report Builder",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "autocomplete",
+          "button",
+          "checkbox",
+          "chips",
+          "date-range",
+          "docked-layout",
+          "drag-drop",
+          "dropdown",
+          "file-upload",
+          "masked-input",
+          "modal",
+          "multiselect",
+          "numeric-input",
+          "radio-button",
+          "text-area",
+          "text-input"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "store",
+          "types"
+        ],
+        "external": [
+          "chart.js",
+          "classnames",
+          "html2canvas",
+          "react",
+          "react-chartjs-2",
+          "react-dom"
+        ],
+        "optionalPeers": [
+          "chart.js",
+          "html2canvas",
+          "react-chartjs-2"
+        ]
+      }
+    },
+    {
+      "id": "scroll-to-top",
+      "name": "ScrollToTop",
+      "kind": "directory",
+      "sourcePath": "components/scroll-to-top",
+      "entryFile": "components/scroll-to-top/index.ts",
+      "files": [
+        "ScrollToTop.scss",
+        "ScrollToTop.tsx",
+        "index.ts"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Scroll To Top",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "icon"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "select-button",
+      "name": "SelectButton",
+      "kind": "flat",
+      "sourcePath": "components/SelectButton.tsx",
+      "entryFile": "components/SelectButton.tsx",
+      "files": [
+        "SelectButton.scss",
+        "SelectButton.tsx"
+      ],
+      "category": "Selection",
+      "label": "Select Button",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "shimmer",
+      "name": "Shimmer",
+      "kind": "directory",
+      "sourcePath": "components/shimmer",
+      "entryFile": "components/shimmer/index.ts",
+      "files": [
+        "ShimmerBarChart.tsx",
+        "ShimmerDiv.tsx",
+        "ShimmerFeed.tsx",
+        "ShimmerLegends.tsx",
+        "ShimmerPieChart.tsx",
+        "ShimmerTable.tsx",
+        "Skeleton.tsx",
+        "SkeletonAvatar.tsx",
+        "SkeletonButton.tsx",
+        "SkeletonCard.tsx",
+        "SkeletonImage.tsx",
+        "SkeletonText.tsx",
+        "index.ts",
+        "shimmer.scss"
+      ],
+      "category": "Feedback",
+      "label": "Shimmer",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "signature-pad",
+      "name": "SignaturePad",
+      "kind": "directory",
+      "sourcePath": "components/signature-pad",
+      "entryFile": "components/signature-pad/index.ts",
+      "files": [
+        "SignaturePad.scss",
+        "SignaturePad.tsx",
+        "index.ts"
+      ],
+      "category": "Form Inputs",
+      "label": "Signature Pad",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "slider",
+      "name": "Slider",
+      "kind": "directory",
+      "sourcePath": "components/slider",
+      "entryFile": "components/slider/index.ts",
+      "files": [
+        "Slider.scss",
+        "Slider.tsx",
+        "index.ts"
+      ],
+      "category": "Form Inputs",
+      "label": "Slider",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "snackbar",
+      "name": "Snackbar",
+      "kind": "directory",
+      "sourcePath": "components/snackbar",
+      "entryFile": "components/snackbar/index.ts",
+      "files": [
+        "Snackbar.tsx",
+        "SnackbarManager.tsx",
+        "constants.ts",
+        "index.ts",
+        "snackbar.scss",
+        "types.ts"
+      ],
+      "category": "Feedback",
+      "label": "Snackbar",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "speed-dial",
+      "name": "SpeedDial",
+      "kind": "flat",
+      "sourcePath": "components/SpeedDial.tsx",
+      "entryFile": "components/SpeedDial.tsx",
+      "files": [
+        "SpeedDial.scss",
+        "SpeedDial.tsx"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Fab & Speed Dial",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "split-button",
+      "name": "SplitButton",
+      "kind": "directory",
+      "sourcePath": "components/split-button",
+      "entryFile": "components/split-button/index.ts",
+      "files": [
+        "SplitButton.scss",
+        "SplitButton.tsx",
+        "index.ts"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Split Button",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "button",
+          "icon"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "splitter",
+      "name": "Splitter",
+      "kind": "directory",
+      "sourcePath": "components/splitter",
+      "entryFile": "components/splitter/index.ts",
+      "files": [
+        "Splitter.tsx",
+        "index.ts",
+        "splitter.scss"
+      ],
+      "category": "Layout",
+      "label": "Splitter",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "stepper",
+      "name": "Stepper",
+      "kind": "flat",
+      "sourcePath": "components/Stepper.tsx",
+      "entryFile": "components/Stepper.tsx",
+      "files": [
+        "Stepper.scss",
+        "Stepper.tsx"
+      ],
+      "category": "Navigation",
+      "label": "Stepper",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "tab-view",
+      "name": "TabView",
+      "kind": "directory",
+      "sourcePath": "components/tab-view",
+      "entryFile": "components/tab-view/index.ts",
+      "files": [
+        "TabHeader.tsx",
+        "TabNav.tsx",
+        "TabPage.tsx",
+        "TabView.css",
+        "TabView.tsx",
+        "index.ts",
+        "tab-view.scss",
+        "tabview-utils.tsx"
+      ],
+      "category": "Navigation",
+      "label": "Tab View",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "table",
+      "name": "TableTypes",
+      "kind": "directory",
+      "sourcePath": "components/table",
+      "entryFile": "components/table/table-types.ts",
+      "files": [
+        "Table.tsx",
+        "TableBody.tsx",
+        "TableFooter.tsx",
+        "TableHeader.tsx",
+        "table-types.ts",
+        "table.scss",
+        "useSortedData.ts"
+      ],
+      "category": "Data & Reports",
+      "label": "Table",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "dropdown",
+          "shimmer",
+          "tooltip"
+        ],
+        "hooks": [],
+        "utils": [
+          "common-fns"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "text-area",
+      "name": "TextArea",
+      "kind": "flat",
+      "sourcePath": "components/TextArea.tsx",
+      "entryFile": "components/TextArea.tsx",
+      "files": [
+        "TextArea.scss",
+        "TextArea.tsx"
+      ],
+      "category": "Form Inputs",
+      "label": "Textarea",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "text-input",
+      "name": "TextInput",
+      "kind": "flat",
+      "sourcePath": "components/TextInput.tsx",
+      "entryFile": "components/TextInput.tsx",
+      "files": [
+        "TextInput.scss",
+        "TextInput.tsx"
+      ],
+      "category": "Form Inputs",
+      "label": "Text Input",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "time-picker",
+      "name": "TimePicker",
+      "kind": "directory",
+      "sourcePath": "components/time-picker",
+      "entryFile": "components/time-picker/index.ts",
+      "files": [
+        "MobileTimePanel.tsx",
+        "TimePanel.tsx",
+        "TimePicker.tsx",
+        "index.ts",
+        "time-picker.scss",
+        "utils.ts"
+      ],
+      "category": "Date, Time & Color",
+      "label": "Time Picker",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "timeline",
+      "name": "Timeline",
+      "kind": "directory",
+      "sourcePath": "components/timeline",
+      "entryFile": "components/timeline/index.ts",
+      "files": [
+        "Timeline.scss",
+        "Timeline.tsx",
+        "TimelineItem.tsx",
+        "index.ts"
+      ],
+      "category": "Charts & Boards",
+      "label": "Timeline",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "toggle-button",
+      "name": "ToggleButton",
+      "kind": "flat",
+      "sourcePath": "components/ToggleButton.tsx",
+      "entryFile": "components/ToggleButton.tsx",
+      "files": [
+        "ToggleButton.scss",
+        "ToggleButton.tsx"
+      ],
+      "category": "Selection",
+      "label": "Toggle Button",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "tooltip",
+      "name": "TooltipApi",
+      "kind": "directory",
+      "sourcePath": "components/tooltip",
+      "entryFile": "components/tooltip/tooltip-api.ts",
+      "files": [
+        "Tooltip.tsx",
+        "TooltipManager.tsx",
+        "tooltip-api.ts",
+        "tooltip.scss",
+        "utils.ts"
+      ],
+      "category": "Feedback",
+      "label": "Tooltip",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [
+          "types"
+        ],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "tour",
+      "name": "StepTour",
+      "kind": "directory",
+      "sourcePath": "components/tour",
+      "entryFile": "components/tour/StepTour.tsx",
+      "files": [
+        "StepTour.tsx",
+        "TourTooltip.tsx",
+        "tour.scss",
+        "types.ts",
+        "useWindowResize.ts",
+        "utils.ts"
+      ],
+      "category": "Navigation",
+      "label": "Step Tour",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "button"
+        ],
+        "hooks": [],
+        "utils": [
+          "layout"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "tree-view",
+      "name": "TreeView",
+      "kind": "directory",
+      "sourcePath": "components/tree-view",
+      "entryFile": "components/tree-view/index.ts",
+      "files": [
+        "TreeNodeComponent.tsx",
+        "TreeView.scss",
+        "TreeView.tsx",
+        "index.ts",
+        "tree-view-types.ts"
+      ],
+      "category": "Data & Reports",
+      "label": "TreeView",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "week-day-selector",
+      "name": "WeekDaySelector",
+      "kind": "directory",
+      "sourcePath": "components/week-day-selector",
+      "entryFile": "components/week-day-selector/index.ts",
+      "files": [
+        "WeekDaySelector.scss",
+        "WeekDaySelector.tsx",
+        "index.ts"
+      ],
+      "category": "Form Inputs",
+      "label": "Week Day Selector",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    }
+  ],
+  "hooks": [
+    {
+      "id": "useClickOutside",
+      "name": "useClickOutside",
+      "sourcePath": "hooks/useClickOutside.ts",
+      "files": [
+        "useClickOutside.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "useDebounce",
+      "name": "useDebounce",
+      "sourcePath": "hooks/useDebounce.ts",
+      "files": [
+        "useDebounce.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "useKeyboard",
+      "name": "useKeyboard",
+      "sourcePath": "hooks/useKeyboard.ts",
+      "files": [
+        "useKeyboard.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "useMobile",
+      "name": "useMobile",
+      "sourcePath": "hooks/useMobile.ts",
+      "files": [
+        "useMobile.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "usePosition",
+      "name": "usePosition",
+      "sourcePath": "hooks/usePosition.ts",
+      "files": [
+        "usePosition.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "useReducedMotion",
+      "name": "useReducedMotion",
+      "sourcePath": "hooks/useReducedMotion.ts",
+      "files": [
+        "useReducedMotion.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    }
+  ],
+  "utils": [
+    {
+      "id": "common-fns",
+      "name": "common-fns",
+      "sourcePath": "utils/common-fns.ts",
+      "files": [
+        "common-fns.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "field-label",
+      "name": "field-label",
+      "sourcePath": "utils/field-label.tsx",
+      "files": [
+        "field-label.tsx"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "layout",
+      "name": "layout",
+      "sourcePath": "utils/layout.ts",
+      "files": [
+        "layout.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "qr-scanner",
+      "name": "qr-scanner",
+      "sourcePath": "utils/qr-scanner.ts",
+      "files": [
+        "qr-scanner.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [],
+        "optionalPeers": []
+      }
+    }
+  ],
+  "shared": [
+    {
+      "id": "types",
+      "sourcePath": "types",
+      "files": [
+        "types/index.ts"
+      ]
+    },
+    {
+      "id": "themes",
+      "sourcePath": "themes",
+      "files": [
+        "themes/index.ts"
+      ]
+    },
+    {
+      "id": "store",
+      "sourcePath": "store",
+      "files": []
+    }
+  ]
+}

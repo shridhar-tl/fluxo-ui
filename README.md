@@ -50,6 +50,10 @@ Using **bun**:
 bun add fluxo-ui
 ```
 
+### Cherry-Pick Components (`fluxo-cli`)
+
+Prefer to vendor individual components into your repo instead of taking a runtime dependency on `fluxo-ui`? Use the standalone **[fluxo-cli](https://www.npmjs.com/package/fluxo-cli)** package — `npx fluxo-cli add button` drops real source files into your project. See [fluxo-ui.utilsware.com/cli-usage](https://fluxo-ui.utilsware.com/cli-usage) for the full walkthrough.
+
 ## Usage
 
 Import the stylesheet once in your application entry file, then use components anywhere:

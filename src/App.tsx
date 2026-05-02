@@ -15,6 +15,7 @@ const HighlightsPage = React.lazy(() => import('./story/pages/HighlightsPage'));
 const HomePage = React.lazy(() => import('./story/pages/HomePage'));
 const InstallationPage = React.lazy(() => import('./story/pages/InstallationPage'));
 const MCPIntegrationPage = React.lazy(() => import('./story/pages/MCPIntegrationPage'));
+const CliUsagePage = React.lazy(() => import('./story/pages/cli-usage/CliUsagePage'));
 
 const AutocompleteMultiPage = React.lazy(() => import('./story/pages/autocomplete-multi/AutocompleteMultiPage'));
 const AutocompletePage = React.lazy(() => import('./story/pages/autocomplete/AutocompletePage'));
@@ -164,6 +165,14 @@ const App: React.FC = () => {
                         element={
                             <LayoutWrapper>
                                 <MCPIntegrationPage />
+                            </LayoutWrapper>
+                        }
+                    />
+                    <Route
+                        path="/cli-usage"
+                        element={
+                            <LayoutWrapper>
+                                <CliUsagePage />
                             </LayoutWrapper>
                         }
                     />

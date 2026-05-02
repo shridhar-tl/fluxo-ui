@@ -1,7 +1,7 @@
 {
     "name": "fluxo-ui",
     "version": "0.4.1",
-    "description": "A comprehensive, accessible React component library built with TypeScript. Includes 70+ production-ready UI components, a custom state management solution, dependency injection container, 12 color themes, dark mode, and full keyboard navigation.",
+    "description": "A comprehensive, accessible React component library built with TypeScript. Includes 80+ production-ready UI components, a custom state management solution, dependency injection container, 12 color themes, dark mode, and full keyboard navigation.",
     "keywords": [
         "react-component-library",
         "react-ui-kit",
@@ -94,9 +94,12 @@
     "scripts": {
         "start": "vite",
         "build": "tsc -b && vite build",
-        "build-lib": "tsc -b && vite build --config vite.lib.config.ts && node scripts/build-mcp-index.mjs",
-        "prepublishOnly": "npm run build-lib",
-        "prepare": "npm run build-lib",
+        "build-lib": "node scripts/generate-manifest.mjs && tsc -b && vite build --config vite.lib.config.ts && node scripts/build-mcp-index.mjs",
+        "build-cli": "node scripts/generate-manifest.mjs && vite build --config vite.cli.config.ts",
+        "build-all": "npm run build-lib && npm run build-cli",
+        "generate-manifest": "node scripts/generate-manifest.mjs",
+        "test": "node scripts/verify-cli.mjs",
+        "prepublishOnly": "npm run build-all",
         "lint": "eslint ."
     },
     "sideEffects": [
@@ -118,14 +121,18 @@
         }
     },
     "dependencies": {
+        "chalk": "5.6.2",
         "classnames": "^2.5.1",
-        "date-fns": "^4.1.0"
+        "date-fns": "^4.1.0",
+        "prompts": "2.4.2",
+        "sass": "^1.99.0"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@tailwindcss/vite": "^4.2.4",
         "@types/fs-extra": "^11.0.4",
         "@types/node": "^25.6.0",
+        "@types/prompts": "^2.4.9",
         "@types/react": "^19.2.14",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^6.0.1",
@@ -141,7 +148,6 @@
         "react-chartjs-2": "^5.3.1",
         "react-dom": "^19.2.5",
         "react-router-dom": "^7.14.2",
-        "sass": "^1.99.0",
         "tailwindcss": "^4.2.4",
         "typescript": "~6.0.3",
         "typescript-eslint": "^8.59.1",
