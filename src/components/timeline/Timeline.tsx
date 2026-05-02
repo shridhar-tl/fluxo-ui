@@ -18,6 +18,8 @@ interface TimelineEvent {
     color?: TimelineColor;
     marker?: React.ReactNode;
     content?: React.ReactNode;
+    href?: string;
+    onClick?: () => void;
 }
 
 interface TimelineProps {
@@ -27,6 +29,8 @@ interface TimelineProps {
     connectorStyle?: TimelineConnectorStyle;
     className?: string;
     markerSize?: TimelineMarkerSize;
+    headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+    ariaLabel?: string;
 }
 
 function Timeline({
@@ -36,6 +40,8 @@ function Timeline({
     connectorStyle = 'solid',
     className,
     markerSize = 'md',
+    headingLevel = 4,
+    ariaLabel = 'Timeline',
 }: TimelineProps) {
     const rootClass = useMemo(
         () =>
@@ -52,7 +58,11 @@ function Timeline({
     );
 
     return (
-        <div className={rootClass} role="list" aria-label="Timeline">
+        <ol
+            className={rootClass}
+            aria-label={ariaLabel}
+            aria-roledescription="timeline"
+        >
             {events.map((event, index) => (
                 <TimelineItem
                     key={event.id}
@@ -62,9 +72,10 @@ function Timeline({
                     isLast={index === events.length - 1}
                     align={align}
                     layout={layout}
+                    headingLevel={headingLevel}
                 />
             ))}
-        </div>
+        </ol>
     );
 }
 

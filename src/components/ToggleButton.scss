@@ -65,3 +65,15 @@
         pointer-events: none;
     }
 }
+
+.eui-toggle-button-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.eui-toggle-button-label {
+    font-family: var(--eui-font-family);
+    font-size: 0.875rem;
+    color: var(--eui-text);
+}

@@ -33,6 +33,7 @@ export interface TreeViewProps {
     className?: string;
     nodeTemplate?: (node: TreeNode) => React.ReactNode;
     filterText?: string;
+    ariaLabel?: string;
 }
 
 export type CheckState = 'checked' | 'unchecked' | 'indeterminate';
@@ -40,6 +41,8 @@ export type CheckState = 'checked' | 'unchecked' | 'indeterminate';
 export interface TreeNodeProps {
     node: TreeNode;
     level: number;
+    posInSet: number;
+    setSize: number;
     expanded: boolean;
     selected: boolean;
     checkState: CheckState;
@@ -49,6 +52,7 @@ export interface TreeNodeProps {
     focused: boolean;
     dropPosition: 'before' | 'inside' | 'after' | null;
     nodeTemplate?: (node: TreeNode) => React.ReactNode;
+    childCount?: number;
     onToggle: (node: TreeNode) => void;
     onSelect: (node: TreeNode, event: React.MouseEvent | React.KeyboardEvent) => void;
     onCheck: (node: TreeNode) => void;

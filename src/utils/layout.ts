@@ -25,14 +25,14 @@ export function ensurePartiallyVisible(element: HTMLElement): void {
         // Scroll down so that minVisibleHeight of the element is visible.
         // We'll scroll so that the element is visible starting "minVisibleHeight" px from top viewport
         const scrollTo = scrollY + rect.top - minVisibleHeight + 20; // 20px padding
-        window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+        window.scrollTo({ top: scrollTo, behavior: typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     }
     // Case 2: Element is above the viewport (bottom is above viewport top)
     else if (rect.bottom < 0) {
         // Scroll up so that minVisibleHeight of the element is visible.
         // We'll scroll so that element's bottom is minVisibleHeight px from the top of viewport.
         const scrollTo = scrollY + rect.bottom - 20;
-        window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+        window.scrollTo({ top: scrollTo, behavior: typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     }
     // Case 3: Element is partially visible but visibleHeight < minVisibleHeight
     else {
@@ -42,12 +42,12 @@ export function ensurePartiallyVisible(element: HTMLElement): void {
             // Too little visible at top because element extends above viewport
             // Scroll down by the missing height
             const scrollDelta = minVisibleHeight - visibleHeight;
-            window.scrollBy({ top: -scrollDelta, behavior: 'smooth' });
+            window.scrollBy({ top: -scrollDelta, behavior: typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
         } else if (rect.bottom > viewportHeight) {
             // Too little visible at bottom because element extends below viewport
             // Scroll down by the missing height
             const scrollDelta = minVisibleHeight - visibleHeight;
-            window.scrollBy({ top: scrollDelta, behavior: 'smooth' });
+            window.scrollBy({ top: scrollDelta, behavior: typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
         }
     }
 }

@@ -118,7 +118,14 @@ const Calendar: React.FC<CalendarProps> = ({
   height = '100%',
   className,
   apiRef,
+  ariaLabel = 'Calendar',
 }) => {
+  const calendarBodyRef = useRef<HTMLDivElement>(null);
+  const [announcement, setAnnouncement] = useState('');
+  const announce = (msg: string) => {
+    setAnnouncement('');
+    window.setTimeout(() => setAnnouncement(msg), 30);
+  };
   const config = useMemo<CalendarConfig>(() => ({
     ...defaultConfig,
     ...(slotDuration !== undefined && { slotDuration }),
@@ -250,7 +257,26 @@ const Calendar: React.FC<CalendarProps> = ({
       title: navRef.current.title,
     }),
     getEntries: () => entriesRef.current,
-    scrollToTime: () => {},
+    scrollToTime: (time) => {
+      const body = calendarBodyRef.current;
+      if (!body) return;
+      const scrollEl = body.querySelector<HTMLElement>('[data-time-grid-scroll]') ?? body.querySelector<HTMLElement>('.eui-cal-time-grid-scroll');
+      if (!scrollEl) return;
+      const totalSlots = body.querySelectorAll<HTMLElement>('[data-slot-index]');
+      let parsed: { hours: number; minutes: number } | null = null;
+      if (typeof time === 'string') {
+        const match = time.match(/^(\d{1,2}):(\d{2})/);
+        if (match) parsed = { hours: parseInt(match[1], 10), minutes: parseInt(match[2], 10) };
+      } else if (typeof time === 'number') {
+        parsed = { hours: Math.floor(time / 60), minutes: time % 60 };
+      }
+      if (!parsed) return;
+      const slotHeight = parseFloat(getComputedStyle(body).getPropertyValue('--eui-cal-slot-height')) || 36;
+      const slotsPerHour = totalSlots.length > 0 ? Math.max(1, totalSlots.length / 24) : 2;
+      const offset = (parsed.hours + parsed.minutes / 60) * slotsPerHour * slotHeight;
+      const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      scrollEl.scrollTo({ top: offset, behavior: reduce ? 'auto' : 'smooth' });
+    },
   }), []);
 
   useEffect(() => {
@@ -304,20 +330,23 @@ const Calendar: React.FC<CalendarProps> = ({
       case 'ArrowLeft':
         e.preventDefault();
         nav.prev();
+        announce(`Navigated to previous: ${nav.title}`);
         break;
       case 'ArrowRight':
         e.preventDefault();
         nav.next();
-        break;
-      case 't':
-      case 'T':
-        if (!e.ctrlKey && !e.metaKey) {
-          e.preventDefault();
-          nav.today();
-        }
+        announce(`Navigated to next: ${nav.title}`);
         break;
     }
   };
+
+  useEffect(() => {
+    announce(nav.title);
+  }, [nav.title]);
+
+  useEffect(() => {
+    announce(`View changed to ${nav.viewMode}`);
+  }, [nav.viewMode]);
 
   return (
     <CalendarContext.Provider value={contextValue}>
@@ -327,7 +356,7 @@ const Calendar: React.FC<CalendarProps> = ({
         }, className)}
         style={containerStyle}
         role="region"
-        aria-label="Calendar"
+        aria-label={ariaLabel}
         tabIndex={0}
         onKeyDown={handleKeyDown}
       >
@@ -363,7 +392,7 @@ const Calendar: React.FC<CalendarProps> = ({
             />
           )
         )}
-        <div className="eui-calendar-body">
+        <div className="eui-calendar-body" ref={calendarBodyRef}>
           <ViewRenderer
             viewDefinition={currentViewDef}
             currentDate={nav.currentDate}
@@ -392,6 +421,9 @@ const Calendar: React.FC<CalendarProps> = ({
             dateRangeBackgrounds={dateRangeBackgrounds}
             loadingRanges={loadingRanges}
           />
+        </div>
+        <div className="eui-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+          {announcement}
         </div>
       </div>
     </CalendarContext.Provider>

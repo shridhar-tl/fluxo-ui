@@ -23,6 +23,9 @@ interface AutocompleteProps extends BaseComponentProps {
     emptyMessage?: string;
     renderItem?: (item: ListItem, index: number, isSelected: boolean, isHighlighted: boolean) => React.ReactNode;
     autoFocus?: boolean;
+    compareFn?: (a: any, b: any) => boolean;
+    ariaLabel?: string;
+    ariaLabelledBy?: string;
 }
 
 export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
@@ -48,14 +51,19 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             className,
             name,
             args,
+            compareFn,
+            ariaLabel,
+            ariaLabelledBy,
             ...baseProps
         },
         ref,
     ) => {
         const [inputId] = useState(id || generateId());
+        const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
         const [isFocused, setIsFocused] = useState(false);
         const [internalValue, setInternalValue] = useState('');
+        const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
         const inputRef = useRef<HTMLInputElement>(null);
         const combinedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
         const { isCompact } = useViewport();
@@ -63,9 +71,23 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         const isControlled = value !== undefined;
         const currentValue = isControlled ? value : internalValue;
 
+        const compare = (a: any, b: any) => {
+            if (compareFn) return compareFn(a, b);
+            if (a === b) return true;
+            if (a == null || b == null) return false;
+            if (typeof a === 'object' && typeof b === 'object') {
+                try {
+                    return JSON.stringify(a) === JSON.stringify(b);
+                } catch {
+                    return false;
+                }
+            }
+            return false;
+        };
+
         const debouncedValue = useDebounce(currentValue, debounceMs);
-        const selectedItem = items.find((item) => item.value === selectedValue) || null;
-        const selectedIndex = selectedItem ? items.findIndex((item) => item.value === selectedValue) : -1;
+        const selectedItem = items.find((item) => compare(item.value, selectedValue)) || null;
+        const selectedIndex = selectedItem ? items.findIndex((item) => compare(item.value, selectedValue)) : -1;
 
         useEffect(() => {
             if (debouncedValue.length >= minLength && onFilter) {
@@ -91,18 +113,18 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             });
         };
 
-        const handleSelect = (item: ListItem) => {
+        const handleSelect = (item: ListItem, e?: React.SyntheticEvent) => {
             if (!isControlled) {
                 setInternalValue(item.label);
             }
             onSelect?.({
-                event: { target: { value: item.value } } as any,
+                event: e,
                 value: item.value,
                 name,
                 args,
             });
             onChange?.({
-                event: { target: { value: item.label } } as any,
+                event: e,
                 value: item.label,
                 name,
                 args,
@@ -134,7 +156,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                 setInternalValue(newValue);
             }
             onChange?.({
-                event: { target: { value: newValue } } as any,
+                event: undefined,
                 value: newValue,
                 name,
                 args,
@@ -175,6 +197,10 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                     aria-autocomplete="list"
                     aria-expanded={isOpen}
                     aria-haspopup="listbox"
+                    aria-controls={isOpen ? listboxId : undefined}
+                    aria-activedescendant={isOpen ? activeOptionId ?? undefined : undefined}
+                    aria-label={ariaLabel}
+                    aria-labelledby={ariaLabelledBy}
                     role="combobox"
                 />
 
@@ -184,13 +210,15 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                         onClose={handleClose}
                         triggerElement={combinedRef.current}
                         items={items}
-                        onSelect={handleSelect}
+                        onSelect={(item) => handleSelect(item)}
                         selectedIndex={selectedIndex}
                         renderItem={renderItem}
                         filter={currentValue}
                         loading={loading}
                         emptyMessage={emptyMessage}
                         mobileTitle={placeholder}
+                        listboxId={listboxId}
+                        onHighlightChange={(_, optionId) => setActiveOptionId(optionId)}
                         mobileSearch={{
                             value: currentValue,
                             onChange: handleMobileSearchChange,

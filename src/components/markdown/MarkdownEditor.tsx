@@ -172,8 +172,20 @@ const MarkdownEditorInner = forwardRef<MarkdownEditorHandle, MarkdownEditorProps
         const ta = textareaRef.current;
         const sel = pendingSelectionRef.current;
         if (ta && sel) {
-            ta.focus();
-            ta.setSelectionRange(sel.start, sel.end);
+            const activeEl = typeof document !== 'undefined' ? document.activeElement : null;
+            const focusInsideEditor = activeEl === ta || (activeEl instanceof Node && ta.contains(activeEl));
+            const focusOnPopupTrigger =
+                activeEl instanceof HTMLElement &&
+                (activeEl.getAttribute('aria-haspopup') !== null || activeEl.getAttribute('aria-expanded') === 'true');
+            const focusInsideOverlay =
+                activeEl instanceof Element &&
+                Boolean(activeEl.closest('[role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"]'));
+            if (focusInsideEditor || (!focusOnPopupTrigger && !focusInsideOverlay)) {
+                ta.focus({ preventScroll: true });
+                ta.setSelectionRange(sel.start, sel.end);
+            } else {
+                ta.setSelectionRange(sel.start, sel.end);
+            }
             pendingSelectionRef.current = null;
         }
     }, [currentValue]);

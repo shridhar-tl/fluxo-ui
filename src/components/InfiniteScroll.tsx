@@ -16,7 +16,11 @@ interface InfiniteScrollProps {
     children: React.ReactNode;
     scrollableTarget?: string | HTMLElement;
     inverse?: boolean;
+    endAnnouncement?: string;
 }
+
+const DEFAULT_END_ANNOUNCEMENT = 'You have reached the end of the list.';
+const INVERSE_STABILIZATION_WINDOW_MS = 1500;
 
 function InfiniteScroll({
     loadMore,
@@ -32,12 +36,19 @@ function InfiniteScroll({
     children,
     scrollableTarget,
     inverse = false,
+    endAnnouncement,
 }: InfiniteScrollProps) {
     const sentinelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const loadingRef = useRef(false);
     const prevScrollHeightRef = useRef<number>(0);
+    const stabilizingRef = useRef<{ active: boolean; baseHeight: number; deadlineId: ReturnType<typeof setTimeout> | null }>({
+        active: false,
+        baseHeight: 0,
+        deadlineId: null,
+    });
     const [internalLoading, setInternalLoading] = useState(false);
+    const [hasAnnouncedEnd, setHasAnnouncedEnd] = useState(false);
 
     const loading = isLoading || internalLoading;
 
@@ -78,7 +89,49 @@ function InfiniteScroll({
             scrollParent.scrollTop += diff;
         }
         prevScrollHeightRef.current = 0;
+
+        const stabilizing = stabilizingRef.current;
+        if (stabilizing.deadlineId !== null) clearTimeout(stabilizing.deadlineId);
+        stabilizing.active = true;
+        stabilizing.baseHeight = newScrollHeight;
+        stabilizing.deadlineId = setTimeout(() => {
+            stabilizing.active = false;
+            stabilizing.deadlineId = null;
+        }, INVERSE_STABILIZATION_WINDOW_MS);
     }, [children, inverse, getScrollParent]);
+
+    useEffect(() => {
+        if (!inverse) return;
+        const scrollParent = getScrollParent() || containerRef.current;
+        if (!scrollParent) return;
+
+        const observer = new ResizeObserver(() => {
+            const stabilizing = stabilizingRef.current;
+            if (!stabilizing.active) return;
+            const currentHeight = scrollParent.scrollHeight;
+            const diff = currentHeight - stabilizing.baseHeight;
+            if (diff > 0) {
+                scrollParent.scrollTop += diff;
+                stabilizing.baseHeight = currentHeight;
+            }
+        });
+
+        observer.observe(scrollParent);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [inverse, getScrollParent]);
+
+    useEffect(() => {
+        return () => {
+            const stabilizing = stabilizingRef.current;
+            if (stabilizing.deadlineId !== null) {
+                clearTimeout(stabilizing.deadlineId);
+                stabilizing.deadlineId = null;
+            }
+        };
+    }, []);
 
     useEffect(() => {
         const sentinel = sentinelRef.current;
@@ -107,6 +160,16 @@ function InfiniteScroll({
         };
     }, [hasMore, error, threshold, inverse, handleLoadMore, getScrollParent]);
 
+    useEffect(() => {
+        if (hasMore) {
+            if (hasAnnouncedEnd) setHasAnnouncedEnd(false);
+            return;
+        }
+        if (!hasAnnouncedEnd && !loading && !error) {
+            setHasAnnouncedEnd(true);
+        }
+    }, [hasMore, loading, error, hasAnnouncedEnd]);
+
     const handleRetry = useCallback(() => {
         if (onRetry) {
             onRetry();
@@ -117,7 +180,7 @@ function InfiniteScroll({
 
     const defaultLoader = (
         <div className="eui-is-loader">
-            <div className="eui-is-spinner" />
+            <div className="eui-is-spinner" aria-hidden="true" />
             <span className="eui-is-loader-text">Loading...</span>
         </div>
     );
@@ -142,12 +205,12 @@ function InfiniteScroll({
     const statusContent = (
         <>
             {loading && (
-                <div aria-live="polite" aria-busy="true" className="eui-is-status">
+                <div aria-busy="true" className="eui-is-status">
                     {loader || defaultLoader}
                 </div>
             )}
             {error && !loading && (
-                <div aria-live="assertive" className="eui-is-status">
+                <div role="alert" className="eui-is-status">
                     {errorMessage || defaultErrorMessage}
                 </div>
             )}
@@ -169,6 +232,15 @@ function InfiniteScroll({
             {children}
             {!inverse && sentinel}
             {!inverse && statusContent}
+            <div
+                className="eui-is-sr-only"
+                aria-live="polite"
+                aria-atomic="true"
+                role="status"
+            >
+                {loading ? 'Loading more items' : ''}
+                {hasAnnouncedEnd ? (endAnnouncement || DEFAULT_END_ANNOUNCEMENT) : ''}
+            </div>
         </div>
     );
 }

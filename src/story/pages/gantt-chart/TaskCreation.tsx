@@ -23,8 +23,13 @@ const TaskCreation: React.FC = () => {
             progress: 0,
             color: '#8b5cf6',
         };
-        setCreateableTasks(prev => [...prev, newTask]);
-        setLastEvent(`Created task: ${e.start.toLocaleDateString()} – ${e.end.toLocaleDateString()}`);
+        setCreateableTasks(prev => {
+            const next = [...prev];
+            const insertAt = Math.min(Math.max(e.rowIndex, 0), next.length);
+            next.splice(insertAt, 0, newTask);
+            return next;
+        });
+        setLastEvent(`Created task at row ${e.rowIndex + 1}: ${e.start.toLocaleDateString()} – ${e.end.toLocaleDateString()}`);
     };
 
     return (

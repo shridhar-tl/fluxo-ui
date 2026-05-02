@@ -49,6 +49,15 @@
     "args": {
       "type": "any",
       "description": "Custom arguments passed to onChange callback"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the chip list and input"
+    },
+    "commitOnTab": {
+      "type": "boolean",
+      "default": true,
+      "description": "Commit the current input as a chip when Tab is pressed (common tag-input UX)"
     }
   }
 }

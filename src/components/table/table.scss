@@ -66,6 +66,41 @@
 
         .eui-table-sort-icon {
             margin-left: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 0.875rem;
+            height: 0.875rem;
+            color: var(--eui-text-muted);
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        .eui-table-th-sort-btn {
+            appearance: none;
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+
+            &:focus-visible {
+                outline: 2px solid var(--eui-primary);
+                outline-offset: 2px;
+                border-radius: var(--eui-radius-sm);
+            }
+        }
+
+        .eui-table-th-sorted .eui-table-sort-icon {
+            color: var(--eui-primary);
         }
     }
 
@@ -75,6 +110,11 @@
 
             &.eui-table-row-clickable {
                 cursor: pointer;
+
+                &:focus-visible {
+                    outline: 2px solid var(--eui-primary);
+                    outline-offset: -2px;
+                }
             }
 
             &:hover {
@@ -288,6 +328,62 @@
 
             &:disabled {
                 color: var(--eui-text-disabled);
+            }
+        }
+    }
+}
+
+.eui-table-caption {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--eui-text-muted);
+    caption-side: top;
+}
+
+.eui-table.eui-table-mobile-cards {
+    @media (max-width: $bp-sm) {
+        display: block;
+        border: none;
+        box-shadow: none;
+        background-color: transparent;
+
+        .eui-table-header {
+            display: none;
+        }
+
+        .eui-table-body {
+            display: block;
+
+            tr {
+                display: block;
+                margin-bottom: 0.75rem;
+                padding: 0.75rem;
+                background-color: var(--eui-bg);
+                border: 1px solid var(--eui-border-subtle);
+                border-radius: var(--eui-radius-md);
+            }
+
+            td {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 1rem;
+                padding: 0.375rem 0;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+
+                &.eui-table-col-hidden {
+                    display: flex;
+                }
+
+                &::before {
+                    content: attr(data-label);
+                    font-weight: 600;
+                    color: var(--eui-text-muted);
+                    flex-shrink: 0;
+                }
             }
         }
     }

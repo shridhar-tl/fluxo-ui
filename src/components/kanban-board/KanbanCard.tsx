@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import { useCallback, useMemo } from 'react';
+import { TimesIcon } from '../../assets/icons';
 import { useKanban } from './KanbanContext';
 import { KanbanCardProps, KanbanPriority } from './kanban-types';
 import { formatDueDate, getInitials } from './kanban-utils';
@@ -104,9 +105,7 @@ function KanbanCard({ card, column, index }: KanbanCardProps) {
                                 title="Delete card"
                                 type="button"
                             >
-                                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14" aria-hidden="true">
-                                    <path d="M4 4l8 8M12 4l-8 8" />
-                                </svg>
+                                <TimesIcon width={14} height={14} aria-hidden="true" />
                             </button>
                         )}
                     </div>
@@ -147,6 +146,7 @@ function KanbanCard({ card, column, index }: KanbanCardProps) {
                                 style={{ backgroundColor: label.color }}
                                 role="listitem"
                                 title={label.text}
+                                aria-label={label.text}
                             >
                                 {cardSize === 'detailed' ? label.text : ''}
                             </span>
@@ -267,9 +267,7 @@ function KanbanCard({ card, column, index }: KanbanCardProps) {
                                 title="Delete card"
                                 type="button"
                             >
-                                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14" aria-hidden="true">
-                                    <path d="M4 4l8 8M12 4l-8 8" />
-                                </svg>
+                                <TimesIcon width={14} height={14} aria-hidden="true" />
                             </button>
                         )}
                     </div>

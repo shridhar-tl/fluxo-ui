@@ -204,8 +204,32 @@ export default function CanvasDrawToolbar({
     const showExport = features.export !== false;
     const showClear = features.clearAll !== false;
 
+    const handleToolbarKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'BUTTON' && target.getAttribute('role') !== 'radio') return;
+        if (target.closest('select, input, textarea')) return;
+        const focusable = Array.from(
+            e.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled])'),
+        );
+        const idx = focusable.indexOf(target);
+        if (idx < 0) return;
+        let next = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (idx + 1) % focusable.length;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (idx - 1 + focusable.length) % focusable.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = focusable.length - 1;
+        else return;
+        e.preventDefault();
+        focusable[next]?.focus();
+    };
+
     return (
-        <div className="eui-canvas-draw-toolbar">
+        <div
+            className="eui-canvas-draw-toolbar"
+            role="toolbar"
+            aria-label="Canvas draw tools"
+            onKeyDown={handleToolbarKey}
+        >
             <div className="eui-cdt-section eui-cdt-section--tools">
                 {visibleTools.map((t) => (
                     <button

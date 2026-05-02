@@ -6,6 +6,7 @@ type CardVariant = 'elevated' | 'outlined' | 'filled' | 'ghost' | 'interactive';
 type CardPadding = 'none' | 'sm' | 'md' | 'lg';
 type CardOrientation = 'vertical' | 'horizontal';
 type CardSize = 'sm' | 'md' | 'lg';
+type CardHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 interface CardProps {
     variant?: CardVariant;
@@ -14,6 +15,7 @@ interface CardProps {
     size?: CardSize;
     title?: React.ReactNode;
     subtitle?: React.ReactNode;
+    headingLevel?: CardHeadingLevel;
     actions?: React.ReactNode;
     cover?: React.ReactNode;
     footer?: React.ReactNode;
@@ -26,6 +28,24 @@ interface CardProps {
     ariaLabel?: string;
 }
 
+const interactiveTags = new Set(['button', 'a', 'input', 'select', 'textarea', 'details', 'summary']);
+
+const hasInteractiveDescendant = (node: React.ReactNode): boolean => {
+    let found = false;
+    React.Children.forEach(node, (child) => {
+        if (found || !React.isValidElement(child)) return;
+        if (typeof child.type === 'string' && interactiveTags.has(child.type)) {
+            found = true;
+            return;
+        }
+        const props = child.props as { children?: React.ReactNode } | null | undefined;
+        if (props && 'children' in props && hasInteractiveDescendant(props.children)) {
+            found = true;
+        }
+    });
+    return found;
+};
+
 const Card: React.FC<CardProps> = ({
     variant = 'outlined',
     padding = 'md',
@@ -33,6 +53,7 @@ const Card: React.FC<CardProps> = ({
     size = 'md',
     title,
     subtitle,
+    headingLevel,
     actions,
     cover,
     footer,
@@ -45,7 +66,40 @@ const Card: React.FC<CardProps> = ({
     ariaLabel,
 }) => {
     const hasHeader = Boolean(title || subtitle || actions);
-    const Tag: React.ElementType = as ?? (href ? 'a' : variant === 'interactive' && onClick ? 'button' : 'div');
+    const requestedTag: 'div' | 'a' | 'button' = as ?? (href ? 'a' : variant === 'interactive' && onClick ? 'button' : 'div');
+
+    let Tag: React.ElementType = requestedTag;
+    let extraRoleProps: Record<string, unknown> = {};
+
+    if (requestedTag === 'button' || requestedTag === 'a') {
+        const innerHasInteractive =
+            hasInteractiveDescendant(children) ||
+            hasInteractiveDescendant(actions) ||
+            hasInteractiveDescendant(footer) ||
+            hasInteractiveDescendant(title) ||
+            hasInteractiveDescendant(subtitle);
+
+        if (innerHasInteractive) {
+            if (typeof console !== 'undefined' && typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+                console.warn(
+                    `[FluxoUI Card] as="${requestedTag}" with interactive children produces nested interactive elements (invalid HTML and a screen-reader accessibility issue). Falling back to a non-interactive container with role="group". Move the click target to a single inner element, or remove the nested interactive children.`,
+                );
+            }
+            Tag = 'div';
+            extraRoleProps = onClick
+                ? {
+                      role: 'button',
+                      tabIndex: 0,
+                      onKeyDown: (e: React.KeyboardEvent<HTMLDivElement>) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              if (!loading) onClick(e as unknown as React.MouseEvent<HTMLElement>);
+                          }
+                      },
+                  }
+                : { role: 'group' };
+        }
+    }
 
     const tagProps: Record<string, unknown> = {
         className: cn(
@@ -60,10 +114,13 @@ const Card: React.FC<CardProps> = ({
         onClick: loading ? undefined : onClick,
         'aria-label': ariaLabel,
         'aria-busy': loading || undefined,
+        ...extraRoleProps,
     };
 
     if (Tag === 'a' && href) tagProps.href = href;
     if (Tag === 'button') tagProps.type = 'button';
+
+    const TitleTag: React.ElementType = headingLevel ? (`h${headingLevel}` as React.ElementType) : 'div';
 
     return (
         <Tag {...tagProps}>
@@ -72,14 +129,14 @@ const Card: React.FC<CardProps> = ({
                 {hasHeader && (
                     <div className="eui-card-header">
                         <div className="eui-card-header-text">
-                            {title && <div className="eui-card-title">{title}</div>}
+                            {title && <TitleTag className="eui-card-title">{title}</TitleTag>}
                             {subtitle && <div className="eui-card-subtitle">{subtitle}</div>}
                         </div>
                         {actions && <div className="eui-card-actions">{actions}</div>}
                     </div>
                 )}
                 {children !== undefined && (
-                    <div className={cn('eui-card-body', { 'mt-2': hasHeader })} style={hasHeader ? { marginTop: '0.625rem' } : undefined}>
+                    <div className={cn('eui-card-body', { 'eui-card-body-with-header': hasHeader })}>
                         {children}
                     </div>
                 )}
@@ -91,4 +148,4 @@ const Card: React.FC<CardProps> = ({
 };
 
 export { Card };
-export type { CardProps, CardVariant, CardPadding, CardOrientation, CardSize };
+export type { CardProps, CardVariant, CardPadding, CardOrientation, CardSize, CardHeadingLevel };

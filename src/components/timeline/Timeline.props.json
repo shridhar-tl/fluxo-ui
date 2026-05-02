@@ -28,6 +28,16 @@
     "className": {
       "type": "string",
       "description": "Additional CSS class for the container."
+    },
+    "headingLevel": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "4",
+      "description": "Heading level used for each event title (h1-h6)."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Timeline'",
+      "description": "Accessible name for the timeline container."
     }
   },
   "eventProps": {
@@ -64,6 +74,14 @@
     "content": {
       "type": "ReactNode",
       "description": "Additional custom content below description."
+    },
+    "href": {
+      "type": "string",
+      "description": "When set, renders the event content as a link to this URL."
+    },
+    "onClick": {
+      "type": "() => void",
+      "description": "When set, renders the event content as a button that fires this callback (mutually exclusive with href)."
     }
   }
 }

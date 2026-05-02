@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { getComponentClasses } from '../utils';
+import { generateId, getComponentClasses, getResolvedSize } from '../utils';
 import './Checkbox.scss';
 
 interface CheckboxProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {
@@ -30,7 +30,16 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         },
         ref,
     ) => {
-        const [inputId] = useState(id || name);
+        const [inputId] = useState(id || name || generateId());
+        const innerRef = useRef<HTMLInputElement | null>(null);
+
+        useImperativeHandle(ref, () => innerRef.current as HTMLInputElement, []);
+
+        useEffect(() => {
+            if (innerRef.current) {
+                innerRef.current.indeterminate = indeterminate;
+            }
+        }, [indeterminate]);
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (onChange) {
@@ -43,10 +52,13 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             }
         };
 
+        const resolvedSize = getResolvedSize({ ...baseProps });
+
         const containerClasses = getComponentClasses(
             { ...baseProps, disabled },
             classNames(
                 'eui-checkbox',
+                `eui-checkbox-${resolvedSize}`,
                 {
                     'eui-checkbox-disabled': disabled,
                 },
@@ -64,7 +76,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         const checkbox = (
             <div className="eui-checkbox-input-wrapper">
                 <input
-                    ref={ref}
+                    ref={innerRef}
                     id={inputId}
                     type="checkbox"
                     checked={checked}
@@ -72,9 +84,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                     required={required}
                     disabled={disabled}
                     className="eui-checkbox-native"
-                    aria-describedby={label ? `${inputId}-label` : undefined}
+                    aria-checked={indeterminate ? 'mixed' : checked}
+                    aria-required={required || undefined}
                 />
-                <div className={boxClasses}>{indeterminate ? renderIntermediateIcon() : renderCheckIcon(checked)}</div>
+                <div className={boxClasses} aria-hidden="true">
+                    {indeterminate ? renderIntermediateIcon() : renderCheckIcon(checked)}
+                </div>
             </div>
         );
 
@@ -90,7 +105,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             <label className={containerClasses} htmlFor={inputId}>
                 {checkbox}
                 <span
-                    id={`${inputId}-label`}
                     className={classNames('eui-checkbox-label', {
                         'eui-checkbox-label-disabled': disabled,
                     })}
@@ -104,7 +118,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
 const renderIntermediateIcon = () => {
     return (
-        <svg fill="white" viewBox="0 0 16 16">
+        <svg fill="white" viewBox="0 0 16 16" aria-hidden="true">
             <rect x="3" y="7" width="10" height="2" rx="1" />
         </svg>
     );
@@ -113,7 +127,7 @@ const renderIntermediateIcon = () => {
 const renderCheckIcon = (checked: boolean) => {
     if (checked) {
         return (
-            <svg fill="white" viewBox="0 0 16 16">
+            <svg fill="white" viewBox="0 0 16 16" aria-hidden="true">
                 <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
             </svg>
         );

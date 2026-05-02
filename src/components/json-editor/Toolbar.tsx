@@ -46,6 +46,24 @@ const Toolbar: React.FC<ToolbarProps> = ({
         setTimeout(() => setCopied(false), 1500);
     }, [value]);
 
+    const handleToolbarKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'BUTTON') return;
+        const focusable = Array.from(
+            e.currentTarget.querySelectorAll<HTMLButtonElement>('button:not([disabled])'),
+        );
+        const idx = focusable.indexOf(target as HTMLButtonElement);
+        if (idx < 0) return;
+        let next = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (idx + 1) % focusable.length;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (idx - 1 + focusable.length) % focusable.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = focusable.length - 1;
+        else return;
+        e.preventDefault();
+        focusable[next]?.focus();
+    };
+
     return (
         <div className={cn('eui-je-toolbar', `eui-je-size-${size}`)}>
             {allowSearch && showSearch && (
@@ -59,7 +77,12 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     aria-label="Search JSON"
                 />
             )}
-            <div className="eui-je-toolbar-actions">
+            <div
+                className="eui-je-toolbar-actions"
+                role="toolbar"
+                aria-label="JSON editor actions"
+                onKeyDown={handleToolbarKey}
+            >
                 {allowSearch && (
                     <button
                         className={cn('eui-je-toolbar-btn', { active: showSearch })}

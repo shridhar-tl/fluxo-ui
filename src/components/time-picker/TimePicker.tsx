@@ -1,7 +1,7 @@
 import cn from 'classnames';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ClockIcon } from '../../assets/icons';
+import { ClockIcon, TimesIcon } from '../../assets/icons';
 import { useViewport } from '../../hooks/useMobile';
 import MobileTimePanel from './MobileTimePanel';
 import './time-picker.scss';
@@ -70,7 +70,10 @@ const TimePicker: React.FC<TimePickerProps> = ({
     const [inputText, setInputText] = useState('');
     const triggerRef = useRef<HTMLDivElement>(null);
     const popRef = useRef<HTMLDivElement>(null);
+    const previousFocusRef = useRef<HTMLElement | null>(null);
     const { isCompact, isMobile, isTablet } = useViewport();
+    const generatedId = useId();
+    const popoverId = `eui-tp-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
     const normalizedControlled = useMemo(() => normalizeValue(controlledValue), [controlledValue]);
     const current = controlledValue !== undefined ? normalizedControlled : internal;
@@ -118,14 +121,49 @@ const TimePicker: React.FC<TimePickerProps> = ({
 
     useEffect(() => {
         if (!isOpen) return;
+        const focusableSelector = 'button:not([disabled]), [href]:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
+        const focusFrame = requestAnimationFrame(() => {
+            const pop = popRef.current;
+            if (!pop) return;
+            const focusable = pop.querySelectorAll<HTMLElement>(focusableSelector);
+            if (focusable.length > 0) focusable[0].focus();
+            else pop.focus();
+        });
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') closePopover(false);
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closePopover(false);
+                return;
+            }
+            if (e.key !== 'Tab') return;
+            const pop = popRef.current;
+            if (!pop) return;
+            const focusable = Array.from(pop.querySelectorAll<HTMLElement>(focusableSelector)).filter((el) => el.tabIndex !== -1);
+            if (focusable.length === 0) {
+                e.preventDefault();
+                pop.focus();
+                return;
+            }
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first || !pop.contains(document.activeElement)) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last || !pop.contains(document.activeElement)) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
         };
         document.addEventListener('keydown', onKey);
         if (isCompact) {
             const previousOverflow = document.body.style.overflow;
             document.body.style.overflow = 'hidden';
             return () => {
+                cancelAnimationFrame(focusFrame);
                 document.removeEventListener('keydown', onKey);
                 document.body.style.overflow = previousOverflow;
             };
@@ -142,11 +180,12 @@ const TimePicker: React.FC<TimePickerProps> = ({
             }
         };
         window.addEventListener('resize', onResize);
-        document.addEventListener('scroll', onResize, true);
+        window.addEventListener('scroll', onResize, true);
         document.addEventListener('mousedown', onClickOutside);
         return () => {
+            cancelAnimationFrame(focusFrame);
             window.removeEventListener('resize', onResize);
-            document.removeEventListener('scroll', onResize, true);
+            window.removeEventListener('scroll', onResize, true);
             document.removeEventListener('mousedown', onClickOutside);
             document.removeEventListener('keydown', onKey);
         };
@@ -155,6 +194,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
 
     const openPopover = () => {
         if (!interactive || isOpen) return;
+        previousFocusRef.current = document.activeElement as HTMLElement | null;
         setDraft(current ?? DEFAULT_TIME);
         setIsOpen(true);
         onOpenChange?.(true);
@@ -165,6 +205,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
         setIsOpen(false);
         setDraft(null);
         onOpenChange?.(false);
+        previousFocusRef.current?.focus?.();
     };
 
     const handlePanelChange = (next: TimeValue) => {
@@ -237,7 +278,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
             )}
             onClick={() => openPopover()}
         >
-            <ClockIcon className="eui-time-picker-icon" width={16} height={16} />
+            <ClockIcon className="eui-time-picker-icon" width={16} height={16} aria-hidden="true" />
             <input
                 type="text"
                 className="eui-time-picker-input"
@@ -246,6 +287,9 @@ const TimePicker: React.FC<TimePickerProps> = ({
                 disabled={disabled}
                 readOnly={readOnly}
                 aria-label={ariaLabel ?? placeholder}
+                aria-haspopup="dialog"
+                aria-expanded={isOpen}
+                aria-controls={isOpen ? popoverId : undefined}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
                 onClick={(e) => {
@@ -258,9 +302,9 @@ const TimePicker: React.FC<TimePickerProps> = ({
                     type="button"
                     className="eui-time-picker-clear"
                     onClick={handleClear}
-                    aria-label="Clear"
+                    aria-label="Clear time"
                 >
-                    ×
+                    <TimesIcon aria-hidden="true" />
                 </button>
             )}
             {isOpen &&
@@ -272,16 +316,21 @@ const TimePicker: React.FC<TimePickerProps> = ({
                                 'eui-time-picker-backdrop-tablet': isTablet,
                             })}
                             onClick={() => closePopover(false)}
+                            onTouchMove={(e) => {
+                                if (e.target === e.currentTarget) e.preventDefault();
+                            }}
                         >
                             <div
+                                id={popoverId}
                                 ref={popRef}
                                 className={cn('eui-time-picker-popover', 'eui-time-picker-popover-mobile', {
                                     'eui-time-picker-popover-mobile-mobile': isMobile,
                                     'eui-time-picker-popover-mobile-tablet': isTablet,
                                 })}
                                 role="dialog"
-                                aria-label="Pick time"
+                                aria-label={ariaLabel ?? 'Pick time'}
                                 aria-modal="true"
+                                tabIndex={-1}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <MobileTimePanel
@@ -300,10 +349,14 @@ const TimePicker: React.FC<TimePickerProps> = ({
                         </div>
                     ) : (
                         <div
+                            id={popoverId}
                             ref={popRef}
                             className={cn('eui-time-picker-popover', { 'eui-time-picker-popover-hidden': !popStyle })}
                             style={popStyle}
                             role="dialog"
+                            aria-modal="false"
+                            aria-label={ariaLabel ?? 'Pick time'}
+                            tabIndex={-1}
                         >
                             <TimePanel
                                 value={draft ?? current ?? DEFAULT_TIME}

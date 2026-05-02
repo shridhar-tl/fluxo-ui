@@ -27,6 +27,9 @@ interface AutocompleteMultiProps<T = any> extends BaseComponentProps {
     autoFocus?: boolean;
     id?: string;
     maxSelections?: number;
+    compareFn?: (a: any, b: any) => boolean;
+    ariaLabel?: string;
+    ariaLabelledBy?: string;
 }
 
 export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiProps>(
@@ -53,20 +56,41 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             className,
             name,
             args,
+            compareFn,
+            ariaLabel,
+            ariaLabelledBy,
             ...baseProps
         },
         ref,
     ) => {
         const [inputId] = useState(id || generateId());
+        const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
         const [inputValue, setInputValue] = useState('');
         const [isFocused, setIsFocused] = useState(false);
+        const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
+        const [maxReachedAnnouncement, setMaxReachedAnnouncement] = useState('');
         const containerRef = useRef<HTMLDivElement>(null);
         const inputRef = useRef<HTMLInputElement>(null);
         const combinedRef = (ref as React.RefObject<HTMLDivElement>) || containerRef;
 
+        const compare = (a: any, b: any) => {
+            if (compareFn) return compareFn(a, b);
+            if (a === b) return true;
+            if (a == null || b == null) return false;
+            if (typeof a === 'object' && typeof b === 'object') {
+                try {
+                    return JSON.stringify(a) === JSON.stringify(b);
+                } catch {
+                    return false;
+                }
+            }
+            return false;
+        };
+
         const debouncedValue = useDebounce(inputValue, debounceMs);
-        const selectedItems = items.filter((item) => value.includes(item.value));
+        const selectedItems = items.filter((item) => value.some((v) => compare(v, item.value)));
+        const isMaxReached = !!maxSelectedItems && value.length >= maxSelectedItems;
 
         useEffect(() => {
             if (debouncedValue.length >= minLength && onFilter) {
@@ -84,16 +108,20 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             setInputValue(e.target.value);
         };
 
-        const handleSelect = (item: ListItem) => {
+        const handleSelect = (item: ListItem, e?: React.SyntheticEvent) => {
             if (item.disabled) return;
-            if (maxSelectedItems && value.length >= maxSelectedItems) return;
+            const isAlreadySelected = value.some((v) => compare(v, item.value));
+            if (!isAlreadySelected && maxSelectedItems && value.length >= maxSelectedItems) {
+                setMaxReachedAnnouncement(`Maximum of ${maxSelectedItems} items selected`);
+                window.setTimeout(() => setMaxReachedAnnouncement(''), 1500);
+                return;
+            }
 
-            const isAlreadySelected = value.includes(item.value);
-            const newValue = isAlreadySelected ? value.filter((v) => v !== item.value) : [...value, item.value];
+            const newValue = isAlreadySelected ? value.filter((v) => !compare(v, item.value)) : [...value, item.value];
 
             if (onChange) {
                 onChange({
-                    event: { target: { value: newValue } } as any,
+                    event: e,
                     value: newValue,
                     name,
                     args,
@@ -107,11 +135,11 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             setInputValue('');
         };
 
-        const handleRemove = (itemValue: any) => {
-            const newValue = value.filter((v) => v !== itemValue);
+        const handleRemove = (itemValue: any, e?: React.SyntheticEvent) => {
+            const newValue = value.filter((v) => !compare(v, itemValue));
             if (onChange) {
                 onChange({
-                    event: { target: { value: newValue } } as any,
+                    event: e,
                     value: newValue,
                     name,
                     args,
@@ -136,7 +164,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === 'Backspace' && !inputValue && selectedItems.length > 0) {
                 e.preventDefault();
-                handleRemove(selectedItems[selectedItems.length - 1].value);
+                handleRemove(selectedItems[selectedItems.length - 1].value, e);
             }
         };
 
@@ -152,7 +180,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                     e.stopPropagation();
                                     if (onChange) {
                                         onChange({
-                                            event: e as any,
+                                            event: e,
                                             value: [],
                                             name,
                                             args,
@@ -221,7 +249,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                     : defaultRenderSelectedTemplate(selectedItems, handleRemove)}
                             </div>
                         )}
-                        {!readonly && (!maxSelectedItems || value.length < maxSelectedItems) && (
+                        {!readonly && (
                             <input
                                 ref={inputRef}
                                 type="text"
@@ -229,15 +257,24 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                 onChange={handleInputChange}
                                 onFocus={handleFocus}
                                 onKeyDown={handleKeyDown}
-                                placeholder={selectedItems.length === 0 ? placeholder : ''}
-                                disabled={disabled}
+                                placeholder={selectedItems.length === 0 ? placeholder : isMaxReached ? `Max ${maxSelectedItems} reached` : ''}
+                                disabled={disabled || isMaxReached}
                                 autoFocus={autoFocus}
                                 className="eui-autocomplete-multi-input"
                                 aria-autocomplete="list"
                                 aria-expanded={isOpen}
                                 aria-haspopup="listbox"
+                                aria-controls={isOpen ? listboxId : undefined}
+                                aria-activedescendant={isOpen ? activeOptionId ?? undefined : undefined}
+                                aria-label={ariaLabel}
+                                aria-labelledby={ariaLabelledBy}
                                 role="combobox"
                             />
+                        )}
+                        {isMaxReached && (
+                            <span className="eui-visually-hidden" aria-live="polite" role="status">
+                                {maxReachedAnnouncement || `Maximum of ${maxSelectedItems} items selected`}
+                            </span>
                         )}
                     </div>
                     <input type="hidden" name={name} value={value.join(',')} required={required} />
@@ -249,10 +286,12 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                         onClose={handleClose}
                         triggerElement={combinedRef.current}
                         items={items}
-                        onSelect={handleSelect}
+                        onSelect={(item) => handleSelect(item)}
                         selectedIndex={-1}
+                        listboxId={listboxId}
+                        onHighlightChange={(_, optionId) => setActiveOptionId(optionId)}
                         renderItem={(item, index, _isSelected, isHighlighted) => {
-                            const isItemSelected = value.includes(item.value);
+                            const isItemSelected = value.some((v) => compare(v, item.value));
                             if (renderItem) {
                                 return renderItem(item, index, isItemSelected, isHighlighted);
                             }

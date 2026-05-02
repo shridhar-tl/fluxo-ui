@@ -15,9 +15,9 @@
       "description": "Total number of rating items."
     },
     "size": {
-      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'",
       "default": "'md'",
-      "description": "Icon size."
+      "description": "Icon size. Use 'xxl' (~48px) on touch surfaces to clear the 44x44 touch-target requirement."
     },
     "variant": {
       "type": "'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'",

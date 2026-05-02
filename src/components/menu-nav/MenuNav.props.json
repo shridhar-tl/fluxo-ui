@@ -71,6 +71,11 @@
       "default": "'Search...'",
       "description": "Placeholder text for the search input."
     },
+    "searchAriaLabel": {
+      "type": "string",
+      "default": "'Search navigation'",
+      "description": "Accessible label for the search input (used for screen readers)."
+    },
     "headerSlot": {
       "type": "ReactNode",
       "description": "Custom content rendered above the menu."

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { forwardRef, KeyboardEvent, useRef, useState } from 'react';
+import { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { TimesIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
@@ -16,6 +16,8 @@ interface ChipsProps extends BaseComponentProps {
     readonly?: boolean;
     id?: string;
     name?: string;
+    ariaLabel?: string;
+    commitOnTab?: boolean;
 }
 
 export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
@@ -33,6 +35,8 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
             className,
             name,
             args,
+            ariaLabel,
+            commitOnTab = true,
             ...baseProps
         },
         ref,
@@ -42,9 +46,16 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
         const [focusedChipIndex, setFocusedChipIndex] = useState(-1);
         const [internalValue, setInternalValue] = useState<string[]>([]);
         const inputRef = useRef<HTMLInputElement>(null);
+        const chipRefs = useRef<Array<HTMLSpanElement | null>>([]);
 
         const isControlled = value !== undefined;
         const currentValue = isControlled ? value : internalValue;
+
+        useEffect(() => {
+            if (focusedChipIndex >= 0) {
+                chipRefs.current[focusedChipIndex]?.focus();
+            }
+        }, [focusedChipIndex]);
 
         const emitChange = (newValue: string[]) => {
             if (!isControlled) {
@@ -75,30 +86,46 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
             inputRef.current?.focus();
         };
 
+        const commitInput = () => {
+            if (inputValue.includes(separator)) {
+                const chips = inputValue
+                    .split(separator)
+                    .map((s) => s.trim())
+                    .filter(Boolean);
+                chips.forEach(addChip);
+            } else {
+                addChip(inputValue);
+            }
+        };
+
         const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
             switch (e.key) {
                 case 'Enter':
                     e.preventDefault();
-                    if (inputValue.includes(separator)) {
-                        const chips = inputValue
-                            .split(separator)
-                            .map((s) => s.trim())
-                            .filter(Boolean);
-                        chips.forEach(addChip);
-                    } else {
-                        addChip(inputValue);
+                    commitInput();
+                    break;
+                case 'Tab':
+                    if (commitOnTab && inputValue.trim().length > 0) {
+                        e.preventDefault();
+                        commitInput();
                     }
                     break;
                 case 'Backspace':
                     if (!inputValue && currentValue.length > 0) {
                         e.preventDefault();
-                        removeChip(currentValue.length - 1);
+                        setFocusedChipIndex(currentValue.length - 1);
                     }
                     break;
                 case 'ArrowLeft':
                     if (!inputValue && currentValue.length > 0) {
                         e.preventDefault();
                         setFocusedChipIndex(currentValue.length - 1);
+                    }
+                    break;
+                case 'Home':
+                    if (!inputValue && currentValue.length > 0) {
+                        e.preventDefault();
+                        setFocusedChipIndex(0);
                     }
                     break;
             }
@@ -126,6 +153,18 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
                         inputRef.current?.focus();
                     }
                     break;
+                case 'Home':
+                    e.preventDefault();
+                    if (currentValue.length > 0) {
+                        setFocusedChipIndex(0);
+                    }
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    if (currentValue.length > 0) {
+                        setFocusedChipIndex(currentValue.length - 1);
+                    }
+                    break;
                 case 'Escape':
                     e.preventDefault();
                     setFocusedChipIndex(-1);
@@ -147,40 +186,56 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
         delete componentStyles.padding;
         delete componentStyles.height;
 
+        const rovingTabIndex = (i: number) => {
+            if (focusedChipIndex >= 0) return focusedChipIndex === i ? 0 : -1;
+            // input is the default focus target; chips remain reachable via Backspace/ArrowLeft
+            return -1;
+        };
+
         return (
             <div
                 ref={ref}
                 id={inputId}
                 className={classNames(containerClasses, className)}
                 style={componentStyles}
-                onClick={() => inputRef.current?.focus()}
+                onClick={(e) => {
+                    if ((e.target as HTMLElement).closest('.eui-chips-item')) return;
+                    inputRef.current?.focus();
+                }}
             >
-                {currentValue.map((chip, index) => (
-                    <span
-                        key={index}
-                        className={classNames('eui-chips-item', {
-                            'eui-chips-item-focused': focusedChipIndex === index,
-                        })}
-                        tabIndex={focusedChipIndex === index ? 0 : -1}
-                        onKeyDown={(e) => handleChipKeyDown(e, index)}
-                        onFocus={() => setFocusedChipIndex(index)}
-                    >
-                        <span className="eui-chips-item-label">{chip}</span>
-                        {!readonly && !disabled && (
-                            <button
-                                type="button"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    removeChip(index);
-                                }}
-                                className="eui-chips-item-remove"
-                                aria-label={`Remove ${chip}`}
-                            >
-                                <TimesIcon />
-                            </button>
-                        )}
-                    </span>
-                ))}
+                <ul className="eui-chips-list" role="list" aria-label={ariaLabel || 'Selected items'}>
+                    {currentValue.map((chip, index) => (
+                        <li
+                            key={index}
+                            ref={(el) => {
+                                chipRefs.current[index] = el;
+                            }}
+                            role="listitem"
+                            className={classNames('eui-chips-item', {
+                                'eui-chips-item-focused': focusedChipIndex === index,
+                            })}
+                            tabIndex={rovingTabIndex(index)}
+                            onKeyDown={(e) => handleChipKeyDown(e, index)}
+                            onFocus={() => setFocusedChipIndex(index)}
+                        >
+                            <span className="eui-chips-item-label">{chip}</span>
+                            {!readonly && !disabled && (
+                                <button
+                                    type="button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        removeChip(index);
+                                    }}
+                                    className="eui-chips-item-remove"
+                                    aria-label={`Remove ${chip}`}
+                                    tabIndex={-1}
+                                >
+                                    <TimesIcon />
+                                </button>
+                            )}
+                        </li>
+                    ))}
+                </ul>
                 {!readonly && (!maxItems || currentValue.length < maxItems) && (
                     <input
                         ref={inputRef}
@@ -191,6 +246,7 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
                         onFocus={() => setFocusedChipIndex(-1)}
                         placeholder={currentValue.length === 0 ? placeholder : ''}
                         disabled={disabled}
+                        aria-label={ariaLabel || placeholder}
                         className="eui-chips-input"
                     />
                 )}

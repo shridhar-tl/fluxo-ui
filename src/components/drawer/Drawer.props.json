@@ -30,6 +30,10 @@
       "default": "false",
       "description": "Push the main content instead of overlaying."
     },
+    "pushContentSelector": {
+      "type": "string",
+      "description": "CSS selector for the element to push when pushContent is enabled. Defaults to '#root' or the first body child."
+    },
     "closeOnEscape": {
       "type": "boolean",
       "default": "true",
@@ -39,6 +43,18 @@
       "type": "boolean",
       "default": "true",
       "description": "Close drawer when clicking the backdrop."
+    },
+    "title": {
+      "type": "string",
+      "description": "Plain-text title rendered as the drawer header (when no custom header is supplied) and used as the dialog's accessible name."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name for the dialog. Use when there's no visible title."
+    },
+    "ariaLabelledBy": {
+      "type": "string",
+      "description": "ID of an element that labels the dialog. Overrides ariaLabel/title when set."
     },
     "header": {
       "type": "ReactNode",

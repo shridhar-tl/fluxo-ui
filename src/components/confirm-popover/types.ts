@@ -16,6 +16,7 @@ export interface ConfirmPopoverAction {
     onClick: () => void;
     variant?: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info';
     layout?: 'default' | 'outlined' | 'plain';
+    defaultAction?: boolean;
 }
 
 export interface ConfirmPopoverOptions {
@@ -26,6 +27,8 @@ export interface ConfirmPopoverOptions {
     placement?: ConfirmPopoverPlacement;
     actions: ConfirmPopoverAction[];
     onClose?: () => void;
+    headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+    defaultActionIndex?: number;
 }
 
 export interface ConfirmPopoverData extends ConfirmPopoverOptions {

@@ -14,6 +14,11 @@
       "type": "string",
       "description": "An optional bold heading displayed above the message."
     },
+    "headingLevel": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "3",
+      "description": "Heading element used for the title (h1-h6) so the page heading outline includes the banner."
+    },
     "icon": {
       "type": "ReactNode",
       "description": "Custom icon to replace the default type-based icon."
@@ -68,6 +73,11 @@
       "type": "boolean",
       "default": "false",
       "description": "Adds a left border accent matching the banner type color."
+    },
+    "restoreFocusOnDismiss": {
+      "type": "boolean",
+      "default": "true",
+      "description": "On dismiss, return focus to the element that was focused when the banner appeared."
     }
   }
 }

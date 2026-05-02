@@ -62,6 +62,18 @@
     "itemTemplate": {
       "type": "(option: ListBoxOption) => ReactNode",
       "description": "Custom renderer for each option item."
+    },
+    "compareFn": {
+      "type": "(a: T, b: T) => boolean",
+      "description": "Custom equality comparator for option values. Defaults to deep-equal (JSON-stringify based) for objects."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the listbox."
+    },
+    "ariaLabelledBy": {
+      "type": "string",
+      "description": "ID of the element that labels the listbox."
     }
   }
 }

@@ -16,6 +16,12 @@
     align-items: center;
     cursor: pointer;
 
+    .eui-radio-control-wrap {
+        position: relative;
+        flex-shrink: 0;
+        display: inline-flex;
+    }
+
     .eui-radio-native {
         position: absolute;
         width: 1px;

@@ -421,7 +421,12 @@ function CanvasDrawInner({
                 />
             )}
 
-            <div ref={canvasRef} className="eui-canvas-draw__canvas">
+            <div
+                ref={canvasRef}
+                className="eui-canvas-draw__canvas"
+                role="img"
+                aria-label={items.length === 0 ? 'Drawing canvas (empty)' : `Drawing canvas (${items.length} ${items.length === 1 ? 'object' : 'objects'})`}
+            >
                 {backgroundEl}
 
                 <CanvasDrawOverlay

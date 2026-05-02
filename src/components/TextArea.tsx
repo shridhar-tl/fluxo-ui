@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles } from '../utils';
 import './TextArea.scss';
@@ -18,6 +18,9 @@ interface TextAreaProps extends BaseComponentProps, Omit<React.TextareaHTMLAttri
     autoFocus?: boolean;
     id?: string;
     showCount?: boolean;
+    error?: string | boolean;
+    invalid?: boolean;
+    helperText?: ReactNode;
 }
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
@@ -39,6 +42,10 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             className,
             name,
             args,
+            error,
+            invalid,
+            helperText,
+            'aria-describedby': ariaDescribedBy,
             ...baseProps
         },
         ref,
@@ -54,7 +61,6 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
             let newValue = e.target.value;
 
-            // Enforce maxLength if specified
             if (maxLength && newValue.length > maxLength) {
                 newValue = newValue.slice(0, maxLength);
                 e.target.value = newValue;
@@ -96,8 +102,15 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             setCurrentLength(displayValue.length);
         }, [displayValue]);
 
+        const errorMessage = typeof error === 'string' ? error : undefined;
+        const hasError = invalid === true || error === true || (typeof error === 'string' && error.length > 0);
+        const helperId = helperText ? `${inputId}-helper` : undefined;
+        const errorId = errorMessage ? `${inputId}-error` : undefined;
+        const describedBy = [ariaDescribedBy, helperId, errorId].filter(Boolean).join(' ') || undefined;
+        const ariaInvalid = hasError ? 'true' : (required && !displayValue ? 'true' : 'false');
+
         const componentClasses = getComponentClasses(
-            { ...baseProps, disabled, className },
+            { ...baseProps, disabled, className: classNames(className, { 'eui-textarea-error': hasError }) },
             classNames('eui-textarea', {
                 'eui-textarea-resizable': !autoResize,
                 'eui-textarea-readonly': readonly,
@@ -130,14 +143,26 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
                     disabled={disabled}
                     className={componentClasses}
                     style={componentStyles}
-                    aria-invalid={required && !displayValue ? 'true' : 'false'}
+                    aria-invalid={ariaInvalid}
                     aria-required={required}
+                    aria-describedby={describedBy}
+                    aria-errormessage={errorId}
                     onInput={adjustHeight}
                 />
                 {maxLength && (
                     <div className="eui-textarea-count">
                         {currentLength}/{maxLength}
                     </div>
+                )}
+                {helperText && !errorMessage && (
+                    <span id={helperId} className="eui-textarea-helper">
+                        {helperText}
+                    </span>
+                )}
+                {errorMessage && (
+                    <span id={errorId} className="eui-textarea-error-message" role="alert">
+                        {errorMessage}
+                    </span>
                 )}
             </div>
         );

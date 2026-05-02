@@ -15,6 +15,12 @@ interface TimelinePanelProps {
     headerMeasureRef: React.RefObject<HTMLDivElement | null>;
 }
 
+interface CreateDragState {
+    startX: number;
+    currentX: number;
+    rowIndex: number;
+}
+
 function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMeasureRef }: TimelinePanelProps) {
     const {
         flatTasks, columnWidth, rowHeight, totalWidth, totalHeight,
@@ -23,8 +29,8 @@ function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMe
     } = useGanttContext();
 
     const headerRef = useRef<HTMLDivElement>(null);
-    const [createDrag, setCreateDrag] = useState<{ startX: number; currentX: number } | null>(null);
-    const createDragRef = useRef<{ startX: number; currentX: number } | null>(null);
+    const [createDrag, setCreateDrag] = useState<CreateDragState | null>(null);
+    const createDragRef = useRef<CreateDragState | null>(null);
 
     const visibleTasks = useMemo(() => flatTasks.filter(ft => ft.isVisible), [flatTasks]);
 
@@ -69,16 +75,26 @@ function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMe
         const target = e.target as HTMLElement;
         if (target.closest('.eui-gantt-taskbar, .eui-gantt-milestone, .eui-gantt-taskbar-handle')) return;
 
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - rect.left + e.currentTarget.scrollLeft;
+        const body = e.currentTarget as HTMLDivElement;
+        const rect = body.getBoundingClientRect();
+        const scrollLeft = body.scrollLeft;
+        const scrollTop = body.scrollTop;
+        const x = e.clientX - rect.left + scrollLeft;
+        const y = e.clientY - rect.top + scrollTop;
+        const rowIndex = Math.max(0, Math.floor(y / rowHeight));
 
-        const state = { startX: x, currentX: x };
+        const state: CreateDragState = { startX: x, currentX: x, rowIndex };
         setCreateDrag(state);
         createDragRef.current = state;
 
         const handleMove = (me: MouseEvent) => {
-            const cx = me.clientX - rect.left + (bodyRef.current?.scrollLeft ?? 0);
-            const updated = { startX: createDragRef.current!.startX, currentX: cx };
+            const live = bodyRef.current;
+            const liveRect = live ? live.getBoundingClientRect() : rect;
+            const liveScrollLeft = live ? live.scrollLeft : scrollLeft;
+            const cx = me.clientX - liveRect.left + liveScrollLeft;
+            const prev = createDragRef.current;
+            if (!prev) return;
+            const updated: CreateDragState = { startX: prev.startX, currentX: cx, rowIndex: prev.rowIndex };
             createDragRef.current = updated;
             setCreateDrag(updated);
         };
@@ -90,8 +106,9 @@ function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMe
                 const right = Math.max(ds.startX, ds.currentX);
                 const start = columnToDate(0, startDate, columnWidth, left, viewMode);
                 const end = columnToDate(0, startDate, columnWidth, right, viewMode);
+                const targetTask = visibleTasks[ds.rowIndex]?.task;
 
-                onTaskCreate({ start, end });
+                onTaskCreate({ start, end, rowIndex: ds.rowIndex, targetTask });
             }
 
             setCreateDrag(null);
@@ -102,14 +119,16 @@ function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMe
 
         window.addEventListener('mousemove', handleMove);
         window.addEventListener('mouseup', handleUp);
-    }, [allowTaskCreate, readOnly, columnWidth, startDate, viewMode, onTaskCreate, bodyRef]);
+    }, [allowTaskCreate, readOnly, columnWidth, startDate, viewMode, onTaskCreate, bodyRef, rowHeight, visibleTasks]);
 
     const createBarStyle = useMemo(() => {
         if (!createDrag) return null;
         const left = Math.min(createDrag.startX, createDrag.currentX);
         const width = Math.abs(createDrag.currentX - createDrag.startX);
-        return { left, width };
-    }, [createDrag]);
+        const barHeight = rowHeight * 0.55;
+        const top = createDrag.rowIndex * rowHeight + (rowHeight - barHeight) / 2;
+        return { left, width, top, height: barHeight };
+    }, [createDrag, rowHeight]);
 
     return (
         <div className="eui-gantt-timeline">
@@ -148,8 +167,8 @@ function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMe
                             style={{
                                 left: createBarStyle.left,
                                 width: createBarStyle.width,
-                                height: rowHeight * 0.5,
-                                top: 0,
+                                height: createBarStyle.height,
+                                top: createBarStyle.top,
                             }}
                         />
                     )}

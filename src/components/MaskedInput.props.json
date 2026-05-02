@@ -2,7 +2,15 @@
   "maskedInputProps": {
     "mask": {
       "type": "string",
-      "description": "Mask pattern. Use '9' for digit, 'a' for letter, '*' for alphanumeric, any other char as literal separator"
+      "description": "Mask pattern. Use '9' for digit, 'a' for letter, '*' for alphanumeric, any other char as literal separator. Either mask or preset must be provided"
+    },
+    "preset": {
+      "type": "'phone' | 'phone-us' | 'phone-intl' | 'date' | 'date-us' | 'ssn' | 'credit-card' | 'zip' | 'zip-plus4' | 'time'",
+      "description": "Built-in mask preset that auto-fills the mask and a SR-readable format hint"
+    },
+    "formatHint": {
+      "type": "string",
+      "description": "Format hint string surfaced under the input and linked via aria-describedby. Auto-derived from preset when not provided"
     },
     "value": {
       "type": "string",
@@ -26,9 +34,21 @@
       "default": true,
       "description": "Whether to include literal separator characters in the onChange value"
     },
+    "error": {
+      "type": "string | boolean",
+      "description": "Error message string (also marks invalid). Pass `true` to mark invalid without a visible message"
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Force the field into an invalid state without an error message"
+    },
+    "helperText": {
+      "type": "ReactNode",
+      "description": "Helper text rendered under the input and linked via aria-describedby"
+    },
     "placeholder": {
       "type": "string",
-      "description": "Placeholder text"
+      "description": "Placeholder text. Defaults to the mask itself"
     },
     "required": {
       "type": "boolean",

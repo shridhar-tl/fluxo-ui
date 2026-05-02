@@ -49,6 +49,10 @@
       "default": "false",
       "description": "Load content at the top (chat-style)."
     },
+    "endAnnouncement": {
+      "type": "string",
+      "description": "Text announced via aria-live region when the end of the feed is reached. Defaults to 'You have reached the end of the list.'"
+    },
     "children": {
       "type": "ReactNode",
       "required": true,

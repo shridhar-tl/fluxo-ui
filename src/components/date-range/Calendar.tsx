@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { isSameDay, startOfWeek, endOfWeek } from 'date-fns';
+import { isSameDay, isToday, startOfWeek, endOfWeek, format } from 'date-fns';
 import type { SelectionMode } from './types';
 import { generateCalendarDays, getDayHeaders, isDateDisabled } from './utils';
 
@@ -42,31 +42,58 @@ function Calendar({
         const disabled = isDateDisabled(day, minDate, maxDate);
         const isSelected = (activeField === 'from' && isSameDay(day, selectedFrom)) || (activeField === 'to' && isSameDay(day, selectedTo));
         const isInRange = day >= selectedFrom && day <= selectedTo;
+        const fullLabel = format(day, 'EEEE, MMMM d, yyyy');
+        const today = isToday(day);
+
+        if (isWeekMode) {
+            return (
+                <div
+                    key={day.toString()}
+                    role="gridcell"
+                    aria-selected={isInRange}
+                    aria-disabled={disabled || undefined}
+                    aria-current={today ? 'date' : undefined}
+                    aria-label={fullLabel}
+                    className={classNames(
+                        'eui-drp-day',
+                        disabled && 'eui-drp-day-disabled',
+                        isInRange && 'eui-drp-day-in-range',
+                        today && 'eui-drp-day-today',
+                    )}
+                >
+                    {day.getDate()}
+                </div>
+            );
+        }
 
         return (
-            <button
-                key={day.toString()}
-                type="button"
-                onClick={isWeekMode ? undefined : () => onSelectDate(day)}
-                disabled={disabled}
-                tabIndex={isWeekMode ? -1 : 0}
-                className={classNames(
-                    'eui-drp-day',
-                    disabled && 'eui-drp-day-disabled',
-                    isSelected && !isWeekMode && 'eui-drp-day-selected',
-                    !isSelected && isInRange && !isWeekMode && 'eui-drp-day-in-range'
-                )}
-            >
-                {day.getDate()}
-            </button>
+            <div role="gridcell" key={day.toString()}>
+                <button
+                    type="button"
+                    onClick={() => onSelectDate(day)}
+                    disabled={disabled}
+                    aria-label={fullLabel}
+                    aria-selected={isSelected}
+                    aria-current={today ? 'date' : undefined}
+                    className={classNames(
+                        'eui-drp-day',
+                        disabled && 'eui-drp-day-disabled',
+                        isSelected && 'eui-drp-day-selected',
+                        !isSelected && isInRange && 'eui-drp-day-in-range',
+                        today && 'eui-drp-day-today',
+                    )}
+                >
+                    {day.getDate()}
+                </button>
+            </div>
         );
     };
 
     return (
-        <div className="eui-drp-calendar">
-            <div className="eui-drp-weekdays">
+        <div className="eui-drp-calendar" role="grid" aria-label={`Calendar for ${format(currentMonth, 'MMMM yyyy')}`}>
+            <div className="eui-drp-weekdays" role="row">
                 {dayHeaders.map((d) => (
-                    <div key={d} className="eui-drp-weekday">
+                    <div key={d} className="eui-drp-weekday" role="columnheader">
                         {d}
                     </div>
                 ))}
@@ -74,21 +101,32 @@ function Calendar({
             {weeks.map((week, wi) => {
                 if (isWeekMode) {
                     const selected = isWeekInRange(week);
+                    const weekStart = startOfWeek(week[0], { weekStartsOn: fdow });
+                    const weekEnd = endOfWeek(week[0], { weekStartsOn: fdow });
                     return (
-                        <button
+                        <div
                             key={wi}
-                            type="button"
+                            role="row"
+                            aria-selected={selected}
+                            aria-label={`Week of ${format(weekStart, 'MMMM d')} to ${format(weekEnd, 'MMMM d, yyyy')}`}
+                            tabIndex={0}
                             className={classNames('eui-drp-week eui-drp-week-selectable', {
                                 'eui-drp-week-selected': selected,
                             })}
                             onClick={() => handleWeekClick(week)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handleWeekClick(week);
+                                }
+                            }}
                         >
                             {week.map((day) => renderDay(day))}
-                        </button>
+                        </div>
                     );
                 }
                 return (
-                    <div key={wi} className="eui-drp-week">
+                    <div key={wi} className="eui-drp-week" role="row">
                         {week.map((day) => renderDay(day))}
                     </div>
                 );

@@ -157,7 +157,7 @@ export interface CalendarApi {
   getView: () => { mode: CalendarViewMode; dateRange: DateRange; title: string };
   gotoDate: (date: Date) => void;
   getEntries: () => ResolvedCalendarEntry[];
-  scrollToTime: (time: string) => void;
+  scrollToTime: (time: string | number) => void;
 }
 
 export interface ViewProps {
@@ -385,6 +385,7 @@ export interface CalendarProps {
   height?: string | number;
   className?: string;
   apiRef?: React.RefObject<CalendarApi | null>;
+  ariaLabel?: string;
 }
 
 export interface PositionedEntry {

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../assets/icons';
 import { useClickOutside } from '../hooks/useClickOutside';
@@ -7,7 +7,7 @@ import { useKeyboard } from '../hooks/useKeyboard';
 import { useViewport } from '../hooks/useMobile';
 import { usePosition } from '../hooks/usePosition';
 import { BaseComponentProps, ListItem, ListItemGroup } from '../types';
-import { getComponentClasses } from '../utils';
+import { generateId, getComponentClasses } from '../utils';
 import Icon from './Icon';
 import './Popover.scss';
 
@@ -36,6 +36,8 @@ interface PopoverProps extends BaseComponentProps {
     mobileSearch?: MobileSearchConfig;
     hideChildrenOnMobile?: boolean;
     footer?: React.ReactNode;
+    listboxId?: string;
+    onHighlightChange?: (index: number, optionId: string | null) => void;
 }
 
 export const Popover = ({
@@ -57,6 +59,8 @@ export const Popover = ({
     mobileSearch,
     hideChildrenOnMobile = false,
     footer,
+    listboxId: listboxIdProp,
+    onHighlightChange,
     ...baseProps
 }: PopoverProps) => {
     const popoverRef = useRef<HTMLDivElement>(null);
@@ -66,32 +70,63 @@ export const Popover = ({
     const [isVisible, setIsVisible] = useState(false);
     const { position, calculatePosition } = usePosition();
     const { isMobile, isTablet, isCompact } = useViewport();
+    const internalIdRef = useRef<string>('');
+    if (!internalIdRef.current) internalIdRef.current = generateId();
+    const listboxId = listboxIdProp || `${internalIdRef.current}-listbox`;
+    const optionId = (i: number) => `${listboxId}-option-${i}`;
 
-    const filteredItems = items.filter((item) => !filter || item.label.toLowerCase().includes(filter.toLowerCase()));
+    const filteredItems = useMemo(
+        () => items.filter((item) => !filter || item.label.toLowerCase().includes(filter.toLowerCase())),
+        [items, filter],
+    );
 
-    const filteredGroups = groups
-        ? groups
-              .map((group) => ({
-                  ...group,
-                  items: group.items.filter((item) => !filter || item.label.toLowerCase().includes(filter.toLowerCase())),
-              }))
-              .filter((group) => group.items.length > 0)
-        : undefined;
+    const filteredGroups = useMemo(
+        () =>
+            groups
+                ? groups
+                      .map((group) => ({
+                          ...group,
+                          items: group.items.filter((item) => !filter || item.label.toLowerCase().includes(filter.toLowerCase())),
+                      }))
+                      .filter((group) => group.items.length > 0)
+                : undefined,
+        [groups, filter],
+    );
 
     useClickOutside(popoverRef, onClose, isOpen && !isCompact);
+
+    useEffect(() => {
+        if (onHighlightChange) {
+            const id = highlightedIndex >= 0 && highlightedIndex < filteredItems.length ? optionId(highlightedIndex) : null;
+            onHighlightChange(highlightedIndex, id);
+        }
+    }, [highlightedIndex, filteredItems.length, onHighlightChange]);
 
     useKeyboard(
         {
             Escape: onClose,
             ArrowDown: () => {
+                if (filteredItems.length === 0) return;
                 setHighlightedIndex((prev) => (prev < filteredItems.length - 1 ? prev + 1 : 0));
             },
             ArrowUp: () => {
+                if (filteredItems.length === 0) return;
                 setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : filteredItems.length - 1));
+            },
+            Home: () => {
+                if (filteredItems.length === 0) return;
+                setHighlightedIndex(0);
+            },
+            End: () => {
+                if (filteredItems.length === 0) return;
+                setHighlightedIndex(filteredItems.length - 1);
             },
             Enter: () => {
                 if (highlightedIndex >= 0 && highlightedIndex < filteredItems.length) {
-                    onSelect(filteredItems[highlightedIndex], highlightedIndex);
+                    const item = filteredItems[highlightedIndex];
+                    if (!item.disabled) {
+                        onSelect(item, highlightedIndex);
+                    }
                 }
             },
         },
@@ -158,7 +193,7 @@ export const Popover = ({
 
         const listElement = listRef.current;
         const scrollContainer = listElement.parentElement || popoverRef.current;
-        const itemElement = listElement.children[highlightedIndex] as HTMLElement;
+        const itemElement = listElement.querySelector(`[data-popover-index="${highlightedIndex}"]`) as HTMLElement | null;
 
         if (!itemElement) {
             return;
@@ -230,6 +265,7 @@ export const Popover = ({
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
+                        aria-hidden="true"
                     >
                         <polyline points="20 6 9 17 4 12" />
                     </svg>
@@ -238,15 +274,8 @@ export const Popover = ({
         );
     };
 
-    const listContent = loading ? (
-        <div className="eui-popover-loading">
-            <div className="eui-popover-spinner" />
-            <span>Loading...</span>
-        </div>
-    ) : filteredItems.length === 0 ? (
-        <div className="eui-popover-empty">{emptyMessage}</div>
-    ) : (
-        <div ref={listRef} className="eui-popover-list">
+    const listInner = (
+        <div ref={listRef} className="eui-popover-list" id={listboxId} role="listbox" aria-label="Options">
             {filteredGroups
                 ? filteredGroups.map((group) => {
                       const groupIcon = group.icon;
@@ -259,7 +288,14 @@ export const Popover = ({
                               {group.items.map((item) => {
                                   const flatIndex = filteredItems.indexOf(item);
                                   return (
-                                      <div key={flatIndex} role="option" aria-selected={flatIndex === selectedIndex}>
+                                      <div
+                                          key={flatIndex}
+                                          id={optionId(flatIndex)}
+                                          role="option"
+                                          aria-selected={flatIndex === selectedIndex}
+                                          aria-disabled={item.disabled || undefined}
+                                          data-popover-index={flatIndex}
+                                      >
                                           {renderItem
                                               ? renderItem(
                                                     item,
@@ -280,13 +316,31 @@ export const Popover = ({
                       );
                   })
                 : filteredItems.map((item, index) => (
-                      <div key={index} role="option" aria-selected={index === selectedIndex}>
+                      <div
+                          key={index}
+                          id={optionId(index)}
+                          role="option"
+                          aria-selected={index === selectedIndex}
+                          aria-disabled={item.disabled || undefined}
+                          data-popover-index={index}
+                      >
                           {renderItem
                               ? renderItem(item, index, index === selectedIndex, index === highlightedIndex)
                               : defaultRenderItem(item, index, index === selectedIndex, index === highlightedIndex)}
                       </div>
                   ))}
         </div>
+    );
+
+    const listContent = loading ? (
+        <div className="eui-popover-loading">
+            <div className="eui-popover-spinner" aria-hidden="true" />
+            <span>Loading...</span>
+        </div>
+    ) : filteredItems.length === 0 ? (
+        <div className="eui-popover-empty">{emptyMessage}</div>
+    ) : (
+        listInner
     );
 
     if (isCompact) {
@@ -297,13 +351,13 @@ export const Popover = ({
                     'eui-popover-backdrop-mobile': isMobile,
                 })}
                 onClick={handleBackdropClick}
-                onTouchMove={(e) => e.preventDefault()}
             >
                 <div
                     ref={popoverRef}
                     className={componentClasses}
                     style={componentStyles}
-                    role="listbox"
+                    role="dialog"
+                    aria-modal="true"
                     aria-label={mobileTitle}
                     onClick={handleStopPropagation}
                 >
@@ -328,6 +382,7 @@ export const Popover = ({
                                 placeholder={mobileSearch.placeholder || 'Search...'}
                                 className="eui-popover-mobile-search-input"
                                 aria-label="Search options"
+                                aria-controls={listboxId}
                             />
                         </div>
                     )}
@@ -341,7 +396,7 @@ export const Popover = ({
     }
 
     return createPortal(
-        <div ref={popoverRef} className={componentClasses} style={componentStyles} role="listbox" aria-label="Options">
+        <div ref={popoverRef} className={componentClasses} style={componentStyles}>
             {children}
             {listContent}
             {footer && <div className="eui-popover-footer">{footer}</div>}

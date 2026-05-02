@@ -68,8 +68,8 @@ export const NotificationItemRow: React.FC<NotificationItemRowProps> = ({
         return (
             <div
                 className={classNames('eui-nc-item', { 'eui-nc-item-unread': !item.read })}
-                role="option"
-                aria-selected={!item.read}
+                role="article"
+                aria-label={item.title}
                 tabIndex={0}
                 onClick={handleClick}
                 onKeyDown={handleKeyDown}
@@ -88,7 +88,7 @@ export const NotificationItemRow: React.FC<NotificationItemRowProps> = ({
             onClick={handleClick}
             onKeyDown={handleKeyDown}
         >
-            {!item.read && <span className="eui-nc-unread-dot" aria-label="Unread" />}
+            {!item.read && <span className="eui-nc-unread-dot" role="status" aria-label="Unread" />}
             {item.icon && <span className="eui-nc-item-icon">{item.icon}</span>}
             <div className="eui-nc-item-content">
                 <div className="eui-nc-item-title">{item.title}</div>

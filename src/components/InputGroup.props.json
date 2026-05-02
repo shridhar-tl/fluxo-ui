@@ -3,12 +3,20 @@
     "children": {
       "type": "ReactNode",
       "required": true,
-      "description": "Input and addon elements. Use TextInput, Button, or span/div for addons."
+      "description": "Inputs and addons. `<span>`, `<div>`, `<label>`, `<small>`, `<p>` and any element with `data-input-group-addon` are treated as addons; everything else (TextInput, NumericInput, Button, etc.) renders inline. Fragments are flattened automatically."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the group (sets aria-label on role=group)"
+    },
+    "ariaLabelledBy": {
+      "type": "string",
+      "description": "ID of the element that labels the group"
     },
     "disabled": {
       "type": "boolean",
       "default": false,
-      "description": "Disable the entire group"
+      "description": "Disable the entire group (sets aria-disabled)"
     },
     "className": {
       "type": "string",

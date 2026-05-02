@@ -101,14 +101,6 @@
         min-width: 0;
     }
 
-    .eui-card-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--eui-text);
-        margin: 0;
-        line-height: 1.35;
-    }
-
     .eui-card-subtitle {
         font-size: 0.85rem;
         color: var(--eui-text-muted);
@@ -129,6 +121,18 @@
     line-height: 1.5;
     flex: 1 1 auto;
     min-width: 0;
+
+    &.eui-card-body-with-header {
+        margin-top: 0.625rem;
+    }
+}
+
+.eui-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--eui-text);
+    margin: 0;
+    line-height: 1.35;
 }
 
 .eui-card-footer {

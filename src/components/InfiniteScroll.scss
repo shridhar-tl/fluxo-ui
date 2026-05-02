@@ -86,10 +86,31 @@
         color: var(--eui-text-muted);
         font-size: 0.8125rem;
     }
+
+    .eui-is-sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
 }
 
 @keyframes eui-is-spin {
     to {
         transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-infinite-scroll .eui-is-spinner {
+        animation: none;
+        border-top-color: var(--eui-primary);
+        border-color: var(--eui-primary);
+        opacity: 0.6;
     }
 }

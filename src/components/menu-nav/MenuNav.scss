@@ -299,6 +299,13 @@ $sizes: (
 }
 
 .eui-menu-nav-group-header {
+    appearance: none;
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    width: 100%;
     display: flex;
     align-items: center;
     gap: 0.25rem;
@@ -314,6 +321,10 @@ $sizes: (
     &:focus-visible {
         outline: 2px solid var(--eui-primary);
         outline-offset: -2px;
+    }
+
+    &:disabled {
+        cursor: default;
     }
 }
 
@@ -372,6 +383,60 @@ $sizes: (
             border-color: var(--eui-primary);
         }
     }
+}
+
+.eui-menu-nav-search-results {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.eui-menu-nav-search-empty {
+    padding: 0.75rem 1rem;
+    color: var(--eui-text-muted);
+    font-size: 0.8125rem;
+    text-align: center;
+}
+
+.eui-menu-nav-search-result {
+    list-style: none;
+}
+
+.eui-menu-nav-search-result-btn {
+    appearance: none;
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: -2px;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}
+
+.eui-menu-nav-search-result-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.eui-menu-nav-search-result-path {
+    font-size: 0.75rem;
+    color: var(--eui-text-muted);
+    margin-top: 0.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 // Collapse button

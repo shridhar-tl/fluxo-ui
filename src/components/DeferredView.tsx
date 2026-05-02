@@ -10,9 +10,10 @@ interface DeferredViewProps {
     keepMounted?: boolean;
     className?: string;
     style?: React.CSSProperties;
+    minHeight?: string | number;
 }
 
-function DeferredView({ children, placeholder, rootMargin = '0px', threshold = 0, keepMounted = true, className, style }: DeferredViewProps) {
+function DeferredView({ children, placeholder, rootMargin = '0px', threshold = 0, keepMounted = true, className, style, minHeight }: DeferredViewProps) {
     const [hasBeenVisible, setHasBeenVisible] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const sentinelRef = useRef<HTMLDivElement>(null);
@@ -47,9 +48,20 @@ function DeferredView({ children, placeholder, rootMargin = '0px', threshold = 0
     }, [handleIntersection, rootMargin, threshold]);
 
     const shouldRender = keepMounted ? hasBeenVisible : isVisible;
+    const isLoading = !shouldRender;
+    const containerStyle: React.CSSProperties = {
+        ...style,
+        ...(minHeight !== undefined ? { minHeight: typeof minHeight === 'number' ? `${minHeight}px` : minHeight } : {}),
+    };
 
     return (
-        <div ref={sentinelRef} className={classNames('eui-deferred-view', className)} style={style}>
+        <div
+            ref={sentinelRef}
+            className={classNames('eui-deferred-view', className)}
+            style={containerStyle}
+            aria-busy={isLoading}
+            aria-live={isLoading ? 'polite' : undefined}
+        >
             {shouldRender ? children : (placeholder ?? <div className="eui-deferred-view-placeholder" />)}
         </div>
     );

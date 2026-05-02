@@ -362,13 +362,37 @@ const DiffViewer: React.FC<DiffViewerProps> = ({
                 )}
                 <div className="eui-diff-inline">
                     {rows.map((r, i) => {
-                        if (r.type === 'equal') return <span key={i} className="eui-diff-inline-eq">{r.oldText}{'\n'}</span>;
-                        if (r.type === 'insert') return <span key={i} className="eui-diff-inline-add">{r.newText}{'\n'}</span>;
-                        if (r.type === 'delete') return <span key={i} className="eui-diff-inline-del">{r.oldText}{'\n'}</span>;
+                        if (r.type === 'equal') return <span key={i} className="eui-diff-inline-eq">  {r.oldText}{'\n'}</span>;
+                        if (r.type === 'insert') {
+                            return (
+                                <span key={i} className="eui-diff-inline-add">
+                                    <span aria-hidden="true">+ </span>
+                                    <span className="eui-visually-hidden">Added: </span>
+                                    {r.newText}{'\n'}
+                                </span>
+                            );
+                        }
+                        if (r.type === 'delete') {
+                            return (
+                                <span key={i} className="eui-diff-inline-del">
+                                    <span aria-hidden="true">− </span>
+                                    <span className="eui-visually-hidden">Removed: </span>
+                                    {r.oldText}{'\n'}
+                                </span>
+                            );
+                        }
                         return (
                             <React.Fragment key={i}>
-                                <span className="eui-diff-inline-del">{r.oldText}</span>
-                                <span className="eui-diff-inline-add">{r.newText}</span>
+                                <span className="eui-diff-inline-del">
+                                    <span aria-hidden="true">− </span>
+                                    <span className="eui-visually-hidden">Removed: </span>
+                                    {r.oldText}
+                                </span>
+                                <span className="eui-diff-inline-add">
+                                    <span aria-hidden="true">+ </span>
+                                    <span className="eui-visually-hidden">Added: </span>
+                                    {r.newText}
+                                </span>
                                 {'\n'}
                             </React.Fragment>
                         );

@@ -58,6 +58,9 @@ interface MultiselectProps<T = any> extends BaseComponentProps {
     maxSelections?: number;
     optionLabel?: string;
     optionValue?: string;
+    compareFn?: (a: any, b: any) => boolean;
+    ariaLabel?: string;
+    ariaLabelledBy?: string;
 }
 
 export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
@@ -85,17 +88,38 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
             args,
             optionLabel = 'label',
             optionValue = 'value',
+            compareFn,
+            ariaLabel,
+            ariaLabelledBy,
             ...baseProps
         },
         ref,
     ) => {
         const [inputId] = useState(id || generateId());
+        const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
         const [filterValue, setFilterValue] = useState('');
         const [internalValue, setInternalValue] = useState<any[]>([]);
-        const triggerRef = useRef<HTMLDivElement>(null);
+        const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
+        const [maxReachedAnnouncement, setMaxReachedAnnouncement] = useState('');
+        const wrapRef = useRef<HTMLDivElement>(null);
+        const triggerButtonRef = useRef<HTMLButtonElement>(null);
         const filterInputRef = useRef<HTMLInputElement>(null);
-        const combinedRef = (ref as React.RefObject<HTMLDivElement>) || triggerRef;
+        const combinedRef = (ref as React.RefObject<HTMLDivElement>) || wrapRef;
+
+        const compare = (a: any, b: any) => {
+            if (compareFn) return compareFn(a, b);
+            if (a === b) return true;
+            if (a == null || b == null) return false;
+            if (typeof a === 'object' && typeof b === 'object') {
+                try {
+                    return JSON.stringify(a) === JSON.stringify(b);
+                } catch {
+                    return false;
+                }
+            }
+            return false;
+        };
 
         const isControlled = value !== undefined;
         const currentValue = isControlled ? value : internalValue;
@@ -107,10 +131,11 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
             [options, optionLabel, optionValue],
         );
 
-        const selectedItems = flatItems.filter((item) => currentValue.includes(item.value));
+        const selectedItems = flatItems.filter((item) => currentValue.some((v) => compare(v, item.value)));
         const availableItems = searchable && !onFilter ? filterItems(flatItems, filterValue) : flatItems;
-        const allSelected = flatItems.length > 0 && flatItems.every((item) => currentValue.includes(item.value));
+        const allSelected = flatItems.length > 0 && flatItems.every((item) => currentValue.some((v) => compare(v, item.value)));
         const someSelected = currentValue.length > 0 && currentValue.length < flatItems.length;
+        const isMaxReached = !!maxSelectedItems && currentValue.length >= maxSelectedItems;
 
         const filteredGroups = useMemo(() => {
             if (!grouped || !groups || !searchable || onFilter) return undefined;
@@ -143,40 +168,45 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
             setFilterValue('');
         };
 
-        const emitChange = (newValue: any[]) => {
+        const emitChange = (newValue: any[], e?: React.SyntheticEvent) => {
             if (!isControlled) {
                 setInternalValue(newValue);
             }
             onChange?.({
-                event: { target: { value: newValue } } as any,
+                event: e,
                 value: newValue,
                 name,
                 args,
             });
         };
 
-        const handleItemSelect = (item: ListItem) => {
+        const handleItemSelect = (item: ListItem, e?: React.SyntheticEvent) => {
             if (item.disabled) return;
 
             let newValue: any[];
-            if (currentValue.includes(item.value)) {
-                newValue = currentValue.filter((v) => v !== item.value);
+            const isSel = currentValue.some((v) => compare(v, item.value));
+            if (isSel) {
+                newValue = currentValue.filter((v) => !compare(v, item.value));
             } else {
-                if (maxSelectedItems && currentValue.length >= maxSelectedItems) return;
+                if (isMaxReached) {
+                    setMaxReachedAnnouncement(`Maximum of ${maxSelectedItems} items selected`);
+                    window.setTimeout(() => setMaxReachedAnnouncement(''), 1500);
+                    return;
+                }
                 newValue = [...currentValue, item.value];
             }
 
-            emitChange(newValue);
+            emitChange(newValue, e);
         };
 
-        const handleSelectAll = () => {
+        const handleSelectAll = (e?: React.SyntheticEvent) => {
             const newValue = allSelected ? [] : flatItems.filter((item) => !item.disabled).map((item) => item.value);
-            emitChange(newValue);
+            emitChange(newValue, e);
         };
 
-        const handleRemoveItem = (itemValue: any) => {
-            const newValue = currentValue.filter((v) => v !== itemValue);
-            emitChange(newValue);
+        const handleRemoveItem = (itemValue: any, e?: React.SyntheticEvent) => {
+            const newValue = currentValue.filter((v) => !compare(v, itemValue));
+            emitChange(newValue, e);
         };
 
         const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,9 +219,9 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                     'eui-multiselect-item-highlighted': isHighlighted,
                     'eui-multiselect-item-disabled': item.disabled,
                 })}
-                onClick={() => !item.disabled && handleItemSelect(item)}
+                onClick={(e) => !item.disabled && handleItemSelect(item, e)}
             >
-                <Checkbox checked={isSelected} disabled={item.disabled} onChange={() => handleItemSelect(item)} />
+                <Checkbox checked={isSelected} disabled={item.disabled} onChange={(ev) => handleItemSelect(item, ev?.event as React.SyntheticEvent | undefined)} />
                 {!!item.icon && <Icon icon={item.icon} className="eui-multiselect-item-icon" />}
                 <span className="eui-multiselect-item-label">{item.label}</span>
             </div>
@@ -230,20 +260,40 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
         delete componentStyles.padding;
         delete componentStyles.height;
 
+        const handleTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+            if (disabled || readonly) return;
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+                if (!isOpen) {
+                    e.preventDefault();
+                    setIsOpen(true);
+                }
+            }
+        };
+
         return (
             <>
                 <div
                     ref={combinedRef}
-                    id={inputId}
-                    className={classNames(triggerClasses, className)}
+                    className={classNames(triggerClasses, className, 'eui-multiselect-trigger-wrap')}
                     style={componentStyles}
-                    onClick={handleToggle}
-                    tabIndex={disabled ? -1 : 0}
-                    role="button"
-                    aria-haspopup="listbox"
-                    aria-expanded={isOpen}
                 >
-                    <div className="eui-multiselect-inner">
+                    <button
+                        ref={triggerButtonRef}
+                        id={inputId}
+                        type="button"
+                        disabled={disabled}
+                        className="eui-multiselect-trigger-button"
+                        onClick={handleToggle}
+                        onKeyDown={handleTriggerKeyDown}
+                        aria-haspopup="listbox"
+                        aria-expanded={isOpen}
+                        aria-controls={isOpen ? listboxId : undefined}
+                        aria-activedescendant={isOpen ? activeOptionId ?? undefined : undefined}
+                        aria-required={required}
+                        aria-label={ariaLabel || placeholder}
+                        aria-labelledby={ariaLabelledBy}
+                    />
+                    <div className="eui-multiselect-inner" onClick={handleToggle}>
                         <div className="eui-multiselect-tags">
                             {selectedItems.length === 0 ? (
                                 <span className="eui-multiselect-placeholder">{placeholder}</span>
@@ -261,14 +311,22 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                             className={classNames('eui-multiselect-chevron', {
                                 'eui-multiselect-chevron-open': isOpen,
                             })}
+                            aria-hidden="true"
                         />
                     </div>
                 </div>
+                {isMaxReached && (
+                    <span className="eui-visually-hidden" aria-live="polite" role="status">
+                        {maxReachedAnnouncement || `Maximum of ${maxSelectedItems} items selected`}
+                    </span>
+                )}
 
                 <Popover
                     isOpen={isOpen}
                     onClose={handleClose}
-                    triggerElement={combinedRef.current}
+                    triggerElement={triggerButtonRef.current ?? combinedRef.current}
+                    listboxId={listboxId}
+                    onHighlightChange={(_, optionId) => setActiveOptionId(optionId)}
                     items={[
                         ...(showSelectAll
                             ? [
@@ -297,16 +355,16 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                                     className={classNames('eui-multiselect-item eui-multiselect-item-select-all', {
                                         'eui-multiselect-item-highlighted': isHighlighted,
                                     })}
-                                    onClick={handleSelectAll}
+                                    onClick={() => handleSelectAll()}
                                 >
-                                    <Checkbox checked={allSelected} indeterminate={someSelected} onChange={handleSelectAll} />
+                                    <Checkbox checked={allSelected} indeterminate={someSelected} onChange={() => handleSelectAll()} />
                                     <span className="eui-multiselect-item-label">{item.label}</span>
                                 </div>
                             );
                         }
 
                         const actualItem = availableItems[index - (showSelectAll ? 1 : 0)];
-                        const actualIsSelected = currentValue.includes(actualItem.value);
+                        const actualIsSelected = currentValue.some((v) => compare(v, actualItem.value));
 
                         return renderItem
                             ? renderItem(actualItem, index, actualIsSelected, isHighlighted)
@@ -337,6 +395,8 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                                 onChange={handleFilterChange}
                                 placeholder="Filter items..."
                                 className="eui-multiselect-filter-input"
+                                aria-label="Filter items"
+                                aria-controls={listboxId}
                             />
                         </div>
                     )}

@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import './CountdownTimer.scss';
 
 export type CountdownTimerVariant = 'circular' | 'linear' | 'segmented' | 'numeric' | 'rounded-square' | 'triangle';
@@ -26,6 +26,12 @@ export interface CountdownTimerProps {
     disabled?: boolean;
     disabledMessage?: string;
     pulseWhenRunning?: boolean;
+    announceInterval?: number;
+    announceFinalSeconds?: number;
+    announceOnComplete?: boolean;
+    announcePoliteness?: 'polite' | 'assertive';
+    criticalThreshold?: number;
+    onCriticalThreshold?: (remaining: number) => void;
     className?: string;
     style?: React.CSSProperties;
     onComplete?: () => void;
@@ -61,8 +67,22 @@ const formatTime = (totalSeconds: number): { display: string; unit: string; hour
     return { display: String(seconds), unit: 'sec', days, hours, minutes, seconds };
 };
 
-// Thresholds work as "when remaining % drops AT or BELOW this value, apply this color".
-// Sort descending so the most restrictive (lowest %) threshold wins last.
+const formatAnnouncementText = (totalSeconds: number): string => {
+    const absSeconds = Math.max(0, Math.round(totalSeconds));
+    const days = Math.floor(absSeconds / 86400);
+    const hours = Math.floor((absSeconds % 86400) / 3600);
+    const minutes = Math.floor((absSeconds % 3600) / 60);
+    const seconds = absSeconds % 60;
+
+    const parts: string[] = [];
+    if (days > 0) parts.push(`${days} ${days === 1 ? 'day' : 'days'}`);
+    if (hours > 0) parts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`);
+    if (minutes > 0) parts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`);
+    if (seconds > 0 || parts.length === 0) parts.push(`${seconds} ${seconds === 1 ? 'second' : 'seconds'}`);
+
+    return `${parts.join(', ')} remaining`;
+};
+
 const resolveColor = (
     remaining: number,
     duration: number,
@@ -77,7 +97,6 @@ const resolveColor = (
 
     if (thresholds && thresholds.length > 0) {
         const pct = duration > 0 ? (remaining / duration) * 100 : 0;
-        // Sort descending: highest threshold first — first match where pct <= threshold.at wins
         const sorted = [...thresholds].sort((a, b) => b.at - a.at);
         for (const t of sorted) {
             if (pct <= t.at) {
@@ -108,9 +127,6 @@ const ResetIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
-// ──────────────────────────────────────────────────────────────────────────────
-// CIRCULAR VARIANT
-// ──────────────────────────────────────────────────────────────────────────────
 const CircularVariant: React.FC<{
     remaining: number;
     duration: number;
@@ -154,9 +170,6 @@ const CircularVariant: React.FC<{
     );
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// ROUNDED-SQUARE VARIANT — SVG rect with rounded corners as progress border
-// ──────────────────────────────────────────────────────────────────────────────
 const RoundedSquareVariant: React.FC<{
     remaining: number;
     duration: number;
@@ -174,7 +187,6 @@ const RoundedSquareVariant: React.FC<{
     const half = strokeWidth / 2;
     const w = diameter - strokeWidth;
     const h = diameter - strokeWidth;
-    // Perimeter of rounded rectangle: 2*(w+h) - (2-π)*2*rx (approx straightening corners)
     const perimeter = 2 * (w + h) - (8 - 2 * Math.PI) * rx;
     const progress = duration > 0 ? remaining / duration : 0;
     const offset = perimeter * (1 - progress);
@@ -208,9 +220,6 @@ const RoundedSquareVariant: React.FC<{
     );
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// TRIANGLE VARIANT — equilateral triangle progress border
-// ──────────────────────────────────────────────────────────────────────────────
 const TriangleVariant: React.FC<{
     remaining: number;
     duration: number;
@@ -225,13 +234,11 @@ const TriangleVariant: React.FC<{
     const strokeWidth = strokeWidths[size];
     const pad = strokeWidth + 2;
 
-    // Equilateral triangle vertices — pointing up, centered
     const cx = svgSize / 2;
     const top = { x: cx, y: pad };
     const bottomLeft = { x: pad, y: svgSize - pad };
     const bottomRight = { x: svgSize - pad, y: svgSize - pad };
 
-    // Perimeter
     const sideLen = Math.sqrt(Math.pow(top.x - bottomLeft.x, 2) + Math.pow(top.y - bottomLeft.y, 2));
     const bottomLen = bottomRight.x - bottomLeft.x;
     const perimeter = 2 * sideLen + bottomLen;
@@ -244,7 +251,6 @@ const TriangleVariant: React.FC<{
     const strokeStyle: React.CSSProperties = {};
     if (customColor) strokeStyle.stroke = customColor;
 
-    // Center of triangle for text (centroid)
     const textY = (top.y + bottomLeft.y + bottomRight.y) / 3;
 
     return (
@@ -274,9 +280,6 @@ const TriangleVariant: React.FC<{
     );
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// LINEAR VARIANT
-// ──────────────────────────────────────────────────────────────────────────────
 const LinearVariant: React.FC<{
     remaining: number;
     duration: number;
@@ -302,9 +305,6 @@ const LinearVariant: React.FC<{
     );
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// SEGMENTED VARIANT — single-row grid with fixed pixel columns
-// ──────────────────────────────────────────────────────────────────────────────
 const segSizePx: Record<CountdownTimerSize, number> = { xs: 10, sm: 14, md: 18, lg: 24, xl: 30 };
 const segGapPx: Record<CountdownTimerSize, number> = { xs: 2, sm: 3, md: 3, lg: 4, xl: 4 };
 
@@ -348,9 +348,6 @@ const SegmentedVariant: React.FC<{
     );
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// NUMERIC VARIANT
-// ──────────────────────────────────────────────────────────────────────────────
 const NumericVariant: React.FC<{
     remaining: number;
     colorClass: string;
@@ -397,9 +394,6 @@ const NumericVariant: React.FC<{
     );
 };
 
-// ──────────────────────────────────────────────────────────────────────────────
-// MAIN COMPONENT
-// ──────────────────────────────────────────────────────────────────────────────
 export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTimerProps>(
     (
         {
@@ -417,6 +411,12 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
             disabled = false,
             disabledMessage = 'Off',
             pulseWhenRunning = false,
+            announceInterval,
+            announceFinalSeconds,
+            announceOnComplete = false,
+            announcePoliteness = 'polite',
+            criticalThreshold,
+            onCriticalThreshold,
             className,
             style,
             onComplete,
@@ -431,10 +431,18 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
         const [running, setRunning] = useState(autoStart && !disabled);
         const [completed, setCompleted] = useState(false);
         const [hovering, setHovering] = useState(false);
+        const [announcement, setAnnouncement] = useState('');
 
         const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
         const remainingRef = useRef(countUp ? 0 : duration);
         const runningRef = useRef(autoStart && !disabled);
+        const lastIntervalAnnounceRef = useRef<number | null>(null);
+        const criticalFiredRef = useRef<boolean>(false);
+        const onCriticalThresholdRef = useRef(onCriticalThreshold);
+
+        useEffect(() => {
+            onCriticalThresholdRef.current = onCriticalThreshold;
+        }, [onCriticalThreshold]);
 
         const clearTimer = useCallback(() => {
             if (intervalRef.current !== null) {
@@ -448,14 +456,19 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
             setRunning(false);
             runningRef.current = false;
             setCompleted(true);
+            if (announceOnComplete) {
+                setAnnouncement('Timer complete');
+            }
             onComplete?.();
             if (repeat) {
                 const resetVal = countUp ? 0 : duration;
                 remainingRef.current = resetVal;
                 setRemaining(resetVal);
                 setCompleted(false);
+                lastIntervalAnnounceRef.current = null;
+                criticalFiredRef.current = false;
             }
-        }, [clearTimer, onComplete, repeat, countUp, duration]);
+        }, [clearTimer, onComplete, repeat, countUp, duration, announceOnComplete]);
 
         const startTicking = useCallback(() => {
             clearTimer();
@@ -491,11 +504,35 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
             remainingRef.current = resetVal;
             setRemaining(resetVal);
             setCompleted(false);
+            lastIntervalAnnounceRef.current = null;
+            criticalFiredRef.current = false;
             if (autoStart && !disabled) {
                 setRunning(true);
                 runningRef.current = true;
             }
         }, [duration]);
+
+        useEffect(() => {
+            if (!running || disabled) return;
+            const remainingSec = countUp ? duration - remaining : remaining;
+
+            if (criticalThreshold !== undefined && remainingSec > 0 && remainingSec <= criticalThreshold && !criticalFiredRef.current) {
+                criticalFiredRef.current = true;
+                onCriticalThresholdRef.current?.(remainingSec);
+            }
+
+            if (announceFinalSeconds !== undefined && remainingSec > 0 && remainingSec <= announceFinalSeconds) {
+                setAnnouncement(formatAnnouncementText(remainingSec));
+                return;
+            }
+
+            if (announceInterval !== undefined && announceInterval > 0 && remainingSec > 0 && remainingSec % announceInterval === 0) {
+                if (lastIntervalAnnounceRef.current !== remainingSec) {
+                    lastIntervalAnnounceRef.current = remainingSec;
+                    setAnnouncement(formatAnnouncementText(remainingSec));
+                }
+            }
+        }, [remaining, running, disabled, countUp, duration, announceInterval, announceFinalSeconds, criticalThreshold]);
 
         const pause = useCallback(() => {
             if (!runningRef.current) return;
@@ -518,6 +555,9 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
             remainingRef.current = resetVal;
             setRemaining(resetVal);
             setCompleted(false);
+            lastIntervalAnnounceRef.current = null;
+            criticalFiredRef.current = false;
+            setAnnouncement('');
             if (autoStart) {
                 runningRef.current = true;
                 setRunning(true);
@@ -540,11 +580,16 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
         const effectiveRemaining = countUp ? duration - remaining : remaining;
         const { colorClass, customColor } = resolveColor(effectiveRemaining, duration, color, colorThresholds);
 
-        const rootStyle: React.CSSProperties = { ...style };
-        if (customColor) (rootStyle as Record<string, string>)['--eui-timer-custom-color'] = customColor;
+        const rootStyle: React.CSSProperties = useMemo(() => {
+            const base: React.CSSProperties = { ...style, width: variant === 'linear' ? '100%' : undefined };
+            if (customColor) (base as Record<string, string>)['--eui-timer-custom-color'] = customColor;
+            return base;
+        }, [style, variant, customColor]);
 
         const isLinear = variant === 'linear';
         const isCircularFamily = variant === 'circular' || variant === 'rounded-square' || variant === 'triangle';
+
+        const announcerEnabled = announceInterval !== undefined || announceFinalSeconds !== undefined || announceOnComplete;
 
         return (
             <div
@@ -562,10 +607,11 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
                     },
                     className,
                 )}
-                style={{ ...rootStyle, width: isLinear ? '100%' : undefined }}
+                style={rootStyle}
                 onMouseEnter={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
-                aria-label={`Countdown timer: ${formatTime(remaining).display} remaining`}
+                role="timer"
+                aria-label={`Countdown timer: ${formatAnnouncementText(effectiveRemaining)}`}
                 aria-live="off"
             >
                 {disabled && (
@@ -586,7 +632,7 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
                     <TriangleVariant remaining={remaining} duration={duration} size={size} colorClass={colorClass} customColor={customColor} />
                 )}
 
-                {variant === 'linear' && (
+                {isLinear && (
                     <LinearVariant remaining={remaining} duration={duration} colorClass={colorClass} customColor={customColor} />
                 )}
 
@@ -608,6 +654,7 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
                 {showControls && !disabled && (
                     <div className="eui-countdown-timer-controls">
                         <button
+                            type="button"
                             className="eui-countdown-timer-btn"
                             onClick={running ? pause : resume}
                             aria-label={running ? 'Pause timer' : 'Resume timer'}
@@ -616,6 +663,7 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
                             {running ? <PauseIcon /> : <PlayIcon />}
                         </button>
                         <button
+                            type="button"
                             className="eui-countdown-timer-btn"
                             onClick={reset}
                             aria-label="Reset timer"
@@ -623,6 +671,17 @@ export const CountdownTimer = React.forwardRef<CountdownTimerHandle, CountdownTi
                         >
                             <ResetIcon />
                         </button>
+                    </div>
+                )}
+
+                {announcerEnabled && (
+                    <div
+                        className="eui-countdown-timer-sr-only"
+                        aria-live={announcePoliteness}
+                        aria-atomic="true"
+                        role="status"
+                    >
+                        {announcement}
                     </div>
                 )}
             </div>

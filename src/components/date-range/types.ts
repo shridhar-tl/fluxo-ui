@@ -33,6 +33,7 @@ interface PropsBase {
     selectionMode?: SelectionMode;
     firstDayOfWeek?: number;
     range?: boolean;
+    ariaLabel?: string;
     classNames?: {
         container?: string;
         control?: string;

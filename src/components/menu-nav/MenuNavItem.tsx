@@ -101,7 +101,7 @@ const MenuNavItemComponent: React.FC<MenuNavItemComponentProps> = ({
     );
 
     if (item.separator) {
-        return <li className="eui-menu-nav-separator" role="separator" />;
+        return <li className="eui-menu-nav-separator" role="separator" aria-hidden="true" />;
     }
 
     const showSubmenu = isVertical ? expanded : hoverOpen;
@@ -135,7 +135,6 @@ const MenuNavItemComponent: React.FC<MenuNavItemComponentProps> = ({
             })}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            role="none"
         >
             <Tag
                 {...tagProps}
@@ -151,12 +150,10 @@ const MenuNavItemComponent: React.FC<MenuNavItemComponentProps> = ({
                         'eui-menu-nav-item-collapsed': collapsed,
                     },
                 )}
-                role="menuitem"
                 tabIndex={item.disabled ? -1 : 0}
                 aria-current={isSelected ? 'page' : undefined}
-                aria-disabled={item.disabled}
+                aria-disabled={item.disabled || undefined}
                 aria-expanded={hasChildren ? showSubmenu : undefined}
-                aria-haspopup={hasChildren ? 'true' : undefined}
                 onClick={handleClick}
                 onKeyDown={handleKeyDown}
             >
@@ -164,7 +161,7 @@ const MenuNavItemComponent: React.FC<MenuNavItemComponentProps> = ({
             </Tag>
 
             {hasChildren && showSubmenu && !isMobile && (
-                <ul className={cn('eui-menu-nav-submenu', `eui-menu-nav-submenu-depth-${depth}`)} role="menu">
+                <ul className={cn('eui-menu-nav-submenu', `eui-menu-nav-submenu-depth-${depth}`)}>
                     {item.children!.map((child) => (
                         <MenuNavItemComponent
                             key={child.id}

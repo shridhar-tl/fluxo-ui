@@ -42,6 +42,9 @@ interface SliderProps {
     className?: string;
     ariaLabel?: string;
     ariaLabelledBy?: string;
+    name?: string;
+    rangeStartLabel?: string;
+    rangeEndLabel?: string;
     onChange?: (value: number | [number, number]) => void;
     onChangeEnd?: (value: number | [number, number]) => void;
 }
@@ -91,6 +94,9 @@ const Slider: React.FC<SliderProps> = ({
     className,
     ariaLabel,
     ariaLabelledBy,
+    name,
+    rangeStartLabel = 'Minimum',
+    rangeEndLabel = 'Maximum',
     onChange,
     onChangeEnd,
 }) => {
@@ -327,6 +333,12 @@ const Slider: React.FC<SliderProps> = ({
             ? { left: `${pct}%` }
             : { bottom: `${pct}%` };
 
+        const thumbAriaLabel = thumb === 'low'
+            ? rangeStartLabel
+            : thumb === 'high'
+                ? rangeEndLabel
+                : ariaLabel;
+
         return (
             <div
                 className={cn('eui-slider-thumb', {
@@ -340,7 +352,7 @@ const Slider: React.FC<SliderProps> = ({
                 }}
                 role="slider"
                 tabIndex={disabled ? -1 : 0}
-                aria-label={ariaLabel}
+                aria-label={thumbAriaLabel}
                 aria-labelledby={ariaLabelledBy}
                 aria-valuemin={effectiveMin}
                 aria-valuemax={effectiveMax}
@@ -356,7 +368,7 @@ const Slider: React.FC<SliderProps> = ({
                 onMouseLeave={() => setHoveredThumb(null)}
             >
                 {shouldShowTooltip(thumb) && (
-                    <div className="eui-slider-tooltip">{formatValue(val)}</div>
+                    <div className="eui-slider-tooltip" aria-hidden="true">{formatValue(val)}</div>
                 )}
             </div>
         );
@@ -404,9 +416,11 @@ const Slider: React.FC<SliderProps> = ({
                             key={mark.value}
                             className={cn('eui-slider-mark', { 'eui-slider-mark-active': isActive })}
                             style={posStyle}
+                            role="presentation"
+                            aria-label={mark.label}
                         >
-                            <div className="eui-slider-mark-dot" />
-                            {mark.label && <span className="eui-slider-mark-label">{mark.label}</span>}
+                            <div className="eui-slider-mark-dot" aria-hidden="true" />
+                            {mark.label && <span className="eui-slider-mark-label" aria-hidden="true">{mark.label}</span>}
                         </div>
                     );
                 })}
@@ -443,7 +457,7 @@ const Slider: React.FC<SliderProps> = ({
 
             <div className="eui-slider-container">
                 {showMinMax && (
-                    <span className="eui-slider-minmax eui-slider-min">{formatValue(effectiveMin)}</span>
+                    <span className="eui-slider-minmax eui-slider-min" aria-hidden="true">{formatValue(effectiveMin)}</span>
                 )}
 
                 <div
@@ -470,11 +484,21 @@ const Slider: React.FC<SliderProps> = ({
                 </div>
 
                 {showMinMax && (
-                    <span className="eui-slider-minmax eui-slider-max">{formatValue(effectiveMax)}</span>
+                    <span className="eui-slider-minmax eui-slider-max" aria-hidden="true">{formatValue(effectiveMax)}</span>
                 )}
             </div>
 
             {(showValue && (valuePosition === 'bottom' || valuePosition === 'right')) && renderValueDisplay()}
+
+            {name && !range && (
+                <input type="hidden" name={name} value={String(currentValue)} />
+            )}
+            {name && range && (
+                <>
+                    <input type="hidden" name={`${name}_min`} value={String(currentRangeValue[0])} />
+                    <input type="hidden" name={`${name}_max`} value={String(currentRangeValue[1])} />
+                </>
+            )}
         </div>
     );
 };

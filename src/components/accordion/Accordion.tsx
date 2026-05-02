@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { ChevronDownIcon } from '../../assets/icons';
 import './Accordion.scss';
 
 type AccordionVariant = 'default' | 'bordered' | 'filled' | 'minimal' | 'separated';
@@ -24,13 +25,9 @@ interface AccordionProps {
     onChange?: (openIds: string[]) => void;
     className?: string;
     ariaLabel?: string;
+    headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
+    unmountOnCollapse?: boolean;
 }
-
-const ChevronIcon: React.FC = () => (
-    <svg className="eui-accordion-item-chevron" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-);
 
 const Accordion: React.FC<AccordionProps> = ({
     items,
@@ -42,12 +39,15 @@ const Accordion: React.FC<AccordionProps> = ({
     onChange,
     className,
     ariaLabel,
+    headingLevel = 3,
+    unmountOnCollapse = false,
 }) => {
     const controlled = value !== undefined;
     const [internal, setInternal] = useState<string[]>(defaultOpen ?? []);
     const open = controlled ? value! : internal;
     const openSet = useMemo(() => new Set(open), [open]);
     const headersRef = useRef<(HTMLButtonElement | null)[]>([]);
+    const HeadingTag = `h${headingLevel}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
     const toggle = useCallback(
         (id: string) => {
@@ -64,9 +64,10 @@ const Accordion: React.FC<AccordionProps> = ({
     );
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-        const focusables = headersRef.current.filter(Boolean) as HTMLButtonElement[];
+        const focusables = headersRef.current.filter((el): el is HTMLButtonElement => !!el && !el.disabled);
         if (!focusables.length) return;
         const currentPos = focusables.indexOf(e.currentTarget);
+        if (currentPos === -1) return;
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             focusables[(currentPos + 1) % focusables.length]?.focus();
@@ -85,7 +86,6 @@ const Accordion: React.FC<AccordionProps> = ({
     return (
         <div
             className={cn('eui-accordion', `eui-accordion-${variant}`, className)}
-            role="region"
             aria-label={ariaLabel}
         >
             {items.map((item, idx) => {
@@ -94,7 +94,7 @@ const Accordion: React.FC<AccordionProps> = ({
                 const headerId = `eui-acc-header-${item.id}`;
                 return (
                     <div key={item.id} className="eui-accordion-item">
-                        <h3 style={{ margin: 0 }}>
+                        <HeadingTag className="eui-accordion-item-heading">
                             <button
                                 ref={(el) => {
                                     headersRef.current[idx] = el;
@@ -112,18 +112,20 @@ const Accordion: React.FC<AccordionProps> = ({
                             >
                                 {item.icon && <span className="eui-accordion-item-icon">{item.icon}</span>}
                                 <span className="eui-accordion-item-title">{item.title}</span>
-                                <ChevronIcon />
+                                <ChevronDownIcon className="eui-accordion-item-chevron" aria-hidden="true" />
                             </button>
-                        </h3>
+                        </HeadingTag>
                         <div
                             id={panelId}
                             role="region"
                             aria-labelledby={headerId}
                             className={cn('eui-accordion-item-panel', { 'eui-accordion-item-panel-open': isOpen })}
-                            aria-hidden={!isOpen}
+                            inert={!isOpen}
                         >
                             <div>
-                                <div className="eui-accordion-item-panel-inner">{item.content}</div>
+                                {(isOpen || !unmountOnCollapse) && (
+                                    <div className="eui-accordion-item-panel-inner">{item.content}</div>
+                                )}
                             </div>
                         </div>
                     </div>

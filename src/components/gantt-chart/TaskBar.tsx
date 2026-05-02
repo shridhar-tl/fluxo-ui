@@ -146,6 +146,39 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
         }
     }, [task, onTaskDoubleClick]);
 
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (readOnly || !onTaskChange) return;
+        const isLeft = e.key === 'ArrowLeft';
+        const isRight = e.key === 'ArrowRight';
+        if (!isLeft && !isRight) return;
+
+        const dayMs = 24 * 60 * 60 * 1000;
+        const stepDays = e.shiftKey ? 7 : 1;
+        const dir = isRight ? 1 : -1;
+        const deltaMs = dir * stepDays * dayMs;
+        const start = new Date(task.start as string | number | Date);
+        const end = new Date(task.end as string | number | Date);
+
+        e.preventDefault();
+        let nextStart = new Date(start);
+        let nextEnd = new Date(end);
+
+        if (e.altKey && canResize) {
+            nextEnd = new Date(end.getTime() + deltaMs);
+            if (nextEnd.getTime() <= start.getTime()) return;
+        } else if (e.ctrlKey && canResize) {
+            nextStart = new Date(start.getTime() + deltaMs);
+            if (nextStart.getTime() >= end.getTime()) return;
+        } else if (canDrag) {
+            nextStart = new Date(start.getTime() + deltaMs);
+            nextEnd = new Date(end.getTime() + deltaMs);
+        } else {
+            return;
+        }
+
+        onTaskChange({ task, originalTask: task, start: nextStart, end: nextEnd });
+    }, [readOnly, onTaskChange, task, canDrag, canResize]);
+
     const handleMouseEnter = useCallback((e: React.MouseEvent) => {
         if (!showTooltip || dragState) return;
         setTooltipVisible(true);
@@ -179,12 +212,13 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
                     onMouseDown={canDrag ? (e) => handleMouseDown(e, 'move') : undefined}
                     onClick={handleClick}
                     onDoubleClick={handleDoubleClick}
+                    onKeyDown={handleKeyDown}
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                     onMouseMove={handleTooltipMouseMove}
                     role="button"
                     tabIndex={0}
-                    aria-label={`Milestone: ${task.name}`}
+                    aria-label={`Milestone: ${task.name}. Use arrow keys to move.`}
                 />
                 {tooltipVisible && <TaskTooltip task={task} x={tooltipPos.x} y={tooltipPos.y} template={tooltipTemplate} />}
             </>
@@ -210,12 +244,13 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
                 }}
                 onClick={handleClick}
                 onDoubleClick={handleDoubleClick}
+                onKeyDown={handleKeyDown}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onMouseMove={handleTooltipMouseMove}
                 role="button"
                 tabIndex={0}
-                aria-label={`Task: ${task.name}, ${progress}% complete`}
+                aria-label={`Task: ${task.name}, ${progress}% complete. Use arrow keys to move; Alt+arrow to resize end; Ctrl+arrow to resize start.`}
                 aria-valuenow={progress}
                 aria-valuemin={0}
                 aria-valuemax={100}

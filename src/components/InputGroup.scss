@@ -16,7 +16,27 @@
 
     &.eui-input-group-disabled {
         opacity: 0.5;
-        pointer-events: none;
+
+        > * { cursor: not-allowed; }
+    }
+
+    &[aria-disabled='true'] {
+        > input,
+        > textarea,
+        > button,
+        > .eui-text-input,
+        > .eui-text-input-wrap input,
+        > .eui-password-wrap input,
+        > .eui-button {
+            tabindex: -1;
+        }
+    }
+
+    > .eui-text-input:focus,
+    > .eui-text-input-wrap > .eui-text-input:focus,
+    > .eui-password-wrap > .eui-password:focus,
+    > .eui-numeric-input:focus {
+        box-shadow: inset 0 0 0 2px var(--eui-primary) !important;
     }
 
     > .eui-text-input,

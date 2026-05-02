@@ -5,6 +5,7 @@ export interface TooltipOptions {
     timeout?: number;
     content?: React.ReactNode | string;
     placement?: PlacementCorners;
+    id?: string;
 }
 
 export interface TooltipData {

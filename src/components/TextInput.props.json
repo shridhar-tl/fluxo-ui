@@ -13,8 +13,25 @@
       "description": "Label text"
     },
     "error": {
-      "type": "string",
-      "description": "Error message to display"
+      "type": "string | boolean",
+      "description": "Error message string (also marks field invalid). Pass `true` to mark invalid without a message"
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Force the field into an invalid state without an error message"
+    },
+    "helperText": {
+      "type": "ReactNode",
+      "description": "Helper text rendered under the input and linked via aria-describedby"
+    },
+    "clearable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show an X button to clear the input value"
+    },
+    "onClear": {
+      "type": "() => void",
+      "description": "Callback fired after the value is cleared via the clear button"
     },
     "disabled": {
       "type": "boolean",

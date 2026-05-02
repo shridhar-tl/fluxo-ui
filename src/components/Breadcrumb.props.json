@@ -12,7 +12,12 @@
     },
     "maxItems": {
       "type": "number",
-      "description": "Maximum visible items before collapsing middle items into ellipsis."
+      "description": "Maximum visible items before collapsing middle items into ellipsis. When omitted, the breadcrumb auto-collapses based on container width unless autoCollapse is explicitly false."
+    },
+    "autoCollapse": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Auto-collapse middle items when the breadcrumb overflows its container. Ignored when maxItems is provided."
     },
     "className": {
       "type": "string",

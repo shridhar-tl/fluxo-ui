@@ -78,9 +78,9 @@
 .eui-wds-shape-squared .eui-wds-item { border-radius: var(--eui-radius-md); }
 .eui-wds-shape-circle  .eui-wds-item { border-radius: 9999px; aspect-ratio: 1 / 1; padding: 0; }
 
-.eui-wds-size-sm .eui-wds-item { height: 1.75rem; min-width: 1.75rem; font-size: 0.72rem; }
-.eui-wds-size-md .eui-wds-item { height: 2.25rem; min-width: 2.25rem; font-size: 0.8rem; }
-.eui-wds-size-lg .eui-wds-item { height: 2.75rem; min-width: 2.75rem; font-size: 0.9rem; }
+.eui-wds-size-sm .eui-wds-item { height: 2.25rem; min-width: 2.25rem; font-size: 0.78rem; }
+.eui-wds-size-md .eui-wds-item { height: 2.75rem; min-width: 2.75rem; font-size: 0.85rem; }
+.eui-wds-size-lg .eui-wds-item { height: 3rem; min-width: 3rem; font-size: 0.95rem; }
 
 @mixin wds-solid($bg, $text) {
     background: $bg;

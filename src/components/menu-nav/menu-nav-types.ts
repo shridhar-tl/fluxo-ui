@@ -44,6 +44,7 @@ export interface MenuNavProps {
     mobileFullScreen?: boolean;
     showSearch?: boolean;
     searchPlaceholder?: string;
+    searchAriaLabel?: string;
     headerSlot?: React.ReactNode;
     footerSlot?: React.ReactNode;
     maxSubMenuDepth?: number;

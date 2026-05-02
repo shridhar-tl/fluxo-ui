@@ -13,8 +13,16 @@
       "description": "Label text"
     },
     "error": {
-      "type": "string",
-      "description": "Error message to display"
+      "type": "string | boolean",
+      "description": "Error message string (also marks invalid). Pass `true` to mark invalid without a message"
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Force the field into an invalid state without an error message"
+    },
+    "helperText": {
+      "type": "ReactNode",
+      "description": "Helper text rendered under the input and linked via aria-describedby"
     },
     "disabled": {
       "type": "boolean",

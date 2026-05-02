@@ -12,9 +12,104 @@
       "type": "string | number",
       "description": "Border radius of the shimmer block. Useful for circle avatars or pill shapes."
     },
+    "level": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "2",
+      "description": "Background contrast level. Higher levels are darker."
+    },
+    "animation": {
+      "type": "'shimmer' | 'pulse'",
+      "default": "'shimmer'",
+      "description": "Animation style: a sweeping highlight ('shimmer') or a soft fade ('pulse')."
+    },
+    "loadingLabel": {
+      "type": "string",
+      "description": "Visually-hidden text announced by screen readers (e.g., 'Loading content')."
+    },
+    "repeat": {
+      "type": "number",
+      "description": "When set, render N stacked copies (typical for list shimmers). Adds a flex-column wrapper with a configurable gap."
+    },
+    "gap": {
+      "type": "string | number",
+      "default": "'0.5rem'",
+      "description": "Spacing between repeated shimmers (when `repeat` is set)."
+    },
     "className": {
       "type": "string",
       "description": "Additional CSS classes applied to the root element."
+    }
+  },
+  "skeletonLineProps": {
+    "width": {
+      "type": "string | number",
+      "default": "'100%'",
+      "description": "Width of the line. Numbers are treated as pixels."
+    },
+    "height": {
+      "type": "string | number",
+      "default": "'0.75rem'",
+      "description": "Height of the line."
+    },
+    "radius": {
+      "type": "string | number",
+      "default": "'4px'",
+      "description": "Corner radius of the line."
+    },
+    "level": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "2",
+      "description": "Background contrast level."
+    },
+    "animation": {
+      "type": "'shimmer' | 'pulse'",
+      "default": "'shimmer'",
+      "description": "Animation style."
+    },
+    "animated": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Disable animation entirely (useful for testing or static placeholders)."
+    },
+    "loadingLabel": {
+      "type": "string",
+      "description": "Visually-hidden text announced by screen readers."
+    }
+  },
+  "skeletonRectProps": {
+    "width": {
+      "type": "string | number",
+      "default": "'100%'",
+      "description": "Width of the rectangle."
+    },
+    "height": {
+      "type": "string | number",
+      "default": "'4rem'",
+      "description": "Height of the rectangle."
+    },
+    "radius": {
+      "type": "string | number",
+      "default": "'6px'",
+      "description": "Corner radius of the rectangle."
+    },
+    "level": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "2",
+      "description": "Background contrast level."
+    },
+    "animation": {
+      "type": "'shimmer' | 'pulse'",
+      "default": "'shimmer'",
+      "description": "Animation style."
+    },
+    "animated": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Disable animation entirely."
+    },
+    "loadingLabel": {
+      "type": "string",
+      "description": "Visually-hidden text announced by screen readers."
     }
   },
   "shimmerTableProps": {

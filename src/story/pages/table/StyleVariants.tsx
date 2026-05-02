@@ -12,7 +12,7 @@ const code = `<Table bordered columns={columns} rows={data} totalRows={data.leng
 <Table hoverable columns={columns} rows={data} totalRows={data.length} pagination={false} />
 <Table cardStyle columns={columns} rows={data} totalRows={data.length} pagination={false} />
 <Table minimalHeader columns={columns} rows={data} totalRows={data.length} pagination={false} />
-<Table stickyHeader columns={columns} rows={data} totalRows={data.length} pagination={false} />
+<Table stickyHeader maxHeight={200} columns={columns} rows={data} totalRows={data.length} pagination={false} />
 <Table striped compact bordered columns={columns} rows={data} totalRows={data.length} pagination={false} />`;
 
 const rows5 = sampleUsers.slice(0, 5);
@@ -52,10 +52,8 @@ const StyleVariants: React.FC = () => (
                 <Table minimalHeader columns={basicColumns} rows={rows5} totalRows={5} pagination={false} />
             </ComponentDemo>
 
-            <ComponentDemo title="Sticky Header" description="Header stays fixed when scrolling (resize container to see)" centered={false}>
-                <div style={{ maxHeight: '200px', overflow: 'auto' }}>
-                    <Table stickyHeader columns={basicColumns} rows={sampleUsers} totalRows={sampleUsers.length} pagination={false} />
-                </div>
+            <ComponentDemo title="Sticky Header" description="Header stays fixed when scrolling (use the maxHeight prop to make the table itself scrollable)" centered={false}>
+                <Table stickyHeader maxHeight={200} columns={basicColumns} rows={sampleUsers} totalRows={sampleUsers.length} pagination={false} />
             </ComponentDemo>
 
             <ComponentDemo title="Combined: Striped + Compact + Bordered" description="Multiple variants can be combined" centered={false}>

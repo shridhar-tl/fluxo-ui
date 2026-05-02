@@ -22,8 +22,22 @@
     },
     "zIndex": {
       "type": "number",
-      "default": "1000",
-      "description": "Base z-index for the tour overlay, highlight, and tooltip layers."
+      "default": "10050",
+      "description": "Base z-index for the tour overlay, highlight, and tooltip layers. Defaults above modals/drawers per popover rules."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Product tour'",
+      "description": "Accessible name for the tour dialog read by screen readers."
+    },
+    "interactiveHighlight": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When true, clicks pass through the highlight overlay so users can interact with the highlighted element during the tour."
+    },
+    "onMissingStep": {
+      "type": "(stepIndex: number, step: TourStep) => void",
+      "description": "Called when a step's selector does not match any element so consumers can advance, retry, or surface the issue."
     }
   },
   "stepProps": {

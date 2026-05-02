@@ -96,6 +96,11 @@
     "id": {
       "type": "string",
       "description": "Element ID. Also used as the group key in CollapsiblePanelGroup."
+    },
+    "headingLevel": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "3",
+      "description": "Heading level used for the panel title (h1-h6) so the page heading outline reflects the panel."
     }
   },
   "groupProps": {
@@ -144,6 +149,10 @@
     "style": {
       "type": "React.CSSProperties",
       "description": "Inline styles for the group container."
+    },
+    "headingLevel": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "description": "Default heading level for child panels. Defaults to 3 if neither group nor panel specifies one."
     }
   },
   "tabsProps": {

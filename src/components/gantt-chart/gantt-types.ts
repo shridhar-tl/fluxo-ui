@@ -113,6 +113,8 @@ export interface GanttTaskClickEvent {
 export interface GanttTaskCreateEvent {
     start: Date;
     end: Date;
+    rowIndex: number;
+    targetTask?: GanttTask;
     parentTask?: GanttTask;
 }
 

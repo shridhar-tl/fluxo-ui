@@ -31,6 +31,15 @@
     "onClose": {
       "type": "() => void",
       "description": "Called when the popover is dismissed via Escape key or an outside click."
+    },
+    "headingLevel": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "3",
+      "description": "Heading element level used for the title (h1-h6) so it integrates with the page heading outline."
+    },
+    "defaultActionIndex": {
+      "type": "number",
+      "description": "Index of the action to auto-focus when the popover opens. Defaults to the first non-danger action when destructive variants exist, otherwise the last action."
     }
   },
   "staticMethodProps": {

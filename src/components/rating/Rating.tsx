@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     CircleFilledIcon,
     CircleIcon,
@@ -14,7 +14,7 @@ import {
 } from '../../assets/icons';
 import './Rating.scss';
 
-type RatingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type RatingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 type RatingVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';
 type RatingShape = 'star' | 'heart' | 'circle' | 'square' | 'thumb';
 type RatingPrecision = 1 | 0.5 | 0.1;
@@ -48,6 +48,7 @@ const sizeConfig: Record<RatingSize, number> = {
     md: 24,
     lg: 32,
     xl: 40,
+    xxl: 48,
 };
 
 const shapeIconMap: Record<RatingShape, { empty: React.FC<React.SVGProps<SVGSVGElement>>; filled: React.FC<React.SVGProps<SVGSVGElement>> }> = {
@@ -90,6 +91,14 @@ const Rating: React.FC<RatingProps> = ({
     const [internalValue, setInternalValue] = useState(defaultValue);
     const [hoverValue, setHoverValue] = useState<number | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
+    const moveRafRef = useRef<number | null>(null);
+    const pendingMoveRef = useRef<number | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (moveRafRef.current !== null) cancelAnimationFrame(moveRafRef.current);
+        };
+    }, []);
 
     const currentValue = controlledValue !== undefined ? controlledValue : internalValue;
     const displayValue = hoverValue !== null ? hoverValue : currentValue;
@@ -123,8 +132,15 @@ const Rating: React.FC<RatingProps> = ({
         (e: React.PointerEvent<HTMLSpanElement>, index: number) => {
             if (!interactive) return;
             const next = getValueFromPointer(e, index);
-            setHoverValue(next);
-            onHoverChange?.(next);
+            pendingMoveRef.current = next;
+            if (moveRafRef.current !== null) return;
+            moveRafRef.current = requestAnimationFrame(() => {
+                moveRafRef.current = null;
+                const value = pendingMoveRef.current;
+                if (value === null) return;
+                setHoverValue(value);
+                onHoverChange?.(value);
+            });
         },
         [interactive, getValueFromPointer, onHoverChange],
     );
@@ -135,7 +151,7 @@ const Rating: React.FC<RatingProps> = ({
         onHoverChange?.(currentValue);
     }, [interactive, onHoverChange, currentValue]);
 
-    const handleClick = useCallback(
+    const handlePointerActivate = useCallback(
         (e: React.PointerEvent<HTMLSpanElement>, index: number) => {
             if (!interactive) return;
             const next = getValueFromPointer(e, index);
@@ -146,6 +162,19 @@ const Rating: React.FC<RatingProps> = ({
             commit(next);
         },
         [interactive, getValueFromPointer, allowClear, precision, currentValue, commit],
+    );
+
+    const handleClickFallback = useCallback(
+        (index: number) => {
+            if (!interactive) return;
+            const next = index + 1;
+            if (allowClear && precision === 1 && next === currentValue) {
+                commit(0);
+                return;
+            }
+            commit(next);
+        },
+        [interactive, allowClear, precision, currentValue, commit],
     );
 
     const handleKeyDown = useCallback(
@@ -201,18 +230,23 @@ const Rating: React.FC<RatingProps> = ({
                     'eui-rating-item-partial': fillAmount > 0 && fillAmount < 1,
                 })}
                 style={{ width: iconSize, height: iconSize }}
-                title={tooltip}
+                aria-label={tooltip}
                 role="presentation"
                 onPointerMove={(e) => handleMove(e, index)}
-                onPointerDown={(e) => handleClick(e, index)}
+                onPointerDown={(e) => handlePointerActivate(e, index)}
+                onClick={(e) => {
+                    if (e.detail === 0) handleClickFallback(index);
+                }}
             >
-                <span className="eui-rating-item-empty">{empty}</span>
-                <span className="eui-rating-item-filled" style={{ width: `${fillAmount * 100}%`, height: iconSize }}>
+                <span className="eui-rating-item-empty" aria-hidden="true">{empty}</span>
+                <span className="eui-rating-item-filled" style={{ width: `${fillAmount * 100}%`, height: iconSize }} aria-hidden="true">
                     {full}
                 </span>
             </span>
         );
     };
+
+    const valueText = `${currentValue} out of ${count} ${shape}${count === 1 ? '' : 's'}`;
 
     return (
         <div
@@ -229,13 +263,14 @@ const Rating: React.FC<RatingProps> = ({
                 },
                 className,
             )}
-            role="slider"
-            tabIndex={interactive ? 0 : -1}
-            aria-label={ariaLabel ?? 'Rating'}
-            aria-valuemin={0}
-            aria-valuemax={count}
-            aria-valuenow={currentValue}
-            aria-readonly={readOnly}
+            role={readOnly ? 'img' : 'slider'}
+            tabIndex={interactive ? 0 : undefined}
+            aria-label={readOnly ? `${ariaLabel ?? 'Rating'}: ${valueText}` : (ariaLabel ?? 'Rating')}
+            aria-valuemin={readOnly ? undefined : 0}
+            aria-valuemax={readOnly ? undefined : count}
+            aria-valuenow={readOnly ? undefined : currentValue}
+            aria-valuetext={readOnly ? undefined : valueText}
+            aria-readonly={!readOnly && !disabled ? false : undefined}
             aria-disabled={disabled}
             onKeyDown={handleKeyDown}
             onPointerLeave={handleLeave}

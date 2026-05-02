@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDownIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent, ListItem, ListItemGroup } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
@@ -51,6 +51,9 @@ interface DropdownProps<T = any> extends BaseComponentProps {
     readOnly?: boolean;
     optionLabel?: string;
     optionValue?: string;
+    compareFn?: (a: any, b: any) => boolean;
+    ariaLabel?: string;
+    ariaLabelledBy?: string;
 }
 
 export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
@@ -74,14 +77,19 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
             args,
             optionLabel = 'label',
             optionValue = 'value',
+            compareFn,
+            ariaLabel,
+            ariaLabelledBy,
             ...baseProps
         },
         ref,
     ) => {
         const [inputId] = useState(id || generateId());
+        const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
         const [filterValue, setFilterValue] = useState('');
         const [internalValue, setInternalValue] = useState<any>(undefined);
+        const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
         const triggerRef = useRef<HTMLButtonElement>(null);
         const filterInputRef = useRef<HTMLInputElement>(null);
         const combinedRef = (ref as React.RefObject<HTMLButtonElement>) || triggerRef;
@@ -100,21 +108,46 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
             [options, optionLabel, optionValue],
         );
 
-        const selectedItem = flatItems.find((item) => item.value === currentValue) || null;
-        const selectedIndex = selectedItem ? flatItems.findIndex((item) => item.value === currentValue) : -1;
+        const compare = useCallback(
+            (a: any, b: any) => {
+                if (compareFn) return compareFn(a, b);
+                if (a === b) return true;
+                if (a == null || b == null) return false;
+                if (typeof a === 'object' && typeof b === 'object') {
+                    try {
+                        return JSON.stringify(a) === JSON.stringify(b);
+                    } catch {
+                        return false;
+                    }
+                }
+                return false;
+            },
+            [compareFn],
+        );
 
-        const handleSelect = (item: ListItem) => {
+        const selectedItem = flatItems.find((item) => compare(item.value, currentValue)) || null;
+        const selectedIndex = selectedItem ? flatItems.findIndex((item) => compare(item.value, currentValue)) : -1;
+
+        const handleSelect = (item: ListItem, e?: React.SyntheticEvent) => {
             if (!isControlled) {
                 setInternalValue(item.value);
             }
             onChange?.({
-                event: { target: { value: item.value } } as any,
+                event: e,
                 value: item.value,
                 name,
                 args,
             });
             setIsOpen(false);
             setFilterValue('');
+            requestAnimationFrame(() => combinedRef.current?.focus());
+        };
+
+        const openDropdown = () => {
+            if (!disabled && !readonly && !isOpen) {
+                setIsOpen(true);
+                setFilterValue('');
+            }
         };
 
         const handleToggle = () => {
@@ -127,12 +160,34 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
         };
 
         const handleClose = (e?: MouseEvent) => {
-            if (e?.target && combinedRef.current.contains(e?.target as Node)) {
+            if (e?.target && combinedRef.current?.contains(e?.target as Node)) {
                 return;
             }
 
             setIsOpen(false);
             setFilterValue('');
+        };
+
+        const handleTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+            if (disabled || readonly) return;
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                openDropdown();
+                return;
+            }
+            if (e.key === 'Home' || e.key === 'End') {
+                e.preventDefault();
+                openDropdown();
+                return;
+            }
+            if (!isOpen && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                const ch = e.key.toLowerCase();
+                const match = flatItems.find((it) => !it.disabled && it.label.toLowerCase().startsWith(ch));
+                if (match) {
+                    e.preventDefault();
+                    handleSelect(match, e);
+                }
+            }
         };
 
         const resolvedSize = getResolvedSize({ ...baseProps });
@@ -164,15 +219,20 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
                     id={inputId}
                     type="button"
                     onClick={handleToggle}
+                    onKeyDown={handleTriggerKeyDown}
                     disabled={disabled}
                     className={classNames(triggerClasses, className)}
                     style={componentStyles}
                     aria-haspopup="listbox"
                     aria-expanded={isOpen}
+                    aria-controls={isOpen ? listboxId : undefined}
+                    aria-activedescendant={isOpen ? activeOptionId ?? undefined : undefined}
                     aria-required={required}
+                    aria-label={ariaLabel}
+                    aria-labelledby={ariaLabelledBy}
                 >
                     <div className="eui-dropdown-value">{renderValue ? renderValue(selectedItem) : defaultRenderValue(selectedItem)}</div>
-                    <ChevronDownIcon className={classNames('eui-dropdown-chevron', { 'eui-dropdown-chevron-open': isOpen })} />
+                    <ChevronDownIcon className={classNames('eui-dropdown-chevron', { 'eui-dropdown-chevron-open': isOpen })} aria-hidden="true" />
                 </button>
 
                 <Popover
@@ -181,13 +241,15 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
                     triggerElement={combinedRef.current}
                     items={flatItems}
                     groups={groups}
-                    onSelect={handleSelect}
+                    onSelect={(item) => handleSelect(item)}
                     selectedIndex={selectedIndex}
                     renderItem={renderItem}
                     filter={searchable ? filterValue : ''}
                     loading={loading}
                     emptyMessage={emptyMessage}
                     mobileTitle={placeholder}
+                    listboxId={listboxId}
+                    onHighlightChange={(_, optionId) => setActiveOptionId(optionId)}
                     mobileSearch={
                         searchable
                             ? {
@@ -209,6 +271,8 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
                                 onChange={(e) => setFilterValue(e.target.value)}
                                 placeholder="Search..."
                                 className="eui-dropdown-filter-input"
+                                aria-label="Filter options"
+                                aria-controls={listboxId}
                                 onClick={(e) => e.stopPropagation()}
                             />
                         </div>

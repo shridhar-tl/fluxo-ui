@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ensurePartiallyVisible } from '../../utils/layout';
 import { TourTooltip } from './TourTooltip';
@@ -11,12 +11,35 @@ interface StepTourProps {
     initialStep?: number;
     zIndex?: number;
     className?: string;
+    ariaLabel?: string;
+    interactiveHighlight?: boolean;
+    onMissingStep?: (stepIndex: number, step: TourStep) => void;
 }
 
-function StepTour({ steps, isOpen, onClose, initialStep = 0, zIndex = 1000 }: StepTourProps) {
+function StepTour({
+    steps,
+    isOpen,
+    onClose,
+    initialStep = 0,
+    zIndex = 10050,
+    ariaLabel = 'Product tour',
+    interactiveHighlight = false,
+    onMissingStep,
+}: StepTourProps) {
     const sortedSteps = React.useMemo(() => [...steps].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)), [steps]);
     const [current, setCurrent] = useState<number>(initialStep);
     const [highlightRect, setHighlightRect] = useState<DOMRect | null>(null);
+    const generatedId = useId();
+    const safeId = generatedId.replace(/[^a-zA-Z0-9_-]/g, '');
+    const liveRegionId = `eui-tour-live-${safeId}`;
+    const [liveMessage, setLiveMessage] = useState('');
+
+    useEffect(() => {
+        if (!isOpen) return;
+        if (initialStep >= 0 && initialStep < sortedSteps.length) {
+            setCurrent(initialStep);
+        }
+    }, [initialStep, isOpen, sortedSteps.length]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -27,12 +50,17 @@ function StepTour({ steps, isOpen, onClose, initialStep = 0, zIndex = 1000 }: St
             const el = document.querySelector(step.selector);
             if (!el || !(el instanceof HTMLElement)) {
                 setHighlightRect(null);
+                onMissingStep?.(current, step);
+                if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+                    console.warn(`[StepTour] Step ${current} selector "${step.selector}" did not match any element.`);
+                }
                 return;
             }
             ensurePartiallyVisible(el);
             const rect = el.getBoundingClientRect();
             if (rect.width === 0 || rect.height === 0) {
                 setHighlightRect(null);
+                onMissingStep?.(current, step);
                 return;
             }
             setHighlightRect(rect);
@@ -44,7 +72,30 @@ function StepTour({ steps, isOpen, onClose, initialStep = 0, zIndex = 1000 }: St
             window.removeEventListener('resize', updateRect);
             window.removeEventListener('scroll', updateRect, true);
         };
-    }, [current, sortedSteps, isOpen]);
+    }, [current, sortedSteps, isOpen, onMissingStep]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const step = sortedSteps[current];
+        if (!step) return;
+        const titleStr = typeof step.title === 'string' ? step.title : '';
+        const message = `Step ${current + 1} of ${sortedSteps.length}${titleStr ? `: ${titleStr}` : ''}`;
+        setLiveMessage('');
+        const t = window.setTimeout(() => setLiveMessage(message), 30);
+        return () => window.clearTimeout(t);
+    }, [current, isOpen, sortedSteps]);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                onClose();
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, onClose]);
 
     if (!isOpen || !sortedSteps.length) return null;
 
@@ -66,7 +117,7 @@ function StepTour({ steps, isOpen, onClose, initialStep = 0, zIndex = 1000 }: St
     return ReactDOM.createPortal(
         <>
             <Backdrop visible={!!highlightRect} zIndex={zIndex} highlightRect={highlightRect} />
-            {highlightRect && <HighlightOverlay rect={highlightRect} zIndex={zIndex + 1} />}
+            {highlightRect && <HighlightOverlay rect={highlightRect} zIndex={zIndex + 1} interactive={interactiveHighlight} />}
             {highlightRect && (
                 <TourTooltip
                     step={step}
@@ -77,8 +128,19 @@ function StepTour({ steps, isOpen, onClose, initialStep = 0, zIndex = 1000 }: St
                     index={current}
                     total={sortedSteps.length}
                     zIndex={zIndex + 2}
+                    ariaLabel={ariaLabel}
+                    liveRegionId={liveRegionId}
                 />
             )}
+            <div
+                id={liveRegionId}
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                className="eui-visually-hidden"
+            >
+                {liveMessage}
+            </div>
         </>,
         document.body
     );
@@ -92,7 +154,7 @@ interface BackdropProps {
     zIndex?: number;
 }
 
-export const Backdrop: React.FC<BackdropProps> = ({ visible, highlightRect, zIndex = 1000 }) => {
+export const Backdrop: React.FC<BackdropProps> = ({ visible, highlightRect, zIndex = 10050 }) => {
     if (!visible || !highlightRect) return null;
 
     const { top, left, width, height } = highlightRect;
@@ -127,18 +189,21 @@ export const Backdrop: React.FC<BackdropProps> = ({ visible, highlightRect, zInd
 interface HighlightOverlayProps {
     rect: DOMRect;
     zIndex?: number;
+    interactive?: boolean;
 }
 
-function HighlightOverlay({ rect, zIndex = 1001 }: HighlightOverlayProps) {
+function HighlightOverlay({ rect, zIndex = 10051, interactive = false }: HighlightOverlayProps) {
     return (
         <div
             className="eui-tour-highlight"
+            aria-hidden="true"
             style={{
                 top: rect.top + window.scrollY,
                 left: rect.left + window.scrollX,
                 width: rect.width,
                 height: rect.height,
                 zIndex,
+                pointerEvents: interactive ? 'none' : undefined,
             }}
         />
     );

@@ -42,6 +42,33 @@ body.mode-dark {
     }
 }
 
+.eui-sortable-slot {
+    outline: none;
+    border-radius: var(--eui-dnd-drop-radius);
+
+    &:focus-visible {
+        box-shadow: var(--eui-dnd-drop-glow);
+    }
+}
+
+.eui-sortable-item-grabbed {
+    background-color: var(--eui-dnd-drop-bg);
+    box-shadow: var(--eui-dnd-drop-glow);
+    border-radius: var(--eui-dnd-drop-radius);
+}
+
+.eui-sortable-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .eui-droppable {
     position: relative;
     transition: background-color var(--eui-dnd-transition), transform var(--eui-dnd-transition);

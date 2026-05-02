@@ -7,7 +7,12 @@
     "indeterminate": {
       "type": "boolean",
       "default": "false",
-      "description": "Show indeterminate state (partially selected)"
+      "description": "Show indeterminate state (partially selected). Sets aria-checked='mixed' and the native indeterminate flag for SR users"
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+      "default": "'md'",
+      "description": "Checkbox size"
     },
     "disabled": {
       "type": "boolean",

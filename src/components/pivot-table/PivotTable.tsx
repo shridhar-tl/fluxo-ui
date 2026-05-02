@@ -355,9 +355,14 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
         if (headerLevels.length === 0) return null;
 
         return headerLevels.map((level, idx) => (
-            <tr key={idx} className="eui-pivot-header-row">
+            <tr key={idx} className="eui-pivot-header-row" role="row">
                 {idx === 0 && (
-                    <th className="eui-pivot-row-header-cell eui-pivot-corner" rowSpan={headerLevels.length} colSpan={maxRowHeaderDepth || 1}>
+                    <th
+                        className="eui-pivot-row-header-cell eui-pivot-corner"
+                        scope="colgroup"
+                        rowSpan={headerLevels.length}
+                        colSpan={maxRowHeaderDepth || 1}
+                    >
                         {config.rows.map((r, i) => {
                             if (headerTemplate) return <React.Fragment key={r}>{headerTemplate(r, r)}</React.Fragment>;
                             return (
@@ -368,16 +373,24 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
                         })}
                     </th>
                 )}
-                {level.map((col) => (
+                {level.map((col) => {
+                    const isLeaf = col.isLeaf;
+                    const isSortable = sortable && isLeaf && permissions.allowSort;
+                    const sortDir = isSortable && currentSort?.field === col.key
+                        ? (currentSort.direction === 'asc' ? 'ascending' : 'descending')
+                        : isSortable ? 'none' : undefined;
+                    return (
                     <th
                         key={col.key}
                         className={cn('eui-pivot-col-header', {
-                            'eui-pivot-col-header-sortable': sortable && col.isLeaf && permissions.allowSort,
+                            'eui-pivot-col-header-sortable': isSortable,
                             'eui-pivot-col-header-total': col.key === '__total__',
                         })}
-                        colSpan={col.isLeaf ? 1 : col.span}
-                        rowSpan={col.isLeaf ? headerLevels.length - idx : 1}
-                        onClick={sortable && col.isLeaf && permissions.allowSort ? () => handleSort(col.key) : undefined}
+                        scope={isLeaf ? 'col' : 'colgroup'}
+                        aria-sort={sortDir}
+                        colSpan={isLeaf ? 1 : col.span}
+                        rowSpan={isLeaf ? headerLevels.length - idx : 1}
+                        onClick={isSortable ? () => handleSort(col.key) : undefined}
                     >
                         <div className="eui-pivot-col-header-content">
                             {headerTemplate ? headerTemplate(col.key, col.label) : <span>{col.label}</span>}
@@ -388,7 +401,8 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
                             )}
                         </div>
                     </th>
-                ))}
+                    );
+                })}
             </tr>
         ));
     };
@@ -402,6 +416,7 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
         rows.push(
             <tr
                 key={node.key}
+                role="row"
                 className={cn('eui-pivot-data-row', {
                     'eui-pivot-data-row-total': isTotal,
                     'eui-pivot-data-row-subtotal': !isTotal && hasChildren,
@@ -410,8 +425,9 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
                     'eui-pivot-data-row-editable': editable && node.isLeaf,
                 })}
             >
-                <td
+                <th
                     className="eui-pivot-row-label-cell"
+                    scope="row"
                     colSpan={isTotal ? maxRowHeaderDepth || 1 : 1}
                     style={!isTotal ? indentStyle : undefined}
                 >
@@ -434,7 +450,7 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
                             )}
                         </span>
                     </div>
-                </td>
+                </th>
 
                 {!isTotal && maxRowHeaderDepth > 1 && node.depth < maxRowHeaderDepth &&
                     Array.from({ length: maxRowHeaderDepth - node.depth }, (_, i) => (
@@ -621,7 +637,7 @@ function PivotTable<T extends Record<string, unknown> = Record<string, unknown>>
                             <span>Loading...</span>
                         </div>
                     ) : (
-                        <table className="eui-pivot-table-element">
+                        <table className="eui-pivot-table-element" role="grid" aria-label="Pivot table">
                             <thead>{renderColumnHeaders()}</thead>
                             <tbody>
                                 {sortedTopLevel.map((node) => renderRow(node, false))}

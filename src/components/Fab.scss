@@ -20,16 +20,16 @@
 $fab-variants: (
     default: (bg: var(--eui-bg-subtle), color: var(--eui-text), hover-bg: var(--eui-bg-hover), border: var(--eui-border)),
     primary: (bg: var(--eui-primary), color: var(--eui-text-on-primary), hover-bg: var(--eui-primary-hover), border: transparent),
-    success: (bg: #22c55e, color: #fff, hover-bg: #16a34a, border: transparent),
-    warning: (bg: #f59e0b, color: #fff, hover-bg: #d97706, border: transparent),
-    danger: (bg: #ef4444, color: #fff, hover-bg: #dc2626, border: transparent),
-    info: (bg: #06b6d4, color: #fff, hover-bg: #0891b2, border: transparent),
+    success: (bg: #16a34a, color: #fff, hover-bg: #15803d, border: transparent),
+    warning: (bg: #f59e0b, color: #422006, hover-bg: #d97706, border: transparent),
+    danger: (bg: #dc2626, color: #fff, hover-bg: #b91c1c, border: transparent),
+    info: (bg: #0891b2, color: #fff, hover-bg: #0e7490, border: transparent),
     secondary: (bg: var(--eui-bg), color: var(--eui-text), hover-bg: var(--eui-bg-hover), border: var(--eui-border)),
 );
 
 $fab-sizes: (
-    xs: (size: 2rem, icon: 0.875rem, font: 0.7rem, padding: 0 0.5rem, shadow: 0 2px 6px rgba(0,0,0,0.12)),
-    sm: (size: 2.5rem, icon: 1rem, font: 0.8rem, padding: 0 0.75rem, shadow: 0 2px 8px rgba(0,0,0,0.15)),
+    xs: (size: 2.75rem, icon: 1rem, font: 0.7rem, padding: 0 0.75rem, shadow: 0 2px 6px rgba(0,0,0,0.12)),
+    sm: (size: 2.75rem, icon: 1.1rem, font: 0.8rem, padding: 0 0.85rem, shadow: 0 2px 8px rgba(0,0,0,0.15)),
     md: (size: 3rem, icon: 1.25rem, font: 0.875rem, padding: 0 1rem, shadow: 0 3px 10px rgba(0,0,0,0.18)),
     lg: (size: 3.5rem, icon: 1.5rem, font: 1rem, padding: 0 1.25rem, shadow: 0 4px 12px rgba(0,0,0,0.2)),
     xl: (size: 4rem, icon: 1.75rem, font: 1.125rem, padding: 0 1.5rem, shadow: 0 4px 16px rgba(0,0,0,0.22)),
@@ -107,14 +107,34 @@ $fab-sizes: (
 
     &.eui-fab-fixed {
         position: fixed;
-        z-index: 1000;
+        z-index: 10050;
 
-        &.eui-fab-bottom-right { bottom: 1.5rem; right: 1.5rem; }
-        &.eui-fab-bottom-left { bottom: 1.5rem; left: 1.5rem; }
-        &.eui-fab-top-right { top: 1.5rem; right: 1.5rem; }
-        &.eui-fab-top-left { top: 1.5rem; left: 1.5rem; }
-        &.eui-fab-bottom-center { bottom: 1.5rem; left: 50%; transform: translateX(-50%); }
-        &.eui-fab-top-center { top: 1.5rem; left: 50%; transform: translateX(-50%); }
+        &.eui-fab-bottom-right {
+            bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+            right: calc(1.5rem + env(safe-area-inset-right, 0px));
+        }
+        &.eui-fab-bottom-left {
+            bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+            left: calc(1.5rem + env(safe-area-inset-left, 0px));
+        }
+        &.eui-fab-top-right {
+            top: calc(1.5rem + env(safe-area-inset-top, 0px));
+            right: calc(1.5rem + env(safe-area-inset-right, 0px));
+        }
+        &.eui-fab-top-left {
+            top: calc(1.5rem + env(safe-area-inset-top, 0px));
+            left: calc(1.5rem + env(safe-area-inset-left, 0px));
+        }
+        &.eui-fab-bottom-center {
+            bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        &.eui-fab-top-center {
+            top: calc(1.5rem + env(safe-area-inset-top, 0px));
+            left: 50%;
+            transform: translateX(-50%);
+        }
     }
 
     &.eui-fab-disabled {
@@ -125,6 +145,6 @@ $fab-sizes: (
 
     &:focus-visible {
         outline: none;
-        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+        box-shadow: 0 0 0 2px var(--eui-bg), 0 0 0 4px var(--eui-primary);
     }
 }

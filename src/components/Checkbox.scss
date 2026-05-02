@@ -26,6 +26,18 @@
         opacity: 0.5;
     }
 
+    &.eui-checkbox-xs .eui-checkbox-box { width: 0.85rem;  height: 0.85rem; }
+    &.eui-checkbox-sm .eui-checkbox-box { width: 1rem;     height: 1rem; }
+    &.eui-checkbox-md .eui-checkbox-box { width: 1.25rem;  height: 1.25rem; }
+    &.eui-checkbox-lg .eui-checkbox-box { width: 1.5rem;   height: 1.5rem; }
+    &.eui-checkbox-xl .eui-checkbox-box { width: 1.75rem;  height: 1.75rem; }
+
+    &.eui-checkbox-xs .eui-checkbox-box svg { width: 0.55rem; height: 0.55rem; }
+    &.eui-checkbox-sm .eui-checkbox-box svg { width: 0.65rem; height: 0.65rem; }
+    &.eui-checkbox-md .eui-checkbox-box svg { width: 0.75rem; height: 0.75rem; }
+    &.eui-checkbox-lg .eui-checkbox-box svg { width: 0.95rem; height: 0.95rem; }
+    &.eui-checkbox-xl .eui-checkbox-box svg { width: 1.15rem; height: 1.15rem; }
+
     .eui-checkbox-input-wrapper {
         position: relative;
         flex-shrink: 0;

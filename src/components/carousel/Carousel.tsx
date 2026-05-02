@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, MenuIcon, PauseIcon, PlayIcon, TimesIcon } from '../../assets/icons';
 import CarouselSlideRenderer from './CarouselSlide';
 import type { CarouselSlideData } from './CarouselSlide';
 import CarouselThumbnails from './CarouselThumbnails';
@@ -37,19 +38,23 @@ interface CarouselProps {
     className?: string;
     slideClassName?: string;
     aspectRatio?: string;
+    ariaLabel?: string;
+    showAutoplayToggle?: boolean;
 }
 
-const arrowLeftSvg = (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="15 18 9 12 15 6" />
-    </svg>
-);
+const focusableSelector = [
+    'button:not([disabled])',
+    '[href]:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"]):not([disabled])',
+].join(',');
 
-const arrowRightSvg = (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="9 6 15 12 9 18" />
-    </svg>
-);
+const reducedMotionMatches = () => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
 
 function Carousel({
     slides,
@@ -69,23 +74,39 @@ function Carousel({
     className,
     slideClassName,
     aspectRatio,
+    ariaLabel = 'Image carousel',
+    showAutoplayToggle = true,
 }: CarouselProps) {
     const [internalIndex, setInternalIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
-    const [isPaused, setIsPaused] = useState(false);
+    const [hoverPause, setHoverPause] = useState(false);
+    const [focusPause, setFocusPause] = useState(false);
+    const [autoplayActive, setAutoplayActive] = useState(autoplay);
     const [hamburgerOpen, setHamburgerOpen] = useState(false);
+    const [slideAnnouncement, setSlideAnnouncement] = useState('');
     const trackRef = useRef<HTMLDivElement>(null);
     const pointerStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
-    const autoplayTimerRef = useRef<ReturnType<typeof setInterval>>(undefined);
+    const autoplayTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
     const containerRef = useRef<HTMLDivElement>(null);
+    const hamburgerPanelRef = useRef<HTMLDivElement>(null);
+    const hamburgerTriggerRef = useRef<HTMLButtonElement>(null);
+    const generatedId = useId();
+    const baseId = `eui-carousel-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
     const isControlled = controlledIndex !== undefined;
     const currentIndex = isControlled ? controlledIndex : internalIndex;
     const slideCount = slides.length;
+    const reducedMotion = reducedMotionMatches();
 
     const dotsVisible = showDots !== undefined ? showDots : navigation === 'dots';
     const arrowsVisible = showArrows !== undefined ? showArrows : navigation === 'arrows' || navigation === 'thumbnails';
     const thumbnailsVisible = navigation === 'thumbnails';
+
+    useEffect(() => {
+        setAutoplayActive(autoplay);
+    }, [autoplay]);
+
+    const isPaused = hoverPause || focusPause || !autoplayActive;
 
     const goTo = useCallback((index: number) => {
         let nextIndex = index;
@@ -97,12 +118,12 @@ function Carousel({
 
         if (nextIndex === currentIndex) return;
 
-        setIsTransitioning(true);
+        if (!reducedMotion) setIsTransitioning(true);
         if (!isControlled) {
             setInternalIndex(nextIndex);
         }
         onSlideChange?.(nextIndex);
-    }, [currentIndex, isControlled, loop, onSlideChange, slideCount]);
+    }, [currentIndex, isControlled, loop, onSlideChange, slideCount, reducedMotion]);
 
     const goNext = useCallback(() => {
         if (!loop && currentIndex >= slideCount - 1) return;
@@ -115,19 +136,28 @@ function Carousel({
     }, [currentIndex, goTo, loop]);
 
     useEffect(() => {
-        if (isTransitioning) {
-            const timer = setTimeout(() => setIsTransitioning(false), 400);
-            return () => clearTimeout(timer);
-        }
-    }, [isTransitioning, currentIndex]);
+        if (!isTransitioning) return;
+        const timer = window.setTimeout(() => setIsTransitioning(false), reducedMotion ? 0 : 400);
+        return () => window.clearTimeout(timer);
+    }, [isTransitioning, reducedMotion]);
 
     useEffect(() => {
-        if (autoplay && !isPaused && slideCount > 1) {
+        if (slideCount === 0) return;
+        const slide = slides[currentIndex];
+        const name = slide?.name ?? slide?.alt ?? `Slide ${currentIndex + 1}`;
+        const message = `Slide ${currentIndex + 1} of ${slideCount}: ${name}`;
+        setSlideAnnouncement('');
+        const t = window.setTimeout(() => setSlideAnnouncement(message), 30);
+        return () => window.clearTimeout(t);
+    }, [currentIndex, slideCount, slides]);
+
+    useEffect(() => {
+        if (autoplayActive && !isPaused && slideCount > 1) {
             autoplayTimerRef.current = setInterval(goNext, autoplayInterval);
             return () => clearInterval(autoplayTimerRef.current);
         }
         return () => clearInterval(autoplayTimerRef.current);
-    }, [autoplay, autoplayInterval, goNext, isPaused, slideCount]);
+    }, [autoplayActive, autoplayInterval, goNext, isPaused, slideCount]);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -146,6 +176,58 @@ function Carousel({
         container.addEventListener('keydown', handleKeyDown);
         return () => container.removeEventListener('keydown', handleKeyDown);
     }, [goNext, goPrev]);
+
+    useEffect(() => {
+        if (!hamburgerOpen) return;
+
+        const previousFocus = document.activeElement as HTMLElement | null;
+        const focusFrame = requestAnimationFrame(() => {
+            const panel = hamburgerPanelRef.current;
+            if (!panel) return;
+            const focusable = panel.querySelectorAll<HTMLElement>(focusableSelector);
+            if (focusable.length > 0) focusable[0].focus();
+            else panel.focus();
+        });
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                setHamburgerOpen(false);
+                hamburgerTriggerRef.current?.focus();
+                return;
+            }
+            if (e.key !== 'Tab') return;
+            const panel = hamburgerPanelRef.current;
+            if (!panel) return;
+            const focusable = Array.from(panel.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+                (el) => el.tabIndex !== -1,
+            );
+            if (focusable.length === 0) {
+                e.preventDefault();
+                panel.focus();
+                return;
+            }
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            cancelAnimationFrame(focusFrame);
+            document.removeEventListener('keydown', handleKeyDown);
+            previousFocus?.focus?.();
+        };
+    }, [hamburgerOpen]);
 
     const handlePointerDown = useCallback((e: React.PointerEvent) => {
         if (!swipeable) return;
@@ -179,8 +261,8 @@ function Carousel({
 
     const trackStyle: React.CSSProperties = useMemo(() => ({
         transform: `translateX(-${currentIndex * 100}%)`,
-        transition: isTransitioning ? 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
-    }), [currentIndex, isTransitioning]);
+        transition: isTransitioning && !reducedMotion ? 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
+    }), [currentIndex, isTransitioning, reducedMotion]);
 
     const canGoPrev = loop || currentIndex > 0;
     const canGoNext = loop || currentIndex < slideCount - 1;
@@ -192,6 +274,7 @@ function Carousel({
     const handleHamburgerSelect = useCallback((index: number) => {
         goTo(index);
         setHamburgerOpen(false);
+        hamburgerTriggerRef.current?.focus();
     }, [goTo]);
 
     const renderThumbnails = (pos: 'top' | 'bottom' | 'left' | 'right') => (
@@ -209,9 +292,12 @@ function Carousel({
 
         return (
             <div
+                ref={hamburgerPanelRef}
                 className={classNames('eui-carousel-hamburger-panel', `eui-carousel-hamburger-${thumbnailPosition}`)}
                 role="dialog"
+                aria-modal="true"
                 aria-label="Slide list"
+                tabIndex={-1}
             >
                 <div className="eui-carousel-hamburger-header">
                     <span className="eui-carousel-hamburger-title">Slides</span>
@@ -221,9 +307,7 @@ function Carousel({
                         type="button"
                         aria-label="Close slide list"
                     >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
+                        <TimesIcon aria-hidden="true" />
                     </button>
                 </div>
                 <div className="eui-carousel-hamburger-list" role="listbox" aria-label="Available slides">
@@ -258,9 +342,7 @@ function Carousel({
                                 </div>
                                 {isActive && (
                                     <span className="eui-carousel-hamburger-active-badge" aria-hidden="true">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                            <polyline points="20 6 9 17 4 12" />
-                                        </svg>
+                                        <CheckIcon />
                                     </span>
                                 )}
                             </button>
@@ -274,15 +356,19 @@ function Carousel({
     const isInline = thumbnailMode === 'inline';
 
     return (
-        <div
+        <section
             ref={containerRef}
             className={classNames('eui-carousel', layoutClass, className)}
-            role="region"
             aria-roledescription="carousel"
-            aria-label="Image carousel"
+            aria-label={ariaLabel}
             tabIndex={0}
-            onMouseEnter={() => autoplay && setIsPaused(true)}
-            onMouseLeave={() => autoplay && setIsPaused(false)}
+            onMouseEnter={() => setHoverPause(true)}
+            onMouseLeave={() => setHoverPause(false)}
+            onFocusCapture={() => setFocusPause(true)}
+            onBlurCapture={(e) => {
+                if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+                setFocusPause(false);
+            }}
         >
             {thumbnailsVisible && isInline && (thumbnailPosition === 'top' || thumbnailPosition === 'left') && renderThumbnails(thumbnailPosition)}
 
@@ -294,17 +380,32 @@ function Carousel({
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUp}
                     onPointerCancel={handlePointerCancel}
+                    aria-live={autoplayActive ? 'off' : 'polite'}
                 >
-                    {slides.map((slide, index) => (
-                        <CarouselSlideRenderer
-                            key={slide.id}
-                            slide={slide as CarouselSlideData}
-                            isActive={index === currentIndex}
-                            lazyLoad={lazyLoad}
-                            aspectRatio={aspectRatio}
-                            className={slideClassName}
-                        />
-                    ))}
+                    {slides.map((slide, index) => {
+                        const slideId = `${baseId}-slide-${index}`;
+                        const isActive = index === currentIndex;
+                        return (
+                            <div
+                                key={slide.id}
+                                id={slideId}
+                                role="group"
+                                aria-roledescription="slide"
+                                aria-label={`${index + 1} of ${slideCount}${slide.name ? `: ${slide.name}` : ''}`}
+                                aria-hidden={!isActive}
+                                inert={!isActive}
+                                className="eui-carousel-slide-wrapper"
+                            >
+                                <CarouselSlideRenderer
+                                    slide={slide as CarouselSlideData}
+                                    isActive={isActive}
+                                    lazyLoad={lazyLoad}
+                                    aspectRatio={aspectRatio}
+                                    className={slideClassName}
+                                />
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {arrowsVisible && slideCount > 1 && (
@@ -318,7 +419,7 @@ function Carousel({
                             aria-label="Previous slide"
                             type="button"
                         >
-                            {arrowLeftSvg}
+                            <ChevronLeftIcon aria-hidden="true" />
                         </button>
                         <button
                             className={classNames('eui-carousel-arrow eui-carousel-arrow-next', {
@@ -329,24 +430,34 @@ function Carousel({
                             aria-label="Next slide"
                             type="button"
                         >
-                            {arrowRightSvg}
+                            <ChevronRightIcon aria-hidden="true" />
                         </button>
                     </>
                 )}
 
+                {autoplay && showAutoplayToggle && slideCount > 1 && (
+                    <button
+                        className="eui-carousel-autoplay-toggle"
+                        onClick={() => setAutoplayActive((p) => !p)}
+                        aria-label={autoplayActive ? 'Pause autoplay' : 'Start autoplay'}
+                        aria-pressed={!autoplayActive}
+                        type="button"
+                    >
+                        {autoplayActive ? <PauseIcon aria-hidden="true" /> : <PlayIcon aria-hidden="true" />}
+                    </button>
+                )}
+
                 {thumbnailsVisible && !isInline && (
                     <button
+                        ref={hamburgerTriggerRef}
                         className="eui-carousel-hamburger-btn"
                         onClick={() => setHamburgerOpen((p) => !p)}
                         aria-label="Toggle slide list"
                         aria-expanded={hamburgerOpen}
+                        aria-haspopup="dialog"
                         type="button"
                     >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <line x1="3" y1="12" x2="21" y2="12" />
-                            <line x1="3" y1="18" x2="21" y2="18" />
-                        </svg>
+                        <MenuIcon aria-hidden="true" />
                     </button>
                 )}
             </div>
@@ -357,22 +468,32 @@ function Carousel({
 
             {dotsVisible && slideCount > 1 && (
                 <div className="eui-carousel-dots" role="tablist" aria-label="Slide indicators">
-                    {slides.map((slide, index) => (
-                        <button
-                            key={slide.id}
-                            className={classNames('eui-carousel-dot', {
-                                'eui-carousel-dot-active': index === currentIndex,
-                            })}
-                            onClick={() => goTo(index)}
-                            role="tab"
-                            aria-selected={index === currentIndex}
-                            aria-label={`Go to slide ${index + 1}`}
-                            type="button"
-                        />
-                    ))}
+                    {slides.map((slide, index) => {
+                        const slideId = `${baseId}-slide-${index}`;
+                        const isActive = index === currentIndex;
+                        return (
+                            <button
+                                key={slide.id}
+                                className={classNames('eui-carousel-dot', {
+                                    'eui-carousel-dot-active': isActive,
+                                })}
+                                onClick={() => goTo(index)}
+                                role="tab"
+                                aria-selected={isActive}
+                                aria-controls={slideId}
+                                aria-label={`Go to slide ${index + 1}`}
+                                tabIndex={isActive ? 0 : -1}
+                                type="button"
+                            />
+                        );
+                    })}
                 </div>
             )}
-        </div>
+
+            <div className="eui-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+                {slideAnnouncement}
+            </div>
+        </section>
     );
 }
 

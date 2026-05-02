@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import React, { useCallback, useContext, useId, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { ChevronDownIcon } from '../../assets/icons';
 import './collapsible-panel.scss';
 
 export type CollapsiblePanelVariant = 'default' | 'bordered' | 'elevated' | 'ghost' | 'separated';
@@ -29,24 +30,22 @@ export interface CollapsiblePanelProps {
     lazy?: boolean;
     destroyOnCollapse?: boolean;
     id?: string;
+    headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 interface GroupContextValue {
     variant?: CollapsiblePanelVariant;
     size?: CollapsiblePanelSize;
     iconPosition?: CollapsiblePanelIconPosition;
+    headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
     activeKeys: Set<string>;
     toggle: (key: string) => void;
     accordion: boolean;
+    registerHeader: (id: string, el: HTMLButtonElement | null) => void;
+    onHeaderKeyDown: (id: string, e: React.KeyboardEvent) => void;
 }
 
 const GroupContext = React.createContext<GroupContextValue | null>(null);
-
-const defaultExpandIcon = (
-    <svg className="eui-cp-chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-        <path fillRule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clipRule="evenodd" />
-    </svg>
-);
 
 export const CollapsiblePanel: React.FC<CollapsiblePanelProps> = ({
     children,
@@ -71,9 +70,11 @@ export const CollapsiblePanel: React.FC<CollapsiblePanelProps> = ({
     lazy = false,
     destroyOnCollapse = false,
     id: idProp,
+    headingLevel: headingLevelProp,
 }) => {
     const autoId = useId();
-    const panelId = idProp || autoId;
+    const safeAutoId = autoId.replace(/[^a-zA-Z0-9_-]/g, '');
+    const panelId = idProp || `eui-cp-${safeAutoId}`;
     const headerId = `${panelId}-header`;
     const contentId = `${panelId}-content`;
 
@@ -82,12 +83,15 @@ export const CollapsiblePanel: React.FC<CollapsiblePanelProps> = ({
     const variant = variantProp ?? group?.variant ?? 'default';
     const size = sizeProp ?? group?.size ?? 'md';
     const iconPosition = iconPositionProp ?? group?.iconPosition ?? 'end';
+    const headingLevel = headingLevelProp ?? group?.headingLevel ?? 3;
+    const HeadingTag = `h${headingLevel}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
     const isGroupControlled = group !== null;
     const groupKey = panelId;
 
     const [internalOpen, setInternalOpen] = useState(defaultOpen);
     const hasRendered = useRef(false);
+    const headerButtonRef = useRef<HTMLButtonElement | null>(null);
 
     const isOpen = isGroupControlled
         ? group.activeKeys.has(groupKey)
@@ -97,6 +101,21 @@ export const CollapsiblePanel: React.FC<CollapsiblePanelProps> = ({
 
     if (isOpen) {
         hasRendered.current = true;
+    }
+
+    useEffect(() => {
+        if (!group) return;
+        group.registerHeader(groupKey, headerButtonRef.current);
+        return () => {
+            group.registerHeader(groupKey, null);
+        };
+    }, [group, groupKey]);
+
+    if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+        const oneIconProvided = !!expandIcon !== !!collapseIcon;
+        if (oneIconProvided) {
+            console.warn('[CollapsiblePanel] Provide both `expandIcon` and `collapseIcon` together to avoid an inconsistent indicator across states.');
+        }
     }
 
     const toggle = useCallback(() => {
@@ -115,14 +134,13 @@ export const CollapsiblePanel: React.FC<CollapsiblePanelProps> = ({
         }
     }, [disabled, isGroupControlled, group, groupKey, controlledOpen, onToggle]);
 
-    const handleKeyDown = useCallback(
+    const handleHeaderKeyDown = useCallback(
         (e: React.KeyboardEvent) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggle();
+            if (group) {
+                group.onHeaderKeyDown(groupKey, e);
             }
         },
-        [toggle],
+        [group, groupKey],
     );
 
     const shouldRender = lazy ? hasRendered.current : true;
@@ -130,32 +148,27 @@ export const CollapsiblePanel: React.FC<CollapsiblePanelProps> = ({
 
     const toggleIndicator = useMemo(() => {
         if (expandIcon || collapseIcon) {
-            return isOpen ? (collapseIcon ?? expandIcon) : expandIcon;
+            return isOpen ? (collapseIcon ?? expandIcon) : (expandIcon ?? collapseIcon);
         }
-        return defaultExpandIcon;
+        return <ChevronDownIcon className="eui-cp-chevron" aria-hidden="true" />;
     }, [isOpen, expandIcon, collapseIcon]);
 
-    const headerContent = headerTemplate ? (
+    const headerInner = headerTemplate ? (
         headerTemplate({ isOpen, toggle })
     ) : (
         <>
             {iconPosition === 'start' && (
-                <span className={classNames('eui-cp-indicator', { 'eui-cp-indicator-open': isOpen })}>
+                <span className={classNames('eui-cp-indicator', { 'eui-cp-indicator-open': isOpen })} aria-hidden="true">
                     {toggleIndicator}
                 </span>
             )}
-            {icon && <span className="eui-cp-icon">{icon}</span>}
+            {icon && <span className="eui-cp-icon" aria-hidden="true">{icon}</span>}
             <span className="eui-cp-title-group">
                 <span className="eui-cp-title">{title}</span>
                 {subtitle && <span className="eui-cp-subtitle">{subtitle}</span>}
             </span>
-            {headerActions && (
-                <span className="eui-cp-actions" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
-                    {headerActions}
-                </span>
-            )}
             {iconPosition === 'end' && (
-                <span className={classNames('eui-cp-indicator', { 'eui-cp-indicator-open': isOpen })}>
+                <span className={classNames('eui-cp-indicator', { 'eui-cp-indicator-open': isOpen })} aria-hidden="true">
                     {toggleIndicator}
                 </span>
             )}
@@ -177,24 +190,33 @@ export const CollapsiblePanel: React.FC<CollapsiblePanelProps> = ({
             style={style}
             id={panelId}
         >
-            <div
-                className={classNames('eui-cp-header', headerClassName)}
-                role="button"
-                tabIndex={disabled ? -1 : 0}
-                aria-expanded={isOpen}
-                aria-controls={contentId}
-                aria-disabled={disabled || undefined}
-                id={headerId}
-                onClick={toggle}
-                onKeyDown={handleKeyDown}
-            >
-                {headerContent}
+            <div className="eui-cp-header-row">
+                <HeadingTag className="eui-cp-heading">
+                    <button
+                        ref={headerButtonRef}
+                        type="button"
+                        className={classNames('eui-cp-header', headerClassName)}
+                        aria-expanded={isOpen}
+                        aria-controls={contentId}
+                        disabled={disabled}
+                        id={headerId}
+                        onClick={toggle}
+                        onKeyDown={handleHeaderKeyDown}
+                    >
+                        {headerInner}
+                    </button>
+                </HeadingTag>
+                {headerTemplate ? null : headerActions ? (
+                    <div className="eui-cp-actions" onClick={(e) => e.stopPropagation()}>
+                        {headerActions}
+                    </div>
+                ) : null}
             </div>
             <div
                 className={classNames('eui-cp-body', { 'eui-cp-body-open': isOpen })}
-                role="region"
                 aria-labelledby={headerId}
                 id={contentId}
+                inert={!isOpen}
             >
                 <div className={classNames('eui-cp-content', contentClassName)}>
                     {shouldRender && shouldShow && children}
@@ -221,6 +243,7 @@ export interface CollapsiblePanelGroupProps {
     style?: React.CSSProperties;
     gap?: number;
     onChange?: (openKeys: string[]) => void;
+    headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 export const CollapsiblePanelGroup: React.FC<CollapsiblePanelGroupProps> = ({
@@ -234,8 +257,47 @@ export const CollapsiblePanelGroup: React.FC<CollapsiblePanelGroupProps> = ({
     style,
     gap,
     onChange,
+    headingLevel,
 }) => {
     const [activeKeys, setActiveKeys] = useState<Set<string>>(() => new Set(defaultOpenKeys));
+    const headerOrderRef = useRef<string[]>([]);
+    const headerRefsRef = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+    const registerHeader = useCallback((id: string, el: HTMLButtonElement | null) => {
+        if (el) {
+            headerRefsRef.current.set(id, el);
+            if (!headerOrderRef.current.includes(id)) {
+                headerOrderRef.current.push(id);
+            }
+        } else {
+            headerRefsRef.current.delete(id);
+            headerOrderRef.current = headerOrderRef.current.filter((x) => x !== id);
+        }
+    }, []);
+
+    const onHeaderKeyDown = useCallback((id: string, e: React.KeyboardEvent) => {
+        const order = headerOrderRef.current;
+        const idx = order.indexOf(id);
+        if (idx === -1) return;
+        const focusAt = (i: number) => {
+            const targetId = order[i];
+            if (!targetId) return;
+            headerRefsRef.current.get(targetId)?.focus();
+        };
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            focusAt((idx + 1) % order.length);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            focusAt((idx - 1 + order.length) % order.length);
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            focusAt(0);
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            focusAt(order.length - 1);
+        }
+    }, []);
 
     const toggle = useCallback(
         (key: string) => {
@@ -255,8 +317,8 @@ export const CollapsiblePanelGroup: React.FC<CollapsiblePanelGroupProps> = ({
     );
 
     const ctxValue = useMemo<GroupContextValue>(
-        () => ({ variant, size, iconPosition, activeKeys, toggle, accordion }),
-        [variant, size, iconPosition, activeKeys, toggle, accordion],
+        () => ({ variant, size, iconPosition, headingLevel, activeKeys, toggle, accordion, registerHeader, onHeaderKeyDown }),
+        [variant, size, iconPosition, headingLevel, activeKeys, toggle, accordion, registerHeader, onHeaderKeyDown],
     );
 
     const groupStyle = useMemo<React.CSSProperties>(
@@ -272,7 +334,6 @@ export const CollapsiblePanelGroup: React.FC<CollapsiblePanelGroupProps> = ({
             <div
                 className={classNames('eui-cp-group', className)}
                 style={groupStyle}
-                role="presentation"
             >
                 {children}
             </div>

@@ -8,3 +8,4 @@ export { default as SkeletonButton } from './SkeletonButton';
 export { default as SkeletonCard } from './SkeletonCard';
 export { default as SkeletonImage } from './SkeletonImage';
 export { default as SkeletonText } from './SkeletonText';
+export { Skeleton, SkeletonLine, SkeletonRect } from './Skeleton';

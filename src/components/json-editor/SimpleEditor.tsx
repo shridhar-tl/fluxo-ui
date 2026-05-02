@@ -9,6 +9,7 @@ const SimpleEditor: React.FC<EditorNodeProps> = ({
     name,
     value,
     displayName,
+    depth,
     onChange,
     onNameChange,
     onRemove,
@@ -85,8 +86,14 @@ const SimpleEditor: React.FC<EditorNodeProps> = ({
         return { displayVal, strVal: strVal! };
     }, [value]);
 
+    const isRootLeaf = name === undefined;
+
     return (
-        <div className={`eui-je-node eui-je-node-${type}`}>
+        <div
+            className={`eui-je-node eui-je-node-${type}`}
+            role={isRootLeaf ? undefined : 'treeitem'}
+            aria-level={isRootLeaf ? undefined : depth + 1}
+        >
             <span className="eui-je-node-row">
                 <ItemNameDisplay
                     name={name}

@@ -119,6 +119,12 @@
     }
 }
 
+.eui-accordion-item-heading {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
 .eui-accordion-item-panel {
     display: grid;
     grid-template-rows: 0fr;

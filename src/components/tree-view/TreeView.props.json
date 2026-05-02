@@ -67,6 +67,11 @@
     "filterText": {
       "type": "string",
       "description": "Filter string to show only matching nodes."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Tree'",
+      "description": "Accessible name for the tree announced to screen readers."
     }
   },
   "nodeProps": {

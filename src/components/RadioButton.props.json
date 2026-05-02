@@ -44,6 +44,22 @@
       "default": "vertical",
       "description": "Layout orientation (vertical or horizontal)"
     },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the radiogroup"
+    },
+    "ariaLabelledBy": {
+      "type": "string",
+      "description": "ID of the element that labels the radiogroup"
+    },
+    "ariaDescribedBy": {
+      "type": "string",
+      "description": "ID(s) of element(s) that describe the radiogroup (hint or error text). Auto-set by FieldLabel."
+    },
+    "invalid": {
+      "type": "boolean",
+      "description": "Marks the group as invalid (sets aria-invalid)"
+    },
     "className": {
       "type": "string",
       "description": "Additional CSS classes"

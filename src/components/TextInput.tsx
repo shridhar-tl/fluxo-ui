@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { forwardRef, ReactNode, useState } from 'react';
+import { TimesIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
 import './TextInput.scss';
@@ -18,6 +19,11 @@ interface TextInputProps extends BaseComponentProps, Omit<React.InputHTMLAttribu
     id?: string;
     leftIcon?: ReactNode;
     rightIcon?: ReactNode;
+    error?: string | boolean;
+    invalid?: boolean;
+    helperText?: ReactNode;
+    clearable?: boolean;
+    onClear?: () => void;
 }
 
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
@@ -40,6 +46,12 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             args,
             leftIcon,
             rightIcon,
+            error,
+            invalid,
+            helperText,
+            clearable = false,
+            onClear,
+            'aria-describedby': ariaDescribedBy,
             ...baseProps
         },
         ref,
@@ -72,13 +84,19 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         };
 
         const resolvedSize = getResolvedSize({ ...baseProps });
+        const errorMessage = typeof error === 'string' ? error : undefined;
+        const hasError = invalid === true || error === true || (typeof error === 'string' && error.length > 0);
+        const helperId = helperText ? `${inputId}-helper` : undefined;
+        const errorId = errorMessage ? `${inputId}-error` : undefined;
+        const describedBy = [ariaDescribedBy, helperId, errorId].filter(Boolean).join(' ') || undefined;
+
         const componentClasses = getComponentClasses(
-            { ...baseProps, disabled, className },
+            { ...baseProps, disabled, className: classNames(className, { 'eui-text-input-error': hasError }) },
             classNames('eui-text-input', `eui-text-input-${resolvedSize}`, {
                 'eui-text-input-readonly': readonly,
                 'eui-text-input-disabled': disabled,
                 'eui-text-input-has-left': leftIcon,
-                'eui-text-input-has-right': rightIcon,
+                'eui-text-input-has-right': rightIcon || (clearable && (isControlled ? value : internalValue)),
             }),
         );
 
@@ -88,6 +106,23 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         delete componentStyles.fontSize;
 
         const displayValue = isControlled ? value : internalValue;
+        const ariaInvalid = hasError ? 'true' : (required && !displayValue ? 'true' : 'false');
+
+        const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {
+            if (disabled || readonly) return;
+            if (!isControlled) {
+                setInternalValue('');
+            }
+            if (onChange) {
+                onChange({
+                    event: e,
+                    value: '',
+                    name,
+                    args,
+                });
+            }
+            onClear?.();
+        };
 
         const inputControl = (
             <input
@@ -107,20 +142,48 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
                 disabled={disabled}
                 className={componentClasses}
                 style={componentStyles}
-                aria-invalid={required && !displayValue ? 'true' : 'false'}
+                aria-invalid={ariaInvalid}
                 aria-required={required}
+                aria-describedby={describedBy}
+                aria-errormessage={errorId}
             />
         );
 
-        if (!leftIcon && !rightIcon) {
+        const showClear = clearable && !!displayValue && !disabled && !readonly;
+        const wrapNeeded = leftIcon || rightIcon || showClear || helperText || errorMessage;
+
+        if (!wrapNeeded) {
             return inputControl;
         }
 
         return (
-            <span className="eui-text-input-wrap">
-                {leftIcon && <span className="eui-text-input-icon eui-text-input-icon-left">{renderIcon(leftIcon)}</span>}
-                {inputControl}
-                {rightIcon && <span className="eui-text-input-icon eui-text-input-icon-right">{renderIcon(rightIcon)}</span>}
+            <span className="eui-text-input-wrap-outer">
+                <span className="eui-text-input-wrap">
+                    {leftIcon && <span className="eui-text-input-icon eui-text-input-icon-left">{renderIcon(leftIcon)}</span>}
+                    {inputControl}
+                    {showClear && !rightIcon && (
+                        <button
+                            type="button"
+                            className="eui-text-input-clear"
+                            onClick={handleClear}
+                            tabIndex={-1}
+                            aria-label="Clear input"
+                        >
+                            <TimesIcon />
+                        </button>
+                    )}
+                    {rightIcon && <span className="eui-text-input-icon eui-text-input-icon-right">{renderIcon(rightIcon)}</span>}
+                </span>
+                {helperText && !errorMessage && (
+                    <span id={helperId} className="eui-text-input-helper">
+                        {helperText}
+                    </span>
+                )}
+                {errorMessage && (
+                    <span id={errorId} className="eui-text-input-error-message" role="alert">
+                        {errorMessage}
+                    </span>
+                )}
             </span>
         );
     },

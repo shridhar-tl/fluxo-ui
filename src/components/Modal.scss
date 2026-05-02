@@ -26,7 +26,7 @@
 .eui-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -48,11 +48,40 @@
     transform: scale(1);
     opacity: 1;
     transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    outline: none;
 
     &.eui-modal-sm { max-width: 28rem; }
     &.eui-modal-md { max-width: 32rem; }
     &.eui-modal-lg { max-width: 42rem; }
     &.eui-modal-xl { max-width: 56rem; }
+    &.eui-modal-fullScreen {
+        max-width: none;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+    }
+}
+
+@media (max-width: $bp-sm) {
+    .eui-modal-overlay {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .eui-modal {
+        max-height: 100%;
+        border-radius: 0;
+
+        &.eui-modal-sm,
+        &.eui-modal-md,
+        &.eui-modal-lg,
+        &.eui-modal-xl {
+            max-width: none;
+            width: 100%;
+            height: 100%;
+        }
+    }
 }
 
 .eui-modal-header {
@@ -62,6 +91,10 @@
     padding: 1.5rem;
     border-bottom: 1px solid var(--eui-border);
     flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    background-color: var(--eui-bg);
+    z-index: 1;
 }
 
 .eui-modal-title {
@@ -90,8 +123,9 @@
         background-color: var(--eui-bg-hover);
     }
 
-    &:focus {
-        box-shadow: 0 0 0 2px var(--eui-primary);
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
     }
 }
 
@@ -100,6 +134,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
+    flex: 1 1 auto;
 
     &.eui-modal-body-no-title {
         padding-top: 2rem;
@@ -129,8 +164,9 @@
         background-color: var(--eui-bg-hover);
     }
 
-    &:focus {
-        box-shadow: 0 0 0 2px var(--eui-primary);
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
     }
 }
 
@@ -142,4 +178,8 @@
     padding: 1rem 1.5rem;
     border-top: 1px solid var(--eui-border);
     flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    background-color: var(--eui-bg);
+    z-index: 1;
 }

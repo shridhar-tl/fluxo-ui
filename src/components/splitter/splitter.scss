@@ -24,6 +24,14 @@
         user-select: none;
         background-color: var(--eui-border-subtle);
         transition: background-color 0.15s ease;
+        touch-action: none;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
 
         &:focus {
             outline: none;
@@ -48,10 +56,30 @@
 
         &.eui-splitter-gutter-horizontal {
             cursor: col-resize;
+
+            &::before {
+                left: -10px;
+                right: -10px;
+                top: 0;
+                bottom: 0;
+            }
         }
 
         &.eui-splitter-gutter-vertical {
             cursor: row-resize;
+
+            &::before {
+                top: -10px;
+                bottom: -10px;
+                left: 0;
+                right: 0;
+            }
+        }
+
+        @media (pointer: coarse) {
+            &::before {
+                pointer-events: auto;
+            }
         }
 
         .eui-splitter-gutter-handle {

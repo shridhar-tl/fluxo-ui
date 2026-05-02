@@ -20,6 +20,9 @@ interface PasswordProps extends BaseComponentProps, Omit<React.InputHTMLAttribut
     toggleable?: boolean;
     id?: string;
     strengthMeter?: boolean | Omit<PasswordStrengthMeterProps, 'value'>;
+    error?: string | boolean;
+    invalid?: boolean;
+    helperText?: React.ReactNode;
 }
 
 const isDevEnvironment = (): boolean => {
@@ -75,6 +78,10 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
             name,
             args,
             strengthMeter,
+            error,
+            invalid,
+            helperText,
+            'aria-describedby': ariaDescribedBy,
             ...baseProps
         },
         ref,
@@ -133,9 +140,16 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
             });
         };
 
+        const errorMessage = typeof error === 'string' ? error : undefined;
+        const hasError = invalid === true || error === true || (typeof error === 'string' && error.length > 0);
+        const helperId = helperText ? `${inputId}-helper` : undefined;
+        const errorId = errorMessage ? `${inputId}-error` : undefined;
+        const describedBy = [ariaDescribedBy, meterId, helperId, errorId].filter(Boolean).join(' ') || undefined;
+        const ariaInvalid = hasError ? 'true' : (required && !displayValue ? 'true' : 'false');
+
         const resolvedSize = getResolvedSize({ ...baseProps });
         const componentClasses = getComponentClasses(
-            { ...baseProps, disabled, className },
+            { ...baseProps, disabled, className: classNames(className, { 'eui-password-error': hasError }) },
             classNames('eui-password', `eui-password-${resolvedSize}`, {
                 'eui-password-toggleable': toggleable,
                 'eui-password-readonly': readonly,
@@ -166,9 +180,10 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
                 name={name}
                 className={componentClasses}
                 style={componentStyles}
-                aria-invalid={required && !displayValue ? 'true' : 'false'}
+                aria-invalid={ariaInvalid}
                 aria-required={required}
-                aria-describedby={meterId}
+                aria-describedby={describedBy}
+                aria-errormessage={errorId}
             />
         );
 
@@ -194,18 +209,36 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
             </span>
         );
 
-        if (!meterProps) {
+        const messages = (helperText && !errorMessage) || errorMessage ? (
+            <>
+                {helperText && !errorMessage && (
+                    <span id={helperId} className="eui-password-helper">
+                        {helperText}
+                    </span>
+                )}
+                {errorMessage && (
+                    <span id={errorId} className="eui-password-error-message" role="alert">
+                        {errorMessage}
+                    </span>
+                )}
+            </>
+        ) : null;
+
+        if (!meterProps && !messages) {
             return inputBlock;
         }
 
         return (
             <div className="eui-password-with-meter">
                 {inputBlock}
-                <PasswordStrengthMeter
-                    {...meterProps}
-                    value={typeof displayValue === 'string' ? displayValue : ''}
-                    id={meterId}
-                />
+                {meterProps && (
+                    <PasswordStrengthMeter
+                        {...meterProps}
+                        value={typeof displayValue === 'string' ? displayValue : ''}
+                        id={meterId}
+                    />
+                )}
+                {messages}
             </div>
         );
     },

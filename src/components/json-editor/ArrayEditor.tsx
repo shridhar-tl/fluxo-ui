@@ -100,7 +100,12 @@ const ArrayEditor: React.FC<EditorNodeProps> = ({
     const isRoot = name === undefined;
 
     return (
-        <div className={cn('eui-je-node eui-je-node-array', { 'eui-je-root': isRoot })}>
+        <div
+            className={cn('eui-je-node eui-je-node-array', { 'eui-je-root': isRoot })}
+            role={isRoot ? undefined : 'treeitem'}
+            aria-expanded={isRoot ? undefined : expanded}
+            aria-level={isRoot ? undefined : depth + 1}
+        >
             <span className="eui-je-node-row">
                 <ItemNameDisplay
                     name={name}
@@ -117,6 +122,8 @@ const ArrayEditor: React.FC<EditorNodeProps> = ({
                     onClick={toggleExpand}
                     role="button"
                     tabIndex={0}
+                    aria-expanded={expanded}
+                    aria-label={`${name ?? 'Root'} array${expanded ? ', expanded' : ', collapsed'}`}
                     onKeyDown={e => e.key === 'Enter' && toggleExpand()}
                 >
                     {showDataTypes && <span className="eui-je-type-label">Array</span>}
@@ -131,7 +138,7 @@ const ArrayEditor: React.FC<EditorNodeProps> = ({
                 )}
             </span>
             {expanded && (
-                <div className="eui-je-children">
+                <div className="eui-je-children" role="group">
                     {filteredItems.map(({ item, index }) => (
                         <NodeSelector
                             key={`${path}[${index}]`}

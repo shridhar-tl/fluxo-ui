@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { ShimmerTable } from '../shimmer';
 import { Column, OnChangeParams } from './table-types';
 import TableBody from './TableBody';
@@ -37,11 +37,35 @@ function Table({
     cardStyle,
     minimalHeader,
     stickyHeader,
+    caption,
+    ariaLabel,
+    ariaDescribedBy,
+    keyField,
+    mobileCardStack,
+    maxHeight,
 }: TableProps) {
     const [sortColumn, setSortColumn] = useState<Column | undefined>(colToSort);
     const [sortAsc, setSortAsc] = useState<boolean>(isAsc ?? true);
     const [currentPage, setCurrentPage] = useState<number>(page || 1);
     const [count, setCount] = useState<number>(rowsPerPage ?? rowCounts[0]);
+    const generatedId = useId();
+    const captionId = `eui-table-caption-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+
+    useEffect(() => {
+        if (colToSort !== undefined) setSortColumn(colToSort);
+    }, [colToSort]);
+
+    useEffect(() => {
+        if (isAsc !== undefined) setSortAsc(isAsc);
+    }, [isAsc]);
+
+    useEffect(() => {
+        if (page !== undefined) setCurrentPage(page);
+    }, [page]);
+
+    useEffect(() => {
+        if (rowsPerPage !== undefined) setCount(rowsPerPage);
+    }, [rowsPerPage]);
 
     const totalPages = Math.ceil(totalRows / count);
 
@@ -80,11 +104,11 @@ function Table({
         }
     };
 
-    const goToPage = (page: number) => {
-        if (page < 1 || page > totalPages) return;
-        setCurrentPage(page);
+    const goToPage = (pageNumber: number) => {
+        if (pageNumber < 1 || pageNumber > totalPages) return;
+        setCurrentPage(pageNumber);
         if (onChange) {
-            onChange({ sortColumn: sortColumn || undefined, sortAsc, count, pageNumber: page });
+            onChange({ sortColumn: sortColumn || undefined, sortAsc, count, pageNumber });
         }
     };
 
@@ -98,13 +122,24 @@ function Table({
         'eui-table-card': cardStyle,
         'eui-table-minimal-header': minimalHeader,
         'eui-table-sticky-header': stickyHeader,
+        'eui-table-mobile-cards': mobileCardStack,
     });
 
+    const accessibleNameProps: { 'aria-labelledby'?: string; 'aria-label'?: string; 'aria-describedby'?: string } = {};
+    if (caption) accessibleNameProps['aria-labelledby'] = captionId;
+    else if (ariaLabel) accessibleNameProps['aria-label'] = ariaLabel;
+    if (ariaDescribedBy) accessibleNameProps['aria-describedby'] = ariaDescribedBy;
+
+    const containerStyle: React.CSSProperties | undefined = maxHeight !== undefined
+        ? { maxHeight: typeof maxHeight === 'number' ? `${maxHeight}px` : maxHeight }
+        : undefined;
+
     return (
-        <div id={id} className={classNames('eui-table-container', containerClassName)}>
-            <table className={tableClasses}>
+        <div id={id} className={classNames('eui-table-container', containerClassName)} style={containerStyle}>
+            <table className={tableClasses} {...accessibleNameProps}>
+                {caption && <caption id={captionId} className="eui-table-caption">{caption}</caption>}
                 <TableHeader columns={columns} sortColumn={sortColumn} sortAsc={sortAsc} onSort={handleSort} />
-                <TableBody columns={columns} rows={paginatedRows} noRowsMessage={noRowsMessage} onRowClick={onRowClick} />
+                <TableBody columns={columns} rows={paginatedRows} noRowsMessage={noRowsMessage} onRowClick={onRowClick} keyField={keyField} />
                 {pagination !== false && (
                     <TableFooter
                         columns={columns}
@@ -140,7 +175,7 @@ export type TableProps = {
     page?: number;
     pagination?: boolean;
     containerClassName?: string;
-    onRowClick?: (arg: { row: any; index: number; event: any }) => void;
+    onRowClick?: (arg: { row: any; index: number; event: React.MouseEvent | React.KeyboardEvent }) => void;
     bordered?: boolean;
     striped?: boolean;
     compact?: boolean;
@@ -150,4 +185,10 @@ export type TableProps = {
     cardStyle?: boolean;
     minimalHeader?: boolean;
     stickyHeader?: boolean;
+    caption?: React.ReactNode;
+    ariaLabel?: string;
+    ariaDescribedBy?: string;
+    keyField?: string;
+    mobileCardStack?: boolean;
+    maxHeight?: number | string;
 };

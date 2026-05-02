@@ -5,6 +5,8 @@ import { TreeNodeProps } from './tree-view-types';
 const TreeNodeComponent: React.FC<TreeNodeProps> = ({
     node,
     level,
+    posInSet,
+    setSize,
     expanded,
     selected,
     checkState,
@@ -14,6 +16,7 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
     focused,
     dropPosition,
     nodeTemplate,
+    childCount,
     onToggle,
     onSelect,
     onCheck,
@@ -23,8 +26,8 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
     onDrop,
     onDragEnd,
 }) => {
-    const isExpandable = !node.isLeaf && (node.children?.length || loading || !node.isLeaf);
-    const hasChildren = node.children && node.children.length > 0;
+    const isExpandable = !node.isLeaf && ((childCount ?? 0) > 0 || loading || !node.isLeaf);
+    const hasChildren = (childCount ?? 0) > 0;
 
     const handleToggleClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -114,6 +117,8 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
             aria-selected={selected}
             aria-disabled={node.disabled}
             aria-level={level + 1}
+            aria-posinset={posInSet}
+            aria-setsize={setSize}
             tabIndex={focused ? 0 : -1}
             data-node-id={node.id}
             style={{ paddingLeft: `${level * 1.5}rem` }}
@@ -188,7 +193,7 @@ const TreeNodeComponent: React.FC<TreeNodeProps> = ({
             </span>
 
             {hasChildren && !expanded && (
-                <span className="eui-tv-child-count">{node.children!.length}</span>
+                <span className="eui-tv-child-count">{childCount}</span>
             )}
         </div>
     );

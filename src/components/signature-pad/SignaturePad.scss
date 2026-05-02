@@ -122,3 +122,103 @@
         box-shadow: 0 0 0 2px var(--eui-primary-subtle);
     }
 }
+
+.eui-sig-mode-tabs {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: var(--eui-bg-subtle);
+    border: 1px solid var(--eui-border-subtle);
+    border-radius: var(--eui-radius-md);
+    width: fit-content;
+}
+
+.eui-sig-mode-tab {
+    appearance: none;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--eui-radius-sm);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--eui-text-muted);
+    cursor: pointer;
+    min-width: 64px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover:not(:disabled) {
+        color: var(--eui-text);
+    }
+
+    &.eui-sig-mode-tab-active {
+        background: var(--eui-bg);
+        color: var(--eui-text);
+        border-color: var(--eui-border);
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.eui-sig-type-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    width: 100%;
+}
+
+.eui-sig-type-label {
+    font-size: 0.75rem;
+    color: var(--eui-text-muted);
+    font-weight: 500;
+}
+
+.eui-sig-type-input {
+    appearance: none;
+    font-family: inherit;
+    font-size: 0.875rem;
+    color: var(--eui-text);
+    background: var(--eui-bg);
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-sm);
+    padding: 0.5rem 0.625rem;
+    min-height: 36px;
+    width: 100%;
+
+    &:focus-visible {
+        outline: none;
+        border-color: var(--eui-primary);
+        box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+}
+
+.eui-sig-canvas-readonly {
+    cursor: default;
+    touch-action: auto;
+}
+
+.eui-sig-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

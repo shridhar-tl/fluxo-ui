@@ -11,6 +11,7 @@ import AsLink from './AsLink';
 import AsyncAction from './AsyncAction';
 import BasicUsage from './BasicUsage';
 import Combinations from './Combinations';
+import Confirmation from './Confirmation';
 import CountdownTimer from './CountdownTimer';
 import FullWidth from './FullWidth';
 import Layouts from './Layouts';
@@ -18,6 +19,7 @@ import Sizes from './Sizes';
 import States from './States';
 import Variants from './Variants';
 import WithIcons from './WithIcons';
+import WithTooltip from './WithTooltip';
 
 
 import _Button_props_json from './../../../components/Button.props.json';
@@ -30,6 +32,8 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'states', title: 'States', description: 'Normal, disabled, loading' },
     { id: 'full-width', title: 'Full Width', description: 'Stretch to container' },
     { id: 'with-icons', title: 'With Icons', description: 'Left and right icons' },
+    { id: 'with-tooltip', title: 'With Tooltip', description: 'Built-in hover/focus tooltip' },
+    { id: 'confirmation', title: 'Confirmation', description: 'Inline confirm popover' },
     { id: 'async-action', title: 'Async Action', description: 'Auto loading state' },
     { id: 'countdown', title: 'Countdown Timer', description: 'Delay before clickable' },
     { id: 'as-link', title: 'As Link', description: 'Render as anchor tag' },
@@ -132,6 +136,16 @@ const ButtonPage: React.FC = () => {
             <section id="with-icons" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>With Icons</h2>
                 <WithIcons />
+            </section>
+
+            <section id="with-tooltip" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>With Tooltip</h2>
+                <WithTooltip />
+            </section>
+
+            <section id="confirmation" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Inline Confirmation</h2>
+                <Confirmation />
             </section>
 
             <section id="async-action" className="scroll-mt-8">

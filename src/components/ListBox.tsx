@@ -44,6 +44,10 @@ export interface ListBoxProps<T = any> {
     onSearch?: (query: string) => void;
     onSelectAll?: () => void;
     onClearAll?: () => void;
+
+    compareFn?: (a: T, b: T) => boolean;
+    ariaLabel?: string;
+    ariaLabelledBy?: string;
 }
 
 const InnerCheckbox: React.FC<{ checked?: boolean; indeterminate?: boolean; disabled?: boolean }> = ({ checked, indeterminate, disabled }) => {
@@ -57,13 +61,14 @@ const InnerCheckbox: React.FC<{ checked?: boolean; indeterminate?: boolean; disa
 
     return (
         <div className="eui-listbox-checkbox">
-            <input ref={checkboxRef} type="checkbox" checked={checked} disabled={disabled} readOnly className="eui-listbox-checkbox-input" />
+            <input ref={checkboxRef} type="checkbox" checked={checked} disabled={disabled} readOnly className="eui-listbox-checkbox-input" tabIndex={-1} aria-hidden="true" />
             <div
                 className={classNames('eui-listbox-checkbox-box', {
                     'eui-listbox-checkbox-checked': checked,
                     'eui-listbox-checkbox-indeterminate': indeterminate,
                     'eui-listbox-checkbox-disabled': disabled,
                 })}
+                aria-hidden="true"
             >
                 {(checked || indeterminate) && (
                     <svg
@@ -90,6 +95,7 @@ const SearchIcon: React.FC = () => (
         strokeWidth="2"
         viewBox="0 0 24 24"
         stroke="currentColor"
+        aria-hidden="true"
     >
         <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
@@ -103,10 +109,24 @@ const ClearIcon: React.FC = () => (
         strokeWidth="2"
         viewBox="0 0 24 24"
         stroke="currentColor"
+        aria-hidden="true"
     >
         <path d="M6 18L18 6M6 6l12 12" />
     </svg>
 );
+
+const defaultCompare = <T,>(a: T, b: T): boolean => {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (typeof a === 'object' && typeof b === 'object') {
+        try {
+            return JSON.stringify(a) === JSON.stringify(b);
+        } catch {
+            return false;
+        }
+    }
+    return false;
+};
 
 export function ListBox<T = any>({
     options = [],
@@ -132,17 +152,23 @@ export function ListBox<T = any>({
     onSearch,
     onSelectAll,
     onClearAll,
+    compareFn,
+    ariaLabel,
+    ariaLabelledBy,
 }: ListBoxProps<T>) {
     const [searchQuery, setSearchQuery] = useState('');
+    const [activeIndex, setActiveIndex] = useState<number>(-1);
     const listRef = useRef<HTMLDivElement>(null);
 
+    const compare = compareFn || defaultCompare<T>;
+
     const selectedValues = useMemo(() => {
-        if (value === undefined || value === null) return [];
+        if (value === undefined || value === null) return [] as T[];
         return Array.isArray(value) ? value : [value];
     }, [value]);
 
     const isSelected = (option: ListBoxOption<T>) => {
-        return selectedValues.some((v) => JSON.stringify(v) === JSON.stringify(option.value));
+        return selectedValues.some((v) => compare(v, option.value));
     };
 
     const filteredOptions = useMemo(() => {
@@ -175,6 +201,18 @@ export function ListBox<T = any>({
         );
     }, [grouped, groupBy, filteredOptions]);
 
+    const flatOptions = useMemo(() => {
+        if (!grouped || !groupBy) return filteredOptions;
+        return Object.values(groupedOptions).flat();
+    }, [filteredOptions, grouped, groupBy, groupedOptions]);
+
+    useEffect(() => {
+        setActiveIndex((prev) => {
+            if (prev >= flatOptions.length) return Math.max(0, flatOptions.length - 1);
+            return prev;
+        });
+    }, [flatOptions.length]);
+
     const handleSelect = (option: ListBoxOption<T>) => {
         if (disabled || option.disabled) return;
 
@@ -185,7 +223,7 @@ export function ListBox<T = any>({
             const isCurrentlySelected = isSelected(option);
 
             if (isCurrentlySelected) {
-                newValue = currentValues.filter((v) => JSON.stringify(v) !== JSON.stringify(option.value));
+                newValue = currentValues.filter((v) => !compare(v, option.value));
             } else {
                 newValue = [...currentValues, option.value];
             }
@@ -206,7 +244,7 @@ export function ListBox<T = any>({
     };
 
     const handleClearAll = () => {
-        onChange?.(multiple ? [] : (null as any));
+        onChange?.(multiple ? ([] as T[]) : (null as unknown as T));
         onClearAll?.();
     };
 
@@ -237,19 +275,66 @@ export function ListBox<T = any>({
     );
 
     const defaultGroupTemplate = (groupName: string) => (
-        <div className="eui-listbox-group-header">{groupName}</div>
+        <div className="eui-listbox-group-header" role="presentation">{groupName}</div>
     );
 
-    const renderOption = (option: ListBoxOption<T>, index: number) => {
+    const handleListKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (disabled) return;
+        if (flatOptions.length === 0) return;
+
+        const move = (delta: number) => {
+            const len = flatOptions.length;
+            let next = activeIndex < 0 ? 0 : activeIndex + delta;
+            if (next < 0) next = len - 1;
+            if (next >= len) next = 0;
+            setActiveIndex(next);
+        };
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                move(1);
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                move(-1);
+                break;
+            case 'Home':
+                e.preventDefault();
+                setActiveIndex(0);
+                break;
+            case 'End':
+                e.preventDefault();
+                setActiveIndex(flatOptions.length - 1);
+                break;
+            case 'Enter':
+            case ' ':
+                if (activeIndex >= 0 && activeIndex < flatOptions.length) {
+                    e.preventDefault();
+                    handleSelect(flatOptions[activeIndex]);
+                }
+                break;
+            default:
+                break;
+        }
+    };
+
+    const optionId = (id: string | number) => `eui-listbox-option-${id}`;
+
+    const renderOption = (option: ListBoxOption<T>, indexInList: number) => {
         const selected = isSelected(option);
         const template = itemTemplate || defaultItemTemplate;
+        const isActive = activeIndex >= 0 && flatOptions[activeIndex]?.id === option.id;
 
         return (
             <div
-                key={`${option.id}-${index}`}
+                key={String(option.id)}
+                id={optionId(option.id)}
                 onClick={() => handleSelect(option)}
+                onMouseEnter={() => !option.disabled && setActiveIndex(indexInList)}
                 className={classNames('eui-listbox-option', optionClassName, {
                     [selectedClassName || 'eui-listbox-option-selected']: selected,
+                    'eui-listbox-option-active': isActive,
                     'eui-listbox-option-disabled': option.disabled,
                 })}
                 role="option"
@@ -260,6 +345,12 @@ export function ListBox<T = any>({
             </div>
         );
     };
+
+    const activeOptionId = activeIndex >= 0 && flatOptions[activeIndex]
+        ? optionId(flatOptions[activeIndex].id)
+        : undefined;
+
+    let runningIndex = 0;
 
     return (
         <div className={classNames('eui-listbox', className, { 'eui-listbox-disabled': disabled })}>
@@ -274,6 +365,7 @@ export function ListBox<T = any>({
                             placeholder={searchPlaceholder}
                             disabled={disabled}
                             className="eui-listbox-search-input"
+                            aria-label="Search options"
                         />
                     </div>
                 </div>
@@ -283,6 +375,7 @@ export function ListBox<T = any>({
                 <div className="eui-listbox-toolbar">
                     {selectAll && (
                         <button
+                            type="button"
                             onClick={handleSelectAll}
                             disabled={disabled || allSelected}
                             className="eui-listbox-select-all"
@@ -293,6 +386,7 @@ export function ListBox<T = any>({
                     )}
                     {clearable && selectedValues.length > 0 && (
                         <button
+                            type="button"
                             onClick={handleClearAll}
                             disabled={disabled}
                             className="eui-listbox-clear-all"
@@ -309,7 +403,13 @@ export function ListBox<T = any>({
                 className={classNames('eui-listbox-list', listClassName)}
                 style={{ maxHeight }}
                 role="listbox"
+                tabIndex={disabled ? -1 : 0}
                 aria-multiselectable={multiple}
+                aria-disabled={disabled || undefined}
+                aria-activedescendant={activeOptionId}
+                aria-label={ariaLabel}
+                aria-labelledby={ariaLabelledBy}
+                onKeyDown={handleListKeyDown}
             >
                 {filteredOptions.length === 0 ? (
                     <div className="eui-listbox-empty">{emptyMessage}</div>
@@ -317,11 +417,17 @@ export function ListBox<T = any>({
                     Object.entries(groupedOptions).map(([groupName, groupOptions]) => (
                         <div key={groupName}>
                             {groupTemplate ? groupTemplate(groupName, groupOptions) : defaultGroupTemplate(groupName)}
-                            {groupOptions.map((option, index) => renderOption(option, index))}
+                            {groupOptions.map((option) => {
+                                const idx = runningIndex++;
+                                return renderOption(option, idx);
+                            })}
                         </div>
                     ))
                 ) : (
-                    filteredOptions.map((option, index) => renderOption(option, index))
+                    filteredOptions.map((option) => {
+                        const idx = runningIndex++;
+                        return renderOption(option, idx);
+                    })
                 )}
             </div>
 

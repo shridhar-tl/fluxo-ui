@@ -23,6 +23,46 @@
     }
 }
 
+.eui-multiselect.eui-multiselect-trigger-wrap {
+    position: relative;
+}
+
+.eui-multiselect-trigger-button {
+    @include btn-reset;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    z-index: 0;
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+.eui-multiselect.eui-multiselect-trigger-wrap:focus-within {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px var(--eui-primary);
+}
+
+.eui-multiselect.eui-multiselect-trigger-wrap .eui-multiselect-inner {
+    position: relative;
+    z-index: 1;
+}
+
+.eui-multiselect.eui-multiselect-trigger-wrap .eui-multiselect-tag-remove {
+    position: relative;
+    z-index: 2;
+}
+
 .eui-multiselect {
     width: 100%;
     padding: 0.25rem 0.5rem;

@@ -26,6 +26,7 @@ function TooltipProvider() {
     const hideTimer = useRef<number | null>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
     const hoverRef = useRef(false);
+    const targetRef = useRef<HTMLElement | null>(null);
 
     const clearHideTimer = () => {
         if (hideTimer.current) {
@@ -34,9 +35,17 @@ function TooltipProvider() {
         }
     };
 
+    const isTargetActive = () => {
+        const target = targetRef.current;
+        if (!target) return false;
+        if (document.activeElement === target) return true;
+        return target.matches?.(':hover') ?? false;
+    };
+
     const onShow = (data: TooltipData) => {
         clearHideTimer();
         const target = data.event.currentTarget as HTMLElement;
+        targetRef.current = target;
         const rect = target.getBoundingClientRect();
         setState({
             visible: true,
@@ -49,6 +58,7 @@ function TooltipProvider() {
     };
 
     const performHide = () => {
+        targetRef.current = null;
         setState((s) => ({ ...s, visible: false }));
     };
 
@@ -58,7 +68,7 @@ function TooltipProvider() {
             performHide();
         } else {
             hideTimer.current = window.setTimeout(() => {
-                if (!hoverRef.current) {
+                if (!hoverRef.current && !isTargetActive()) {
                     performHide();
                 }
             }, timeout);
@@ -73,10 +83,18 @@ function TooltipProvider() {
                 performHide();
             }
         };
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                clearHideTimer();
+                performHide();
+            }
+        };
         document.addEventListener('click', handleClick);
+        document.addEventListener('keydown', handleKeyDown, true);
         return () => {
             unregisterTooltipHandlers(onShow, onHide);
             document.removeEventListener('click', handleClick);
+            document.removeEventListener('keydown', handleKeyDown, true);
             clearHideTimer();
         };
     }, []);
@@ -93,6 +111,8 @@ function TooltipProvider() {
         ? createPortal(
               <div
                   ref={tooltipRef}
+                  id={state.options.id}
+                  role="tooltip"
                   className={classNames('eui-tooltip', { 'eui-tooltip-visible': state.positioned })}
                   style={{
                       top: state.positioned ? state.pos.top : -9999,
@@ -106,7 +126,7 @@ function TooltipProvider() {
                       hoverRef.current = false;
                       const t = state.options.timeout ?? 1500;
                       hideTimer.current = window.setTimeout(() => {
-                          if (!hoverRef.current) performHide();
+                          if (!hoverRef.current && !isTargetActive()) performHide();
                       }, t);
                   }}
               >

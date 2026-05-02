@@ -28,6 +28,10 @@
       "type": "ReactNode",
       "description": "Header subtitle."
     },
+    "headingLevel": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "description": "Render the title as the matching <h1>-<h6> element so screen-reader heading navigation works. When omitted, title renders as a styled <div>."
+    },
     "actions": {
       "type": "ReactNode",
       "description": "Header right-side actions (usually buttons)."

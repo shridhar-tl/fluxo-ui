@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { CSSProperties, ElementType, ReactNode, useCallback, useId, useMemo, useRef } from 'react';
+import React, { CSSProperties, ElementType, ReactNode, useCallback, useId, useMemo, useRef, useState } from 'react';
 import Draggable, { DraggableRenderProps } from './Draggable';
 import Droppable, { DropIndicator, DroppableRenderProps } from './Droppable';
 import type { DragItem, DropOrientation, DropResult } from './core/types';
@@ -10,7 +10,7 @@ export interface SortableChangeEvent {
     source?: DragItem;
     target?: DropResult;
     removed?: { index: number; id?: string | number };
-    reason: 'reorder' | 'insert' | 'remove';
+    reason: 'reorder' | 'insert' | 'remove' | 'keyboard';
 }
 
 export interface SortableProps<T = unknown> {
@@ -38,6 +38,9 @@ export interface SortableProps<T = unknown> {
 
     provideDragRef?: boolean;
     provideDropRef?: boolean;
+
+    keyboardReorder?: boolean;
+    itemAriaLabel?: (item: T, index: number) => string;
 
     onChange: (items: T[], args?: unknown, event?: SortableChangeEvent) => void;
     onDrop?: (source: DragItem, target: DropResult, args?: unknown) => void;
@@ -75,6 +78,8 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
         args,
         canDragItem,
         canDropItem,
+        keyboardReorder = true,
+        itemAriaLabel,
     } = props;
 
     const renderItem = children || props.itemTemplate;
@@ -87,6 +92,10 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
     }, [acceptFromProps, itemType]);
 
     const containerId = useId();
+    const containerRef = useRef<HTMLElement>(null);
+    const [grabbedIndex, setGrabbedIndex] = useState<number | null>(null);
+    const grabOriginRef = useRef<{ originalIndex: number; currentIndex: number } | null>(null);
+    const [announcement, setAnnouncement] = useState('');
 
     const getItemId = useCallback(
         (item: T, index: number): string | number | undefined => {
@@ -143,6 +152,90 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
         [containerId],
     );
 
+    const focusSlotByIndex = useCallback((index: number) => {
+        const root = containerRef.current;
+        if (!root) return;
+        const slot = root.querySelector<HTMLElement>(`[data-eui-sortable-slot="${index}"]`);
+        slot?.focus();
+    }, []);
+
+    const moveItemKeyboard = useCallback((from: number, to: number) => {
+        const current = propsRef.current;
+        const next = [...current.items];
+        if (from < 0 || from >= next.length || to < 0 || to >= next.length) return;
+        const [moved] = next.splice(from, 1);
+        next.splice(to, 0, moved);
+        current.onChange(next, current.args, { reason: 'keyboard' });
+    }, []);
+
+    const handleContainerKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLElement>) => {
+            if (!keyboardReorder) return;
+            const target = e.target as HTMLElement;
+            const slot = target.closest('[data-eui-sortable-slot]') as HTMLElement | null;
+            if (!slot || !containerRef.current?.contains(slot)) return;
+            const idxAttr = slot.getAttribute('data-eui-sortable-slot');
+            const idx = idxAttr !== null ? parseInt(idxAttr, 10) : -1;
+            if (idx < 0) return;
+
+            const total = propsRef.current.items.length;
+            const isVertical = (propsRef.current.orientation ?? 'vertical') === 'vertical';
+            const decreaseKeys = isVertical ? ['ArrowUp'] : ['ArrowLeft'];
+            const increaseKeys = isVertical ? ['ArrowDown'] : ['ArrowRight'];
+
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                if (grabbedIndex === null) {
+                    setGrabbedIndex(idx);
+                    grabOriginRef.current = { originalIndex: idx, currentIndex: idx };
+                    setAnnouncement(`Item ${idx + 1} of ${total} grabbed. Use arrow keys to move, Enter to drop, Escape to cancel.`);
+                } else {
+                    const finalIdx = grabOriginRef.current?.currentIndex ?? idx;
+                    setGrabbedIndex(null);
+                    grabOriginRef.current = null;
+                    setAnnouncement(`Dropped at position ${finalIdx + 1} of ${total}.`);
+                    requestAnimationFrame(() => focusSlotByIndex(finalIdx));
+                }
+                return;
+            }
+
+            if (e.key === 'Escape' && grabbedIndex !== null) {
+                e.preventDefault();
+                const origin = grabOriginRef.current;
+                if (origin && origin.currentIndex !== origin.originalIndex) {
+                    moveItemKeyboard(origin.currentIndex, origin.originalIndex);
+                }
+                const restoreIndex = origin?.originalIndex ?? idx;
+                setGrabbedIndex(null);
+                grabOriginRef.current = null;
+                setAnnouncement('Move cancelled. Item returned to original position.');
+                requestAnimationFrame(() => focusSlotByIndex(restoreIndex));
+                return;
+            }
+
+            if (grabbedIndex !== null && (decreaseKeys.includes(e.key) || increaseKeys.includes(e.key))) {
+                e.preventDefault();
+                const dir = decreaseKeys.includes(e.key) ? -1 : 1;
+                const origin = grabOriginRef.current;
+                if (!origin) return;
+                const nextIdx = Math.min(Math.max(origin.currentIndex + dir, 0), total - 1);
+                if (nextIdx === origin.currentIndex) return;
+                moveItemKeyboard(origin.currentIndex, nextIdx);
+                grabOriginRef.current = { ...origin, currentIndex: nextIdx };
+                setAnnouncement(`Moved to position ${nextIdx + 1} of ${total}.`);
+                requestAnimationFrame(() => focusSlotByIndex(nextIdx));
+                return;
+            }
+
+            if (grabbedIndex === null && (e.key === 'Home' || e.key === 'End')) {
+                e.preventDefault();
+                const targetIdx = e.key === 'Home' ? 0 : total - 1;
+                focusSlotByIndex(targetIdx);
+            }
+        },
+        [keyboardReorder, grabbedIndex, focusSlotByIndex, moveItemKeyboard],
+    );
+
     const containerStyle = useMemo<CSSProperties>(
         () => ({ '--eui-sortable-gap': gap, ...style } as CSSProperties),
         [gap, style],
@@ -177,25 +270,60 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
     const itemCanDrop = canDropItem ? (src: DragItem, index: number) => canDropItem(src, index) : undefined;
 
     return (
-        <Component className={containerClass} style={containerStyle}>
-            {items.map((item, i) => (
-                <Droppable
-                    key={(getItemId(item, i) as string | number | undefined) ?? i}
-                    containerId={containerId}
-                    index={i}
-                    accept={accept}
-                    onDrop={handleItemDropped}
-                    args={args}
-                    orientation={orientation}
-                    dropIndicator={dropIndicator}
-                    dropPosition="auto"
-                    edgeThreshold={10}
-                    className="eui-sortable-item"
-                    canDrop={itemCanDrop ? (src) => itemCanDrop(src, i) : undefined}
-                >
-                    {provideDropRef ? (droppable) => renderDraggable(item, i, droppable) : renderDraggable(item, i)}
-                </Droppable>
-            ))}
+        <Component
+            ref={containerRef as React.Ref<HTMLElement>}
+            className={containerClass}
+            style={containerStyle}
+            role={keyboardReorder ? 'listbox' : undefined}
+            aria-label={keyboardReorder ? 'Sortable list. Use arrow keys to navigate, Space or Enter to grab, then arrow keys to move.' : undefined}
+            aria-orientation={keyboardReorder ? orientation : undefined}
+            onKeyDown={keyboardReorder ? handleContainerKeyDown : undefined}
+        >
+            {items.map((item, i) => {
+                const isGrabbed = grabbedIndex === i;
+                const ariaLabel = itemAriaLabel ? itemAriaLabel(item, i) : `Item ${i + 1} of ${items.length}`;
+                const itemKey = (getItemId(item, i) as string | number | undefined) ?? i;
+
+                const droppableNode = (
+                    <Droppable
+                        containerId={containerId}
+                        index={i}
+                        accept={accept}
+                        onDrop={handleItemDropped}
+                        args={args}
+                        orientation={orientation}
+                        dropIndicator={dropIndicator}
+                        dropPosition="auto"
+                        edgeThreshold={10}
+                        className={classNames('eui-sortable-item', { 'eui-sortable-item-grabbed': isGrabbed })}
+                        canDrop={itemCanDrop ? (src) => itemCanDrop(src, i) : undefined}
+                    >
+                        {provideDropRef
+                            ? (droppable) => renderDraggable(item, i, droppable)
+                            : renderDraggable(item, i)}
+                    </Droppable>
+                );
+
+                if (!keyboardReorder) {
+                    return <React.Fragment key={itemKey}>{droppableNode}</React.Fragment>;
+                }
+
+                return (
+                    <div
+                        key={itemKey}
+                        className="eui-sortable-slot"
+                        data-eui-sortable-slot={i}
+                        tabIndex={0}
+                        role="option"
+                        aria-selected={isGrabbed}
+                        aria-roledescription="draggable"
+                        aria-label={`${ariaLabel}${isGrabbed ? ' (grabbed)' : ''}`}
+                        aria-grabbed={isGrabbed}
+                    >
+                        {droppableNode}
+                    </div>
+                );
+            })}
             {(showPlaceholder || placeholder) && (
                 <Droppable
                     containerId={containerId}
@@ -221,6 +349,16 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
                 >
                     <div className="eui-sortable-empty-hint">{emptyHint ?? 'Drop here'}</div>
                 </Droppable>
+            )}
+            {keyboardReorder && (
+                <div
+                    className="eui-sortable-sr-only"
+                    aria-live="polite"
+                    aria-atomic="true"
+                    role="status"
+                >
+                    {announcement}
+                </div>
             )}
         </Component>
     );

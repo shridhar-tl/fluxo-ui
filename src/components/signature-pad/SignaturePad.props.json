@@ -44,6 +44,21 @@
       "default": "'Sign here'",
       "description": "Placeholder text shown when empty."
     },
+    "allowTypeMode": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show a Draw/Type tab so users who cannot draw can type their name as the signature."
+    },
+    "typeFontFamily": {
+      "type": "string",
+      "default": "'Brush Script MT, Lucida Handwriting, Apple Chancery, cursive'",
+      "description": "Font family used to render the typed signature on the canvas."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Signature pad'",
+      "description": "Base accessible name for the canvas. Empty/has-signature state is appended automatically."
+    },
     "onBegin": {
       "type": "() => void",
       "description": "Called at stroke start."

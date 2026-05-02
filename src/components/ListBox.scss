@@ -169,10 +169,19 @@
         padding-left: calc(0.75rem - 2px);
     }
 
+    &.eui-listbox-option-active {
+        background-color: var(--eui-bg-hover);
+    }
+
     &.eui-listbox-option-disabled {
         cursor: not-allowed;
         opacity: 0.5;
     }
+}
+
+.eui-listbox-list:focus-visible {
+    outline: 2px solid var(--eui-primary);
+    outline-offset: -2px;
 }
 
 .eui-listbox-option-content {

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useId, useState } from 'react';
 
 import classNames from 'classnames';
 import './tab-view.scss';
@@ -32,6 +32,8 @@ export interface TabViewProps {
     position?: 'top' | 'bottom' | 'left' | 'right';
     variant?: TabViewVariant;
     preMount?: boolean;
+    activationMode?: 'auto' | 'manual';
+    ariaLabel?: string;
     children?: React.ReactNode;
 }
 
@@ -47,10 +49,14 @@ export const TabView: React.FC<TabViewProps> = ({
     position = 'top',
     variant = 'default',
     preMount = false,
+    activationMode = 'auto',
+    ariaLabel,
     children,
 }) => {
     const [activeIndex, setActiveIndex] = useState(propActiveIndex);
     const visibleTabs = getVisibleTabs(children);
+    const generatedId = useId();
+    const baseId = `eui-tab-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
     useEffect(() => {
         if (propActiveIndex === undefined || propActiveIndex === activeIndex) {
@@ -114,8 +120,11 @@ export const TabView: React.FC<TabViewProps> = ({
         return null;
     }
 
-    const safeActiveIndex = Math.min(activeIndex, visibleTabs.length - 1);
+    const safeActiveIndex = Math.min(Math.max(0, activeIndex), visibleTabs.length - 1);
     const activeTab = visibleTabs[safeActiveIndex];
+    if (!activeTab) {
+        return null;
+    }
 
     const containerClasses = classNames(
         'eui-tab-view',
@@ -140,6 +149,9 @@ export const TabView: React.FC<TabViewProps> = ({
                 onTabClick={handleTabClick}
                 onTabClose={onTabClose ? (index, tab) => onTabClose({ index, tab }) : undefined}
                 headerEnd={headerEnd}
+                baseId={baseId}
+                activationMode={activationMode}
+                ariaLabel={ariaLabel}
                 className={classNames({
                     'eui-tab-nav-order-second': position === 'bottom',
                     'eui-tab-nav-order-first': position === 'top' || position === 'left' || position === 'right',
@@ -152,17 +164,20 @@ export const TabView: React.FC<TabViewProps> = ({
                         <div
                             key={idx}
                             style={{ display: idx === safeActiveIndex ? undefined : 'none' }}
-                            role="tabpanel"
                             aria-hidden={idx !== safeActiveIndex}
                         >
-                            {React.cloneElement(tab, { ...(tab.props as Record<string, unknown>) })}
+                            {React.cloneElement(tab, {
+                                id: `${baseId}-panel-${idx}`,
+                                'aria-labelledby': `${baseId}-tab-${idx}`,
+                            } as Record<string, unknown>)}
                         </div>
                     ))
                 ) : (
                     React.cloneElement(activeTab, {
                         key: safeActiveIndex,
-                        ...(activeTab.props as Record<string, unknown>),
-                    })
+                        id: `${baseId}-panel-${safeActiveIndex}`,
+                        'aria-labelledby': `${baseId}-tab-${safeActiveIndex}`,
+                    } as Record<string, unknown>)
                 )}
             </div>
         </div>

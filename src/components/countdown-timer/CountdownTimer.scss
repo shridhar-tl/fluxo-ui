@@ -373,6 +373,35 @@ $timer-sizes: (
     }
 }
 
+.eui-countdown-timer-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-countdown-timer-progress-arc,
+    .eui-countdown-timer-bar-fill,
+    .eui-countdown-timer-seg {
+        transition: none !important;
+    }
+
+    .eui-countdown-timer-pulse .eui-countdown-timer-time,
+    .eui-countdown-timer-pulse .eui-countdown-timer-digits {
+        animation: none !important;
+    }
+
+    .eui-countdown-timer-btn {
+        transition: none !important;
+    }
+}
+
 // ───────── SIZES ─────────
 @each $size, $vals in $timer-sizes {
     .eui-countdown-timer-#{$size} {

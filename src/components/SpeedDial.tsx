@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import './SpeedDial.scss';
 
 type SpeedDialVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'secondary';
@@ -43,13 +43,13 @@ interface SpeedDialProps {
 }
 
 const defaultPlusIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="eui-speed-dial-icon-svg">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="eui-speed-dial-icon-svg" aria-hidden="true">
         <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
     </svg>
 );
 
 const defaultCloseIcon = (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="eui-speed-dial-icon-svg">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="eui-speed-dial-icon-svg" aria-hidden="true">
         <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
     </svg>
 );
@@ -107,7 +107,11 @@ function SpeedDial({
     const [internalOpen, setInternalOpen] = useState(false);
     const isOpen = isControlled ? controlledOpen : internalOpen;
     const containerRef = useRef<HTMLDivElement>(null!);
+    const triggerRef = useRef<HTMLButtonElement | null>(null);
+    const actionRefs = useRef<Array<HTMLButtonElement | null>>([]);
     const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined!);
+    const reactId = useId();
+    const actionsId = id ? `${id}-actions` : `eui-speed-dial-actions-${reactId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
     const setOpen = useCallback((val: boolean) => {
         if (!isControlled) setInternalOpen(val);
@@ -135,13 +139,25 @@ function SpeedDial({
         if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     };
 
+    const handleTriggerClick = () => {
+        if (disabled) return;
+        // Touch fallback for hover-mode: Touch users can also tap the trigger to open
+        if (trigger === 'click') {
+            toggle();
+            return;
+        }
+        // hover trigger but tap on touch device → toggle
+        toggle();
+    };
+
     const handleItemClick = (item: SpeedDialItem, e: React.MouseEvent<HTMLButtonElement>) => {
         item.onClick?.(e);
         setOpen(false);
+        triggerRef.current?.focus();
     };
 
     useEffect(() => {
-        if (trigger !== 'click' || !isOpen) return;
+        if (!isOpen) return;
         const handleClickOutside = (e: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
                 setOpen(false);
@@ -149,7 +165,7 @@ function SpeedDial({
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [trigger, isOpen, setOpen]);
+    }, [isOpen, setOpen]);
 
     useEffect(() => {
         return () => {
@@ -157,9 +173,54 @@ function SpeedDial({
         };
     }, []);
 
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Escape') {
+    const focusActionAt = (index: number) => {
+        const enabled = items
+            .map((it, i) => (it.disabled ? -1 : i))
+            .filter((i) => i >= 0);
+        if (enabled.length === 0) return;
+        const startIdx = enabled.includes(index) ? enabled.indexOf(index) : 0;
+        const target = actionRefs.current[enabled[startIdx]];
+        target?.focus();
+    };
+
+    const handleActionKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, idx: number) => {
+        const enabled = items.map((it, i) => (it.disabled ? -1 : i)).filter((i) => i >= 0);
+        if (enabled.length === 0) return;
+        const currentPos = enabled.indexOf(idx);
+
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            const next = enabled[(currentPos + 1) % enabled.length];
+            actionRefs.current[next]?.focus();
+        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const prev = enabled[(currentPos - 1 + enabled.length) % enabled.length];
+            actionRefs.current[prev]?.focus();
+        } else if (e.key === 'Home') {
+            e.preventDefault();
+            actionRefs.current[enabled[0]]?.focus();
+        } else if (e.key === 'End') {
+            e.preventDefault();
+            actionRefs.current[enabled[enabled.length - 1]]?.focus();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
             setOpen(false);
+            triggerRef.current?.focus();
+        }
+    };
+
+    const handleTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (e.key === 'Escape' && isOpen) {
+            e.preventDefault();
+            setOpen(false);
+            triggerRef.current?.focus();
+            return;
+        }
+        if ((e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') && !isOpen) {
+            e.preventDefault();
+            setOpen(true);
+            // Focus first action after render
+            setTimeout(() => focusActionAt(0), 50);
         }
     };
 
@@ -214,9 +275,14 @@ function SpeedDial({
                 className={rootClasses}
                 id={id}
                 onMouseLeave={handleContainerMouseLeave}
-                onKeyDown={handleKeyDown}
             >
-                <div className="eui-speed-dial-actions" role="menu" aria-label={ariaLabel || 'Speed dial actions'} onMouseEnter={handleActionsMouseEnter}>
+                <div
+                    id={actionsId}
+                    className="eui-speed-dial-actions"
+                    role="menu"
+                    aria-label={ariaLabel || 'Speed dial actions'}
+                    onMouseEnter={handleActionsMouseEnter}
+                >
                     {items.map((item, index) => (
                         <div
                             key={index}
@@ -229,6 +295,9 @@ function SpeedDial({
                                 <span className="eui-speed-dial-action-label">{item.label}</span>
                             )}
                             <button
+                                ref={(el) => {
+                                    actionRefs.current[index] = el;
+                                }}
                                 type="button"
                                 className={classNames(
                                     'eui-speed-dial-action',
@@ -236,8 +305,10 @@ function SpeedDial({
                                     { 'eui-speed-dial-action-disabled': item.disabled },
                                 )}
                                 onClick={(e) => handleItemClick(item, e)}
+                                onKeyDown={(e) => handleActionKeyDown(e, index)}
                                 disabled={item.disabled}
                                 role="menuitem"
+                                tabIndex={isOpen && !item.disabled ? 0 : -1}
                                 aria-label={item.ariaLabel || item.label}
                                 title={showTooltip ? item.label : undefined}
                             >
@@ -248,14 +319,17 @@ function SpeedDial({
                 </div>
 
                 <button
+                    ref={triggerRef}
                     type="button"
                     className={classNames('eui-speed-dial-trigger', `eui-speed-dial-trigger-variant-${variant}`)}
-                    onClick={trigger === 'click' ? toggle : undefined}
+                    onClick={handleTriggerClick}
+                    onKeyDown={handleTriggerKeyDown}
                     onMouseEnter={handleTriggerMouseEnter}
                     disabled={disabled}
                     aria-label={ariaLabel || 'Open actions'}
                     aria-expanded={isOpen}
                     aria-haspopup="menu"
+                    aria-controls={actionsId}
                 >
                     <span className={classNames('eui-speed-dial-trigger-icon', { 'eui-speed-dial-trigger-rotated': isOpen })}>
                         {isOpen ? renderIcon(mainOpenIcon) : renderIcon(mainIcon)}

@@ -6,8 +6,8 @@ import CustomDatePicker from './CustomDatePicker';
 import QuickRangeDropdown from './QuickRangeDropdown';
 import { DatePickerPropsContext, DatePickerStateContext } from './types';
 
-function DatePopover({ controlRef }: { controlRef: React.RefObject<HTMLButtonElement> }) {
-    const { ranges, position = 'auto', classNames: propsClassNames } = useContext(DatePickerPropsContext);
+function DatePopover({ controlRef, popoverId }: { controlRef: React.RefObject<HTMLButtonElement>; popoverId?: string }) {
+    const { ranges, position = 'auto', classNames: propsClassNames, ariaLabel } = useContext(DatePickerPropsContext);
     const { closePicker: onClose, activeView } = useContext(DatePickerStateContext);
     const { isCompact, isMobile, isTablet } = useViewport();
 
@@ -136,6 +136,9 @@ function DatePopover({ controlRef }: { controlRef: React.RefObject<HTMLButtonEle
                     onClick={(e) => e.stopPropagation()}
                     role="dialog"
                     aria-modal="true"
+                    aria-label={ariaLabel ?? 'Date range picker'}
+                    id={popoverId}
+                    tabIndex={-1}
                 >
                     {isDropdown ? <QuickRangeDropdown /> : <CustomDatePicker />}
                 </div>
@@ -147,7 +150,12 @@ function DatePopover({ controlRef }: { controlRef: React.RefObject<HTMLButtonEle
     return createPortal(
         <div
             ref={popoverRef}
+            id={popoverId}
             style={popoverStyle}
+            role="dialog"
+            aria-modal="true"
+            aria-label={ariaLabel ?? 'Date range picker'}
+            tabIndex={-1}
             className={classNames(
                 'eui-date-range-popover',
                 {

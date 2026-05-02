@@ -46,9 +46,10 @@
     }
 
     .eui-fu-dropzone-icon {
-        font-size: 2rem;
+        width: 2.25rem;
+        height: 2.25rem;
         color: var(--eui-text-muted);
-        line-height: 1;
+        flex-shrink: 0;
     }
 
     .eui-fu-dropzone-text {
@@ -71,6 +72,51 @@
     .eui-fu-dropzone-hint {
         font-size: 0.75rem;
         color: var(--eui-text-disabled);
+    }
+
+    .eui-fu-browse-button {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--eui-primary-border);
+        border-radius: var(--eui-radius-md);
+        background: var(--eui-primary);
+        color: #fff;
+        font-family: inherit;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+
+        &:hover:not(:disabled) {
+            background: var(--eui-primary-hover);
+            border-color: var(--eui-primary-hover);
+        }
+
+        &:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px var(--eui-primary-subtle);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .eui-fu-sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 
     .eui-fu-file-list {

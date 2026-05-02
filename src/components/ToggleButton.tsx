@@ -11,11 +11,30 @@ interface ToggleButtonProps extends BaseComponentProps, Omit<React.ButtonHTMLAtt
     offLabel?: string;
     id?: string;
     variant?: ButtonVariant;
+    label?: string;
+    ariaLabel?: string;
 }
 
 export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
-    ({ checked = false, onChange, onLabel = 'On', offLabel = 'Off', id, disabled = false, className, name, args, ...baseProps }, ref) => {
+    (
+        {
+            checked = false,
+            onChange,
+            onLabel = 'On',
+            offLabel = 'Off',
+            id,
+            disabled = false,
+            className,
+            name,
+            args,
+            label,
+            ariaLabel,
+            ...baseProps
+        },
+        ref,
+    ) => {
         const [inputId] = useState(id || generateId());
+        const labelId = label ? `${inputId}-label` : undefined;
 
         const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
             if (onChange) {
@@ -47,21 +66,31 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         delete componentStyles.height;
         delete componentStyles.fontSize;
 
+        const accessibleLabel = ariaLabel || (label ? undefined : `${checked ? onLabel : offLabel}`);
+
         return (
-            <button
-                ref={ref}
-                id={inputId}
-                type="button"
-                onClick={handleClick}
-                disabled={disabled}
-                className={buttonClasses}
-                style={componentStyles}
-                aria-pressed={checked}
-                aria-label={`Toggle button: ${checked ? onLabel : offLabel}`}
-            >
-                {checked ? onLabel : offLabel}
+            <span className="eui-toggle-button-wrap">
+                {label && (
+                    <span id={labelId} className="eui-toggle-button-label">
+                        {label}
+                    </span>
+                )}
+                <button
+                    ref={ref}
+                    id={inputId}
+                    type="button"
+                    onClick={handleClick}
+                    disabled={disabled}
+                    className={buttonClasses}
+                    style={componentStyles}
+                    aria-pressed={checked}
+                    aria-label={accessibleLabel}
+                    aria-labelledby={labelId}
+                >
+                    {checked ? onLabel : offLabel}
+                </button>
                 <input type="hidden" name={name} value={checked.toString()} />
-            </button>
+            </span>
         );
     },
 );

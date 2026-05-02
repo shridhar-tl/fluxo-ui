@@ -66,6 +66,15 @@
       "default": "false",
       "description": "Pass drag ref to children render function"
     },
+    "keyboardReorder": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Enable keyboard reorder: Space/Enter to grab, arrow keys to move, Enter to drop, Escape to cancel. Adds role=listbox and aria-grabbed semantics."
+    },
+    "itemAriaLabel": {
+      "type": "(item: T, index: number) => string",
+      "description": "Compute the accessible name announced for each draggable slot. Defaults to 'Item N of M'."
+    },
     "onChange": {
       "type": "(items: T[], args?: any, event?: SortableChangeEvent) => void",
       "required": true,

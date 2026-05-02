@@ -1,5 +1,13 @@
 @use '../eui-vars' as *;
 
+@media (prefers-reduced-motion: reduce) {
+    .eui-lightbox-popover,
+    .eui-lightbox-overlay {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
 .eui-lightbox-trigger {
     display: inline-block;
     cursor: pointer;

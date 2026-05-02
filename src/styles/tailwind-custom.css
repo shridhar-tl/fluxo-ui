@@ -795,3 +795,28 @@ body.mode-dark :where(.divide-gray-100 > :not([hidden]) ~ :not([hidden])),
 body.mode-dark :where(.divide-gray-200 > :not([hidden]) ~ :not([hidden])) {
     border-color: var(--eui-border-subtle);
 }
+
+/*
+ * Many story pages use the Tailwind pattern `bg-gray-200 dark:bg-gray-700`
+ * for inline-code chips inside paragraphs. Tailwind v4 defaults `dark:`
+ * to `prefers-color-scheme: dark`, which fires from the OS preference
+ * even when the app is in light mode (body lacks `.mode-dark`). That
+ * makes the dark variant override the light one whenever the OS is dark,
+ * leaving dark text on a near-black chip in the app's light theme.
+ *
+ * Pin both `bg-gray-200` and the `dark:bg-gray-700` overrides to the
+ * app's actual mode so inline code chips stay readable in both themes.
+ */
+:where(.bg-gray-200) { background-color: #e5e7eb; }
+body.mode-dark :where(.bg-gray-200) { background-color: var(--eui-bg-subtle); }
+
+@media (prefers-color-scheme: dark) {
+    body:not(.mode-dark) :where(.dark\:bg-gray-700) { background-color: #e5e7eb; }
+    body:not(.mode-dark) :where(.dark\:bg-gray-600) { background-color: #e5e7eb; }
+    body:not(.mode-dark) :where(.dark\:text-white) { color: #111827; }
+    body:not(.mode-dark) :where(.dark\:text-gray-100) { color: #111827; }
+    body:not(.mode-dark) :where(.dark\:text-gray-200) { color: #111827; }
+    body:not(.mode-dark) :where(.dark\:text-gray-300) { color: #374151; }
+    body:not(.mode-dark) :where(.dark\:text-gray-400) { color: #4b5563; }
+    body:not(.mode-dark) :where(.dark\:hover\:bg-gray-600:hover) { background-color: #d1d5db; }
+}

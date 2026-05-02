@@ -111,27 +111,38 @@ function ProgressBar({
                 aria-valuenow={indeterminate ? undefined : value}
                 aria-valuemin={min}
                 aria-valuemax={max}
+                aria-valuetext={
+                    indeterminate
+                        ? 'Loading'
+                        : renderMultiple
+                            ? `${multipleValues.filter((s) => s.value > 0).length} of ${multipleValues.length} segments completed`
+                            : undefined
+                }
                 aria-label={ariaLabel || (typeof label === 'string' ? label : 'Progress')}
             >
                 {bufferPercentage !== undefined && !indeterminate && (
                     <div
                         className="eui-progress-bar-buffer"
                         style={{ width: `${bufferPercentage}%` }}
+                        aria-hidden="true"
                     />
                 )}
                 {renderMultiple ? (
                     multipleValues.map((seg, idx) => {
                         const segPct = ((clamp(seg.value, min, max) - min) / (max - min)) * 100;
                         return (
-                            <div
-                                key={idx}
-                                className={classNames(
-                                    'eui-progress-bar-fill',
-                                    `eui-progress-bar-fill-${seg.variant || 'primary'}`,
-                                )}
-                                style={{ width: `${segPct}%` }}
-                                title={seg.label}
-                            />
+                            <React.Fragment key={idx}>
+                                {idx > 0 && <span role="separator" aria-hidden="true" className="eui-progress-bar-segment-sep" />}
+                                <div
+                                    className={classNames(
+                                        'eui-progress-bar-fill',
+                                        `eui-progress-bar-fill-${seg.variant || 'primary'}`,
+                                    )}
+                                    style={{ width: `${segPct}%` }}
+                                    role="img"
+                                    aria-label={seg.label ? `${seg.label}: ${Math.round(segPct)}%` : `Segment ${idx + 1}: ${Math.round(segPct)}%`}
+                                />
+                            </React.Fragment>
                         );
                     })
                 ) : (
@@ -145,6 +156,7 @@ function ProgressBar({
                             },
                         )}
                         style={indeterminate ? undefined : { width: `${percentage}%` }}
+                        aria-hidden="true"
                     />
                 )}
             </div>

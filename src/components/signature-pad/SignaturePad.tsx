@@ -1,11 +1,12 @@
 import cn from 'classnames';
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import './SignaturePad.scss';
 
 type SigBorder = 'solid' | 'dashed' | 'none';
 type SigBackground = 'white' | 'transparent' | 'grid' | 'dotted';
 type SigSize = 'sm' | 'md' | 'lg' | 'full';
 type SigThickness = 'thin' | 'regular' | 'bold' | number;
+type SigInputMode = 'draw' | 'type';
 
 interface SignaturePadHandle {
     clear: () => void;
@@ -19,9 +20,6 @@ interface SignaturePadProps {
     size?: SigSize;
     border?: SigBorder;
     background?: SigBackground;
-    /**
-     * Pen color. When omitted, adapts to the current theme text color via --eui-text.
-     */
     penColor?: string;
     thickness?: SigThickness;
     showToolbar?: boolean;
@@ -31,6 +29,8 @@ interface SignaturePadProps {
     disabled?: boolean;
     className?: string;
     ariaLabel?: string;
+    allowTypeMode?: boolean;
+    typeFontFamily?: string;
     onBegin?: () => void;
     onEnd?: () => void;
     onChange?: (isEmpty: boolean) => void;
@@ -49,6 +49,7 @@ type Stroke = {
 };
 
 const DEFAULT_SWATCHES = ['#111827', '#f3f4f6', '#2563eb', '#dc2626', '#16a34a'];
+const DEFAULT_TYPE_FONT = '"Brush Script MT", "Lucida Handwriting", "Apple Chancery", cursive';
 
 const readThemeInk = (el: HTMLElement | null): string => {
     if (!el || typeof window === 'undefined') return '#111827';
@@ -96,6 +97,58 @@ const drawStroke = (ctx: CanvasRenderingContext2D, stroke: Stroke) => {
     ctx.stroke();
 };
 
+const drawTypedSignature = (
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    color: string,
+    fontFamily: string,
+    cssWidth: number,
+    cssHeight: number,
+) => {
+    if (!text) return;
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    let fontSize = Math.floor(cssHeight * 0.55);
+    const minFont = 18;
+    const maxWidthPx = cssWidth * 0.92;
+    while (fontSize > minFont) {
+        ctx.font = `italic ${fontSize}px ${fontFamily}`;
+        if (ctx.measureText(text).width <= maxWidthPx) break;
+        fontSize -= 2;
+    }
+    ctx.fillText(text, cssWidth / 2, cssHeight / 2, maxWidthPx);
+    ctx.restore();
+};
+
+const useToolbarKeyboardNav = () => {
+    return useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'BUTTON' && target.getAttribute('role') !== 'radio') return;
+        const toolbar = e.currentTarget;
+        const focusable = Array.from(
+            toolbar.querySelectorAll<HTMLElement>('button:not([disabled]), [role="radio"]:not([aria-disabled="true"])'),
+        );
+        const idx = focusable.indexOf(target);
+        if (idx < 0) return;
+        let next = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            next = (idx + 1) % focusable.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            next = (idx - 1 + focusable.length) % focusable.length;
+        } else if (e.key === 'Home') {
+            next = 0;
+        } else if (e.key === 'End') {
+            next = focusable.length - 1;
+        } else {
+            return;
+        }
+        e.preventDefault();
+        focusable[next]?.focus();
+    }, []);
+};
+
 const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, ref) => {
     const {
         size = 'md',
@@ -110,6 +163,8 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
         disabled = false,
         className,
         ariaLabel = 'Signature pad',
+        allowTypeMode = true,
+        typeFontFamily = DEFAULT_TYPE_FONT,
         onBegin,
         onEnd,
         onChange,
@@ -122,9 +177,16 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
     const dprRef = useRef<number>(1);
     const [currentColor, setCurrentColor] = useState<string>(penColor ?? '#111827');
     const currentColorRef = useRef<string>(currentColor);
+    const [mode, setMode] = useState<SigInputMode>('draw');
+    const [typedText, setTypedText] = useState<string>('');
+    const reactId = useId();
+    const describedById = `eui-sig-desc-${reactId}`;
+    const labelId = `eui-sig-label-${reactId}`;
+
     useEffect(() => {
         currentColorRef.current = currentColor;
     }, [currentColor]);
+
     const redrawRef = useRef<(() => void) | null>(null);
     const [isEmpty, setIsEmpty] = useState<boolean>(true);
 
@@ -154,21 +216,30 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
 
     const redraw = useCallback(() => {
         const canvas = canvasRef.current;
-        if (!canvas) return;
+        const wrap = wrapRef.current;
+        if (!canvas || !wrap) return;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         ctx.save();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.restore();
+
+        if (mode === 'type') {
+            const rect = wrap.getBoundingClientRect();
+            drawTypedSignature(ctx, typedText, currentColor, typeFontFamily, rect.width, rect.height);
+            return;
+        }
+
         for (const stroke of strokesRef.current) {
             drawStroke(ctx, stroke);
         }
         if (currentRef.current) drawStroke(ctx, currentRef.current);
-    }, []);
+    }, [mode, typedText, currentColor, typeFontFamily]);
 
     useEffect(() => {
         redrawRef.current = redraw;
+        redraw();
     }, [redraw]);
 
     const resize = useCallback(() => {
@@ -203,7 +274,7 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
     };
 
     const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-        if (disabled) return;
+        if (disabled || mode !== 'draw') return;
         e.preventDefault();
         (e.target as HTMLCanvasElement).setPointerCapture(e.pointerId);
         const pt = getLocalPoint(e);
@@ -212,7 +283,7 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
     };
 
     const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
-        if (!currentRef.current) return;
+        if (!currentRef.current || mode !== 'draw') return;
         const pt = getLocalPoint(e);
         const pts = currentRef.current.points;
         const last = pts[pts.length - 1];
@@ -260,24 +331,31 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
     const handlePointerUp = () => finishStroke();
     const handlePointerCancel = () => finishStroke();
 
+    const clearAll = useCallback(() => {
+        strokesRef.current = [];
+        currentRef.current = null;
+        setTypedText('');
+        setIsEmpty(true);
+        onChange?.(true);
+        redraw();
+    }, [onChange, redraw]);
+
     useImperativeHandle(
         ref,
         (): SignaturePadHandle => ({
-            clear: () => {
-                strokesRef.current = [];
-                currentRef.current = null;
-                setIsEmpty(true);
-                onChange?.(true);
-                redraw();
-            },
+            clear: clearAll,
             undo: () => {
+                if (mode === 'type') {
+                    setTypedText((prev) => prev.slice(0, -1));
+                    return;
+                }
                 strokesRef.current.pop();
                 const empty = strokesRef.current.length === 0;
                 setIsEmpty(empty);
                 onChange?.(empty);
                 redraw();
             },
-            isEmpty: () => strokesRef.current.length === 0,
+            isEmpty: () => (mode === 'type' ? typedText.trim().length === 0 : strokesRef.current.length === 0),
             toDataURL: (type = 'image/png', quality?: number) => {
                 const canvas = canvasRef.current!;
                 return canvas.toDataURL(type, quality);
@@ -288,18 +366,23 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
                     canvas.toBlob((b) => resolve(b), type, quality);
                 }),
         }),
-        [redraw, onChange],
+        [redraw, onChange, mode, typedText, clearAll],
     );
 
-    const handleClear = () => {
-        strokesRef.current = [];
-        currentRef.current = null;
-        setIsEmpty(true);
-        onChange?.(true);
-        redraw();
-    };
+    const handleClear = clearAll;
 
     const handleUndo = () => {
+        if (mode === 'type') {
+            setTypedText((prev) => {
+                const next = prev.slice(0, -1);
+                if (next.length === 0) {
+                    setIsEmpty(true);
+                    onChange?.(true);
+                }
+                return next;
+            });
+            return;
+        }
         strokesRef.current.pop();
         const empty = strokesRef.current.length === 0;
         setIsEmpty(empty);
@@ -307,10 +390,69 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
         redraw();
     };
 
-    const describedById = useMemo(() => `eui-sig-desc-${Math.random().toString(36).slice(2, 8)}`, []);
+    const handleTypedTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setTypedText(value);
+        const empty = value.trim().length === 0;
+        if (empty !== isEmpty) {
+            setIsEmpty(empty);
+            onChange?.(empty);
+        }
+    };
+
+    const handleModeChange = (next: SigInputMode) => {
+        if (mode === next) return;
+        setMode(next);
+        strokesRef.current = [];
+        currentRef.current = null;
+        setTypedText('');
+        setIsEmpty(true);
+        onChange?.(true);
+    };
+
+    const dynamicAriaLabel = `${ariaLabel} (${isEmpty ? 'empty' : mode === 'type' ? 'has typed signature' : 'has signature'})`;
+
+    const handleToolbarKey = useToolbarKeyboardNav();
 
     return (
         <div className={cn('eui-sig', `eui-sig-size-${size}`, className)}>
+            {allowTypeMode && (
+                <div
+                    className="eui-sig-mode-tabs"
+                    role="tablist"
+                    aria-label="Signature input mode"
+                    onKeyDown={(e) => {
+                        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                            e.preventDefault();
+                            handleModeChange(mode === 'draw' ? 'type' : 'draw');
+                        }
+                    }}
+                >
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={mode === 'draw'}
+                        tabIndex={mode === 'draw' ? 0 : -1}
+                        className={cn('eui-sig-mode-tab', { 'eui-sig-mode-tab-active': mode === 'draw' })}
+                        onClick={() => handleModeChange('draw')}
+                        disabled={disabled}
+                    >
+                        Draw
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={mode === 'type'}
+                        tabIndex={mode === 'type' ? 0 : -1}
+                        className={cn('eui-sig-mode-tab', { 'eui-sig-mode-tab-active': mode === 'type' })}
+                        onClick={() => handleModeChange('type')}
+                        disabled={disabled}
+                    >
+                        Type
+                    </button>
+                </div>
+            )}
+
             <div
                 ref={wrapRef}
                 className={cn(
@@ -321,26 +463,55 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
             >
                 <canvas
                     ref={canvasRef}
-                    className="eui-sig-canvas"
+                    className={cn('eui-sig-canvas', { 'eui-sig-canvas-readonly': mode === 'type' })}
                     role="img"
-                    aria-label={ariaLabel}
+                    aria-label={dynamicAriaLabel}
                     aria-describedby={describedById}
+                    aria-labelledby={labelId}
                     tabIndex={0}
                     onPointerDown={handlePointerDown}
                     onPointerMove={handlePointerMove}
                     onPointerUp={handlePointerUp}
                     onPointerCancel={handlePointerCancel}
                 />
-                {isEmpty && placeholder && <div className="eui-sig-placeholder">{placeholder}</div>}
-                <span id={describedById} style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
-                    Draw your signature using mouse, touch, or stylus.
+                {isEmpty && placeholder && mode === 'draw' && <div className="eui-sig-placeholder">{placeholder}</div>}
+                <span id={labelId} className="eui-sig-sr-only">{dynamicAriaLabel}</span>
+                <span id={describedById} className="eui-sig-sr-only">
+                    {mode === 'draw'
+                        ? 'Draw your signature using mouse, touch, or stylus. Switch to Type mode if you cannot draw.'
+                        : 'Type your name in the field below to render it as a signature.'}
                 </span>
             </div>
+
+            {mode === 'type' && (
+                <div className="eui-sig-type-row">
+                    <label htmlFor={`${reactId}-type-input`} className="eui-sig-type-label">
+                        Type your name
+                    </label>
+                    <input
+                        id={`${reactId}-type-input`}
+                        type="text"
+                        className="eui-sig-type-input"
+                        value={typedText}
+                        onChange={handleTypedTextChange}
+                        disabled={disabled}
+                        autoComplete="name"
+                        spellCheck={false}
+                        placeholder="e.g. Jane Doe"
+                    />
+                </div>
+            )}
+
             {showToolbar && (
-                <div className="eui-sig-toolbar">
-                    {showSwatches && (
+                <div
+                    className="eui-sig-toolbar"
+                    role="toolbar"
+                    aria-label="Signature pad actions"
+                    onKeyDown={handleToolbarKey}
+                >
+                    {showSwatches && mode === 'draw' && (
                         <div className="eui-sig-swatches" role="radiogroup" aria-label="Pen color">
-                            {swatches.map((c) => (
+                            {swatches.map((c, i) => (
                                 <button
                                     key={c}
                                     type="button"
@@ -349,6 +520,7 @@ const SignaturePad = forwardRef<SignaturePadHandle, SignaturePadProps>((props, r
                                     aria-label={`Pen color ${c}`}
                                     role="radio"
                                     aria-checked={c === currentColor}
+                                    tabIndex={c === currentColor || (i === 0 && currentColor !== c) ? 0 : -1}
                                     onClick={() => setCurrentColor(c)}
                                 />
                             ))}

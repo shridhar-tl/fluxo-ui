@@ -68,6 +68,16 @@
     "slideClassName": {
       "type": "string",
       "description": "Additional CSS class for each slide."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Image carousel'",
+      "description": "Accessible name for the carousel region."
+    },
+    "showAutoplayToggle": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show a play/pause button when autoplay is enabled (WCAG 2.2.2)."
     }
   },
   "slideProps": {

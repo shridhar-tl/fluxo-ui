@@ -454,6 +454,19 @@ body.mode-dark .eui-kanban-column-over-limit .eui-kanban-column-count {
     gap: 4px;
     z-index: 1;
     pointer-events: auto;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.eui-kanban-card:hover .eui-kanban-card-actions-overlay,
+.eui-kanban-card:focus-within .eui-kanban-card-actions-overlay {
+    opacity: 1;
+}
+
+@media (hover: none), (pointer: coarse) {
+    .eui-kanban-card-actions-overlay {
+        opacity: 1;
+    }
 }
 
 // Card sizes
@@ -675,8 +688,19 @@ body.mode-dark .eui-kanban-card-delete:hover {
     color: #fca5a5;
 }
 
-.eui-kanban-card:hover .eui-kanban-card-delete {
+.eui-kanban-card:hover .eui-kanban-card-delete,
+.eui-kanban-card:focus-within .eui-kanban-card-delete {
     opacity: 1;
+}
+
+@media (hover: none), (pointer: coarse) {
+    .eui-kanban-card-delete {
+        opacity: 1;
+        min-width: 32px;
+        min-height: 32px;
+        width: 32px;
+        height: 32px;
+    }
 }
 
 // Assignee avatars

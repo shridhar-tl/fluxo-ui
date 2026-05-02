@@ -59,6 +59,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     const [popStyle, setPopStyle] = useState<React.CSSProperties>();
     const triggerRef = useRef<HTMLElement>(null);
     const popRef = useRef<HTMLDivElement>(null);
+    const previousFocusRef = useRef<HTMLElement | null>(null);
+    const mouseDownTargetRef = useRef<EventTarget | null>(null);
     const { isCompact, isMobile, isTablet } = useViewport();
 
     const currentValue = controlledValue ?? internalValue;
@@ -94,12 +96,47 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
 
     useEffect(() => {
         if (!isOpen) return;
+        const focusableSelector = 'button:not([disabled]), [href]:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
         const closeAll = () => {
             setIsOpen(false);
             onOpenChange?.(false);
+            previousFocusRef.current?.focus?.();
         };
+        const focusFrame = requestAnimationFrame(() => {
+            const pop = popRef.current;
+            if (!pop) return;
+            const focusable = pop.querySelectorAll<HTMLElement>(focusableSelector);
+            if (focusable.length > 0) focusable[0].focus();
+            else pop.focus();
+        });
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') closeAll();
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closeAll();
+                return;
+            }
+            if (e.key !== 'Tab') return;
+            const pop = popRef.current;
+            if (!pop) return;
+            const focusable = Array.from(pop.querySelectorAll<HTMLElement>(focusableSelector)).filter((el) => el.tabIndex !== -1);
+            if (focusable.length === 0) {
+                e.preventDefault();
+                pop.focus();
+                return;
+            }
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first || !pop.contains(document.activeElement)) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last || !pop.contains(document.activeElement)) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
         };
         document.addEventListener('keydown', onKey);
 
@@ -107,6 +144,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             const previousOverflow = document.body.style.overflow;
             document.body.style.overflow = 'hidden';
             return () => {
+                cancelAnimationFrame(focusFrame);
                 document.removeEventListener('keydown', onKey);
                 document.body.style.overflow = previousOverflow;
             };
@@ -124,11 +162,12 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             }
         };
         window.addEventListener('resize', onResize);
-        document.addEventListener('scroll', onResize, true);
+        window.addEventListener('scroll', onResize, true);
         document.addEventListener('mousedown', onClickOutside);
         return () => {
+            cancelAnimationFrame(focusFrame);
             window.removeEventListener('resize', onResize);
-            document.removeEventListener('scroll', onResize, true);
+            window.removeEventListener('scroll', onResize, true);
             document.removeEventListener('mousedown', onClickOutside);
             document.removeEventListener('keydown', onKey);
         };
@@ -147,6 +186,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
         if (!interactive) return;
         setIsOpen((prev) => {
             const next = !prev;
+            if (next) previousFocusRef.current = document.activeElement as HTMLElement | null;
             onOpenChange?.(next);
             return next;
         });
@@ -293,9 +333,14 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
                                 'eui-color-picker-backdrop-mobile': isMobile,
                                 'eui-color-picker-backdrop-tablet': isTablet,
                             })}
-                            onClick={() => {
-                                setIsOpen(false);
-                                onOpenChange?.(false);
+                            onMouseDown={(e) => { mouseDownTargetRef.current = e.target; }}
+                            onMouseUp={(e) => {
+                                if (e.target === e.currentTarget && mouseDownTargetRef.current === e.currentTarget) {
+                                    setIsOpen(false);
+                                    onOpenChange?.(false);
+                                    previousFocusRef.current?.focus?.();
+                                }
+                                mouseDownTargetRef.current = null;
                             }}
                         >
                             <div
@@ -305,9 +350,12 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
                                     'eui-color-picker-popover-mobile-tablet': isTablet,
                                 })}
                                 role="dialog"
-                                aria-label="Color picker"
+                                aria-label={ariaLabel ?? 'Color picker'}
                                 aria-modal="true"
+                                tabIndex={-1}
                                 onClick={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onMouseUp={(e) => e.stopPropagation()}
                             >
                                 <ColorPanel
                                     value={currentValue}
@@ -326,7 +374,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
                             className={cn('eui-color-picker-popover', { 'eui-color-picker-popover-hidden': !popStyle })}
                             style={popStyle}
                             role="dialog"
-                            aria-label="Color picker"
+                            aria-modal="true"
+                            aria-label={ariaLabel ?? 'Color picker'}
+                            tabIndex={-1}
                         >
                             <ColorPanel
                                 value={currentValue}

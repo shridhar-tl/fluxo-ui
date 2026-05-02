@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useReducedMotion } from '../../hooks/useReducedMotion';
 import './AnimateOnView.scss';
 
 type AnimationType =
@@ -57,9 +58,18 @@ const AnimateOnView: React.FC<AnimateOnViewProps> = ({
     stagger = 0,
     staggerIndex = 0,
 }) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [hasAnimated, setHasAnimated] = useState(false);
+    const reducedMotion = useReducedMotion();
+    const animationDisabled = disabled || reducedMotion;
+    const [isVisible, setIsVisible] = useState(animationDisabled);
+    const [hasAnimated, setHasAnimated] = useState(animationDisabled);
     const elementRef = useRef<HTMLElement>(null);
+    const onVisibleRef = useRef(onVisible);
+    const onHiddenRef = useRef(onHidden);
+
+    useEffect(() => {
+        onVisibleRef.current = onVisible;
+        onHiddenRef.current = onHidden;
+    }, [onVisible, onHidden]);
 
     const handleIntersection = useCallback(
         (entries: IntersectionObserverEntry[]) => {
@@ -68,25 +78,34 @@ const AnimateOnView: React.FC<AnimateOnViewProps> = ({
                 if (once && hasAnimated) return;
                 setIsVisible(true);
                 setHasAnimated(true);
-                onVisible?.();
+                onVisibleRef.current?.();
             } else {
                 if (!once) {
                     setIsVisible(false);
-                    onHidden?.();
+                    onHiddenRef.current?.();
                 }
             }
         },
-        [once, hasAnimated, onVisible, onHidden],
+        [once, hasAnimated],
     );
 
     useEffect(() => {
-        if (disabled) {
+        if (animationDisabled) {
             setIsVisible(true);
+            setHasAnimated(true);
+            onVisibleRef.current?.();
             return;
         }
 
         const element = elementRef.current;
         if (!element) return;
+
+        if (typeof IntersectionObserver === 'undefined') {
+            setIsVisible(true);
+            setHasAnimated(true);
+            onVisibleRef.current?.();
+            return;
+        }
 
         const observer = new IntersectionObserver(handleIntersection, {
             threshold,
@@ -95,7 +114,7 @@ const AnimateOnView: React.FC<AnimateOnViewProps> = ({
 
         observer.observe(element);
         return () => observer.disconnect();
-    }, [disabled, threshold, rootMargin, handleIntersection]);
+    }, [animationDisabled, threshold, rootMargin, handleIntersection]);
 
     const effectiveDelay = delay + stagger * staggerIndex;
 
@@ -106,7 +125,7 @@ const AnimateOnView: React.FC<AnimateOnViewProps> = ({
         animationFillMode: 'both',
     };
 
-    if (disabled) {
+    if (animationDisabled) {
         return <Tag className={className}>{children}</Tag>;
     }
 

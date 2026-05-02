@@ -387,6 +387,45 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
     );
 
     // ── Resize logic ──────────────────────────────────────────────────────────
+    const handleResizeKey = useCallback(
+        (e: React.KeyboardEvent, panelId: string, axis: 'horizontal' | 'vertical') => {
+            const runtime = stateRef.current.panels[panelId];
+            if (!runtime) return;
+            const config = panelConfigs.find((c) => c.id === panelId);
+            const minSize = config?.minSize ?? 100;
+            const maxSize = 800;
+            const step = 16;
+            const bigStep = 64;
+            const decreaseKeys = axis === 'horizontal' ? ['ArrowLeft'] : ['ArrowUp'];
+            const increaseKeys = axis === 'horizontal' ? ['ArrowRight'] : ['ArrowDown'];
+            const reverse = runtime.position === 'right' || runtime.position === 'bottom';
+
+            let next: number | null = null;
+            if (decreaseKeys.includes(e.key)) {
+                next = runtime.size + (reverse ? step : -step);
+            } else if (increaseKeys.includes(e.key)) {
+                next = runtime.size + (reverse ? -step : step);
+            } else if (e.key === 'PageUp') {
+                next = runtime.size + (reverse ? bigStep : -bigStep);
+            } else if (e.key === 'PageDown') {
+                next = runtime.size + (reverse ? -bigStep : bigStep);
+            } else if (e.key === 'Home') {
+                next = minSize;
+            } else if (e.key === 'End') {
+                next = maxSize;
+            } else {
+                return;
+            }
+            e.preventDefault();
+            const clamped = Math.max(minSize, Math.min(maxSize, next));
+            updateState((prev) => ({
+                ...prev,
+                panels: { ...prev.panels, [panelId]: { ...prev.panels[panelId], size: clamped } },
+            }));
+        },
+        [panelConfigs, updateState],
+    );
+
     const startResize = useCallback(
         (e: React.MouseEvent, panelId: string, axis: 'horizontal' | 'vertical') => {
             e.preventDefault();
@@ -671,9 +710,14 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                             dragging: resizingPanelId === panelId,
                         })}
                         onMouseDown={(e) => startResize(e, panelId, 'horizontal')}
+                        onKeyDown={(e) => handleResizeKey(e, panelId, 'horizontal')}
                         role="separator"
                         aria-orientation="vertical"
                         aria-label="Resize panel"
+                        aria-valuenow={Math.round(state.panels[panelId]?.size ?? 0)}
+                        aria-valuemin={panelConfigs.find((c) => c.id === panelId)?.minSize ?? 100}
+                        aria-valuemax={800}
+                        aria-controls={panelId}
                         tabIndex={0}
                     />
                 )}
@@ -683,9 +727,14 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                             dragging: resizingPanelId === panelId,
                         })}
                         onMouseDown={(e) => startResize(e, panelId, 'horizontal')}
+                        onKeyDown={(e) => handleResizeKey(e, panelId, 'horizontal')}
                         role="separator"
                         aria-orientation="vertical"
                         aria-label="Resize panel"
+                        aria-valuenow={Math.round(state.panels[panelId]?.size ?? 0)}
+                        aria-valuemin={panelConfigs.find((c) => c.id === panelId)?.minSize ?? 100}
+                        aria-valuemax={800}
+                        aria-controls={panelId}
                         tabIndex={0}
                     />
                 )}
@@ -877,9 +926,14 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                             dragging: resizingPanelId === activeBottomId,
                         })}
                         onMouseDown={(e) => startResize(e, activeBottomId, 'vertical')}
+                        onKeyDown={(e) => handleResizeKey(e, activeBottomId, 'vertical')}
                         role="separator"
                         aria-orientation="horizontal"
                         aria-label="Resize bottom panel"
+                        aria-valuenow={Math.round(state.panels[activeBottomId]?.size ?? 0)}
+                        aria-valuemin={panelConfigs.find((c) => c.id === activeBottomId)?.minSize ?? 100}
+                        aria-valuemax={800}
+                        aria-controls={activeBottomId}
                         tabIndex={0}
                     />
                 )}

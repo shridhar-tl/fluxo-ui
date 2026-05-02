@@ -202,7 +202,10 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
             applyBlurRegion(ctx, canvas, region);
         }
 
-        if (annotationData) {
+        const annotCanvas = annotationCanvasRef.current;
+        if (annotCanvas && annotCanvas.width > 0 && annotCanvas.height > 0) {
+            ctx.drawImage(annotCanvas, 0, 0, canvas.width, canvas.height);
+        } else if (annotationData) {
             const annotImg = new Image();
             annotImg.onload = () => {
                 ctx.drawImage(annotImg, 0, 0, canvas.width, canvas.height);
@@ -378,23 +381,59 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                 ctx.strokeRect(x, y, w, h);
             } else if (activeTool === 'annotate' && freehandActive && freehandPointsRef.current.length > 0) {
                 freehandPointsRef.current.push(coords);
+                const pts = freehandPointsRef.current;
+                if (pts.length < 2) return;
+
                 const aCanvas = annotationCanvasRef.current;
-                if (aCanvas) {
-                    const ctx = aCanvas.getContext('2d');
-                    if (ctx) {
-                        const pts = freehandPointsRef.current;
-                        if (pts.length >= 2) {
-                            const scaleX = aCanvas.width / (canvasRef.current?.width || 1);
-                            const scaleY = aCanvas.height / (canvasRef.current?.height || 1);
-                            ctx.strokeStyle = freehandColor;
-                            ctx.lineWidth = freehandSize;
-                            ctx.lineCap = 'round';
-                            ctx.lineJoin = 'round';
-                            ctx.beginPath();
-                            ctx.moveTo(pts[pts.length - 2].x * scaleX, pts[pts.length - 2].y * scaleY);
-                            ctx.lineTo(pts[pts.length - 1].x * scaleX, pts[pts.length - 1].y * scaleY);
-                            ctx.stroke();
-                        }
+                const mainCanvas = canvasRef.current;
+                const aCtx = aCanvas?.getContext('2d') ?? null;
+                const mainCtx = mainCanvas?.getContext('2d') ?? null;
+
+                const scaleX = aCanvas && mainCanvas ? aCanvas.width / mainCanvas.width : 1;
+                const scaleY = aCanvas && mainCanvas ? aCanvas.height / mainCanvas.height : 1;
+
+                const setStrokeStyle = (ctx: CanvasRenderingContext2D, sx: number, sy: number) => {
+                    ctx.strokeStyle = freehandColor;
+                    ctx.lineWidth = freehandSize * Math.max(sx, sy);
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                };
+
+                if (pts.length === 2) {
+                    if (aCtx) {
+                        setStrokeStyle(aCtx, scaleX, scaleY);
+                        aCtx.beginPath();
+                        aCtx.moveTo(pts[0].x * scaleX, pts[0].y * scaleY);
+                        aCtx.lineTo(pts[1].x * scaleX, pts[1].y * scaleY);
+                        aCtx.stroke();
+                    }
+                    if (mainCtx) {
+                        setStrokeStyle(mainCtx, 1, 1);
+                        mainCtx.beginPath();
+                        mainCtx.moveTo(pts[0].x, pts[0].y);
+                        mainCtx.lineTo(pts[1].x, pts[1].y);
+                        mainCtx.stroke();
+                    }
+                } else {
+                    const p0 = pts[pts.length - 3];
+                    const p1 = pts[pts.length - 2];
+                    const p2 = pts[pts.length - 1];
+                    const midA = { x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2 };
+                    const midB = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+
+                    if (aCtx) {
+                        setStrokeStyle(aCtx, scaleX, scaleY);
+                        aCtx.beginPath();
+                        aCtx.moveTo(midA.x * scaleX, midA.y * scaleY);
+                        aCtx.quadraticCurveTo(p1.x * scaleX, p1.y * scaleY, midB.x * scaleX, midB.y * scaleY);
+                        aCtx.stroke();
+                    }
+                    if (mainCtx) {
+                        setStrokeStyle(mainCtx, 1, 1);
+                        mainCtx.beginPath();
+                        mainCtx.moveTo(midA.x, midA.y);
+                        mainCtx.quadraticCurveTo(p1.x, p1.y, midB.x, midB.y);
+                        mainCtx.stroke();
                     }
                 }
             }
@@ -742,16 +781,42 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         );
     }
 
+    const handleToolbarKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'BUTTON') return;
+        if (target.closest('select, input, textarea')) return;
+        const focusable = Array.from(
+            e.currentTarget.querySelectorAll<HTMLButtonElement>('button:not([disabled])'),
+        );
+        const idx = focusable.indexOf(target as HTMLButtonElement);
+        if (idx < 0) return;
+        let next = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (idx + 1) % focusable.length;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (idx - 1 + focusable.length) % focusable.length;
+        else if (e.key === 'Home') next = 0;
+        else if (e.key === 'End') next = focusable.length - 1;
+        else return;
+        e.preventDefault();
+        focusable[next]?.focus();
+    };
+
     return (
         <div className={cn('eui-image-editor', className)} style={{ width }}>
-            <div className="eui-image-editor-toolbar">
-                <div className="eui-image-editor-tools">
+            <div
+                className="eui-image-editor-toolbar"
+                role="toolbar"
+                aria-label="Image editor tools"
+                onKeyDown={handleToolbarKey}
+            >
+                <div className="eui-image-editor-tools" role="group" aria-label="Tools">
                     {tools.map((tool) => (
                         <button
                             key={tool}
                             className={cn('eui-image-editor-tool-btn', { active: activeTool === tool })}
                             onClick={() => setActiveTool(tool)}
                             title={tool.charAt(0).toUpperCase() + tool.slice(1)}
+                            aria-label={tool.charAt(0).toUpperCase() + tool.slice(1)}
+                            aria-pressed={activeTool === tool}
                             type="button"
                         >
                             {toolIcons[tool]}
@@ -806,6 +871,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                 <canvas
                     ref={canvasRef}
                     className="eui-image-editor-canvas"
+                    role="img"
+                    aria-label={`Image editor canvas — active tool: ${activeTool}`}
                     onMouseDown={handleMouseDown}
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}

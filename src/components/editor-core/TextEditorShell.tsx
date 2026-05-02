@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { EditIcon, EyeIcon, SplitViewIcon } from '../../assets/icons';
 
 export type EditorViewMode = 'edit' | 'preview' | 'split';
@@ -47,6 +47,15 @@ const TextEditorShellInner: React.FC<TextEditorShellProps> = ({
     const [isMobile, setIsMobile] = useState<boolean>(() =>
         typeof window !== 'undefined' ? window.matchMedia('(max-width: 640px)').matches : false,
     );
+    const previousViewRef = useRef<EditorViewMode>(view);
+    const [viewAnnouncement, setViewAnnouncement] = useState('');
+
+    useEffect(() => {
+        if (previousViewRef.current !== view) {
+            setViewAnnouncement(`View changed to ${VIEW_META[view]?.label.toLowerCase() || view}`);
+            previousViewRef.current = view;
+        }
+    }, [view]);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -91,9 +100,46 @@ const TextEditorShellInner: React.FC<TextEditorShellProps> = ({
         >
             {(toolbar || showViewSwitcher) && (
                 <div className="eui-editor-shell-toolbar">
-                    <div className="eui-editor-shell-toolbar-main">{toolbar}</div>
+                    <div
+                        className="eui-editor-shell-toolbar-main"
+                        role="toolbar"
+                        aria-label="Editor formatting toolbar"
+                        onKeyDown={(e) => {
+                            const target = e.target as HTMLElement;
+                            if (target.tagName !== 'BUTTON') return;
+                            if (target.closest('select, input, textarea')) return;
+                            const focusable = Array.from(
+                                e.currentTarget.querySelectorAll<HTMLButtonElement>('button:not([disabled])'),
+                            );
+                            const idx = focusable.indexOf(target as HTMLButtonElement);
+                            if (idx < 0) return;
+                            let next = -1;
+                            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (idx + 1) % focusable.length;
+                            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (idx - 1 + focusable.length) % focusable.length;
+                            else if (e.key === 'Home') next = 0;
+                            else if (e.key === 'End') next = focusable.length - 1;
+                            else return;
+                            e.preventDefault();
+                            focusable[next]?.focus();
+                        }}
+                    >
+                        {toolbar}
+                    </div>
                     {showViewSwitcher && preview && (
-                        <div className="eui-editor-shell-view-switcher" role="tablist" aria-label="View mode">
+                        <div
+                            className="eui-editor-shell-view-switcher"
+                            role="tablist"
+                            aria-label="View mode"
+                            onKeyDown={(e) => {
+                                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+                                const idx = allowedViews.indexOf(effectiveView);
+                                if (idx < 0) return;
+                                const dir = e.key === 'ArrowRight' ? 1 : -1;
+                                const next = allowedViews[(idx + dir + allowedViews.length) % allowedViews.length];
+                                e.preventDefault();
+                                selectView(next);
+                            }}
+                        >
                             {allowedViews.map((v) => {
                                 const { label, icon: Icon } = VIEW_META[v];
                                 const active = effectiveView === v;
@@ -105,6 +151,7 @@ const TextEditorShellInner: React.FC<TextEditorShellProps> = ({
                                         onClick={() => selectView(v)}
                                         role="tab"
                                         aria-selected={active}
+                                        tabIndex={active ? 0 : -1}
                                         title={label}
                                         aria-label={label + ' view'}
                                     >
@@ -162,6 +209,14 @@ const TextEditorShellInner: React.FC<TextEditorShellProps> = ({
                 )}
             </div>
             {statusBar && <div className="eui-editor-shell-statusbar">{statusBar}</div>}
+            <div
+                className="eui-editor-shell-sr-only"
+                aria-live="polite"
+                aria-atomic="true"
+                role="status"
+            >
+                {viewAnnouncement}
+            </div>
         </div>
     );
 };

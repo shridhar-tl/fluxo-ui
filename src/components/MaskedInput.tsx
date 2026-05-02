@@ -11,10 +11,42 @@ import './MaskedInput.scss';
  *   '*' - alphanumeric (a-z, A-Z, 0-9)
  *   Any other character - treated as a literal separator
  */
+export type MaskedInputPreset = 'phone' | 'phone-us' | 'phone-intl' | 'date' | 'date-us' | 'ssn' | 'credit-card' | 'zip' | 'zip-plus4' | 'time';
+
+const PRESET_MASKS: Record<MaskedInputPreset, string> = {
+    'phone': '(999) 999-9999',
+    'phone-us': '(999) 999-9999',
+    'phone-intl': '+99 999 999 9999',
+    'date': '99/99/9999',
+    'date-us': '99/99/9999',
+    'ssn': '999-99-9999',
+    'credit-card': '9999 9999 9999 9999',
+    'zip': '99999',
+    'zip-plus4': '99999-9999',
+    'time': '99:99',
+};
+
+const PRESET_DESCRIPTIONS: Record<MaskedInputPreset, string> = {
+    'phone': 'Phone number, format: (123) 456-7890',
+    'phone-us': 'US phone number, format: (123) 456-7890',
+    'phone-intl': 'International phone number, format: +12 345 678 9012',
+    'date': 'Date, format: MM/DD/YYYY',
+    'date-us': 'Date, format: MM/DD/YYYY',
+    'ssn': 'Social Security Number, format: 123-45-6789',
+    'credit-card': 'Credit card number, format: 1234 5678 9012 3456',
+    'zip': 'ZIP code, format: 12345',
+    'zip-plus4': 'ZIP+4 code, format: 12345-6789',
+    'time': 'Time, format: HH:MM',
+};
+
 export interface MaskedInputProps
     extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'value'> {
-    /** The mask pattern. Use '9' for digit, 'a' for letter, '*' for alphanumeric, any other char as literal separator */
-    mask: string;
+    /** The mask pattern. Use '9' for digit, 'a' for letter, '*' for alphanumeric, any other char as literal separator. Either mask or preset must be provided */
+    mask?: string;
+    /** Built-in mask preset that auto-fills mask and a format hint */
+    preset?: MaskedInputPreset;
+    /** Format hint string (auto-derived from preset). Linked via aria-describedby for SR users */
+    formatHint?: string;
     /** Current value (raw unmasked, or masked - component normalises it) */
     value?: string;
     onChange?: (event: ComponentEvent<string>) => void;
@@ -29,6 +61,9 @@ export interface MaskedInputProps
     onRawChange?: (raw: string, masked: string) => void;
     /** Whether to include literal separator characters in the onChange value */
     includeLiterals?: boolean;
+    error?: string | boolean;
+    invalid?: boolean;
+    helperText?: React.ReactNode;
 }
 
 const MASK_DIGIT = '9';
@@ -184,7 +219,9 @@ function buildEmitValue(slots: SlotArray, mask: string, slotChar: string, includ
 export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
     (
         {
-            mask,
+            mask: maskProp,
+            preset,
+            formatHint,
             value = '',
             onChange,
             onRawChange,
@@ -199,17 +236,53 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
             name,
             args,
             includeLiterals = true,
+            error,
+            invalid,
+            helperText,
+            'aria-describedby': ariaDescribedBy,
             ...baseProps
         },
         ref,
     ) => {
+        const mask = maskProp || (preset ? PRESET_MASKS[preset] : '');
+        if (!mask) {
+            throw new Error('MaskedInput requires either a "mask" or "preset" prop');
+        }
+        const resolvedFormatHint = formatHint || (preset ? PRESET_DESCRIPTIONS[preset] : undefined);
+
         const [inputId] = useState(id || generateId());
         const internalRef = useRef<HTMLInputElement>(null);
         const inputRef = (ref as React.RefObject<HTMLInputElement>) ?? internalRef;
+        const liveRegionRef = useRef<HTMLSpanElement>(null);
 
         const totalSlots = countSlots(mask);
 
         const [slots, setSlots] = useState<SlotArray>(() => parseValue(value, mask, slotChar));
+        const [rejectMessage, setRejectMessage] = useState<string>('');
+        const rejectTimerRef = useRef<number | null>(null);
+
+        const announceReject = useCallback((maskCh: string) => {
+            const expectedLabel =
+                maskCh === MASK_DIGIT
+                    ? 'a digit'
+                    : maskCh === MASK_LETTER
+                        ? 'a letter'
+                        : 'a letter or digit';
+            const msg = `Expected ${expectedLabel}`;
+            setRejectMessage(msg);
+            if (rejectTimerRef.current !== null) {
+                window.clearTimeout(rejectTimerRef.current);
+            }
+            rejectTimerRef.current = window.setTimeout(() => setRejectMessage(''), 1500);
+        }, []);
+
+        useEffect(() => {
+            return () => {
+                if (rejectTimerRef.current !== null) {
+                    window.clearTimeout(rejectTimerRef.current);
+                }
+            };
+        }, []);
 
         // Track the last value we emitted so we don't re-parse our own emissions
         const lastEmittedRef = useRef<string>('');
@@ -348,7 +421,10 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                 const maskPos = nextEditablePos(mask, insertMaskPos);
                 if (maskPos >= mask.length) return;
 
-                if (!matchesMask(ch, mask[maskPos])) return;
+                if (!matchesMask(ch, mask[maskPos])) {
+                    announceReject(mask[maskPos]);
+                    return;
+                }
 
                 const si = maskPosToSlotIdx(mask, maskPos);
                 const newSlots = [...workingSlots];
@@ -360,7 +436,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                 const nextPos = nextEditablePos(mask, maskPos + 1);
                 setCursorTo(nextPos);
             },
-            [disabled, readonly, mask, slots, inputRef, emitChange, setCursorTo],
+            [disabled, readonly, mask, slots, inputRef, emitChange, setCursorTo, announceReject],
         );
 
         const handleKeyDownCombined = useCallback(
@@ -439,8 +515,19 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
             [disabled, readonly, mask, slots, inputRef, emitChange, setCursorTo],
         );
 
+        const errorMessage = typeof error === 'string' ? error : undefined;
+        const hasError = invalid === true || error === true || (typeof error === 'string' && error.length > 0);
+        const helperId = helperText ? `${inputId}-helper` : undefined;
+        const errorId = errorMessage ? `${inputId}-error` : undefined;
+        const formatId = resolvedFormatHint ? `${inputId}-format` : undefined;
+        const liveId = `${inputId}-live`;
+        const describedBy = [ariaDescribedBy, formatId, helperId, errorId].filter(Boolean).join(' ') || undefined;
+        const ariaInvalid = hasError
+            ? 'true'
+            : (required && slots.every((s) => s === null) ? 'true' : 'false');
+
         const componentClasses = getComponentClasses(
-            { ...baseProps, disabled, className },
+            { ...baseProps, disabled, className: classNames(className, { 'eui-masked-input-error': hasError }) },
             classNames('eui-masked-input', {
                 'eui-masked-input-readonly': readonly,
                 'eui-masked-input-disabled': disabled,
@@ -453,30 +540,52 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
         delete componentStyles.fontSize;
 
         return (
-            <input
-                ref={inputRef}
-                id={inputId}
-                type="text"
-                value={maskedValue}
-                onChange={() => {
-                    /* controlled via keydown */
-                }}
-                onKeyDown={handleKeyDownCombined}
-                onFocus={handleFocus}
-                onClick={handleClick}
-                onPaste={handlePaste}
-                placeholder={placeholder}
-                required={required}
-                readOnly={readonly || disabled}
-                autoFocus={autoFocus}
-                disabled={disabled}
-                className={componentClasses}
-                style={componentStyles}
-                aria-invalid={required && slots.every((s) => s === null) ? 'true' : 'false'}
-                aria-required={required}
-                autoComplete="off"
-                spellCheck={false}
-            />
+            <span className="eui-masked-input-wrap-outer">
+                <input
+                    ref={inputRef}
+                    id={inputId}
+                    type="text"
+                    value={maskedValue}
+                    onChange={() => {
+                        /* controlled via keydown */
+                    }}
+                    onKeyDown={handleKeyDownCombined}
+                    onFocus={handleFocus}
+                    onClick={handleClick}
+                    onPaste={handlePaste}
+                    placeholder={placeholder ?? mask}
+                    required={required}
+                    readOnly={readonly || disabled}
+                    autoFocus={autoFocus}
+                    disabled={disabled}
+                    className={componentClasses}
+                    style={componentStyles}
+                    aria-invalid={ariaInvalid}
+                    aria-required={required}
+                    aria-describedby={describedBy}
+                    aria-errormessage={errorId}
+                    autoComplete="off"
+                    spellCheck={false}
+                />
+                {resolvedFormatHint && (
+                    <span id={formatId} className="eui-masked-input-format-hint">
+                        {resolvedFormatHint}
+                    </span>
+                )}
+                {helperText && !errorMessage && (
+                    <span id={helperId} className="eui-masked-input-helper">
+                        {helperText}
+                    </span>
+                )}
+                {errorMessage && (
+                    <span id={errorId} className="eui-masked-input-error-message" role="alert">
+                        {errorMessage}
+                    </span>
+                )}
+                <span ref={liveRegionRef} id={liveId} className="eui-visually-hidden" aria-live="polite" role="status">
+                    {rejectMessage}
+                </span>
+            </span>
         );
     },
 );

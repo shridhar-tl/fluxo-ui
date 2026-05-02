@@ -30,6 +30,24 @@
     "onChange": {
       "type": "(openIds: string[]) => void",
       "description": "Called when the set of open items changes."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name for the accordion if needed."
+    },
+    "headingLevel": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "3",
+      "description": "Heading level used for each item title (h1-h6) so the page heading outline is correct."
+    },
+    "unmountOnCollapse": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Unmount panel content when collapsed (useful for heavy content that should not stay in the DOM)."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the accordion wrapper."
     }
   }
 }

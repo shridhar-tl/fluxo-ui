@@ -69,6 +69,32 @@
       "default": false,
       "description": "Apply a subtle pulse animation to the time display while running."
     },
+    "announceInterval": {
+      "type": "number",
+      "description": "Announce the remaining time via aria-live region every N seconds (e.g. 60 for once-per-minute)."
+    },
+    "announceFinalSeconds": {
+      "type": "number",
+      "description": "When remaining seconds drops to or below this value, announce every second via aria-live (e.g. 10 for the final ten-second countdown)."
+    },
+    "announceOnComplete": {
+      "type": "boolean",
+      "default": false,
+      "description": "Announce 'Timer complete' via aria-live region when the timer reaches zero."
+    },
+    "announcePoliteness": {
+      "type": "'polite' | 'assertive'",
+      "default": "'polite'",
+      "description": "aria-live politeness for the announcement region."
+    },
+    "criticalThreshold": {
+      "type": "number",
+      "description": "Fire onCriticalThreshold once when remaining seconds first drops to or below this value."
+    },
+    "onCriticalThreshold": {
+      "type": "(remaining: number) => void",
+      "description": "Called the first time remaining time crosses criticalThreshold (resets on reset/restart)."
+    },
     "className": {
       "type": "string",
       "description": "Additional CSS class name."

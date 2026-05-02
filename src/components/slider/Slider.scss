@@ -100,6 +100,7 @@
     border-radius: 999px;
     background-color: var(--eui-border);
     cursor: pointer;
+    touch-action: none;
 
     .eui-slider-disabled & {
         cursor: not-allowed;
@@ -149,6 +150,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        min-width: 44px;
+        min-height: 44px;
+        margin: auto;
+        border-radius: 50%;
+    }
 
     .eui-slider-horizontal & {
         top: 50%;
@@ -314,4 +325,11 @@
 .eui-slider-xl .eui-slider-tooltip {
     font-size: 0.8rem;
     padding: 0.3rem 0.625rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-slider-fill,
+    .eui-slider-thumb {
+        transition: none !important;
+    }
 }

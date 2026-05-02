@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useTheme } from '../components/context/ThemeContext';
+import { themes } from '../themes';
 import { BaseComponentProps } from '../types';
 
 export const generateId = () => {
@@ -8,63 +8,56 @@ export const generateId = () => {
 
 export const getComponentClasses = (baseProps: BaseComponentProps, additionalClasses?: string) => {
     const { size, theme, className, disabled } = baseProps;
-    const themeContext = useTheme();
-
-    const finalSize = size || themeContext.size || 'md';
-    const finalTheme = theme || themeContext.theme || 'default';
+    const finalSize = size || 'md';
+    const finalTheme = theme || 'default';
 
     return classNames(
-        'transition-all duration-200 ease-in-out',
-        `ui-size-${finalSize}`,
-        `ui-theme-${finalTheme}`,
-        {
-            'opacity-50 cursor-not-allowed': disabled,
-        },
+        `eui-size-${finalSize}`,
+        `eui-theme-${finalTheme}`,
+        { 'eui-component-disabled': disabled },
         additionalClasses,
-        className
+        className,
     );
 };
 
 export const getComponentStyles = (baseProps: BaseComponentProps): React.CSSProperties => {
-    const themeContext = useTheme();
-    const themeConfig = themeContext.getThemeConfig();
-    const finalSize = baseProps.size || themeContext.size || 'md';
-
-    const sizeStyles = (themeConfig.sizes as any)[finalSize];
+    const finalSize = baseProps.size || 'md';
+    const finalTheme = baseProps.theme || 'default';
+    const themeConfig = themes[finalTheme] ?? themes.default;
+    const sizeStyles = (themeConfig.sizes as Record<string, { fontSize: string; padding: string; height: string; borderRadius: string }>)[finalSize];
 
     return {
-        borderRadius: baseProps.borderRadius || themeContext.borderRadius || sizeStyles.borderRadius,
-        ...(baseProps.borderColor || themeContext.borderColor ? { borderColor: baseProps.borderColor || themeContext.borderColor } : {}),
-        borderWidth: baseProps.borderWidth || themeContext.borderWidth || themeConfig.borderWidth,
-        ...(baseProps.backgroundColor || themeContext.backgroundColor ? { backgroundColor: baseProps.backgroundColor || themeContext.backgroundColor } : {}),
-        fontSize: baseProps.fontSize || themeContext.fontSize || sizeStyles.fontSize,
-        ...(baseProps.fontColor || themeContext.fontColor ? { color: baseProps.fontColor || themeContext.fontColor } : {}),
+        borderRadius: baseProps.borderRadius || sizeStyles.borderRadius,
+        ...(baseProps.borderColor ? { borderColor: baseProps.borderColor } : {}),
+        borderWidth: baseProps.borderWidth || themeConfig.borderWidth,
+        ...(baseProps.backgroundColor ? { backgroundColor: baseProps.backgroundColor } : {}),
+        fontSize: baseProps.fontSize || sizeStyles.fontSize,
+        ...(baseProps.fontColor ? { color: baseProps.fontColor } : {}),
         padding: sizeStyles.padding,
         height: sizeStyles.height,
     };
 };
 
 export const getResolvedSize = (baseProps: BaseComponentProps): string => {
-    const themeContext = useTheme();
-    return baseProps.size || themeContext.size || 'md';
+    return baseProps.size || 'md';
 };
 
-export const formatValue = (value: any, type: 'string' | 'number' | 'boolean' | 'date' = 'string') => {
+export const formatValue = (value: unknown, type: 'string' | 'number' | 'boolean' | 'date' = 'string') => {
     if (value === null || value === undefined) return '';
 
     switch (type) {
         case 'number':
-            return typeof value === 'number' ? value : parseFloat(value) || 0;
+            return typeof value === 'number' ? value : parseFloat(value as string) || 0;
         case 'boolean':
             return Boolean(value);
         case 'date':
-            return value instanceof Date ? value : new Date(value);
+            return value instanceof Date ? value : new Date(value as string | number);
         default:
             return String(value);
     }
 };
 
-export const filterItems = <T extends { label?: any }>(items: T[], query: string): T[] => {
+export const filterItems = <T extends { label?: unknown }>(items: T[], query: string): T[] => {
     if (!query.trim()) return items;
 
     const lowercaseQuery = query.toLowerCase();

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import React from 'react';
 import { getFieldValue } from '../../utils/common-fns';
 import { Column } from './table-types';
 
@@ -6,7 +7,8 @@ type TableBodyProps = {
     columns: Column[];
     rows: any[];
     noRowsMessage?: string;
-    onRowClick?: (arg: { row: any; index: number; event: any }) => void;
+    onRowClick?: (arg: { row: any; index: number; event: React.MouseEvent | React.KeyboardEvent }) => void;
+    keyField?: string;
 };
 
 const hideColClass = (hideBelow: Column['hideBelow']) => {
@@ -22,7 +24,7 @@ const hideColClass = (hideBelow: Column['hideBelow']) => {
     };
 };
 
-const TableBody = ({ columns, rows, noRowsMessage, onRowClick }: TableBodyProps) => (
+const TableBody = ({ columns, rows, noRowsMessage, onRowClick, keyField }: TableBodyProps) => (
     <tbody className="eui-table-body">
         {rows.length === 0 ? (
             <tr>
@@ -31,27 +33,44 @@ const TableBody = ({ columns, rows, noRowsMessage, onRowClick }: TableBodyProps)
                 </td>
             </tr>
         ) : (
-            rows.map((row, rowIndex) => (
-                <tr
-                    key={rowIndex}
-                    className={classNames({ 'eui-table-row-clickable': !!onRowClick })}
-                    onClick={onRowClick ? (event) => onRowClick({ row, index: rowIndex, event }) : undefined}
-                >
-                    {columns.map((col, colIndex) => {
-                        const cellContent = col.template ? col.template(row) : getFieldValue(row, col.field);
-                        const cellText = typeof cellContent === 'string' || typeof cellContent === 'number' ? cellContent : '';
-                        return (
-                            <td
-                                key={colIndex}
-                                className={classNames(hideColClass(col.hideBelow), col.cellClassName)}
-                                title={cellText.toString()}
-                            >
-                                {cellContent}
-                            </td>
-                        );
-                    })}
-                </tr>
-            ))
+            rows.map((row, rowIndex) => {
+                const rowKey = keyField && row[keyField] !== undefined ? String(row[keyField]) : `row-${rowIndex}`;
+                const isClickable = !!onRowClick;
+                const handleRowKeyDown = isClickable
+                    ? (event: React.KeyboardEvent<HTMLTableRowElement>) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              onRowClick?.({ row, index: rowIndex, event });
+                          }
+                      }
+                    : undefined;
+                return (
+                    <tr
+                        key={rowKey}
+                        className={classNames({ 'eui-table-row-clickable': isClickable })}
+                        role={isClickable ? 'button' : undefined}
+                        tabIndex={isClickable ? 0 : undefined}
+                        onClick={isClickable ? (event) => onRowClick?.({ row, index: rowIndex, event }) : undefined}
+                        onKeyDown={handleRowKeyDown}
+                    >
+                        {columns.map((col, colIndex) => {
+                            const cellContent = col.template ? col.template(row) : getFieldValue(row, col.field);
+                            const isStringLike = typeof cellContent === 'string' || typeof cellContent === 'number';
+                            const titleValue = isStringLike ? String(cellContent) : undefined;
+                            return (
+                                <td
+                                    key={colIndex}
+                                    className={classNames(hideColClass(col.hideBelow), col.cellClassName)}
+                                    title={titleValue}
+                                    data-label={col.title}
+                                >
+                                    {cellContent}
+                                </td>
+                            );
+                        })}
+                    </tr>
+                );
+            })
         )}
     </tbody>
 );

@@ -60,6 +60,13 @@
         pointer-events: none;
     }
 
+    .eui-chips-list {
+        display: contents;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
     .eui-chips-item {
         display: inline-flex;
         align-items: center;
@@ -74,6 +81,7 @@
             outline: none;
         }
 
+        &:focus-visible,
         &.eui-chips-item-focused {
             box-shadow: 0 0 0 2px var(--eui-primary);
         }
@@ -86,16 +94,21 @@
             @include btn-reset;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             margin-left: 0.25rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 9999px;
             color: var(--eui-primary);
 
             &:hover {
                 color: var(--eui-primary-hover);
+                background-color: rgba(0, 0, 0, 0.05);
             }
 
             svg {
-                width: 0.75rem;
-                height: 0.75rem;
+                width: 0.85rem;
+                height: 0.85rem;
             }
         }
     }

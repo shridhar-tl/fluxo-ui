@@ -52,7 +52,7 @@
     "loadingMessage": {
       "type": "string",
       "default": "'Loading...'",
-      "description": "Message to display while loading"
+      "description": "Message to display while loading (also announced via aria-live for screen readers)"
     },
     "waitFor": {
       "type": "number",
@@ -83,6 +83,39 @@
     "id": {
       "type": "string",
       "description": "HTML id attribute"
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Stretch the button to fill the width of its container (common for modal footers and forms)"
+    },
+    "tooltip": {
+      "type": "ReactNode",
+      "description": "Tooltip content shown on hover/focus. Renders the button wrapped in a Tooltip — useful for icon-only buttons where a tooltip is mandatory for accessibility"
+    },
+    "tooltipPlacement": {
+      "type": "'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'auto'",
+      "default": "'auto'",
+      "description": "Placement of the tooltip when tooltip prop is provided"
+    },
+    "confirmText": {
+      "type": "ReactNode",
+      "description": "When set, the first click shows a confirm popover; the popover Confirm action runs onClick. Useful for destructive actions"
+    },
+    "confirmTitle": {
+      "type": "string",
+      "default": "'Confirm'",
+      "description": "Title of the confirm popover when confirmText is set"
+    },
+    "confirmOkText": {
+      "type": "string",
+      "default": "'Confirm'",
+      "description": "Label of the confirm action button"
+    },
+    "confirmCancelText": {
+      "type": "string",
+      "default": "'Cancel'",
+      "description": "Label of the cancel action button"
     }
   }
 }

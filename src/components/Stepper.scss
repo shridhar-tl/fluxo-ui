@@ -21,6 +21,10 @@ $stepper-sizes: (
 .eui-stepper {
     display: flex;
     font-family: var(--eui-font-family);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: eui-stepper;
 
     .eui-stepper-icon-svg {
         width: 100%;
@@ -33,6 +37,7 @@ $stepper-sizes: (
         align-items: center;
         position: relative;
         flex-shrink: 0;
+        list-style: none;
 
         &.eui-stepper-step-clickable {
             cursor: pointer;
@@ -97,7 +102,7 @@ $stepper-sizes: (
         &.eui-stepper-indicator-warning {
             border-color: #f59e0b;
             background: #f59e0b;
-            color: #fff;
+            color: #422006;
         }
     }
 
@@ -414,5 +419,15 @@ $stepper-sizes: (
     &.eui-stepper-disabled {
         opacity: 0.5;
         pointer-events: none;
+    }
+
+    &.eui-stepper-collapsed.eui-stepper-horizontal {
+        overflow-x: auto;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+
+        .eui-stepper-step {
+            scroll-snap-align: start;
+        }
     }
 }

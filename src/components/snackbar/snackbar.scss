@@ -18,9 +18,18 @@
     &:focus {
         outline: none;
     }
+    &:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
     &:disabled {
         cursor: not-allowed;
     }
+}
+
+@keyframes snackbar-progress {
+    from { width: 100%; }
+    to   { width: 0%; }
 }
 
 @keyframes snackbar-fadeIn {
@@ -300,8 +309,16 @@
 
 .eui-snackbar-progress-bar {
     height: 100%;
+    width: 100%;
     opacity: 0.5;
-    transition: width 50ms linear;
+    animation-name: snackbar-progress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    animation-iteration-count: 1;
+
+    &.eui-snackbar-progress-bar-paused {
+        animation-play-state: paused;
+    }
 
     .eui-snackbar-info-light &,
     .eui-snackbar-info-dark & {
@@ -321,6 +338,23 @@
     .eui-snackbar-error-light &,
     .eui-snackbar-error-dark & {
         background-color: #ef4444;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-snackbar {
+        &.eui-snackbar-anim-fade-enter,
+        &.eui-snackbar-anim-fade-exit,
+        &.eui-snackbar-anim-slide-top-enter,
+        &.eui-snackbar-anim-slide-top-exit,
+        &.eui-snackbar-anim-slide-bottom-enter,
+        &.eui-snackbar-anim-slide-bottom-exit,
+        &.eui-snackbar-anim-zoom-enter,
+        &.eui-snackbar-anim-zoom-exit,
+        &.eui-snackbar-anim-bounce-enter,
+        &.eui-snackbar-anim-bounce-exit {
+            animation: none;
+        }
     }
 }
 

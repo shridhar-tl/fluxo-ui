@@ -14,19 +14,40 @@ interface TabNavProps {
     onTabClose?: (index: number, tab: React.ReactElement) => void;
     headerEnd?: React.ReactNode;
     className?: string;
+    baseId: string;
+    activationMode?: 'auto' | 'manual';
+    ariaLabel?: string;
 }
 
-export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scrollable, variant = 'default', onTabClick, onTabClose, headerEnd, className }) => {
+export const TabNav: React.FC<TabNavProps> = ({
+    tabs,
+    activeIndex,
+    position,
+    scrollable,
+    variant = 'default',
+    onTabClick,
+    onTabClose,
+    headerEnd,
+    className,
+    baseId,
+    activationMode = 'auto',
+    ariaLabel,
+}) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(false);
     const [indicatorStyle, setIndicatorStyle] = useState<React.CSSProperties>({});
+    const [focusedIndex, setFocusedIndex] = useState(activeIndex);
     const isSegment = variant === 'segment';
+
+    useEffect(() => {
+        setFocusedIndex(activeIndex);
+    }, [activeIndex]);
 
     const updateIndicator = useCallback(() => {
         if (!isSegment || !scrollContainerRef.current) return;
-        const container = scrollContainerRef.current;
-        const activeEl = container.children[activeIndex] as HTMLElement;
+        const activeEl = tabRefs.current[activeIndex];
         if (!activeEl) return;
         setIndicatorStyle({
             width: activeEl.offsetWidth,
@@ -39,9 +60,23 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
         updateIndicator();
     }, [updateIndicator, tabs.length]);
 
+    useEffect(() => {
+        if (!isSegment) return;
+        const container = scrollContainerRef.current;
+        if (!container) return;
+        if (typeof ResizeObserver === 'undefined') {
+            const handleResize = () => updateIndicator();
+            window.addEventListener('resize', handleResize);
+            return () => window.removeEventListener('resize', handleResize);
+        }
+        const ro = new ResizeObserver(() => updateIndicator());
+        ro.observe(container);
+        return () => ro.disconnect();
+    }, [isSegment, updateIndicator]);
+
     const isVertical = position === 'left' || position === 'right';
 
-    const checkScrollButtons = () => {
+    const checkScrollButtons = useCallback(() => {
         if (!scrollContainerRef.current || !scrollable) return;
 
         const container = scrollContainerRef.current;
@@ -59,7 +94,7 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
             setShowLeftArrow(scrollLeft > 5);
             setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5);
         }
-    };
+    }, [scrollable, isVertical]);
 
     const scrollToTab = (direction: 'left' | 'right') => {
         if (!scrollContainerRef.current) return;
@@ -80,11 +115,11 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
         }
     };
 
-    const ensureActiveTabVisible = () => {
+    const ensureActiveTabVisible = useCallback(() => {
         if (!scrollContainerRef.current || !scrollable) return;
 
         const container = scrollContainerRef.current;
-        const activeTab = container.children[activeIndex] as HTMLElement;
+        const activeTab = tabRefs.current[activeIndex];
 
         if (!activeTab) return;
 
@@ -112,12 +147,12 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
                 });
             }
         }
-    };
+    }, [activeIndex, isVertical, scrollable]);
 
     useEffect(() => {
         checkScrollButtons();
         ensureActiveTabVisible();
-    }, [activeIndex, tabs.length]);
+    }, [activeIndex, tabs.length, checkScrollButtons, ensureActiveTabVisible]);
 
     useEffect(() => {
         const container = scrollContainerRef.current;
@@ -132,32 +167,48 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
             container.removeEventListener('scroll', checkScrollButtons);
             resizeObserver.disconnect();
         };
-    }, [scrollable]);
+    }, [scrollable, checkScrollButtons]);
+
+    const focusTab = (index: number) => {
+        const target = tabRefs.current[index];
+        target?.focus();
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
         let nextIndex = index;
+        let isNavKey = false;
 
         if ((e.key === 'ArrowLeft' && !isVertical) || (e.key === 'ArrowUp' && isVertical)) {
             e.preventDefault();
             nextIndex = index - 1;
+            isNavKey = true;
         } else if ((e.key === 'ArrowRight' && !isVertical) || (e.key === 'ArrowDown' && isVertical)) {
             e.preventDefault();
             nextIndex = index + 1;
+            isNavKey = true;
         } else if (e.key === 'Home') {
             e.preventDefault();
             nextIndex = 0;
+            isNavKey = true;
         } else if (e.key === 'End') {
             e.preventDefault();
             nextIndex = tabs.length - 1;
+            isNavKey = true;
         }
 
-        if (nextIndex !== index) {
+        if (isNavKey && nextIndex !== index) {
+            const direction = nextIndex > index ? 1 : -1;
             while (nextIndex >= 0 && nextIndex < tabs.length && isTabDisabled(tabs[nextIndex])) {
-                nextIndex += nextIndex > index ? 1 : -1;
+                nextIndex += direction;
             }
 
             if (nextIndex >= 0 && nextIndex < tabs.length) {
-                onTabClick(nextIndex, tabs[nextIndex]);
+                if (activationMode === 'auto') {
+                    onTabClick(nextIndex, tabs[nextIndex]);
+                } else {
+                    setFocusedIndex(nextIndex);
+                }
+                requestAnimationFrame(() => focusTab(nextIndex));
             }
         }
     };
@@ -182,10 +233,14 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
         'eui-tab-scroll-wrap': !scrollable && !isVertical,
     });
 
+    const tabbableIndex = activationMode === 'manual' ? focusedIndex : activeIndex;
+    const orientation: 'horizontal' | 'vertical' = isVertical ? 'vertical' : 'horizontal';
+
     return (
         <div className={containerClasses}>
             {scrollable && showLeftArrow && (
                 <button
+                    type="button"
                     className={classNames('eui-tab-arrow', {
                         'eui-tab-arrow-left': !isVertical,
                         'eui-tab-arrow-up': isVertical,
@@ -193,7 +248,7 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
                     onClick={() => scrollToTab('left')}
                     aria-label={isVertical ? 'Scroll up' : 'Scroll left'}
                 >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         {isVertical ? <polyline points="18 15 12 9 6 15" /> : <polyline points="15 18 9 12 15 6" />}
                     </svg>
                 </button>
@@ -203,6 +258,8 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
                 ref={scrollContainerRef}
                 className={scrollContainerClasses}
                 role="tablist"
+                aria-label={ariaLabel}
+                aria-orientation={orientation}
                 style={{
                     paddingLeft: scrollable && showLeftArrow && !isVertical ? '2rem' : undefined,
                     paddingRight: scrollable && showRightArrow && !isVertical ? '2rem' : undefined,
@@ -212,29 +269,38 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
                 }}
             >
                 {isSegment && (
-                    <div className="eui-tab-segment-indicator" style={indicatorStyle} />
+                    <div className="eui-tab-segment-indicator" style={indicatorStyle} aria-hidden="true" />
                 )}
-                {tabs.map((tab: any, index) => (
-                    <TabHeader
-                        key={index}
-                        header={tab.props.header}
-                        leftIcon={tab.props.leftIcon}
-                        rightIcon={tab.props.rightIcon}
-                        active={index === activeIndex}
-                        disabled={isTabDisabled(tab)}
-                        closable={tab.props.closable}
-                        onClick={() => onTabClick(index, tab)}
-                        onClose={() => onTabClose?.(index, tab)}
-                        onKeyDown={(e) => handleKeyDown(e, index)}
-                        tabIndex={index === activeIndex ? 0 : -1}
-                        position={position}
-                        variant={variant}
-                    />
-                ))}
+                {tabs.map((tab, index) => {
+                    const tabProps = tab.props as Record<string, unknown>;
+                    const tabId = `${baseId}-tab-${index}`;
+                    const panelId = `${baseId}-panel-${index}`;
+                    return (
+                        <TabHeader
+                            key={index}
+                            id={tabId}
+                            panelId={panelId}
+                            header={tabProps.header as React.ReactNode}
+                            leftIcon={tabProps.leftIcon as React.ComponentProps<typeof TabHeader>['leftIcon']}
+                            rightIcon={tabProps.rightIcon as React.ComponentProps<typeof TabHeader>['rightIcon']}
+                            active={index === activeIndex}
+                            disabled={isTabDisabled(tab)}
+                            closable={tabProps.closable as boolean | undefined}
+                            onClick={() => onTabClick(index, tab)}
+                            onClose={() => onTabClose?.(index, tab)}
+                            onKeyDown={(e) => handleKeyDown(e, index)}
+                            tabIndex={index === tabbableIndex ? 0 : -1}
+                            position={position}
+                            variant={variant}
+                            tabRef={(el) => { tabRefs.current[index] = el; }}
+                        />
+                    );
+                })}
             </div>
 
             {scrollable && showRightArrow && (
                 <button
+                    type="button"
                     className={classNames('eui-tab-arrow', {
                         'eui-tab-arrow-right': !isVertical,
                         'eui-tab-arrow-down': isVertical,
@@ -242,7 +308,7 @@ export const TabNav: React.FC<TabNavProps> = ({ tabs, activeIndex, position, scr
                     onClick={() => scrollToTab('right')}
                     aria-label={isVertical ? 'Scroll down' : 'Scroll right'}
                 >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         {isVertical ? <polyline points="6 9 12 15 18 9" /> : <polyline points="9 18 15 12 9 6" />}
                     </svg>
                 </button>

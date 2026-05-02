@@ -99,7 +99,7 @@ const WeekDaySelector: React.FC<WeekDaySelectorProps> = (props) => {
         (day: number) => {
             if (isMultiple) {
                 const arr = Array.isArray(current) ? current : [];
-                const next = arr.includes(day) ? arr.filter((d) => d !== day) : [...arr, day].sort();
+                const next = arr.includes(day) ? arr.filter((d) => d !== day) : [...arr, day].sort((a, b) => a - b);
                 if (!controlled) setInternal(next);
                 (props as MultiProps).onChange?.(next);
             } else {
@@ -112,20 +112,28 @@ const WeekDaySelector: React.FC<WeekDaySelectorProps> = (props) => {
     );
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, idx: number) => {
+        let nextIdx = idx;
         if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
             e.preventDefault();
-            const next = (idx + 1) % 7;
-            buttonsRef.current[next]?.focus();
+            nextIdx = (idx + 1) % 7;
         } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
             e.preventDefault();
-            const prev = (idx - 1 + 7) % 7;
-            buttonsRef.current[prev]?.focus();
+            nextIdx = (idx - 1 + 7) % 7;
         } else if (e.key === 'Home') {
             e.preventDefault();
-            buttonsRef.current[0]?.focus();
+            nextIdx = 0;
         } else if (e.key === 'End') {
             e.preventDefault();
-            buttonsRef.current[6]?.focus();
+            nextIdx = 6;
+        } else {
+            return;
+        }
+        buttonsRef.current[nextIdx]?.focus();
+        if (!isMultiple) {
+            const nextDay = orderedDays[nextIdx];
+            if (!disabledSet.has(nextDay) && !disabled) {
+                handleSelect(nextDay);
+            }
         }
     };
 
@@ -159,7 +167,6 @@ const WeekDaySelector: React.FC<WeekDaySelectorProps> = (props) => {
                         onKeyDown={(e) => handleKeyDown(e, idx)}
                         role={isMultiple ? 'checkbox' : 'radio'}
                         aria-checked={selected}
-                        aria-label={orderedLabels[idx]}
                         tabIndex={isMultiple ? 0 : selected || (current === null && idx === 0) ? 0 : -1}
                     >
                         {orderedLabels[idx]}

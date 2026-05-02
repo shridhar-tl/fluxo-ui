@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { CalendarIcon } from '../../assets/icons';
 import './date-range.scss';
 import DatePopover from './DatePopover';
@@ -34,6 +34,8 @@ function DateRangePicker(props: DateRangePickerProps) {
     const [customRange, setCustomRange] = useState<DateRangeValue>(Array.isArray(value) ? value : [new Date(), new Date()]);
 
     const controlRef = useRef<HTMLButtonElement>(null!);
+    const generatedId = useId();
+    const popoverId = `eui-drp-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
     const closePicker = useCallback(() => {
         setIsOpen(false);
@@ -103,11 +105,15 @@ function DateRangePicker(props: DateRangePickerProps) {
                         className={classNames('eui-drp-control', { 'eui-drp-control-icon-only': iconOnly }, props.classNames?.control)}
                         onClick={() => setIsOpen(!isOpen)}
                         disabled={disabled}
+                        aria-haspopup="dialog"
+                        aria-expanded={isOpen}
+                        aria-controls={isOpen ? popoverId : undefined}
+                        aria-label={iconOnly ? `${props.ariaLabel ?? 'Choose date range'}${displayLabel() ? `: ${displayLabel()}` : ''}` : props.ariaLabel}
                     >
                         {!iconOnly && <span className="eui-drp-control-label">{displayLabel()}</span>}
-                        <CalendarIcon className="eui-drp-control-icon" />
+                        <CalendarIcon className="eui-drp-control-icon" aria-hidden="true" />
                     </button>
-                    {isOpen && <DatePopover controlRef={controlRef} />}
+                    {isOpen && <DatePopover controlRef={controlRef} popoverId={popoverId} />}
                 </div>
             </StateProvider>
         </DatePickerPropsContext>

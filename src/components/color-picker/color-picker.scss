@@ -356,8 +356,8 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
     .eui-color-hue-pointer {
         position: absolute;
         top: 50%;
-        width: 12px;
-        height: 12px;
+        width: 18px;
+        height: 18px;
         background: #ffffff;
         border: 2px solid var(--eui-border);
         border-radius: 50%;
@@ -455,6 +455,7 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
 }
 
 .eui-color-swatch {
+    position: relative;
     width: 100%;
     aspect-ratio: 1;
     border: 1px solid var(--eui-border-subtle);
@@ -463,12 +464,36 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
     padding: 0;
     transition: transform 0.12s ease;
 
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        min-width: 44px;
+        min-height: 44px;
+        margin: auto;
+    }
+
     &:hover {
         transform: scale(1.15);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 2px;
     }
 
     &.eui-color-swatch-active {
         border-color: var(--eui-primary);
         box-shadow: 0 0 0 2px var(--eui-primary-subtle);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-color-swatch {
+        transition: none;
+
+        &:hover {
+            transform: none;
+        }
     }
 }

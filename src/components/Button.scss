@@ -33,8 +33,8 @@
                 transform 0.1s ease;
 
     &:focus-visible {
-        outline: 2px solid var(--eui-primary);
-        outline-offset: 2px;
+        outline: none;
+        box-shadow: 0 0 0 2px var(--eui-bg), 0 0 0 4px var(--eui-primary);
     }
 
     &:active:not(.eui-button-disabled) {
@@ -85,7 +85,24 @@
         pointer-events: none;
     }
 
+    &.eui-button-full-width {
+        width: 100%;
+        display: flex;
+    }
+
     &:not(.eui-button-disabled) { cursor: pointer; }
+
+    .eui-visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
 
     // ── Spinner ──────────────────────────────────────────────────────────
     .eui-button-spinner {

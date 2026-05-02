@@ -34,9 +34,13 @@
       "type": "(id?: any) => void",
       "description": "Callback invoked when the item is clicked."
     },
-    "seperator": {
+    "separator": {
       "type": "boolean",
       "description": "When true, renders a visual divider instead of a clickable item."
+    },
+    "seperator": {
+      "type": "boolean",
+      "description": "Deprecated. Misspelled alias for `separator` kept for backwards compatibility — prefer `separator` in new code."
     },
     "items": {
       "type": "MenuItemBase[]",

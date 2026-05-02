@@ -121,7 +121,32 @@
     "stickyHeader": {
       "type": "boolean",
       "default": "false",
-      "description": "Fixed header on scroll"
+      "description": "Keep the header pinned to the top while the table body scrolls. Pair with maxHeight so the table-container has a scrollable height."
+    },
+    "maxHeight": {
+      "type": "number | string",
+      "description": "Cap the height of the inner scroll container. Required for stickyHeader to engage — the container itself becomes the scroll context."
+    },
+    "caption": {
+      "type": "ReactNode",
+      "description": "Visible caption rendered above the table; also used as the accessible name."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name for the table when no visible caption is shown."
+    },
+    "ariaDescribedBy": {
+      "type": "string",
+      "description": "ID of an element that describes the table for screen readers."
+    },
+    "keyField": {
+      "type": "string",
+      "description": "Field name on each row used as a stable React key (avoids reconciliation issues when rows reorder)."
+    },
+    "mobileCardStack": {
+      "type": "boolean",
+      "default": "false",
+      "description": "On narrow viewports, pivot rows into label/value cards instead of horizontal table rows."
     }
   },
   "columnProps": {

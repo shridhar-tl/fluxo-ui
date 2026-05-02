@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { TimesIcon } from '../../assets/icons';
 import './Lightbox.scss';
 
 type LightboxTrigger = 'hover' | 'click';
@@ -33,6 +34,15 @@ interface LightboxProps {
     onClose?: () => void;
 }
 
+const focusableSelector = [
+    'button:not([disabled])',
+    '[href]:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"]):not([disabled])',
+].join(',');
+
 const Lightbox: React.FC<LightboxProps> = ({
     children,
     content,
@@ -53,7 +63,7 @@ const Lightbox: React.FC<LightboxProps> = ({
     hoverDelay = 300,
     hoverCloseDelay = 200,
     disabled = false,
-    ariaLabel,
+    ariaLabel = 'Preview',
     header,
     footer,
     onOpen,
@@ -63,20 +73,26 @@ const Lightbox: React.FC<LightboxProps> = ({
     const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
     const triggerRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<HTMLDivElement>(null);
+    const previousFocusRef = useRef<HTMLElement | null>(null);
+    const mouseDownTargetRef = useRef<EventTarget | null>(null);
     const hoverOpenTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
     const hoverCloseTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-    const $this = useRef({ onOpen, onClose });
-    $this.current = { onOpen, onClose };
+    const onOpenRef = useRef(onOpen);
+    const onCloseRef = useRef(onClose);
+    onOpenRef.current = onOpen;
+    onCloseRef.current = onClose;
 
     const open = useCallback(() => {
         if (disabled) return;
+        previousFocusRef.current = document.activeElement as HTMLElement | null;
         setIsOpen(true);
-        $this.current.onOpen?.();
+        onOpenRef.current?.();
     }, [disabled]);
 
     const close = useCallback(() => {
         setIsOpen(false);
-        $this.current.onClose?.();
+        onCloseRef.current?.();
+        previousFocusRef.current?.focus?.();
     }, []);
 
     const calculatePosition = useCallback(() => {
@@ -103,23 +119,25 @@ const Lightbox: React.FC<LightboxProps> = ({
         }
 
         const style: React.CSSProperties = {};
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
 
         switch (pos) {
             case 'right':
-                style.left = rect.right + gap;
-                style.top = Math.max(gap, Math.min(rect.top, vh - 400));
+                style.left = rect.right + gap + scrollX;
+                style.top = Math.max(gap, Math.min(rect.top, vh - 400)) + scrollY;
                 break;
             case 'left':
-                style.left = rect.left - w - gap;
-                style.top = Math.max(gap, Math.min(rect.top, vh - 400));
+                style.left = rect.left - w - gap + scrollX;
+                style.top = Math.max(gap, Math.min(rect.top, vh - 400)) + scrollY;
                 break;
             case 'bottom':
-                style.left = Math.max(gap, rect.left);
-                style.top = rect.bottom + gap;
+                style.left = Math.max(gap, rect.left) + scrollX;
+                style.top = rect.bottom + gap + scrollY;
                 break;
             case 'top':
-                style.left = Math.max(gap, rect.left);
-                style.top = rect.top - gap;
+                style.left = Math.max(gap, rect.left) + scrollX;
+                style.top = rect.top + scrollY;
                 style.transform = 'translateY(-100%)';
                 break;
         }
@@ -128,12 +146,15 @@ const Lightbox: React.FC<LightboxProps> = ({
     }, [position, width]);
 
     useEffect(() => {
-        if (isOpen && position !== 'center') {
-            calculatePosition();
-            const handleResize = () => calculatePosition();
-            window.addEventListener('resize', handleResize);
-            return () => window.removeEventListener('resize', handleResize);
-        }
+        if (!isOpen || position === 'center') return;
+        calculatePosition();
+        const handleReposition = () => calculatePosition();
+        window.addEventListener('resize', handleReposition);
+        window.addEventListener('scroll', handleReposition, true);
+        return () => {
+            window.removeEventListener('resize', handleReposition);
+            window.removeEventListener('scroll', handleReposition, true);
+        };
     }, [isOpen, calculatePosition, position]);
 
     useEffect(() => {
@@ -145,6 +166,49 @@ const Lightbox: React.FC<LightboxProps> = ({
         return () => document.removeEventListener('keydown', handleKey);
     }, [isOpen, closeOnEscape, close]);
 
+    useEffect(() => {
+        if (!isOpen) return;
+        const focusFrame = requestAnimationFrame(() => {
+            const popover = popoverRef.current;
+            if (!popover) return;
+            const focusable = popover.querySelectorAll<HTMLElement>(focusableSelector);
+            if (focusable.length > 0) focusable[0].focus();
+            else popover.focus();
+        });
+
+        const handleFocusTrap = (e: KeyboardEvent) => {
+            if (e.key !== 'Tab') return;
+            const popover = popoverRef.current;
+            if (!popover) return;
+            const focusable = Array.from(popover.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+                (el) => el.tabIndex !== -1,
+            );
+            if (focusable.length === 0) {
+                e.preventDefault();
+                popover.focus();
+                return;
+            }
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first || !popover.contains(document.activeElement)) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last || !popover.contains(document.activeElement)) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+        };
+        document.addEventListener('keydown', handleFocusTrap);
+        return () => {
+            cancelAnimationFrame(focusFrame);
+            document.removeEventListener('keydown', handleFocusTrap);
+        };
+    }, [isOpen]);
+
     const handleTriggerMouseEnter = useCallback(() => {
         if (trigger !== 'hover' || disabled) return;
         clearTimeout(hoverCloseTimer.current);
@@ -153,6 +217,19 @@ const Lightbox: React.FC<LightboxProps> = ({
 
     const handleTriggerMouseLeave = useCallback(() => {
         if (trigger !== 'hover') return;
+        clearTimeout(hoverOpenTimer.current);
+        hoverCloseTimer.current = setTimeout(close, hoverCloseDelay);
+    }, [trigger, close, hoverCloseDelay]);
+
+    const handleTriggerFocus = useCallback(() => {
+        if (trigger !== 'hover' || disabled) return;
+        clearTimeout(hoverCloseTimer.current);
+        open();
+    }, [trigger, disabled, open]);
+
+    const handleTriggerBlur = useCallback((e: React.FocusEvent) => {
+        if (trigger !== 'hover') return;
+        if (popoverRef.current?.contains(e.relatedTarget as Node)) return;
         clearTimeout(hoverOpenTimer.current);
         hoverCloseTimer.current = setTimeout(close, hoverCloseDelay);
     }, [trigger, close, hoverCloseDelay]);
@@ -173,9 +250,17 @@ const Lightbox: React.FC<LightboxProps> = ({
         else open();
     }, [trigger, disabled, isOpen, open, close]);
 
-    const handleBackdropClick = useCallback(
+    const handleBackdropMouseDown = useCallback((e: React.MouseEvent) => {
+        mouseDownTargetRef.current = e.target;
+    }, []);
+
+    const handleBackdropMouseUp = useCallback(
         (e: React.MouseEvent) => {
-            if (closeOnBackdropClick && e.target === e.currentTarget) close();
+            if (!closeOnBackdropClick) return;
+            if (e.target === e.currentTarget && mouseDownTargetRef.current === e.currentTarget) {
+                close();
+            }
+            mouseDownTargetRef.current = null;
         },
         [closeOnBackdropClick, close],
     );
@@ -209,7 +294,8 @@ const Lightbox: React.FC<LightboxProps> = ({
                     'eui-lightbox-overlay-backdrop': backdrop && isCenter,
                     'eui-lightbox-overlay-no-backdrop': !backdrop || !isCenter,
                 })}
-                onClick={isCenter ? handleBackdropClick : undefined}
+                onMouseDown={isCenter ? handleBackdropMouseDown : undefined}
+                onMouseUp={isCenter ? handleBackdropMouseUp : undefined}
             >
                 <div
                     ref={popoverRef}
@@ -221,6 +307,7 @@ const Lightbox: React.FC<LightboxProps> = ({
                     role="dialog"
                     aria-modal={isCenter}
                     aria-label={ariaLabel}
+                    tabIndex={-1}
                     onMouseEnter={handlePopoverMouseEnter}
                     onMouseLeave={handlePopoverMouseLeave}
                 >
@@ -232,12 +319,9 @@ const Lightbox: React.FC<LightboxProps> = ({
                                     className="eui-lightbox-close"
                                     onClick={close}
                                     type="button"
-                                    aria-label="Close"
+                                    aria-label="Close preview"
                                 >
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <line x1="18" y1="6" x2="6" y2="18" />
-                                        <line x1="6" y1="6" x2="18" y2="18" />
-                                    </svg>
+                                    <TimesIcon aria-hidden="true" />
                                 </button>
                             )}
                         </div>
@@ -277,10 +361,23 @@ const Lightbox: React.FC<LightboxProps> = ({
                 className="eui-lightbox-trigger"
                 onMouseEnter={handleTriggerMouseEnter}
                 onMouseLeave={handleTriggerMouseLeave}
+                onFocus={handleTriggerFocus}
+                onBlur={handleTriggerBlur}
                 onClick={handleTriggerClick}
                 role={trigger === 'click' ? 'button' : undefined}
-                tabIndex={trigger === 'click' ? 0 : undefined}
-                onKeyDown={trigger === 'click' ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleTriggerClick(); } } : undefined}
+                tabIndex={trigger === 'click' || trigger === 'hover' ? 0 : undefined}
+                aria-haspopup={trigger === 'click' ? 'dialog' : undefined}
+                aria-expanded={trigger === 'click' ? isOpen : undefined}
+                onKeyDown={(e) => {
+                    if (trigger === 'click' && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        handleTriggerClick();
+                    } else if (trigger === 'hover' && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        if (isOpen) close();
+                        else open();
+                    }
+                }}
             >
                 {children}
             </div>

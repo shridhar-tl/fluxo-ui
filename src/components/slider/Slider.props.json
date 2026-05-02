@@ -127,6 +127,20 @@
     "onChangeEnd": {
       "type": "(value: number | [number, number]) => void",
       "description": "Called when interaction ends (pointer up or keyboard)."
+    },
+    "name": {
+      "type": "string",
+      "description": "When set, renders hidden form inputs so the slider value submits with surrounding forms. Range mode produces `${name}_min` and `${name}_max`."
+    },
+    "rangeStartLabel": {
+      "type": "string",
+      "default": "'Minimum'",
+      "description": "ARIA label for the lower thumb in range mode (helps screen readers distinguish thumbs)."
+    },
+    "rangeEndLabel": {
+      "type": "string",
+      "default": "'Maximum'",
+      "description": "ARIA label for the upper thumb in range mode."
     }
   }
 }

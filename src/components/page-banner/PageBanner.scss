@@ -7,6 +7,10 @@
     position: relative;
     animation: euiBannerSlideIn 0.3s ease-out;
 
+    &.eui-page-banner-no-anim {
+        animation: none !important;
+    }
+
     &.eui-page-banner-exiting {
         animation: euiBannerSlideOut 0.3s ease-in forwards;
     }
@@ -243,6 +247,10 @@ body.mode-dark {
     transform-origin: left;
     animation: euiBannerProgress linear forwards;
     opacity: 0.6;
+
+    &.eui-page-banner-progress-paused {
+        animation-play-state: paused;
+    }
 }
 
 @keyframes euiBannerProgress {
@@ -319,4 +327,19 @@ body.mode-dark {
     .eui-page-banner-actions {
         flex-wrap: wrap;
     }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-page-banner,
+    .eui-page-banner.eui-page-banner-entering,
+    .eui-page-banner.eui-page-banner-exiting,
+    .eui-page-banner:not(.eui-page-banner-page-level).eui-page-banner-entering,
+    .eui-page-banner:not(.eui-page-banner-page-level).eui-page-banner-exiting {
+        animation: none !important;
+    }
+}
+
+.eui-page-banner-title {
+    margin-top: 0;
+    margin-bottom: 0.125rem;
 }

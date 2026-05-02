@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, ReactNode, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles } from '../utils';
@@ -19,6 +19,9 @@ interface NumericInputProps extends BaseComponentProps, Omit<React.InputHTMLAttr
     step?: number;
     largeStep?: number;
     showSteppers?: boolean;
+    error?: string | boolean;
+    invalid?: boolean;
+    helperText?: ReactNode;
 }
 
 export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
@@ -41,6 +44,10 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
             step = 1,
             largeStep,
             showSteppers = false,
+            error,
+            invalid,
+            helperText,
+            'aria-describedby': ariaDescribedBy,
             ...baseProps
         },
         ref,
@@ -151,8 +158,14 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
             }
         }, [value]);
 
+        const errorMessage = typeof error === 'string' ? error : undefined;
+        const hasError = invalid === true || error === true || (typeof error === 'string' && error.length > 0);
+        const helperId = helperText ? `${inputId}-helper` : undefined;
+        const errorId = errorMessage ? `${inputId}-error` : undefined;
+        const describedBy = [ariaDescribedBy, helperId, errorId].filter(Boolean).join(' ') || undefined;
+
         const componentClasses = getComponentClasses(
-            { ...baseProps, disabled, className },
+            { ...baseProps, disabled, className: classNames(className, { 'eui-numeric-input-error': hasError }) },
             classNames('eui-numeric-input', {
                 'eui-numeric-input-readonly': readonly,
                 'eui-numeric-input-disabled': disabled,
@@ -168,6 +181,7 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
         const numericValue = displayValue !== '' && !isNaN(parseFloat(displayValue)) ? parseFloat(displayValue) : undefined;
         const upDisabled = disabled || readonly || (max !== undefined && numericValue !== undefined && numericValue >= max);
         const downDisabled = disabled || readonly || (min !== undefined && numericValue !== undefined && numericValue <= min);
+        const ariaInvalid = hasError ? 'true' : (required && !value ? 'true' : 'false');
 
         const inputElement = (
             <input
@@ -187,44 +201,73 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
                 disabled={disabled}
                 className={componentClasses}
                 style={componentStyles}
-                aria-invalid={required && !value ? 'true' : 'false'}
+                aria-invalid={ariaInvalid}
                 aria-required={required}
                 aria-valuenow={numericValue}
                 aria-valuemin={min}
                 aria-valuemax={max}
                 aria-valuetext={displayValue || undefined}
+                aria-describedby={describedBy}
+                aria-errormessage={errorId}
             />
         );
 
-        if (!showSteppers) {
+        const messages = (helperText && !errorMessage) || errorMessage ? (
+            <>
+                {helperText && !errorMessage && (
+                    <span id={helperId} className="eui-numeric-input-helper">
+                        {helperText}
+                    </span>
+                )}
+                {errorMessage && (
+                    <span id={errorId} className="eui-numeric-input-error-message" role="alert">
+                        {errorMessage}
+                    </span>
+                )}
+            </>
+        ) : null;
+
+        if (!showSteppers && !messages) {
             return inputElement;
         }
 
+        if (!showSteppers) {
+            return (
+                <span className="eui-numeric-input-wrap-outer">
+                    {inputElement}
+                    {messages}
+                </span>
+            );
+        }
+
         return (
-            <div className={classNames('eui-numeric-input-wrapper', { 'eui-numeric-input-wrapper-disabled': disabled })}>
-                {inputElement}
-                <div className="eui-numeric-input-steppers" aria-hidden="true">
-                    <button
-                        type="button"
-                        tabIndex={-1}
-                        className="eui-numeric-input-stepper eui-numeric-input-stepper-up"
-                        onClick={(e) => handleStepperClick(e, 1)}
-                        disabled={upDisabled}
-                        aria-label="Increase value"
-                    >
-                        <ChevronUpIcon />
-                    </button>
-                    <button
-                        type="button"
-                        tabIndex={-1}
-                        className="eui-numeric-input-stepper eui-numeric-input-stepper-down"
-                        onClick={(e) => handleStepperClick(e, -1)}
-                        disabled={downDisabled}
-                        aria-label="Decrease value"
-                    >
-                        <ChevronDownIcon />
-                    </button>
+            <div className={classNames('eui-numeric-input-wrap-outer', { 'eui-numeric-input-wrapper-disabled': disabled })}>
+                <div className="eui-numeric-input-wrapper">
+                    {inputElement}
+                    <div className="eui-numeric-input-steppers" aria-hidden="true">
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            className="eui-numeric-input-stepper eui-numeric-input-stepper-up"
+                            onClick={(e) => handleStepperClick(e, 1)}
+                            disabled={upDisabled}
+                            aria-label="Increase value"
+                        >
+                            <ChevronUpIcon />
+                        </button>
+                        <button
+                            type="button"
+                            tabIndex={-1}
+                            className="eui-numeric-input-stepper eui-numeric-input-stepper-down"
+                            onClick={(e) => handleStepperClick(e, -1)}
+                            disabled={downDisabled}
+                            aria-label="Decrease value"
+                        >
+                            <ChevronDownIcon />
+                        </button>
+                    </div>
                 </div>
+                {messages}
             </div>
         );
     },

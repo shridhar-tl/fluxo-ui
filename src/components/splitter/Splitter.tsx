@@ -19,8 +19,6 @@ export const SplitterPanel: React.FC<SplitterPanelProps> = ({ children, classNam
 
 SplitterPanel.displayName = 'SplitterPanel';
 
-// ---------------------------------------------------------------------------
-
 export type SplitterLayout = 'horizontal' | 'vertical';
 
 export interface SplitterProps {
@@ -31,6 +29,9 @@ export interface SplitterProps {
     gutterSize?: number;
     onResizeEnd?: (firstPanelSize: number) => void;
 }
+
+const DEFAULT_KEYBOARD_STEP = 20;
+const KEYBOARD_DEBOUNCE_MS = 180;
 
 function parseSizeToPixels(size: string, totalPx: number): number {
     if (size.endsWith('%')) {
@@ -46,9 +47,21 @@ function clamp(value: number, min: number, max: number): number {
 function getPanels(children: React.ReactNode): React.ReactElement<SplitterPanelProps>[] {
     const panels: React.ReactElement<SplitterPanelProps>[] = [];
     React.Children.forEach(children, (child) => {
-        if (React.isValidElement(child)) {
-            panels.push(child as React.ReactElement<SplitterPanelProps>);
+        if (!React.isValidElement(child)) return;
+
+        const childType = child.type as { displayName?: string; name?: string } | string;
+        const isSplitterPanel =
+            childType === SplitterPanel ||
+            (typeof childType !== 'string' && (childType.displayName === 'SplitterPanel' || childType.name === 'SplitterPanel'));
+
+        if (!isSplitterPanel) {
+            if (typeof console !== 'undefined' && typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
+                console.warn('[FluxoUI Splitter] Only <SplitterPanel> children are accepted. Other elements will be ignored.');
+            }
+            return;
         }
+
+        panels.push(child as React.ReactElement<SplitterPanelProps>);
     });
     return panels;
 }
@@ -66,15 +79,19 @@ export const Splitter: React.FC<SplitterProps> = ({
     const isHorizontal = layout === 'horizontal';
     const containerRef = useRef<HTMLDivElement>(null);
     const firstPanelRef = useRef<HTMLDivElement>(null);
+    const secondPanelRef = useRef<HTMLDivElement>(null);
     const dragState = useRef<{ dragging: boolean; startPos: number; startFirstSize: number }>({
         dragging: false,
         startPos: 0,
         startFirstSize: 0,
     });
+    const keyboardDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [firstSize, setFirstSize] = useState<number | null>(null);
     const initialised = useRef(false);
-    const id = useId();
+    const reactId = useId();
+    const firstPanelId = `eui-splitter-panel-1-${reactId}`;
+    const secondPanelId = `eui-splitter-panel-2-${reactId}`;
 
     const panels = getPanels(children);
     const firstPanel = panels[0];
@@ -133,6 +150,14 @@ export const Splitter: React.FC<SplitterProps> = ({
         initialised.current = false;
         setFirstSize(null);
     }, [isHorizontal]);
+
+    useEffect(() => {
+        return () => {
+            if (keyboardDebounceRef.current !== null) {
+                clearTimeout(keyboardDebounceRef.current);
+            }
+        };
+    }, []);
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
@@ -219,30 +244,62 @@ export const Splitter: React.FC<SplitterProps> = ({
         document.addEventListener('touchend', handleTouchEnd);
     }, [getMinPx]);
 
+    const scheduleKeyboardResizeEnd = useCallback((next: number) => {
+        if (keyboardDebounceRef.current !== null) {
+            clearTimeout(keyboardDebounceRef.current);
+        }
+        keyboardDebounceRef.current = setTimeout(() => {
+            keyboardDebounceRef.current = null;
+            const { onResizeEnd } = propsRef.current;
+            onResizeEnd?.(next);
+        }, KEYBOARD_DEBOUNCE_MS);
+    }, []);
+
     const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-        const step = 20;
         const container = containerRef.current;
         const firstEl = firstPanelRef.current;
         if (!container || !firstEl) return;
 
-        const { isHorizontal, firstProps, secondProps, gutterSize, onResizeEnd } = propsRef.current;
+        const { isHorizontal, firstProps, secondProps, gutterSize } = propsRef.current;
         if (!firstProps || !secondProps) return;
         const totalPx = isHorizontal ? container.offsetWidth : container.offsetHeight;
         const currentSize = isHorizontal ? firstEl.offsetWidth : firstEl.offsetHeight;
+        const minPx = getMinPx(firstProps, totalPx);
+        const maxPx = totalPx - gutterSize - getMinPx(secondProps, totalPx);
 
-        let delta = 0;
-        if (e.key === (isHorizontal ? 'ArrowLeft' : 'ArrowUp')) delta = -step;
-        else if (e.key === (isHorizontal ? 'ArrowRight' : 'ArrowDown')) delta = step;
-        else return;
+        const decreaseKey = isHorizontal ? 'ArrowLeft' : 'ArrowUp';
+        const increaseKey = isHorizontal ? 'ArrowRight' : 'ArrowDown';
+
+        let next: number | null = null;
+
+        if (e.key === decreaseKey) {
+            next = currentSize - DEFAULT_KEYBOARD_STEP;
+        } else if (e.key === increaseKey) {
+            next = currentSize + DEFAULT_KEYBOARD_STEP;
+        } else if (e.key === 'PageUp') {
+            next = currentSize - DEFAULT_KEYBOARD_STEP * 5;
+        } else if (e.key === 'PageDown') {
+            next = currentSize + DEFAULT_KEYBOARD_STEP * 5;
+        } else if (e.key === 'Home') {
+            next = minPx;
+        } else if (e.key === 'End') {
+            next = maxPx;
+        } else if (e.key === 'Enter' || e.key === ' ') {
+            return;
+        } else {
+            return;
+        }
 
         e.preventDefault();
-        const next = clamp(currentSize + delta, getMinPx(firstProps, totalPx), totalPx - gutterSize - getMinPx(secondProps, totalPx));
-        setFirstSize(next);
-        onResizeEnd?.(next);
-    }, [getMinPx]);
+        const clamped = clamp(next, minPx, maxPx);
+        setFirstSize(clamped);
+        scheduleKeyboardResizeEnd(clamped);
+    }, [getMinPx, scheduleKeyboardResizeEnd]);
 
     if (!firstPanel) {
-        console.warn('[Splitter] At least 1 SplitterPanel child is required.');
+        if (typeof console !== 'undefined') {
+            console.warn('[Splitter] At least 1 SplitterPanel child is required.');
+        }
         return null;
     }
 
@@ -283,15 +340,32 @@ export const Splitter: React.FC<SplitterProps> = ({
         ? { width: `${gutterSize}px`, flexShrink: 0, minWidth: `${gutterSize}px` }
         : { height: `${gutterSize}px`, flexShrink: 0, minHeight: `${gutterSize}px` };
 
+    const containerEl = containerRef.current;
+    let valueNow = 50;
+    let valueMin = 0;
+    let valueMax = 100;
+
+    if (containerEl && firstSize !== null) {
+        const totalPx = isHorizontal ? containerEl.offsetWidth : containerEl.offsetHeight;
+        if (totalPx > 0) {
+            valueNow = Math.round((firstSize / totalPx) * 100);
+            const minFirst = firstProps ? getMinPx(firstProps, totalPx) : 0;
+            const minSecond = secondProps ? getMinPx(secondProps, totalPx) : 0;
+            valueMin = Math.round((minFirst / totalPx) * 100);
+            valueMax = Math.round(((totalPx - gutterSize - minSecond) / totalPx) * 100);
+        }
+    }
+
     return (
         <div
             ref={containerRef}
             className={classNames('eui-splitter', isHorizontal ? 'eui-splitter-horizontal' : 'eui-splitter-vertical', className)}
             style={style}
-            id={id}
+            id={reactId}
         >
             <div
                 ref={firstPanelRef}
+                id={firstPanelId}
                 className={classNames('eui-splitter-panel', firstProps?.className)}
                 style={firstStyle}
             >
@@ -307,6 +381,10 @@ export const Splitter: React.FC<SplitterProps> = ({
                 role="separator"
                 aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
                 aria-label="Resize panels"
+                aria-valuenow={valueNow}
+                aria-valuemin={valueMin}
+                aria-valuemax={valueMax}
+                aria-controls={`${firstPanelId} ${secondPanelId}`}
                 tabIndex={0}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
@@ -325,6 +403,8 @@ export const Splitter: React.FC<SplitterProps> = ({
             </div>
 
             <div
+                ref={secondPanelRef}
+                id={secondPanelId}
                 className={classNames('eui-splitter-panel', secondProps?.className)}
                 style={secondStyle}
             >

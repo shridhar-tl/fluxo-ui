@@ -1,9 +1,8 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { AnnouncementIcon, TimesIcon } from '../../assets/icons';
 import { useClickOutside } from '../../hooks/useClickOutside';
-import { useKeyboard } from '../../hooks/useKeyboard';
 import { useViewport } from '../../hooks/useMobile';
 import { usePosition } from '../../hooks/usePosition';
 import type { NotificationCenterProps } from './notification-center-types';
@@ -11,6 +10,15 @@ import './NotificationCenter.scss';
 import { NotificationItemRow } from './NotificationItemRow';
 
 const allCategory = 'All';
+
+const focusableSelector = [
+    'button:not([disabled])',
+    '[href]:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    'textarea:not([disabled])',
+    '[tabindex]:not([tabindex="-1"]):not([disabled])',
+].join(',');
 
 export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     items,
@@ -35,12 +43,18 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     const [isOpen, setIsOpen] = useState(false);
     const [activeCategory, setActiveCategory] = useState(allCategory);
     const [loadingMore, setLoadingMore] = useState(false);
+    const [announcement, setAnnouncement] = useState('');
 
     const triggerRef = useRef<HTMLButtonElement>(null);
     const panelRef = useRef<HTMLDivElement>(null);
     const listRef = useRef<HTMLDivElement>(null);
+    const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+    const previousFocusRef = useRef<HTMLElement | null>(null);
     const { calculatePosition } = usePosition();
     const { isCompact, isMobile, isTablet } = useViewport();
+    const generatedId = useId();
+    const baseId = `eui-nc-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+    const panelId = `${baseId}-panel`;
 
     const resolvedUnreadCount = useMemo(() => {
         if (unreadCount !== undefined) return unreadCount;
@@ -67,8 +81,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
     useClickOutside(panelRef, closePanel, isOpen && !isCompact);
 
-    useKeyboard({ Escape: closePanel }, isOpen);
-
     useLayoutEffect(() => {
         if (!isOpen || isCompact) return;
         const reposition = () => {
@@ -86,13 +98,67 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     }, [isOpen, calculatePosition, isCompact]);
 
     useEffect(() => {
-        if (!isOpen || !isCompact) return;
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
-        return () => {
-            document.body.style.overflow = previousOverflow;
+        if (!isOpen) return;
+        previousFocusRef.current = document.activeElement as HTMLElement | null;
+
+        const previousOverflow = isCompact ? document.body.style.overflow : null;
+        if (isCompact) {
+            document.body.style.overflow = 'hidden';
+        }
+
+        const focusFrame = requestAnimationFrame(() => {
+            const panel = panelRef.current;
+            if (!panel) return;
+            const focusable = panel.querySelectorAll<HTMLElement>(focusableSelector);
+            if (focusable.length > 0) {
+                focusable[0].focus();
+            } else {
+                panel.focus();
+            }
+        });
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                closePanel();
+                return;
+            }
+            if (e.key !== 'Tab') return;
+            const panel = panelRef.current;
+            if (!panel) return;
+            const focusable = Array.from(panel.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+                (el) => el.tabIndex !== -1,
+            );
+            if (focusable.length === 0) {
+                e.preventDefault();
+                panel.focus();
+                return;
+            }
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+                if (document.activeElement === first || !panel.contains(document.activeElement)) {
+                    e.preventDefault();
+                    last.focus();
+                }
+            } else {
+                if (document.activeElement === last || !panel.contains(document.activeElement)) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
         };
-    }, [isOpen, isCompact]);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            cancelAnimationFrame(focusFrame);
+            document.removeEventListener('keydown', handleKeyDown);
+            if (isCompact && previousOverflow !== null) {
+                document.body.style.overflow = previousOverflow;
+            }
+            previousFocusRef.current?.focus?.();
+        };
+    }, [isOpen, isCompact, closePanel]);
 
     const handleScroll = useCallback(async () => {
         if (!listRef.current || !hasMore || loadingMore || isLoading || !onLoadMore) return;
@@ -116,16 +182,49 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         return () => listEl.removeEventListener('scroll', handleScroll);
     }, [isOpen, handleScroll]);
 
-    const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            togglePanel();
-        }
+    const announce = (msg: string) => {
+        setAnnouncement('');
+        window.setTimeout(() => setAnnouncement(msg), 30);
     };
+
+    const handleMarkAllRead = () => {
+        onMarkAllRead?.();
+        announce('All notifications marked as read');
+    };
+
+    const handleClearAll = () => {
+        onClear?.();
+        announce('All notifications cleared');
+    };
+
+    const handleTabKeyDown = (e: React.KeyboardEvent, idx: number) => {
+        const len = categoryTabs.length;
+        if (len === 0) return;
+        let next = idx;
+        if (e.key === 'ArrowRight') {
+            next = (idx + 1) % len;
+        } else if (e.key === 'ArrowLeft') {
+            next = (idx - 1 + len) % len;
+        } else if (e.key === 'Home') {
+            next = 0;
+        } else if (e.key === 'End') {
+            next = len - 1;
+        } else {
+            return;
+        }
+        e.preventDefault();
+        setActiveCategory(categoryTabs[next]);
+        requestAnimationFrame(() => tabRefs.current[next]?.focus());
+    };
+
+    const activeTabIndex = categoryTabs.indexOf(activeCategory);
+    const activeTabId = `${baseId}-tab-${activeTabIndex}`;
+    const isBusy = isLoading || loadingMore;
 
     const panel = isOpen ? (
         <div
             ref={panelRef}
+            tabIndex={-1}
             className={classNames('eui-notification-center', className, {
                 'eui-notification-center-mobile': isMobile,
                 'eui-notification-center-tablet': isTablet,
@@ -140,12 +239,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     <span className="eui-nc-header-title">Notifications</span>
                     <div className="eui-nc-header-actions">
                         {onMarkAllRead && resolvedUnreadCount > 0 && (
-                            <button className="eui-nc-action-btn" onClick={onMarkAllRead} type="button">
+                            <button className="eui-nc-action-btn" onClick={handleMarkAllRead} type="button">
                                 Mark all read
                             </button>
                         )}
                         {onClear && items.length > 0 && (
-                            <button className="eui-nc-action-btn eui-nc-action-btn-danger" onClick={onClear} type="button">
+                            <button className="eui-nc-action-btn eui-nc-action-btn-danger" onClick={handleClearAll} type="button">
                                 Clear all
                             </button>
                         )}
@@ -165,53 +264,71 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
 
             {categoryTabs.length > 0 && (
                 <div className="eui-nc-tabs" role="tablist" aria-label="Notification categories">
-                    {categoryTabs.map((cat) => (
-                        <button
-                            key={cat}
-                            className={classNames('eui-nc-tab', { 'eui-nc-tab-active': activeCategory === cat })}
-                            role="tab"
-                            aria-selected={activeCategory === cat}
-                            onClick={() => setActiveCategory(cat)}
-                            type="button"
-                        >
-                            {cat}
-                        </button>
-                    ))}
+                    {categoryTabs.map((cat, idx) => {
+                        const tabId = `${baseId}-tab-${idx}`;
+                        const selected = activeCategory === cat;
+                        return (
+                            <button
+                                key={cat}
+                                ref={(el) => { tabRefs.current[idx] = el; }}
+                                id={tabId}
+                                className={classNames('eui-nc-tab', { 'eui-nc-tab-active': selected })}
+                                role="tab"
+                                aria-selected={selected}
+                                aria-controls={panelId}
+                                tabIndex={selected ? 0 : -1}
+                                onClick={() => setActiveCategory(cat)}
+                                onKeyDown={(e) => handleTabKeyDown(e, idx)}
+                                type="button"
+                            >
+                                {cat}
+                            </button>
+                        );
+                    })}
                 </div>
             )}
 
             <div
                 ref={listRef}
+                id={panelId}
+                role={categoryTabs.length > 0 ? 'tabpanel' : 'feed'}
+                aria-labelledby={categoryTabs.length > 0 ? activeTabId : undefined}
+                aria-label={categoryTabs.length > 0 ? undefined : 'Notifications list'}
+                aria-busy={isBusy}
                 className="eui-nc-list"
                 style={isCompact ? undefined : { maxHeight }}
-                role="listbox"
-                aria-label="Notifications list"
             >
                 {filteredItems.length === 0 && !isLoading ? (
                     <div className="eui-nc-empty">
                         {typeof emptyMessage === 'string' ? <span>{emptyMessage}</span> : emptyMessage}
                     </div>
                 ) : (
-                    filteredItems.map((item) => (
-                        <NotificationItemRow
-                            key={item.id}
-                            item={item}
-                            onClick={onItemClick}
-                            onMarkRead={onMarkRead}
-                            itemTemplate={itemTemplate}
-                        />
-                    ))
+                    <div role={categoryTabs.length > 0 ? 'feed' : undefined} aria-busy={categoryTabs.length > 0 ? isBusy : undefined}>
+                        {filteredItems.map((item) => (
+                            <NotificationItemRow
+                                key={item.id}
+                                item={item}
+                                onClick={onItemClick}
+                                onMarkRead={onMarkRead}
+                                itemTemplate={itemTemplate}
+                            />
+                        ))}
+                    </div>
                 )}
 
                 {(isLoading || loadingMore) && (
-                    <div className="eui-nc-loading">
-                        <span className="eui-nc-spinner" />
+                    <div className="eui-nc-loading" role="status" aria-live="polite">
+                        <span className="eui-nc-spinner" aria-hidden="true" />
                         <span>Loading...</span>
                     </div>
                 )}
             </div>
 
             {footer && <div className="eui-nc-footer">{footer}</div>}
+
+            <div className="eui-visually-hidden" role="status" aria-live="polite" aria-atomic="true">
+                {announcement}
+            </div>
         </div>
     ) : null;
 
@@ -221,9 +338,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                 ref={triggerRef}
                 className="eui-nc-trigger"
                 onClick={togglePanel}
-                onKeyDown={handleTriggerKeyDown}
                 aria-haspopup="dialog"
                 aria-expanded={isOpen}
+                aria-controls={isOpen ? panelId : undefined}
                 aria-label={`Notifications${resolvedUnreadCount > 0 ? `, ${resolvedUnreadCount} unread` : ''}`}
                 type="button"
             >

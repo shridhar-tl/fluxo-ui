@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { FolderIcon } from '../../assets/icons';
 import type { FileUploadProps, UploadFile } from './file-upload-types';
 import FilePreview from './FilePreview';
 import './FileUpload.scss';
@@ -58,8 +59,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
 }) => {
     const [files, setFiles] = useState<UploadFile[]>([]);
     const [isDragOver, setIsDragOver] = useState(false);
+    const [announcement, setAnnouncement] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const dragCounterRef = useRef(0);
+    const previousFileIdsRef = useRef<Set<string>>(new Set());
+    const reactId = useId();
+    const dropzoneId = `eui-fu-dropzone-${reactId}`;
+    const hintId = `eui-fu-hint-${reactId}`;
+    const labelId = `eui-fu-label-${reactId}`;
 
     useEffect(() => {
         return () => {
@@ -70,6 +77,31 @@ const FileUpload: React.FC<FileUploadProps> = ({
             });
         };
     }, []);
+
+    useEffect(() => {
+        const currentIds = new Set(files.map(f => f.id));
+        const previousIds = previousFileIdsRef.current;
+        const added: UploadFile[] = files.filter(f => !previousIds.has(f.id));
+        const removed: string[] = [];
+        previousIds.forEach(id => {
+            if (!currentIds.has(id)) removed.push(id);
+        });
+        const messages: string[] = [];
+        if (added.length === 1) {
+            messages.push(`Added ${added[0].file.name}`);
+        } else if (added.length > 1) {
+            messages.push(`Added ${added.length} files`);
+        }
+        if (removed.length === 1) {
+            messages.push(`Removed file`);
+        } else if (removed.length > 1) {
+            messages.push(`Removed ${removed.length} files`);
+        }
+        if (messages.length > 0) {
+            setAnnouncement(messages.join('. '));
+        }
+        previousFileIdsRef.current = currentIds;
+    }, [files]);
 
     const validateFile = useCallback((file: File): string | undefined => {
         if (accept && !validateFileType(file, accept)) {
@@ -83,6 +115,34 @@ const FileUpload: React.FC<FileUploadProps> = ({
         }
         return undefined;
     }, [accept, maxFileSize, customValidator]);
+
+    const startUpload = useCallback((uploadFile: UploadFile) => {
+        if (!onUpload) return;
+
+        setFiles(prev => prev.map(f =>
+            f.id === uploadFile.id ? { ...f, status: 'uploading' as const, progress: 0 } : f
+        ));
+
+        const onProgress = (percent: number) => {
+            setFiles(prev => prev.map(f =>
+                f.id === uploadFile.id ? { ...f, progress: Math.min(percent, 100) } : f
+            ));
+        };
+
+        onUpload(uploadFile.file, onProgress)
+            .then(() => {
+                setFiles(prev => prev.map(f =>
+                    f.id === uploadFile.id ? { ...f, status: 'success' as const, progress: 100 } : f
+                ));
+            })
+            .catch((err: Error) => {
+                setFiles(prev => prev.map(f =>
+                    f.id === uploadFile.id
+                        ? { ...f, status: 'error' as const, error: err?.message || 'Upload failed' }
+                        : f
+                ));
+            });
+    }, [onUpload]);
 
     const processFiles = useCallback((fileList: FileList | File[]) => {
         const rawFiles = Array.from(fileList);
@@ -125,35 +185,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 startUpload(uploadFile);
             });
         }
-    }, [files.length, multiple, maxFiles, validateFile, onFilesSelect, onUpload]);
-
-    const startUpload = useCallback((uploadFile: UploadFile) => {
-        if (!onUpload) return;
-
-        setFiles(prev => prev.map(f =>
-            f.id === uploadFile.id ? { ...f, status: 'uploading' as const, progress: 0 } : f
-        ));
-
-        const onProgress = (percent: number) => {
-            setFiles(prev => prev.map(f =>
-                f.id === uploadFile.id ? { ...f, progress: Math.min(percent, 100) } : f
-            ));
-        };
-
-        onUpload(uploadFile.file, onProgress)
-            .then(() => {
-                setFiles(prev => prev.map(f =>
-                    f.id === uploadFile.id ? { ...f, status: 'success' as const, progress: 100 } : f
-                ));
-            })
-            .catch((err: Error) => {
-                setFiles(prev => prev.map(f =>
-                    f.id === uploadFile.id
-                        ? { ...f, status: 'error' as const, error: err?.message || 'Upload failed' }
-                        : f
-                ));
-            });
-    }, [onUpload]);
+    }, [files.length, multiple, maxFiles, validateFile, onFilesSelect, onUpload, startUpload]);
 
     const handleRemove = useCallback((uploadFile: UploadFile) => {
         if (uploadFile.previewUrl) {
@@ -210,7 +242,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         }
     }, [processFiles]);
 
-    const handleZoneClick = useCallback(() => {
+    const openFilePicker = useCallback(() => {
         if (!disabled) {
             inputRef.current?.click();
         }
@@ -241,19 +273,23 @@ const FileUpload: React.FC<FileUploadProps> = ({
         hintParts.push(`Up to ${maxFiles} file${maxFiles > 1 ? 's' : ''}`);
     }
 
+    const describedBy = hintParts.length > 0 ? hintId : undefined;
+
     return (
         <div className={containerClass}>
             <div
+                id={dropzoneId}
                 className={dropzoneClass}
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
-                onClick={handleZoneClick}
+                onClick={openFilePicker}
                 onKeyDown={handleZoneKeyDown}
                 role="button"
                 tabIndex={disabled ? -1 : 0}
-                aria-label="File upload dropzone. Click or drag files to upload."
+                aria-labelledby={labelId}
+                aria-describedby={describedBy}
                 aria-disabled={disabled}
             >
                 <input
@@ -268,18 +304,27 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 />
                 {dropzoneContent || (
                     <>
-                        <span className="eui-fu-dropzone-icon" aria-hidden="true">{'\uD83D\uDCC2'}</span>
-                        <span className="eui-fu-dropzone-text">
-                            Drag & drop files here or <span className="eui-fu-browse-link">browse</span>
+                        <FolderIcon className="eui-fu-dropzone-icon" aria-hidden="true" />
+                        <span id={labelId} className="eui-fu-dropzone-text">
+                            Drag & drop files here, or <span className="eui-fu-browse-link">browse</span> to choose
                         </span>
                         {hintParts.length > 0 && (
-                            <span className="eui-fu-dropzone-hint">{hintParts.join(' \u2022 ')}</span>
+                            <span id={hintId} className="eui-fu-dropzone-hint">{hintParts.join(' • ')}</span>
                         )}
                     </>
                 )}
             </div>
+            <button
+                type="button"
+                className="eui-fu-browse-button"
+                onClick={openFilePicker}
+                disabled={disabled}
+                aria-describedby={describedBy}
+            >
+                Choose {multiple ? 'files' : 'a file'}
+            </button>
             {files.length > 0 && (
-                <div className="eui-fu-file-list" role="list" aria-live="polite" aria-label="Uploaded files">
+                <div className="eui-fu-file-list" role="list" aria-label="Uploaded files">
                     {files.map(uploadFile => (
                         <FilePreview
                             key={uploadFile.id}
@@ -290,6 +335,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
                     ))}
                 </div>
             )}
+            <div
+                className="eui-fu-sr-only"
+                aria-live="polite"
+                aria-atomic="true"
+                role="status"
+            >
+                {announcement}
+            </div>
         </div>
     );
 };

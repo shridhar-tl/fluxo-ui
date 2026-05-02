@@ -228,11 +228,13 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
             )}
 
             {showSwatches && (
-                <div className="eui-color-swatches">
-                    {swatches.map((sw) => (
+                <div className="eui-color-swatches" role="listbox" aria-label="Color swatches">
+                    {swatches.map((sw, idx) => (
                         <button
                             key={sw}
                             type="button"
+                            role="option"
+                            aria-selected={sw.toLowerCase() === value.toLowerCase()}
                             className={cn('eui-color-swatch', { 'eui-color-swatch-active': sw.toLowerCase() === value.toLowerCase() })}
                             style={{ backgroundColor: sw }}
                             aria-label={sw}
@@ -241,6 +243,22 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
                                 if (next) {
                                     setHsv(next);
                                     commit(next, alpha);
+                                }
+                            }}
+                            onKeyDown={(e) => {
+                                const buttons = (e.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('.eui-color-swatch')) ?? [];
+                                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                                    e.preventDefault();
+                                    buttons[(idx + 1) % buttons.length]?.focus();
+                                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                                    e.preventDefault();
+                                    buttons[(idx - 1 + buttons.length) % buttons.length]?.focus();
+                                } else if (e.key === 'Home') {
+                                    e.preventDefault();
+                                    buttons[0]?.focus();
+                                } else if (e.key === 'End') {
+                                    e.preventDefault();
+                                    buttons[buttons.length - 1]?.focus();
                                 }
                             }}
                         />

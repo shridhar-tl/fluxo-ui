@@ -36,6 +36,20 @@
       "default": "'top'",
       "description": "Position of tab headers"
     },
+    "activationMode": {
+      "type": "'auto' | 'manual'",
+      "default": "'auto'",
+      "description": "How tabs activate via keyboard. 'auto' selects on arrow-key navigation; 'manual' moves focus only and requires Enter/Space to activate."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name for the tablist (announced by screen readers when entering the tabs)."
+    },
+    "preMount": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Render all tab panels at once (hiding inactive ones) instead of mounting only the active panel."
+    },
     "className": {
       "type": "string",
       "description": "Additional CSS class names"
