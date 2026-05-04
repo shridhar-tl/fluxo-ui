@@ -6,7 +6,7 @@ type ProgressBarVariant = 'default' | 'primary' | 'success' | 'warning' | 'dange
 type ProgressBarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type ProgressBarLayout = 'default' | 'rounded' | 'sharp' | 'striped' | 'animated';
 
-interface ProgressBarProps {
+interface ProgressBarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {
     value: number;
     max?: number;
     min?: number;
@@ -57,6 +57,7 @@ function ProgressBar({
     disabled = false,
     ariaLabel,
     id,
+    ...rest
 }: ProgressBarProps) {
     const percentage = useMemo(() => {
         if (indeterminate) return 0;
@@ -95,7 +96,7 @@ function ProgressBar({
     const renderMultiple = multipleValues && multipleValues.length > 0;
 
     return (
-        <div className={rootClasses} id={id}>
+        <div {...rest} className={rootClasses} id={id}>
             {(label || displayValue) && (
                 <div className="eui-progress-bar-header">
                     <div className="eui-progress-bar-label-group">

@@ -10,7 +10,7 @@ interface BreadcrumbItem {
     onClick?: () => void;
 }
 
-interface BreadcrumbProps {
+interface BreadcrumbProps extends Omit<React.HTMLAttributes<HTMLElement>, 'className'> {
     items: BreadcrumbItem[];
     separator?: React.ReactNode;
     maxItems?: number;
@@ -248,6 +248,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     autoCollapse = true,
     className,
     onItemClick,
+    ...rest
 }) => {
     const navRef = useRef<HTMLElement>(null);
     const measureRef = useRef<HTMLOListElement>(null);
@@ -353,7 +354,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({
     };
 
     return (
-        <nav ref={navRef} className={classNames('eui-breadcrumb', className)} aria-label="Breadcrumb">
+        <nav {...rest} ref={navRef} className={classNames('eui-breadcrumb', className)} aria-label={rest['aria-label'] ?? 'Breadcrumb'}>
             <ol className="eui-breadcrumb-list">{renderItems()}</ol>
             {autoCollapse && maxItems === undefined && (
                 <ol ref={measureRef} className="eui-breadcrumb-list eui-breadcrumb-list-measure" aria-hidden="true">

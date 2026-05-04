@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDownIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent, ListItem, ListItemGroup } from '../types';
-import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './Dropdown.scss';
 import { Popover } from './Popover';
 
@@ -34,7 +34,7 @@ const normalizeOptions = (
     return { flatItems, groups: undefined };
 };
 
-interface DropdownProps<T = any> extends BaseComponentProps {
+interface DropdownProps<T = any> extends BaseComponentProps, Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange' | 'size' | 'value' | 'type'> {
     options: ListItem[] | ListItemGroup[];
     value?: T;
     onChange?: (event: ComponentEvent<T>) => void;
@@ -80,10 +80,11 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
             compareFn,
             ariaLabel,
             ariaLabelledBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
@@ -215,14 +216,21 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
         return (
             <>
                 <button
+                    {...nativeProps}
                     ref={combinedRef}
                     id={inputId}
                     type="button"
-                    onClick={handleToggle}
-                    onKeyDown={handleTriggerKeyDown}
+                    onClick={(e) => {
+                        nativeProps.onClick?.(e);
+                        handleToggle();
+                    }}
+                    onKeyDown={(e) => {
+                        nativeProps.onKeyDown?.(e);
+                        handleTriggerKeyDown(e);
+                    }}
                     disabled={disabled}
                     className={classNames(triggerClasses, className)}
-                    style={componentStyles}
+                    style={{ ...nativeProps.style, ...componentStyles }}
                     aria-haspopup="listbox"
                     aria-expanded={isOpen}
                     aria-controls={isOpen ? listboxId : undefined}

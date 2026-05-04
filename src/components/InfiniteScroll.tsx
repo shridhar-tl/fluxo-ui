@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './InfiniteScroll.scss';
 
-interface InfiniteScrollProps {
+interface InfiniteScrollProps extends React.HTMLAttributes<HTMLDivElement> {
     loadMore: () => Promise<void>;
     hasMore: boolean;
     isLoading?: boolean;
@@ -37,6 +37,7 @@ function InfiniteScroll({
     scrollableTarget,
     inverse = false,
     endAnnouncement,
+    ...rest
 }: InfiniteScrollProps) {
     const sentinelRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -224,6 +225,7 @@ function InfiniteScroll({
 
     return (
         <div
+            {...rest}
             ref={containerRef}
             className={classNames('eui-infinite-scroll', { 'eui-is-inverse': inverse }, className)}
         >

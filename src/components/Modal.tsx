@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { TimesIcon } from '../assets/icons';
 import './Modal.scss';
 
-interface ModalProps {
+interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role' | 'children' | 'title'> {
     isOpen: boolean;
     onClose: () => void;
     title?: string;
@@ -36,6 +36,7 @@ const Modal: React.FC<ModalProps> = ({
     closeOnBackdrop = true,
     initialFocus,
     ariaLabel,
+    ...rest
 }) => {
     const overlayRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
@@ -157,8 +158,9 @@ const Modal: React.FC<ModalProps> = ({
             onMouseUp={handleBackdropMouseUp}
         >
             <div
+                {...rest}
                 ref={modalRef}
-                className={classNames('eui-modal', `eui-modal-${size}`)}
+                className={classNames('eui-modal', `eui-modal-${size}`, rest.className)}
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby={titleId}

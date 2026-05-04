@@ -3,7 +3,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 import { EyeIcon, EyeSlashIcon } from '../assets/icons';
 import { PasswordStrengthMeter, PasswordStrengthMeterProps } from './password-strength';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './Password.scss';
 
 interface PasswordProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {
@@ -82,10 +82,11 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
             invalid,
             helperText,
             'aria-describedby': ariaDescribedBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const [internalShowPassword, setInternalShowPassword] = useState(false);
         const isControlled = value !== undefined;
@@ -164,6 +165,7 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
 
         const passwordField = (
             <input
+                {...nativeProps}
                 ref={inputRef}
                 id={inputId}
                 type={showPassword ? 'text' : 'password'}
@@ -179,7 +181,7 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
                 disabled={disabled}
                 name={name}
                 className={componentClasses}
-                style={componentStyles}
+                style={{ ...nativeProps.style, ...componentStyles }}
                 aria-invalid={ariaInvalid}
                 aria-required={required}
                 aria-describedby={describedBy}

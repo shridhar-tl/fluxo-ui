@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getResolvedSize, splitBaseAndNativeProps, splitVisibleAndHiddenProps } from '../utils';
 import './Checkbox.scss';
 
 interface CheckboxProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {
@@ -26,10 +26,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             className,
             name,
             args,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
+        const { visibleProps, hiddenInputProps } = splitVisibleAndHiddenProps(nativeProps);
         const [inputId] = useState(id || name || generateId());
         const innerRef = useRef<HTMLInputElement | null>(null);
 
@@ -76,8 +78,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         const checkbox = (
             <div className="eui-checkbox-input-wrapper">
                 <input
+                    {...hiddenInputProps}
                     ref={innerRef}
                     id={inputId}
+                    name={name}
                     type="checkbox"
                     checked={checked}
                     onChange={handleChange}
@@ -95,14 +99,14 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
         if (!label) {
             return (
-                <label className={containerClasses} htmlFor={inputId}>
+                <label {...visibleProps} className={containerClasses} htmlFor={inputId}>
                     {checkbox}
                 </label>
             );
         }
 
         return (
-            <label className={containerClasses} htmlFor={inputId}>
+            <label {...visibleProps} className={containerClasses} htmlFor={inputId}>
                 {checkbox}
                 <span
                     className={classNames('eui-checkbox-label', {

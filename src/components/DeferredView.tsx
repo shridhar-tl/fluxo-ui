@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './DeferredView.scss';
 
-interface DeferredViewProps {
+interface DeferredViewProps extends React.HTMLAttributes<HTMLDivElement> {
     children: React.ReactNode;
     placeholder?: React.ReactNode;
     rootMargin?: string;
@@ -13,7 +13,7 @@ interface DeferredViewProps {
     minHeight?: string | number;
 }
 
-function DeferredView({ children, placeholder, rootMargin = '0px', threshold = 0, keepMounted = true, className, style, minHeight }: DeferredViewProps) {
+function DeferredView({ children, placeholder, rootMargin = '0px', threshold = 0, keepMounted = true, className, style, minHeight, ...rest }: DeferredViewProps) {
     const [hasBeenVisible, setHasBeenVisible] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const sentinelRef = useRef<HTMLDivElement>(null);
@@ -56,6 +56,7 @@ function DeferredView({ children, placeholder, rootMargin = '0px', threshold = 0
 
     return (
         <div
+            {...rest}
             ref={sentinelRef}
             className={classNames('eui-deferred-view', className)}
             style={containerStyle}

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, ReactNode, useState } from 'react';
 import { TimesIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './TextInput.scss';
 
 interface TextInputProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size'> {
@@ -52,10 +52,11 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             clearable = false,
             onClear,
             'aria-describedby': ariaDescribedBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const isControlled = value !== undefined;
         const [internalValue, setInternalValue] = useState(value ?? '');
@@ -126,9 +127,11 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
 
         const inputControl = (
             <input
+                {...nativeProps}
                 ref={ref}
                 id={inputId}
-                type="text"
+                name={name}
+                type={nativeProps.type ?? 'text'}
                 value={displayValue}
                 onChange={handleChange}
                 placeholder={placeholder}
@@ -141,7 +144,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
                 autoFocus={autoFocus}
                 disabled={disabled}
                 className={componentClasses}
-                style={componentStyles}
+                style={{ ...nativeProps.style, ...componentStyles }}
                 aria-invalid={ariaInvalid}
                 aria-required={required}
                 aria-describedby={describedBy}

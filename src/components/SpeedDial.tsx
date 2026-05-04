@@ -20,7 +20,7 @@ interface SpeedDialItem {
     ariaLabel?: string;
 }
 
-interface SpeedDialProps {
+interface SpeedDialProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role' | 'children'> {
     icon?: IconComponent | React.ReactElement;
     openIcon?: IconComponent | React.ReactElement;
     items: SpeedDialItem[];
@@ -102,6 +102,7 @@ function SpeedDial({
     className,
     ariaLabel,
     id,
+    ...rest
 }: SpeedDialProps) {
     const isControlled = controlledOpen !== undefined;
     const [internalOpen, setInternalOpen] = useState(false);
@@ -271,10 +272,14 @@ function SpeedDial({
         <>
             {mask && isOpen && <div className="eui-speed-dial-mask" onClick={() => setOpen(false)} />}
             <div
+                {...rest}
                 ref={containerRef}
                 className={rootClasses}
                 id={id}
-                onMouseLeave={handleContainerMouseLeave}
+                onMouseLeave={(e) => {
+                    rest.onMouseLeave?.(e);
+                    handleContainerMouseLeave();
+                }}
             >
                 <div
                     id={actionsId}

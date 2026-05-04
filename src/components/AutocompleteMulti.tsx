@@ -3,12 +3,12 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { TimesIcon } from '../assets/icons';
 import { useDebounce } from '../hooks';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
-import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './AutocompleteMulti.scss';
 import { Checkbox } from './Checkbox';
 import { Popover } from './Popover';
 
-interface AutocompleteMultiProps<T = any> extends BaseComponentProps {
+interface AutocompleteMultiProps<T = any> extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
     items: ListItem[];
     value?: T[];
     onChange?: (event: ComponentEvent<T[]>) => void;
@@ -59,10 +59,11 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             compareFn,
             ariaLabel,
             ariaLabelledBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
@@ -235,11 +236,15 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         return (
             <>
                 <div
+                    {...nativeProps}
                     ref={combinedRef}
                     id={inputId}
                     className={classNames(containerClasses, className)}
-                    style={componentStyles}
-                    onClick={handleContainerClick}
+                    style={{ ...nativeProps.style, ...componentStyles }}
+                    onClick={(e) => {
+                        nativeProps.onClick?.(e);
+                        handleContainerClick();
+                    }}
                 >
                     <div className="eui-autocomplete-multi-inner">
                         {selectedItems.length > 0 && (

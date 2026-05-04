@@ -6,6 +6,108 @@ export const generateId = () => {
     return `ui-${Math.random().toString(36).substring(2, 9)}`;
 };
 
+const BASE_STYLE_PROP_KEYS = [
+    'size',
+    'theme',
+    'borderRadius',
+    'borderColor',
+    'borderWidth',
+    'backgroundColor',
+    'fontSize',
+    'fontColor',
+] as const;
+
+export const splitBaseAndNativeProps = <T extends Record<string, any>>(rest: T) => {
+    const styleProps: Record<string, any> = {};
+    const nativeProps: Record<string, any> = {};
+    for (const key of Object.keys(rest)) {
+        if ((BASE_STYLE_PROP_KEYS as readonly string[]).includes(key)) {
+            styleProps[key] = rest[key];
+        } else {
+            nativeProps[key] = rest[key];
+        }
+    }
+    return { styleProps, nativeProps };
+};
+
+const POINTER_EVENT_KEYS = new Set([
+    'onClick',
+    'onClickCapture',
+    'onDoubleClick',
+    'onDoubleClickCapture',
+    'onMouseDown',
+    'onMouseDownCapture',
+    'onMouseUp',
+    'onMouseUpCapture',
+    'onMouseEnter',
+    'onMouseLeave',
+    'onMouseMove',
+    'onMouseMoveCapture',
+    'onMouseOver',
+    'onMouseOverCapture',
+    'onMouseOut',
+    'onMouseOutCapture',
+    'onPointerDown',
+    'onPointerDownCapture',
+    'onPointerUp',
+    'onPointerUpCapture',
+    'onPointerMove',
+    'onPointerMoveCapture',
+    'onPointerEnter',
+    'onPointerLeave',
+    'onPointerOver',
+    'onPointerOverCapture',
+    'onPointerOut',
+    'onPointerOutCapture',
+    'onPointerCancel',
+    'onPointerCancelCapture',
+    'onGotPointerCapture',
+    'onGotPointerCaptureCapture',
+    'onLostPointerCapture',
+    'onLostPointerCaptureCapture',
+    'onContextMenu',
+    'onContextMenuCapture',
+    'onTouchStart',
+    'onTouchStartCapture',
+    'onTouchEnd',
+    'onTouchEndCapture',
+    'onTouchMove',
+    'onTouchMoveCapture',
+    'onTouchCancel',
+    'onTouchCancelCapture',
+    'onWheel',
+    'onWheelCapture',
+    'onDrag',
+    'onDragCapture',
+    'onDragStart',
+    'onDragStartCapture',
+    'onDragEnd',
+    'onDragEndCapture',
+    'onDragEnter',
+    'onDragEnterCapture',
+    'onDragLeave',
+    'onDragLeaveCapture',
+    'onDragOver',
+    'onDragOverCapture',
+    'onDragExit',
+    'onDragExitCapture',
+    'onDrop',
+    'onDropCapture',
+]);
+
+export const splitVisibleAndHiddenProps = <T extends Record<string, any>>(nativeProps: T) => {
+    const visibleProps: Record<string, any> = {};
+    const hiddenInputProps: Record<string, any> = {};
+    for (const key of Object.keys(nativeProps)) {
+        if (POINTER_EVENT_KEYS.has(key) || key === 'style' || key === 'title') {
+            visibleProps[key] = nativeProps[key];
+        } else {
+            hiddenInputProps[key] = nativeProps[key];
+        }
+    }
+    return { visibleProps, hiddenInputProps };
+};
+
 export const getComponentClasses = (baseProps: BaseComponentProps, additionalClasses?: string) => {
     const { size, theme, className, disabled } = baseProps;
     const finalSize = size || 'md';

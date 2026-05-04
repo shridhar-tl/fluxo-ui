@@ -2,11 +2,11 @@ import classNames from 'classnames';
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { useDebounce, useViewport } from '../hooks';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
-import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './Autocomplete.scss';
 import { Popover } from './Popover';
 
-interface AutocompleteProps extends BaseComponentProps {
+interface AutocompleteProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'value' | 'type' | 'onSelect'> {
     items: ListItem[];
     value?: string;
     selectedValue?: any;
@@ -54,10 +54,11 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             compareFn,
             ariaLabel,
             ariaLabelledBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
@@ -180,20 +181,30 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         return (
             <>
                 <input
+                    {...nativeProps}
                     ref={combinedRef}
                     id={inputId}
                     type="text"
                     value={currentValue}
-                    onChange={handleInputChange}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
+                    onChange={(e) => {
+                        nativeProps.onChange?.(e);
+                        handleInputChange(e);
+                    }}
+                    onFocus={(e) => {
+                        nativeProps.onFocus?.(e);
+                        handleFocus();
+                    }}
+                    onBlur={(e) => {
+                        nativeProps.onBlur?.(e);
+                        handleBlur();
+                    }}
                     placeholder={placeholder}
                     required={required}
                     readOnly={readonly}
                     autoFocus={autoFocus}
                     disabled={disabled}
                     className={classNames(inputClasses, className)}
-                    style={componentStyles}
+                    style={{ ...nativeProps.style, ...componentStyles }}
                     aria-autocomplete="list"
                     aria-expanded={isOpen}
                     aria-haspopup="listbox"

@@ -1,11 +1,11 @@
 import classNames from 'classnames';
-import { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { TimesIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './Chips.scss';
 
-interface ChipsProps extends BaseComponentProps {
+interface ChipsProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
     value?: string[];
     onChange?: (event: ComponentEvent<string[]>) => void;
     placeholder?: string;
@@ -37,10 +37,11 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
             args,
             ariaLabel,
             commitOnTab = true,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const [inputValue, setInputValue] = useState('');
         const [focusedChipIndex, setFocusedChipIndex] = useState(-1);
@@ -194,11 +195,13 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
 
         return (
             <div
+                {...nativeProps}
                 ref={ref}
                 id={inputId}
                 className={classNames(containerClasses, className)}
-                style={componentStyles}
+                style={{ ...nativeProps.style, ...componentStyles }}
                 onClick={(e) => {
+                    nativeProps.onClick?.(e);
                     if ((e.target as HTMLElement).closest('.eui-chips-item')) return;
                     inputRef.current?.focus();
                 }}

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
-import { generateId, getComponentClasses } from '../utils';
+import { generateId, getComponentClasses, splitBaseAndNativeProps, splitVisibleAndHiddenProps } from '../utils';
 import './RadioButton.scss';
 
 interface RadioButtonProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {
@@ -15,7 +15,9 @@ interface RadioButtonProps extends BaseComponentProps, Omit<React.InputHTMLAttri
 }
 
 export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
-    ({ checked = false, onChange, label, value, required = false, id, disabled = false, className, name, args, tabIndex, ...baseProps }, ref) => {
+    ({ checked = false, onChange, label, value, required = false, id, disabled = false, className, name, args, tabIndex, ...rest }, ref) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
+        const { visibleProps, hiddenInputProps } = splitVisibleAndHiddenProps(nativeProps);
         const [generatedId] = useState(() => generateId());
         const inputId = id || generatedId;
 
@@ -36,9 +38,10 @@ export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
         );
 
         return (
-            <label className={containerClasses} htmlFor={inputId}>
+            <label {...visibleProps} className={containerClasses} htmlFor={inputId}>
                 <span className="eui-radio-control-wrap">
                     <input
+                        {...hiddenInputProps}
                         ref={ref}
                         id={inputId}
                         type="radio"

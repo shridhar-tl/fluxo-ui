@@ -21,7 +21,7 @@ interface StepItem {
     optional?: boolean;
 }
 
-interface StepperProps {
+interface StepperProps extends Omit<React.OlHTMLAttributes<HTMLOListElement>, 'onChange'> {
     steps: StepItem[];
     activeStep?: number;
     variant?: StepperVariant;
@@ -89,6 +89,7 @@ function Stepper({
     ariaLabel,
     connector,
     autoCollapse = true,
+    ...rest
 }: StepperProps) {
     const containerRef = useRef<HTMLOListElement>(null);
     const stepRefs = useRef<Array<HTMLLIElement | null>>([]);
@@ -250,7 +251,7 @@ function Stepper({
     );
 
     return (
-        <ol ref={containerRef} className={rootClasses} id={id} aria-label={ariaLabel || 'Progress steps'}>
+        <ol {...rest} ref={containerRef} className={rootClasses} id={id} aria-label={ariaLabel || 'Progress steps'}>
             {resolvedSteps.map((step, index) => {
                 const isStepClickable = clickable && !disabled && !step.disabled && (!linear || index <= activeStep + 1);
                 const ariaLabelText = step.label

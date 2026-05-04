@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, useState } from 'react';
 import { BaseComponentProps, ButtonVariant, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './ToggleButton.scss';
 
 interface ToggleButtonProps extends BaseComponentProps, Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {
@@ -29,10 +29,11 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
             args,
             label,
             ariaLabel,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const labelId = label ? `${inputId}-label` : undefined;
 
@@ -76,13 +77,17 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
                     </span>
                 )}
                 <button
+                    {...nativeProps}
                     ref={ref}
                     id={inputId}
                     type="button"
-                    onClick={handleClick}
+                    onClick={(e) => {
+                        nativeProps.onClick?.(e);
+                        handleClick(e);
+                    }}
                     disabled={disabled}
                     className={buttonClasses}
-                    style={componentStyles}
+                    style={{ ...nativeProps.style, ...componentStyles }}
                     aria-pressed={checked}
                     aria-label={accessibleLabel}
                     aria-labelledby={labelId}

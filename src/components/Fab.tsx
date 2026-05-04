@@ -8,7 +8,7 @@ type FabPosition = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left' | '
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;
 
-interface FabProps {
+interface FabProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'size'> {
     icon: IconComponent | React.ReactElement;
     label?: string;
     variant?: FabVariant;
@@ -44,6 +44,7 @@ function Fab({
     ariaLabel,
     id,
     title,
+    ...rest
 }: FabProps) {
     const rootClasses = classNames(
         'eui-fab',
@@ -60,6 +61,7 @@ function Fab({
 
     return (
         <button
+            {...rest}
             type="button"
             className={rootClasses}
             onClick={onClick}

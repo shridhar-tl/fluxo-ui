@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, ReactNode, useCallback, useImperativeHandle, useRef, useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getComponentStyles } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
 import './NumericInput.scss';
 
 interface NumericInputProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {
@@ -48,10 +48,11 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
             invalid,
             helperText,
             'aria-describedby': ariaDescribedBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const [displayValue, setDisplayValue] = useState(value?.toString() || '');
         const inputRef = useRef<HTMLInputElement | null>(null);
@@ -185,22 +186,30 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
 
         const inputElement = (
             <input
+                {...nativeProps}
                 ref={inputRef}
                 id={inputId}
+                name={name}
                 type="text"
                 inputMode="decimal"
                 role="spinbutton"
                 value={displayValue}
                 onChange={handleChange}
-                onBlur={handleBlur}
-                onKeyDown={handleKeyDown}
+                onBlur={(e) => {
+                    nativeProps.onBlur?.(e);
+                    handleBlur(e);
+                }}
+                onKeyDown={(e) => {
+                    nativeProps.onKeyDown?.(e);
+                    handleKeyDown(e);
+                }}
                 placeholder={placeholder}
                 required={required}
                 readOnly={readonly}
                 autoFocus={autoFocus}
                 disabled={disabled}
                 className={componentClasses}
-                style={componentStyles}
+                style={{ ...nativeProps.style, ...componentStyles }}
                 aria-invalid={ariaInvalid}
                 aria-required={required}
                 aria-valuenow={numericValue}

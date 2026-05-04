@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import React, { forwardRef, useEffect, useState } from 'react';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
-import { generateId, getComponentClasses } from '../utils';
+import { generateId, getComponentClasses, splitBaseAndNativeProps } from '../utils';
 import Icon from './Icon';
 import './MultiStateCheckbox.scss';
 
-interface MultiStateCheckboxProps<T = any> extends BaseComponentProps {
+interface MultiStateCheckboxProps<T = any> extends BaseComponentProps, Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange' | 'size' | 'value' | 'type'> {
     items: ListItem[];
     value?: T;
     onChange?: (event: ComponentEvent<T>) => void;
@@ -26,7 +26,8 @@ const isDevEnvironment = (): boolean => {
 };
 
 export const MultiStateCheckbox = forwardRef<HTMLButtonElement, MultiStateCheckboxProps>(
-    ({ items, value, onChange, required = false, id, disabled = false, className, name, args, ariaLabel, ...baseProps }, ref) => {
+    ({ items, value, onChange, required = false, id, disabled = false, className, name, args, ariaLabel, ...rest }, ref) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
 
         const currentIndex = items.findIndex((item) => item.value === value);
@@ -97,11 +98,18 @@ export const MultiStateCheckbox = forwardRef<HTMLButtonElement, MultiStateCheckb
 
         return (
             <button
+                {...nativeProps}
                 ref={ref}
                 id={inputId}
                 type="button"
-                onClick={handleClick}
-                onKeyDown={handleKeyDown}
+                onClick={(e) => {
+                    nativeProps.onClick?.(e);
+                    handleClick(e);
+                }}
+                onKeyDown={(e) => {
+                    nativeProps.onKeyDown?.(e);
+                    handleKeyDown(e);
+                }}
                 disabled={disabled}
                 className={buttonClasses}
                 {...(isThreeOrMoreState

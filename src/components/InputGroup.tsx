@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import React, { Children, isValidElement, ReactNode } from 'react';
 import { BaseComponentProps } from '../types';
-import { getComponentClasses, getComponentStyles } from '../utils';
+import { getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
 import './InputGroup.scss';
 
-interface InputGroupProps extends BaseComponentProps {
+interface InputGroupProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {
     children: ReactNode;
     ariaLabel?: string;
     ariaLabelledBy?: string;
@@ -42,8 +42,9 @@ export const InputGroup: React.FC<InputGroupProps> = ({
     className,
     ariaLabel,
     ariaLabelledBy,
-    ...baseProps
+    ...rest
 }) => {
+    const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
     const containerClasses = getComponentClasses(
         { ...baseProps, disabled },
         classNames('eui-input-group', {
@@ -68,8 +69,9 @@ export const InputGroup: React.FC<InputGroupProps> = ({
 
     return (
         <div
+            {...nativeProps}
             className={classNames(containerClasses, className)}
-            style={componentStyles}
+            style={{ ...nativeProps.style, ...componentStyles }}
             role="group"
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledBy}

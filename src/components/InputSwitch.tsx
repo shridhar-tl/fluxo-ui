@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getResolvedSize } from '../utils';
+import { generateId, getComponentClasses, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './InputSwitch.scss';
 
 interface InputSwitchProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {
@@ -30,10 +30,11 @@ export const InputSwitch = forwardRef<HTMLInputElement, InputSwitchProps>(
             className,
             name,
             args,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const innerRef = useRef<HTMLInputElement | null>(null);
         useImperativeHandle(ref, () => innerRef.current as HTMLInputElement, []);
@@ -126,10 +127,17 @@ export const InputSwitch = forwardRef<HTMLInputElement, InputSwitchProps>(
                     {offLabel}
                 </span>
                 <button
+                    {...nativeProps}
                     type="button"
                     className={trackClasses}
-                    onClick={handleClick}
-                    onKeyDown={handleKeyDown}
+                    onClick={(e) => {
+                        nativeProps.onClick?.(e as any);
+                        handleClick(e);
+                    }}
+                    onKeyDown={(e) => {
+                        nativeProps.onKeyDown?.(e as any);
+                        handleKeyDown(e);
+                    }}
                     disabled={disabled}
                     aria-checked={checked}
                     aria-label={!accessibleLabel ? `Toggle ${checked ? 'off' : 'on'}` : accessibleLabel}

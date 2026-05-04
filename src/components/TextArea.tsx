@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getComponentStyles } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
 import './TextArea.scss';
 
 interface TextAreaProps extends BaseComponentProps, Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange' | 'size'> {
@@ -46,10 +46,11 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             invalid,
             helperText,
             'aria-describedby': ariaDescribedBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const isControlled = value !== undefined;
         const [internalValue, setInternalValue] = useState(value ?? '');
@@ -130,6 +131,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         return (
             <div className="eui-textarea-wrap">
                 <textarea
+                    {...nativeProps}
                     ref={combinedRef}
                     id={inputId}
                     value={displayValue}
@@ -147,7 +149,10 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
                     aria-required={required}
                     aria-describedby={describedBy}
                     aria-errormessage={errorId}
-                    onInput={adjustHeight}
+                    onInput={(e) => {
+                        adjustHeight();
+                        nativeProps.onInput?.(e);
+                    }}
                 />
                 {maxLength && (
                     <div className="eui-textarea-count">

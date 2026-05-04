@@ -3,7 +3,7 @@ import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { ChevronDownIcon, TimesIcon } from '../assets/icons';
 import { useDebounce } from '../hooks';
 import { BaseComponentProps, ComponentEvent, ListItem, ListItemGroup } from '../types';
-import { filterItems, generateId, getComponentClasses, getComponentStyles, getResolvedSize } from '../utils';
+import { filterItems, generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import { Checkbox } from './Checkbox';
 import Icon from './Icon';
 import './Multiselect.scss';
@@ -38,7 +38,7 @@ const normalizeOptions = (
     return { flatItems, groups: undefined, grouped: false };
 };
 
-interface MultiselectProps<T = any> extends BaseComponentProps {
+interface MultiselectProps<T = any> extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
     options: ListItem[] | ListItemGroup[];
     value?: T[];
     onChange?: (event: ComponentEvent<T[]>) => void;
@@ -91,10 +91,11 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
             compareFn,
             ariaLabel,
             ariaLabelledBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
@@ -273,9 +274,10 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
         return (
             <>
                 <div
+                    {...nativeProps}
                     ref={combinedRef}
                     className={classNames(triggerClasses, className, 'eui-multiselect-trigger-wrap')}
-                    style={componentStyles}
+                    style={{ ...nativeProps.style, ...componentStyles }}
                 >
                     <button
                         ref={triggerButtonRef}

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
-import { generateId, getComponentClasses, getComponentStyles } from '../utils';
+import { generateId, getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
 import './MaskedInput.scss';
 
 /**
@@ -240,10 +240,11 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
             invalid,
             helperText,
             'aria-describedby': ariaDescribedBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const mask = maskProp || (preset ? PRESET_MASKS[preset] : '');
         if (!mask) {
             throw new Error('MaskedInput requires either a "mask" or "preset" prop');
@@ -542,24 +543,38 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
         return (
             <span className="eui-masked-input-wrap-outer">
                 <input
+                    {...nativeProps}
                     ref={inputRef}
                     id={inputId}
+                    name={name}
                     type="text"
                     value={maskedValue}
-                    onChange={() => {
-                        /* controlled via keydown */
+                    onChange={(e) => {
+                        nativeProps.onChange?.(e);
                     }}
-                    onKeyDown={handleKeyDownCombined}
-                    onFocus={handleFocus}
-                    onClick={handleClick}
-                    onPaste={handlePaste}
+                    onKeyDown={(e) => {
+                        nativeProps.onKeyDown?.(e);
+                        handleKeyDownCombined(e);
+                    }}
+                    onFocus={(e) => {
+                        nativeProps.onFocus?.(e);
+                        handleFocus(e);
+                    }}
+                    onClick={(e) => {
+                        nativeProps.onClick?.(e);
+                        handleClick(e);
+                    }}
+                    onPaste={(e) => {
+                        nativeProps.onPaste?.(e);
+                        handlePaste(e);
+                    }}
                     placeholder={placeholder ?? mask}
                     required={required}
                     readOnly={readonly || disabled}
                     autoFocus={autoFocus}
                     disabled={disabled}
                     className={componentClasses}
-                    style={componentStyles}
+                    style={{ ...nativeProps.style, ...componentStyles }}
                     aria-invalid={ariaInvalid}
                     aria-required={required}
                     aria-describedby={describedBy}

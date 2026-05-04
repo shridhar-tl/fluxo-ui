@@ -12,7 +12,7 @@ export interface ListBoxOption<T = any> {
     metadata?: Record<string, any>;
 }
 
-export interface ListBoxProps<T = any> {
+export interface ListBoxProps<T = any> extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
     options: ListBoxOption<T>[];
     value?: T | T[];
     onChange?: (value: T | T[]) => void;
@@ -155,6 +155,7 @@ export function ListBox<T = any>({
     compareFn,
     ariaLabel,
     ariaLabelledBy,
+    ...rest
 }: ListBoxProps<T>) {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeIndex, setActiveIndex] = useState<number>(-1);
@@ -353,7 +354,7 @@ export function ListBox<T = any>({
     let runningIndex = 0;
 
     return (
-        <div className={classNames('eui-listbox', className, { 'eui-listbox-disabled': disabled })}>
+        <div {...rest} className={classNames('eui-listbox', className, { 'eui-listbox-disabled': disabled })}>
             {searchable && (
                 <div className="eui-listbox-search">
                     <div className="eui-listbox-search-wrap">

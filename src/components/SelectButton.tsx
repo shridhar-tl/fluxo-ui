@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import React, { forwardRef, useCallback, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
-import { getComponentClasses, getResolvedSize } from '../utils';
+import { getComponentClasses, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './SelectButton.scss';
 
-interface SelectButtonBaseProps extends BaseComponentProps {
+interface SelectButtonBaseProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'role'> {
     items: ListItem[];
     required?: boolean;
     direction?: 'horizontal' | 'vertical';
@@ -41,10 +41,11 @@ export const SelectButton = forwardRef<HTMLDivElement, SelectButtonProps>(
             args,
             ariaLabel,
             ariaLabelledBy,
-            ...baseProps
+            ...rest
         },
         ref,
     ) => {
+        const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [internalValue, setInternalValue] = useState<string | string[] | undefined>(
             multiple ? [] : undefined
         );
@@ -193,6 +194,7 @@ export const SelectButton = forwardRef<HTMLDivElement, SelectButtonProps>(
 
         return (
             <div
+                {...nativeProps}
                 ref={setRef}
                 className={containerClasses}
                 role={groupRole}
