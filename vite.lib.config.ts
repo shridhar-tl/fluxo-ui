@@ -93,6 +93,7 @@ export default defineConfig({
             entry: {
                 index: resolve(__dirname, 'src/components/index.ts'),
                 'report-builder': resolve(__dirname, 'src/components/report-builder/index.ts'),
+                'chat': resolve(__dirname, 'src/components/chat/index.ts'),
                 draw: resolve(__dirname, 'src/components/canvas-draw/index.ts'),
                 utils: resolve(__dirname, 'src/utils/lib.ts'),
                 hooks: resolve(__dirname, 'src/hooks/index.ts'),

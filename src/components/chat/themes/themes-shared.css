@@ -1,0 +1,79 @@
+/* Ported from zumbot/themes-shared.css via scripts/port-chat-themes.cjs. Do not edit by hand — re-run script if source changes. */
+/* ============================================================
+   SHARED CHAT WINDOW UTILITIES
+   Imported by all themes. Add anything that is truly theme-agnostic here.
+   Do NOT put theme-specific colors or layout here.
+   ============================================================ */
+
+/* Voice recorder pulse animation */
+@keyframes euic-zc-pulse {
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(1.2); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.eui-chat-voice-btn.eui-chat-recording {
+    animation: euic-zc-pulse 1s infinite;
+}
+
+/* Inline options indicator (e.g. view-sources icon) */
+.eui-chat-msg-inline-opts {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    margin-left: 4px;
+    line-height: 1;
+}
+
+.eui-chat-msg-opts {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2px;
+}
+
+/* Date input submit button — used across all themes */
+button.date-input-submit {
+    background-color: #1976d2;
+    border: 1px solid #1976d2;
+    border-radius: 8px;
+    color: #fff;
+    display: block;
+    margin: 8px auto 0;
+    padding: 7px 18px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+button.date-input-submit:hover {
+    background-color: #1565c0;
+    border-color: #1565c0;
+}
+
+button.date-input-submit:disabled {
+    color: #fff;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Disclaimer tooltip */
+.eui-chat-disclaimer-tooltip {
+    visibility: hidden;
+    background-color: #fdfefe;
+    color: #17202a;
+    text-align: center;
+    padding: 5px;
+    border-radius: 4px;
+    position: absolute;
+    bottom: 20px;
+    z-index: 100;
+    right: 25px;
+    left: auto;
+    max-width: 150px;
+}
+
+.eui-chat-disclaimer:hover .eui-chat-disclaimer-tooltip {
+    visibility: visible;
+}

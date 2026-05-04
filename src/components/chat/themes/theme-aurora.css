@@ -1,0 +1,426 @@
+/* Ported from zumbot/theme-aurora.css via scripts/port-chat-themes.cjs. Do not edit by hand — re-run script if source changes. */
+/* ============================================================
+   THEME: AURORA (Floating Composer / Gradient Body)
+   Soft emerald-teal palette. Header is minimal and transparent,
+   blending into a gradient mesh body. Bot bubbles are translucent
+   glass cards. Composer is a floating detached pill bar that sits
+   above the bottom edge — not flush to the window.
+   ============================================================ */
+
+.eui-chat-theme-aurora .eui-chat-container,
+.eui-chat-theme-aurora.eui-chat-container {
+    max-height: 100%;
+    max-width: 100%;
+    padding: 5px;
+    z-index: 10009;
+    font-family: 'Inter', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.eui-chat-theme-aurora .eui-chat-container *,
+.eui-chat-theme-aurora.eui-chat-container * {
+    box-sizing: border-box;
+}
+
+.eui-chat-theme-aurora .eui-chat-window {
+    border-radius: 20px;
+    flex-grow: 1;
+    display: flex;
+    box-shadow:
+        0 8px 32px rgba(5, 150, 105, 0.18),
+        0 2px 8px rgba(0, 0, 0, 0.08);
+    flex-direction: column;
+    z-index: 10010;
+    overflow: hidden;
+    max-height: 100%;
+    background: linear-gradient(150deg, #ecfdf5 0%, #d1fae5 30%, #e0f2fe 70%, #f0fdf4 100%);
+}
+
+.eui-chat-theme-aurora .eui-chat-window.eui-chat-no-shadow {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+/* --- Header: transparent strip, blends into gradient body --- */
+.eui-chat-theme-aurora .eui-chat-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 14px 10px;
+    gap: 10px;
+    flex-shrink: 0;
+    background: transparent;
+    border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    position: relative;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    backdrop-filter: blur(8px);
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-icon img {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    object-fit: cover;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-icon svg {
+    color: #059669;
+    width: 18px;
+    height: 18px;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-logo {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-logo img {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-title {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-title .eui-chat-title-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #064e3b;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-title .eui-chat-subtitle-text {
+    font-size: 11px;
+    color: #059669;
+    display: block;
+    margin-top: 1px;
+    font-weight: 500;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-controls .eui-chat-ctrl-btn {
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6ee7b7;
+    border-radius: 8px;
+    font-size: 16px;
+    transition:
+        background 0.15s,
+        color 0.15s;
+}
+
+.eui-chat-theme-aurora .eui-chat-header .eui-chat-header-controls .eui-chat-ctrl-btn:hover {
+    background: rgba(16, 185, 129, 0.12);
+    color: #064e3b;
+}
+
+/* --- Body: gradient mesh, extra bottom padding for floating composer --- */
+.eui-chat-theme-aurora .eui-chat-body {
+    flex-grow: 1;
+    background: transparent;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 14px 0 16px;
+}
+
+.eui-chat-theme-aurora .eui-chat-body::-webkit-scrollbar {
+    width: 4px;
+}
+.eui-chat-theme-aurora .eui-chat-body::-webkit-scrollbar-thumb {
+    background: rgba(16, 185, 129, 0.3);
+    border-radius: 4px;
+}
+.eui-chat-theme-aurora .eui-chat-body:hover::-webkit-scrollbar-thumb {
+    background: rgba(16, 185, 129, 0.5);
+}
+
+/* --- Messages --- */
+.eui-chat-theme-aurora .eui-chat-msg {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 8px 0;
+    padding: 0;
+}
+
+.eui-chat-theme-aurora .eui-chat-msg.eui-chat-msg-system {
+    display: flex;
+    align-items: flex-start;
+    padding-left: 12px;
+}
+
+.eui-chat-theme-aurora .eui-chat-msg .eui-chat-msg-avatar {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    margin-right: 6px;
+    margin-top: 2px;
+}
+
+.eui-chat-theme-aurora .eui-chat-msg .eui-chat-msg-avatar svg {
+    width: 13px;
+    height: 13px;
+    color: #059669;
+}
+
+.eui-chat-theme-aurora .eui-chat-msg .eui-chat-msg-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.eui-chat-theme-aurora .eui-chat-msg .eui-chat-msg-time {
+    font-size: 10px;
+    color: #6ee7b7;
+    margin-top: 3px;
+}
+
+/* Bot bubble: translucent glass card */
+.eui-chat-theme-aurora .eui-chat-msg.eui-chat-msg-system .eui-chat-msg-content {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 4px 16px 16px 16px;
+    padding: 9px 13px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #064e3b;
+    width: fit-content;
+    max-width: 100%;
+    word-break: break-word;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
+}
+
+/* User bubble */
+.eui-chat-theme-aurora .eui-chat-msg.eui-chat-msg-user {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    max-width: 78%;
+    margin-left: auto;
+    gap: 6px;
+}
+
+.eui-chat-theme-aurora .eui-chat-msg.eui-chat-msg-user .eui-chat-msg-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.eui-chat-theme-aurora .eui-chat-msg.eui-chat-msg-user .eui-chat-msg-content {
+    display: inline-block;
+    background: #059669;
+    color: #ecfdf5;
+    border-radius: 16px 4px 16px 16px;
+    padding: 9px 13px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    width: fit-content;
+    max-width: 100%;
+    word-break: break-word;
+    box-shadow: 0 3px 10px rgba(5, 150, 105, 0.3);
+}
+
+/* --- Composer: floating detached pill bar --- */
+.eui-chat-theme-aurora .eui-chat-composer {
+    background: transparent;
+    display: flex;
+    flex-shrink: 0;
+    padding: 0 10px 12px;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.eui-chat-theme-aurora .eui-chat-composer textarea {
+    flex-grow: 1;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    border: 1.5px solid rgba(16, 185, 129, 0.35);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.75);
+    color: #064e3b;
+    font-family: inherit;
+    outline: none;
+    resize: none;
+    min-height: 42px;
+    max-height: 100px;
+    overflow-y: auto;
+    line-height: 1.4;
+    backdrop-filter: blur(8px);
+    transition:
+        border-color 0.15s,
+        box-shadow 0.15s;
+    box-shadow: 0 2px 12px rgba(5, 150, 105, 0.12);
+}
+
+.eui-chat-theme-aurora .eui-chat-composer textarea:focus {
+    border-color: #059669;
+    box-shadow:
+        0 0 0 3px rgba(5, 150, 105, 0.12),
+        0 2px 12px rgba(5, 150, 105, 0.12);
+}
+
+.eui-chat-theme-aurora .eui-chat-composer textarea::placeholder {
+    color: #6ee7b7;
+}
+
+.eui-chat-theme-aurora .eui-chat-composer .eui-chat-action-btns {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    padding-bottom: 1px;
+}
+
+.eui-chat-theme-aurora .eui-chat-composer div.eui-chat-send-btn,
+.eui-chat-theme-aurora .eui-chat-composer .eui-chat-send-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: var(--euic-primary, #059669);
+    color: var(--euic-font, #ecfdf5);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition:
+        background 0.15s,
+        transform 0.12s;
+    flex-shrink: 0;
+    box-shadow: 0 3px 10px rgba(5, 150, 105, 0.3);
+}
+
+.eui-chat-theme-aurora .eui-chat-composer div.eui-chat-send-btn:hover,
+.eui-chat-theme-aurora .eui-chat-composer .eui-chat-send-btn:hover {
+    background: var(--euic-primary, #047857);
+    transform: scale(1.05);
+}
+
+/* --- Disclaimer --- */
+.eui-chat-theme-aurora .eui-chat-disclaimer {
+    font-size: 10px;
+    padding: 2px 8px 4px;
+    background: transparent;
+    color: #6ee7b7;
+    text-align: center;
+}
+
+.eui-chat-theme-aurora .eui-chat-disclaimer span {
+    display: block;
+    text-align: center;
+}
+
+/* --- Options --- */
+.eui-chat-theme-aurora .eui-chat-opts-wrap {
+    margin-top: 6px;
+    margin-left: 12px;
+    width: calc(100% - 40px);
+}
+
+.eui-chat-theme-aurora .eui-chat-opts-wrap .eui-chat-opts-list .eui-chat-opt-item {
+    padding: 5px 14px;
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+    border-radius: 24px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.65);
+    color: #059669;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 32px;
+    backdrop-filter: blur(4px);
+    transition:
+        background 0.15s,
+        color 0.15s,
+        border-color 0.15s;
+}
+
+.eui-chat-theme-aurora .eui-chat-opts-wrap .eui-chat-opts-list .eui-chat-opt-item:hover {
+    background: #059669;
+    color: #fff;
+    border-color: #059669;
+}
+
+/* --- Launcher --- */
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-icon-btn {
+    background: linear-gradient(to right, var(--euic-primary, #059669), var(--euic-primary, #047857));
+    color: var(--euic-font, #ecfdf5);
+    border-color: var(--euic-primary, #059669);
+    box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35);
+    border-radius: 50%;
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-expand .eui-chat-expand-text {
+    background-image: linear-gradient(90deg, var(--euic-primary, #059669), var(--euic-primary, #047857));
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-expand .eui-chat-expand-icon-wrap {
+    background-color: var(--euic-primary, #059669);
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-spark .eui-chat-spark-inner {
+    background: linear-gradient(135deg, var(--euic-primary, #059669), var(--euic-secondary, var(--euic-primary, #059669)));
+    color: var(--euic-font, #ffffff);
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-spark {
+    background: linear-gradient(135deg, var(--euic-primary, #059669), var(--euic-secondary, var(--euic-primary, #059669)));
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-pulsar .eui-chat-pulsar-core {
+    background: linear-gradient(135deg, var(--euic-primary, #059669), var(--euic-primary, #059669));
+    color: var(--euic-font, #ffffff);
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-pulsar .eui-chat-pulsar-ring {
+    border-color: var(--euic-primary, #059669);
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-pulsar .eui-chat-pulsar-dot {
+    background: var(--euic-font, #ffffff);
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-morph {
+    background: linear-gradient(135deg, var(--euic-primary, #059669), var(--euic-secondary, var(--euic-primary, #059669)));
+    color: var(--euic-font, #ffffff);
+}
+
+.eui-chat-theme-aurora .eui-chat-launcher.eui-chat-beacon .eui-chat-beacon-track {
+    background: linear-gradient(135deg, var(--euic-primary, #059669), var(--euic-secondary, var(--euic-primary, #059669)));
+    color: var(--euic-font, #ffffff);
+}

@@ -35,6 +35,11 @@ const largeComponents = new Set([
     'Report Builder',
     'Report Builder Examples',
     'Report Viewer',
+    'Chat Window',
+    'Chat Themes',
+    'Chat Conversations',
+    'Multi-Chat',
+    'Chat Templates',
 ]);
 
 const heavyComponents = new Set([
@@ -46,6 +51,12 @@ const heavyComponents = new Set([
     'Command Palette',
     'Scroll To Top',
     'QR Scanner',
+    'Chat Window',
+    'Chat Themes',
+    'Chat Launcher',
+    'Chat Conversations',
+    'Multi-Chat',
+    'Chat Templates',
 ]);
 
 const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>> = {
@@ -467,6 +478,15 @@ const layoutComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     },
 ];
 
+const chatComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Chat Window', description: 'Fully-controlled chat surface with composer, attachments, reactions, replies, and 9 themes', path: '/components/chat-window', badge: 'New' },
+    { title: 'Chat Themes', description: 'All 9 built-in themes side by side in light and dark mode', path: '/components/chat-themes', badge: 'New' },
+    { title: 'Chat Launcher', description: '7 floating-button variants to invite users into the chat', path: '/components/chat-launcher', badge: 'New' },
+    { title: 'Chat Conversations', description: 'Two-pane inbox with search, pinned, archived, and unread counts', path: '/components/chat-conversations', badge: 'New' },
+    { title: 'Multi-Chat', description: 'Render multiple independent chat windows on a single screen', path: '/components/chat-multi', badge: 'New' },
+    { title: 'Chat Templates', description: 'Built-in text/image/file/options/video templates plus your own custom renderers', path: '/components/chat-templates', badge: 'New' },
+];
+
 const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Button', description: 'Primary action element with variants', path: '/components/button' },
     { title: 'Split Button', description: 'Primary action paired with a related-actions menu', path: '/components/split-button', badge: 'New' },
@@ -625,6 +645,12 @@ const HomePage: React.FC = () => {
                         title="Actions & Interaction"
                         icon="&#9757;"
                         items={interactiveComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Chat"
+                        icon="&#9993;"
+                        items={chatComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                 </div>

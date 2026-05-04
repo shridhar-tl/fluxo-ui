@@ -1,0 +1,23 @@
+{
+    "chatConversationsProps": {
+        "conversations": { "type": "ChatConversationItem[]", "required": true, "description": "List of conversations to render in the sidebar." },
+        "activeId": { "type": "string", "description": "ID of the currently active conversation; highlighted in the list." },
+        "onSelect": { "type": "(id: string) => void", "description": "Fires when a conversation row is clicked." },
+        "onSearch": { "type": "(query: string) => void", "description": "Fires when the search input changes. Internal filtering still runs in addition to this." },
+        "onPin": { "type": "(id: string, pinned: boolean) => void", "description": "Fires when an item is pinned/unpinned (consumer-triggered actions)." },
+        "onArchive": { "type": "(id: string, archived: boolean) => void", "description": "Fires when an item is archived/unarchived." },
+        "onDelete": { "type": "(id: string) => void", "description": "Fires when an item is deleted." },
+        "searchable": { "type": "boolean", "default": "true", "description": "Show the built-in search input above the list." },
+        "sidebarWidth": { "type": "number | string", "default": "'280px'", "description": "Initial width of the sidebar panel." },
+        "minSidebarWidth": { "type": "number", "default": "200", "description": "Minimum sidebar panel width." },
+        "maxSidebarWidth": { "type": "number", "default": "480", "description": "Maximum sidebar panel width." },
+        "hideArchived": { "type": "boolean", "description": "Filter archived conversations out of the visible list." },
+        "emptyState": { "type": "ReactNode", "description": "Content rendered when no conversations match." },
+        "renderItem": { "type": "(item: ChatConversationItem, ctx) => ReactNode", "description": "Custom row renderer." },
+        "children": { "type": "ReactNode", "description": "Right-side content. Typically a <ChatWindow /> for the active conversation." },
+        "className": { "type": "string", "description": "Extra class on the root container." },
+        "style": { "type": "CSSProperties", "description": "Extra inline styles on the root container." },
+        "placeholder": { "type": "string", "default": "'Search conversations…'", "description": "Search input placeholder." },
+        "title": { "type": "ReactNode", "description": "Optional title shown above the search input." }
+    }
+}

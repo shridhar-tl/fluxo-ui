@@ -228,6 +228,18 @@ const navSections: NavSection[] = [
         items: [{ label: 'Hooks & Utilities', path: '/hooks-utils' }],
     },
     {
+        title: 'Chat',
+        key: 'chat',
+        items: [
+            { label: 'Chat Window', path: '/components/chat-window' },
+            { label: 'Chat Themes', path: '/components/chat-themes' },
+            { label: 'Chat Launcher', path: '/components/chat-launcher' },
+            { label: 'Conversations', path: '/components/chat-conversations' },
+            { label: 'Multi-Chat', path: '/components/chat-multi' },
+            { label: 'Message Templates', path: '/components/chat-templates' },
+        ],
+    },
+    {
         title: 'Showcase',
         key: 'showcase',
         items: [

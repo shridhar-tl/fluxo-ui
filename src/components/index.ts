@@ -113,6 +113,7 @@ export type { CheckState, DragDropInfo, TreeNode, TreeNodeProps, TreeViewProps }
 export * from './week-day-selector';
 export * from './card';
 export * from './accordion';
+export * from './chat';
 export * from './signature-pad';
 export * from './diff-viewer';
 export * from './docked-layout';

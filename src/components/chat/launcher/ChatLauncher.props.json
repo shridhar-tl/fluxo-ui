@@ -1,0 +1,21 @@
+{
+    "chatLauncherProps": {
+        "variant": { "type": "'icon' | 'morph' | 'beacon' | 'pulsar' | 'expand' | 'bar' | 'spark'", "default": "'spark'", "description": "Visual style for the launcher button." },
+        "imageUrl": { "type": "string", "description": "Logo image rendered inside the launcher. Falls back to default chat icon if not set." },
+        "text": { "type": "string", "default": "'Live Chat'", "description": "Label for variants that show text (bar, beacon, expand, spark)." },
+        "bgColor": { "type": "string", "description": "Primary background color." },
+        "secBgColor": { "type": "string", "description": "Secondary color used in gradients." },
+        "fontColor": { "type": "string", "description": "Foreground (icon/text) color." },
+        "align": { "type": "'bottomRight' | 'bottomLeft'", "default": "'bottomRight'", "description": "Side of the screen the launcher is anchored to." },
+        "spacingCorner": { "type": "string", "description": "Distance from the anchored side edge." },
+        "spacingBottom": { "type": "string", "description": "Distance from the bottom edge." },
+        "showTooltip": { "type": "boolean", "description": "Show an idle tooltip near the launcher." },
+        "tooltipText": { "type": "string", "default": "'We are online!'", "description": "Tooltip text." },
+        "icon": { "type": "ReactNode", "description": "Custom icon overriding the default chat icon." },
+        "className": { "type": "string", "description": "Extra class on the root." },
+        "style": { "type": "CSSProperties", "description": "Extra inline styles." },
+        "buttonOnMobile": { "type": "boolean", "description": "Force the simple icon variant on mobile when variant is bar/expand." },
+        "autoAnimate": { "type": "boolean", "default": "true", "description": "Enable periodic animations on variants that support them (e.g., expand)." },
+        "onClick": { "type": "() => void", "required": true, "description": "Click handler — toggles open/close state externally." }
+    }
+}

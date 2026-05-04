@@ -275,6 +275,17 @@ function Counter() {
 | Infinite Scroll  | Load-more on scroll with indicators                          |
 | Animate On View  | Scroll-triggered CSS animations                              |
 
+### Chat
+
+| Component          | Description                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| Chat Window        | Fully-controlled chat surface with composer, attachments, reactions, replies, and 9 themes  |
+| Chat Themes        | All 9 built-in themes side by side in light and dark mode                                    |
+| Chat Launcher      | 7 floating-button variants to invite users into the chat                                     |
+| Chat Conversations | Two-pane inbox with search, pinned, archived, and unread counts                              |
+| Multi-Chat         | Render multiple independent chat windows on a single screen                                  |
+| Chat Templates     | Built-in text/image/file/options/video templates plus your own custom renderers              |
+
 ## Hooks & Utilities
 
 | Name              | Description                                    |

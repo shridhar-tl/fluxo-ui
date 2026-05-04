@@ -1,0 +1,418 @@
+/* Ported from zumbot/theme-prism.css via scripts/port-chat-themes.cjs. Do not edit by hand — re-run script if source changes. */
+/* ============================================================
+   THEME: PRISM (Split Header Panel)
+   Clean light theme. Header is split: a bold colored left block
+   holds the avatar, while the white right panel holds title+status.
+   This creates a two-column header identity zone vs typical full-width.
+   Bot bubbles are flat chips. Composer uses a minimal borderless input
+   with a color-accent send bar on the right.
+   ============================================================ */
+
+.eui-chat-theme-prism .eui-chat-container,
+.eui-chat-theme-prism.eui-chat-container {
+    max-height: 100%;
+    max-width: 100%;
+    padding: 5px;
+    z-index: 10009;
+    font-family: 'Inter', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.eui-chat-theme-prism .eui-chat-container *,
+.eui-chat-theme-prism.eui-chat-container * {
+    box-sizing: border-box;
+}
+
+.eui-chat-theme-prism .eui-chat-window {
+    border-radius: 16px;
+    flex-grow: 1;
+    display: flex;
+    box-shadow:
+        0 6px 24px rgba(30, 80, 160, 0.14),
+        0 1px 4px rgba(0, 0, 0, 0.06);
+    flex-direction: column;
+    z-index: 10010;
+    overflow: hidden;
+    max-height: 100%;
+    background: #f8faff;
+}
+
+.eui-chat-theme-prism .eui-chat-window.eui-chat-no-shadow {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+/* --- Header: split left-color / right-white --- */
+.eui-chat-theme-prism .eui-chat-header {
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+    padding: 0;
+    gap: 0;
+    height: 64px;
+    border-bottom: 1px solid #dbeafe;
+}
+
+/* Left color block: holds icon */
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-icon {
+    width: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1d4ed8;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-icon img {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-icon svg {
+    color: #fff;
+    width: 22px;
+    height: 22px;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-logo {
+    width: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1d4ed8;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-logo img {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* Right white block: holds title + controls */
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-title {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 12px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-title .eui-chat-title-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.1px;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-title .eui-chat-subtitle-text {
+    font-size: 11px;
+    color: #1d4ed8;
+    display: block;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    padding: 0 10px;
+    background: #fff;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-controls .eui-chat-ctrl-btn {
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    border-radius: 7px;
+    font-size: 16px;
+    transition:
+        background 0.15s,
+        color 0.15s;
+}
+
+.eui-chat-theme-prism .eui-chat-header .eui-chat-header-controls .eui-chat-ctrl-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* --- Body --- */
+.eui-chat-theme-prism .eui-chat-body {
+    flex-grow: 1;
+    background: #f8faff;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 14px 0 24px;
+}
+
+.eui-chat-theme-prism .eui-chat-body::-webkit-scrollbar {
+    width: 4px;
+}
+.eui-chat-theme-prism .eui-chat-body::-webkit-scrollbar-thumb {
+    background: #bfdbfe;
+    border-radius: 4px;
+}
+.eui-chat-theme-prism .eui-chat-body:hover::-webkit-scrollbar-thumb {
+    background: #93c5fd;
+}
+
+/* --- Messages --- */
+.eui-chat-theme-prism .eui-chat-msg {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 8px 0;
+    padding: 0;
+}
+
+.eui-chat-theme-prism .eui-chat-msg.eui-chat-msg-system {
+    display: flex;
+    align-items: flex-start;
+    padding-left: 14px;
+}
+
+.eui-chat-theme-prism .eui-chat-msg .eui-chat-msg-avatar {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dbeafe;
+    border-radius: 6px;
+    margin-right: 6px;
+    margin-top: 2px;
+}
+
+.eui-chat-theme-prism .eui-chat-msg .eui-chat-msg-avatar svg {
+    width: 13px;
+    height: 13px;
+    color: #1d4ed8;
+}
+
+.eui-chat-theme-prism .eui-chat-msg .eui-chat-msg-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.eui-chat-theme-prism .eui-chat-msg .eui-chat-msg-time {
+    font-size: 10px;
+    color: #94a3b8;
+    margin-top: 3px;
+}
+
+/* Bot bubble: flat chip style */
+.eui-chat-theme-prism .eui-chat-msg.eui-chat-msg-system .eui-chat-msg-content {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px 12px 12px 12px;
+    padding: 9px 13px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #0f172a;
+    width: fit-content;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+/* User bubble */
+.eui-chat-theme-prism .eui-chat-msg.eui-chat-msg-user {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    max-width: 78%;
+    margin-left: auto;
+    gap: 6px;
+}
+
+.eui-chat-theme-prism .eui-chat-msg.eui-chat-msg-user .eui-chat-msg-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.eui-chat-theme-prism .eui-chat-msg.eui-chat-msg-user .eui-chat-msg-content {
+    display: inline-block;
+    background: #1d4ed8;
+    color: #fff;
+    border-radius: 12px 4px 12px 12px;
+    padding: 9px 13px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    width: fit-content;
+    max-width: 100%;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgba(29, 78, 216, 0.25);
+}
+
+/* --- Composer: borderless input with accent send column --- */
+.eui-chat-theme-prism .eui-chat-composer {
+    background: #fff;
+    display: flex;
+    flex-shrink: 0;
+    padding: 0;
+    align-items: stretch;
+    gap: 0;
+    border-top: 1px solid #dbeafe;
+}
+
+.eui-chat-theme-prism .eui-chat-composer textarea {
+    flex-grow: 1;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    border: none;
+    border-radius: 0;
+    background: #fff;
+    color: #0f172a;
+    font-family: inherit;
+    outline: none;
+    resize: none;
+    min-height: 44px;
+    max-height: 100px;
+    overflow-y: auto;
+    line-height: 1.4;
+}
+
+.eui-chat-theme-prism .eui-chat-composer textarea::placeholder {
+    color: #94a3b8;
+}
+
+.eui-chat-theme-prism .eui-chat-composer .eui-chat-action-btns {
+    display: flex;
+    align-items: stretch;
+    flex-shrink: 0;
+}
+
+/* Accent column send (matches the header left block width) */
+.eui-chat-theme-prism .eui-chat-composer div.eui-chat-send-btn,
+.eui-chat-theme-prism .eui-chat-composer .eui-chat-send-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 100%;
+    min-height: 44px;
+    background: var(--euic-primary, #1d4ed8);
+    color: var(--euic-font, #fff);
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background 0.15s;
+    flex-shrink: 0;
+}
+
+.eui-chat-theme-prism .eui-chat-composer div.eui-chat-send-btn:hover,
+.eui-chat-theme-prism .eui-chat-composer .eui-chat-send-btn:hover {
+    background: var(--euic-primary, #1e40af);
+}
+
+/* --- Disclaimer --- */
+.eui-chat-theme-prism .eui-chat-disclaimer {
+    font-size: 10px;
+    padding: 4px 8px;
+    background: #fff;
+    color: #94a3b8;
+    border-top: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.eui-chat-theme-prism .eui-chat-disclaimer span {
+    display: block;
+    text-align: center;
+}
+
+/* --- Options --- */
+.eui-chat-theme-prism .eui-chat-opts-wrap {
+    margin-top: 6px;
+    margin-left: 14px;
+    width: calc(100% - 42px);
+}
+
+.eui-chat-theme-prism .eui-chat-opts-wrap .eui-chat-opts-list .eui-chat-opt-item {
+    padding: 5px 13px;
+    border: 1.5px solid #bfdbfe;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #fff;
+    color: #1d4ed8;
+    font-size: 13px;
+    font-weight: 500;
+    min-height: 32px;
+    transition:
+        background 0.15s,
+        color 0.15s,
+        border-color 0.15s;
+}
+
+.eui-chat-theme-prism .eui-chat-opts-wrap .eui-chat-opts-list .eui-chat-opt-item:hover {
+    background: #1d4ed8;
+    color: #fff;
+    border-color: #1d4ed8;
+}
+
+/* --- Launcher --- */
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-icon-btn {
+    background: linear-gradient(to right, var(--euic-primary, #1d4ed8), var(--euic-primary, #1e40af));
+    color: var(--euic-font, #ffffff);
+    border-color: var(--euic-primary, #1d4ed8);
+    box-shadow: 0 4px 16px rgba(30, 80, 160, 0.35);
+    border-radius: 50%;
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-expand .eui-chat-expand-text {
+    background-image: linear-gradient(90deg, var(--euic-primary, #1d4ed8), var(--euic-primary, #1e40af));
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-expand .eui-chat-expand-icon-wrap {
+    background-color: var(--euic-primary, #1d4ed8);
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-spark .eui-chat-spark-inner {
+    background: linear-gradient(135deg, var(--euic-primary, #1d4ed8), var(--euic-secondary, var(--euic-primary, #1d4ed8)));
+    color: var(--euic-font, #ffffff);
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-spark {
+    background: linear-gradient(135deg, var(--euic-primary, #1d4ed8), var(--euic-secondary, var(--euic-primary, #1d4ed8)));
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-pulsar .eui-chat-pulsar-core {
+    background: linear-gradient(135deg, var(--euic-primary, #1d4ed8), var(--euic-primary, #1d4ed8));
+    color: var(--euic-font, #ffffff);
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-pulsar .eui-chat-pulsar-ring {
+    border-color: var(--euic-primary, #1d4ed8);
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-pulsar .eui-chat-pulsar-dot {
+    background: var(--euic-font, #ffffff);
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-morph {
+    background: linear-gradient(135deg, var(--euic-primary, #1d4ed8), var(--euic-secondary, var(--euic-primary, #1d4ed8)));
+    color: var(--euic-font, #ffffff);
+}
+
+.eui-chat-theme-prism .eui-chat-launcher.eui-chat-beacon .eui-chat-beacon-track {
+    background: linear-gradient(135deg, var(--euic-primary, #1d4ed8), var(--euic-secondary, var(--euic-primary, #1d4ed8)));
+    color: var(--euic-font, #ffffff);
+}

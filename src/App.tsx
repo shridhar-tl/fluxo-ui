@@ -128,6 +128,12 @@ const EmptyStatePage = React.lazy(() => import('./story/pages/empty-state/EmptyS
 const PasswordStrengthPage = React.lazy(() => import('./story/pages/password-strength/PasswordStrengthPage'));
 const PasswordRequirementsPage = React.lazy(() => import('./story/pages/password-requirements/PasswordRequirementsPage'));
 const ScrollToTopPage = React.lazy(() => import('./story/pages/scroll-to-top/ScrollToTopPage'));
+const ChatWindowPage = React.lazy(() => import('./story/pages/chat/ChatWindowPage'));
+const ChatThemesPage = React.lazy(() => import('./story/pages/chat/ChatThemesPage'));
+const ChatLauncherPage = React.lazy(() => import('./story/pages/chat/ChatLauncherPage'));
+const ChatConversationsPage = React.lazy(() => import('./story/pages/chat/ChatConversationsPage'));
+const MultiChatPage = React.lazy(() => import('./story/pages/chat/MultiChatPage'));
+const ChatTemplatesPage = React.lazy(() => import('./story/pages/chat/ChatTemplatesPage'));
 
 const App: React.FC = () => {
     return (
@@ -640,6 +646,12 @@ const App: React.FC = () => {
                     <Route path="/components/password-strength" element={<LayoutWrapper><PasswordStrengthPage /></LayoutWrapper>} />
                     <Route path="/components/password-requirements" element={<LayoutWrapper><PasswordRequirementsPage /></LayoutWrapper>} />
                     <Route path="/components/scroll-to-top" element={<LayoutWrapper><ScrollToTopPage /></LayoutWrapper>} />
+                    <Route path="/components/chat-window" element={<LayoutWrapper><ChatWindowPage /></LayoutWrapper>} />
+                    <Route path="/components/chat-themes" element={<LayoutWrapper><ChatThemesPage /></LayoutWrapper>} />
+                    <Route path="/components/chat-launcher" element={<LayoutWrapper><ChatLauncherPage /></LayoutWrapper>} />
+                    <Route path="/components/chat-conversations" element={<LayoutWrapper><ChatConversationsPage /></LayoutWrapper>} />
+                    <Route path="/components/chat-multi" element={<LayoutWrapper><MultiChatPage /></LayoutWrapper>} />
+                    <Route path="/components/chat-templates" element={<LayoutWrapper><ChatTemplatesPage /></LayoutWrapper>} />
                     <Route
                         path="*"
                         element={

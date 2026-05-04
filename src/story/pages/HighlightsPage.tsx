@@ -165,6 +165,15 @@ const extraComponents: FlagshipItem[] = [
         highlights: ['Code 128 / 39 / EAN / UPC', 'SVG output', 'Configurable label', 'Themeable'],
         accent: '#0891b2',
     },
+    {
+        title: 'Chat Window',
+        tagline: 'Real-time chat in a single component.',
+        description:
+            'A fully-controlled chat surface with composer, attachments, reactions, replies, message actions, feedback, and a built-in emoji picker. Ships with 9 themes, light/dark modes, drag/resize, persistence, custom message templates, and seven floating launcher styles for opening it.',
+        path: '/components/chat-window',
+        highlights: ['9 themes', 'Reactions & replies', 'Attachments', 'Custom templates', 'Multi-chat', 'Launchers'],
+        accent: '#7c3aed',
+    },
 ];
 
 const LazyPreview: React.FC<{ loader: () => Promise<{ default: React.ComponentType }> }> = ({ loader }) => {

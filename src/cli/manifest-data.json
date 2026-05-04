@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-02T16:19:40.128Z",
+  "generatedAt": "2026-05-04T17:35:23.913Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -469,6 +469,85 @@
         "external": [
           "classnames",
           "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "chat",
+      "name": "Chat",
+      "kind": "directory",
+      "sourcePath": "components/chat",
+      "entryFile": "components/chat/index.ts",
+      "files": [
+        "components/EmojiPicker.tsx",
+        "conversations/ChatConversations.tsx",
+        "conversations/chat-conversations.scss",
+        "icons.tsx",
+        "index.ts",
+        "launcher/ChatLauncher.tsx",
+        "launcher/chat-launcher.scss",
+        "templates/DateMessage.tsx",
+        "templates/DateTimeMessage.tsx",
+        "templates/FileMessage.tsx",
+        "templates/ImageMessage.tsx",
+        "templates/LightboxViewer.tsx",
+        "templates/Loader.tsx",
+        "templates/OptionsMessage.tsx",
+        "templates/TextMessage.tsx",
+        "templates/TimeMessage.tsx",
+        "templates/VideoMessage.tsx",
+        "templates/YouTubeMessage.tsx",
+        "templates/index.ts",
+        "themes/_chat-vars.scss",
+        "themes/index.css",
+        "themes/theme-aurora.css",
+        "themes/theme-canvas.css",
+        "themes/theme-classic.css",
+        "themes/theme-dusk.css",
+        "themes/theme-ember.css",
+        "themes/theme-iris.css",
+        "themes/theme-mist.css",
+        "themes/theme-modern.css",
+        "themes/theme-prism.css",
+        "themes/themes-shared.css",
+        "types.ts",
+        "utils/emoji-data.ts",
+        "utils/parseText.tsx",
+        "utils/persistence.ts",
+        "utils/time.ts",
+        "utils/useDragResize.ts",
+        "window/ChatHeader.tsx",
+        "window/ChatMessage.tsx",
+        "window/ChatMessages.tsx",
+        "window/ChatWindow.tsx",
+        "window/Composer.tsx",
+        "window/MessageActionsBar.tsx",
+        "window/MessageStatus.tsx",
+        "window/TypingIndicator.tsx",
+        "window/chat-window.scss"
+      ],
+      "category": "Misc",
+      "label": "Chat",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "button",
+          "carousel",
+          "context-menu",
+          "date-range",
+          "splitter",
+          "text-input",
+          "time-picker"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
         ],
         "optionalPeers": []
       }
