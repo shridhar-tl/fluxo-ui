@@ -1,4 +1,5 @@
 @import './themes-shared.css';
+@import './theme-vars.css';
 @import './theme-classic.css';
 @import './theme-modern.css';
 @import './theme-iris.css';

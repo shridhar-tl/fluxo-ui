@@ -1,0 +1,264 @@
+/* Per-theme CSS variable overrides. Loaded AFTER the base chat-window styles, so these win.
+   Each theme sets only the --euic-* variables; structural rules live in the matching theme-<name>.css file. */
+
+.eui-chat-theme-classic.eui-chat-container,
+.eui-chat-theme-classic .eui-chat-container {
+    --euic-primary: #2563eb;
+    --euic-secondary: #1d4ed8;
+    --euic-font: #ffffff;
+    --euic-bg: #ffffff;
+    --euic-bg-subtle: #f1f5f9;
+    --euic-border: #e2e8f0;
+    --euic-border-subtle: #eef2f6;
+    --euic-text: #1e293b;
+    --euic-text-muted: #64748b;
+    --euic-bubble-bot-bg: #ffffff;
+    --euic-bubble-bot-fg: #1e293b;
+    --euic-bubble-user-bg: #2563eb;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+.eui-chat-theme-modern.eui-chat-container,
+.eui-chat-theme-modern .eui-chat-container {
+    --euic-primary: #6366f1;
+    --euic-secondary: #4f46e5;
+    --euic-font: #ffffff;
+    --euic-bg: #ffffff;
+    --euic-bg-subtle: #f3f4f6;
+    --euic-border: #e5e7eb;
+    --euic-border-subtle: #f1f5f9;
+    --euic-text: #111827;
+    --euic-text-muted: #6b7280;
+    --euic-bubble-bot-bg: #f3f4f6;
+    --euic-bubble-bot-fg: #111827;
+    --euic-bubble-user-bg: #6366f1;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+.eui-chat-theme-iris.eui-chat-container,
+.eui-chat-theme-iris .eui-chat-container {
+    --euic-primary: #7c3aed;
+    --euic-secondary: #5b21b6;
+    --euic-font: #ffffff;
+    --euic-bg: #ffffff;
+    --euic-bg-subtle: #faf5ff;
+    --euic-border: #e9d5ff;
+    --euic-border-subtle: #f3e8ff;
+    --euic-text: #1e1b4b;
+    --euic-text-muted: #6d28d9;
+    --euic-bubble-bot-bg: #faf5ff;
+    --euic-bubble-bot-fg: #1e1b4b;
+    --euic-bubble-user-bg: #7c3aed;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+.eui-chat-theme-dusk.eui-chat-container,
+.eui-chat-theme-dusk .eui-chat-container {
+    --euic-primary: #f97316;
+    --euic-secondary: #ea580c;
+    --euic-font: #ffffff;
+    --euic-bg: #1e1b29;
+    --euic-bg-subtle: #2a2438;
+    --euic-border: #3f3654;
+    --euic-border-subtle: #322a44;
+    --euic-text: #f1f5f9;
+    --euic-text-muted: #c4b5fd;
+    --euic-bubble-bot-bg: #2a2438;
+    --euic-bubble-bot-fg: #f1f5f9;
+    --euic-bubble-user-bg: #f97316;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+.eui-chat-theme-mist.eui-chat-container,
+.eui-chat-theme-mist .eui-chat-container {
+    --euic-primary: #0ea5e9;
+    --euic-secondary: #0284c7;
+    --euic-font: #ffffff;
+    --euic-bg: #ffffff;
+    --euic-bg-subtle: #f0f9ff;
+    --euic-border: #bae6fd;
+    --euic-border-subtle: #e0f2fe;
+    --euic-text: #0c4a6e;
+    --euic-text-muted: #475569;
+    --euic-bubble-bot-bg: #f0f9ff;
+    --euic-bubble-bot-fg: #0c4a6e;
+    --euic-bubble-user-bg: #0ea5e9;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+.eui-chat-theme-ember.eui-chat-container,
+.eui-chat-theme-ember .eui-chat-container {
+    --euic-primary: #dc2626;
+    --euic-secondary: #b91c1c;
+    --euic-font: #ffffff;
+    --euic-bg: #fffbf5;
+    --euic-bg-subtle: #fff7ed;
+    --euic-border: #fed7aa;
+    --euic-border-subtle: #ffedd5;
+    --euic-text: #7c2d12;
+    --euic-text-muted: #92400e;
+    --euic-bubble-bot-bg: #fff7ed;
+    --euic-bubble-bot-fg: #7c2d12;
+    --euic-bubble-user-bg: #dc2626;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+.eui-chat-theme-canvas.eui-chat-container,
+.eui-chat-theme-canvas .eui-chat-container {
+    --euic-primary: #475569;
+    --euic-secondary: #334155;
+    --euic-font: #ffffff;
+    --euic-bg: #fafaf9;
+    --euic-bg-subtle: #f5f5f4;
+    --euic-border: #e7e5e4;
+    --euic-border-subtle: #ede9e3;
+    --euic-text: #292524;
+    --euic-text-muted: #78716c;
+    --euic-bubble-bot-bg: #ffffff;
+    --euic-bubble-bot-fg: #292524;
+    --euic-bubble-user-bg: #475569;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+.eui-chat-theme-prism.eui-chat-container,
+.eui-chat-theme-prism .eui-chat-container {
+    --euic-primary: #ec4899;
+    --euic-secondary: #db2777;
+    --euic-font: #ffffff;
+    --euic-bg: #ffffff;
+    --euic-bg-subtle: #fdf2f8;
+    --euic-border: #fbcfe8;
+    --euic-border-subtle: #fce7f3;
+    --euic-text: #831843;
+    --euic-text-muted: #9d174d;
+    --euic-bubble-bot-bg: #fdf2f8;
+    --euic-bubble-bot-fg: #831843;
+    --euic-bubble-user-bg: #ec4899;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+.eui-chat-theme-aurora.eui-chat-container,
+.eui-chat-theme-aurora .eui-chat-container {
+    --euic-primary: #059669;
+    --euic-secondary: #047857;
+    --euic-font: #ffffff;
+    --euic-bg: #ffffff;
+    --euic-bg-subtle: #ecfdf5;
+    --euic-border: #a7f3d0;
+    --euic-border-subtle: #d1fae5;
+    --euic-text: #064e3b;
+    --euic-text-muted: #047857;
+    --euic-bubble-bot-bg: #ecfdf5;
+    --euic-bubble-bot-fg: #064e3b;
+    --euic-bubble-user-bg: #059669;
+    --euic-bubble-user-fg: #ffffff;
+}
+
+/* ====== DARK MODE OVERRIDES ====== */
+.eui-chat-mode-dark.eui-chat-theme-classic.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-classic .eui-chat-container {
+    --euic-bg: #0f172a;
+    --euic-bg-subtle: #1e293b;
+    --euic-border: #334155;
+    --euic-border-subtle: #1e293b;
+    --euic-text: #e2e8f0;
+    --euic-text-muted: #94a3b8;
+    --euic-bubble-bot-bg: #1e293b;
+    --euic-bubble-bot-fg: #e2e8f0;
+}
+
+.eui-chat-mode-dark.eui-chat-theme-modern.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-modern .eui-chat-container {
+    --euic-bg: #111827;
+    --euic-bg-subtle: #1f2937;
+    --euic-border: #374151;
+    --euic-border-subtle: #1f2937;
+    --euic-text: #f9fafb;
+    --euic-text-muted: #9ca3af;
+    --euic-bubble-bot-bg: #1f2937;
+    --euic-bubble-bot-fg: #f9fafb;
+}
+
+.eui-chat-mode-dark.eui-chat-theme-iris.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-container {
+    --euic-bg: #1e1b4b;
+    --euic-bg-subtle: #2e1065;
+    --euic-border: #4c1d95;
+    --euic-border-subtle: #312e81;
+    --euic-text: #ede9fe;
+    --euic-text-muted: #c4b5fd;
+    --euic-bubble-bot-bg: #2e1065;
+    --euic-bubble-bot-fg: #ede9fe;
+}
+
+.eui-chat-mode-dark.eui-chat-theme-dusk.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-dusk .eui-chat-container {
+    --euic-bg: #0f0f17;
+    --euic-bg-subtle: #1e1b29;
+    --euic-border: #322a44;
+    --euic-border-subtle: #271f36;
+    --euic-text: #f1f5f9;
+    --euic-text-muted: #a78bfa;
+    --euic-bubble-bot-bg: #1e1b29;
+    --euic-bubble-bot-fg: #f1f5f9;
+}
+
+.eui-chat-mode-dark.eui-chat-theme-mist.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-container {
+    --euic-bg: #0c1929;
+    --euic-bg-subtle: #0c1f33;
+    --euic-border: #155e75;
+    --euic-border-subtle: #0e2a47;
+    --euic-text: #e0f2fe;
+    --euic-text-muted: #7dd3fc;
+    --euic-bubble-bot-bg: #0c1f33;
+    --euic-bubble-bot-fg: #e0f2fe;
+}
+
+.eui-chat-mode-dark.eui-chat-theme-ember.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-container {
+    --euic-bg: #1c0f08;
+    --euic-bg-subtle: #2a1810;
+    --euic-border: #7c2d12;
+    --euic-border-subtle: #3b1d10;
+    --euic-text: #fff7ed;
+    --euic-text-muted: #fdba74;
+    --euic-bubble-bot-bg: #2a1810;
+    --euic-bubble-bot-fg: #fff7ed;
+}
+
+.eui-chat-mode-dark.eui-chat-theme-canvas.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-container {
+    --euic-bg: #0c0a09;
+    --euic-bg-subtle: #1c1917;
+    --euic-border: #44403c;
+    --euic-border-subtle: #292524;
+    --euic-text: #fafaf9;
+    --euic-text-muted: #a8a29e;
+    --euic-bubble-bot-bg: #1c1917;
+    --euic-bubble-bot-fg: #fafaf9;
+}
+
+.eui-chat-mode-dark.eui-chat-theme-prism.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-prism .eui-chat-container {
+    --euic-bg: #1a0a14;
+    --euic-bg-subtle: #2a0e22;
+    --euic-border: #831843;
+    --euic-border-subtle: #4a1432;
+    --euic-text: #fce7f3;
+    --euic-text-muted: #f9a8d4;
+    --euic-bubble-bot-bg: #2a0e22;
+    --euic-bubble-bot-fg: #fce7f3;
+}
+
+.eui-chat-mode-dark.eui-chat-theme-aurora.eui-chat-container,
+.eui-chat-mode-dark.eui-chat-theme-aurora .eui-chat-container {
+    --euic-bg: #022c22;
+    --euic-bg-subtle: #064e3b;
+    --euic-border: #047857;
+    --euic-border-subtle: #065f46;
+    --euic-text: #ecfdf5;
+    --euic-text-muted: #6ee7b7;
+    --euic-bubble-bot-bg: #064e3b;
+    --euic-bubble-bot-fg: #ecfdf5;
+}

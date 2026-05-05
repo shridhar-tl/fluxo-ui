@@ -1,6 +1,7 @@
 @use '../themes/_chat-vars' as *;
 
-.eui-chat-container {
+/* Defaults applied via :where() so they have zero specificity — any theme override (loaded after) wins. */
+:where(.eui-chat-container) {
     --euic-bg: #ffffff;
     --euic-bg-subtle: #f1f5f9;
     --euic-border: #e2e8f0;
@@ -17,7 +18,9 @@
     --euic-z: 10009;
     --euic-z-window: 10010;
     --euic-z-popover: 10050;
+}
 
+.eui-chat-container {
     position: fixed;
     z-index: var(--euic-z);
     display: flex;
