@@ -27,6 +27,7 @@ import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import Composer, { type ComposerHandle } from './Composer';
 import './chat-window.scss';
+import '../themes/index.css';
 
 export interface ChatWindowProps {
     messages: ChatMessageType[];

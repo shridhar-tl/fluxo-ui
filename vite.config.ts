@@ -28,7 +28,7 @@ export default defineConfig({
         __FLUXO_UI_VERSION__: JSON.stringify(pkg.version),
     },
     build: {
-        sourcemap: true,
+        sourcemap: false,
         outDir: 'build',
         rollupOptions: {
             output: {

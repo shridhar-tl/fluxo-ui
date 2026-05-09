@@ -1,5 +1,3 @@
-import './themes/index.css';
-
 export { ChatWindow } from './window/ChatWindow';
 export type { ChatWindowProps } from './window/ChatWindow';
 

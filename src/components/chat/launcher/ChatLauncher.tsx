@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import { chatIcon } from '../icons';
 import './chat-launcher.scss';
+import '../themes/index.css';
 
 export type ChatLauncherVariant = 'icon' | 'morph' | 'beacon' | 'pulsar' | 'expand' | 'bar' | 'spark';
 export type ChatLauncherAlign = 'bottomRight' | 'bottomLeft';
