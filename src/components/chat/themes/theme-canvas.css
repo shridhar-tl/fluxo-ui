@@ -1,4 +1,3 @@
-/* Ported from zumbot/theme-canvas.css via scripts/port-chat-themes.cjs. Do not edit by hand — re-run script if source changes. */
 /* ============================================================
    THEME: CANVAS (Soft Teal / Productive)
    Header has a vertical left accent stripe instead of full color.
@@ -425,4 +424,80 @@
 .eui-chat-theme-canvas .eui-chat-launcher.eui-chat-beacon .eui-chat-beacon-track {
     background: linear-gradient(135deg, var(--euic-primary, #0d9488), var(--euic-secondary, var(--euic-primary, #0d9488)));
     color: var(--euic-font, #ffffff);
+}
+
+/* === DARK MODE OVERRIDES === */
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-window {
+    background: #0c0a09;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-header {
+    background: #1c1917;
+    border-bottom-color: #292524;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-header .eui-chat-header-icon {
+    background: rgba(13, 148, 136, 0.18);
+    border-color: rgba(13, 148, 136, 0.4);
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-header .eui-chat-header-icon svg {
+    color: #5eead4;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-header .eui-chat-header-title .eui-chat-title-text {
+    color: #fafaf9;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-header .eui-chat-header-title .eui-chat-subtitle-text {
+    color: #5eead4;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-header .eui-chat-header-controls .eui-chat-ctrl-btn {
+    color: #78716c;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-header .eui-chat-header-controls .eui-chat-ctrl-btn:hover {
+    background: rgba(13, 148, 136, 0.18);
+    color: #5eead4;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-body {
+    background: #0c0a09;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-body::-webkit-scrollbar-thumb {
+    background: #134e4a;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-body:hover::-webkit-scrollbar-thumb {
+    background: #0f766e;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-msg .eui-chat-msg-avatar {
+    background: rgba(13, 148, 136, 0.2);
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-msg .eui-chat-msg-avatar svg {
+    color: #5eead4;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-msg .eui-chat-msg-time {
+    color: #44403c;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-msg.eui-chat-msg-system .eui-chat-msg-content {
+    background: rgba(13, 148, 136, 0.14);
+    color: #d1fae5;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-composer {
+    background: #1c1917;
+    border-top-color: #292524;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-composer textarea {
+    background: #0c0a09;
+    color: #fafaf9;
+    border-color: #134e4a;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-composer textarea::placeholder {
+    color: #44403c;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-composer textarea:focus {
+    border-color: #14b8a6;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-disclaimer {
+    background: #1c1917;
+    color: #44403c;
+    border-top-color: #292524;
+}
+.eui-chat-mode-dark.eui-chat-theme-canvas .eui-chat-opts-wrap .eui-chat-opts-list .eui-chat-opt-item {
+    background: rgba(13, 148, 136, 0.14);
+    color: #5eead4;
+    border-color: #0f766e;
 }

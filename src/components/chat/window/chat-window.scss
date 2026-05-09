@@ -694,6 +694,28 @@
     }
 }
 
+/* The picker is portaled to document.body, so the chat container's theme/mode
+   classes don't apply. Flip its colors based on the page-level body.mode-dark. */
+body.mode-dark .eui-chat-emoji-picker {
+    background: #1e293b;
+    border-color: #334155;
+    color: #e2e8f0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+    .eui-chat-emoji-tabs {
+        border-bottom-color: #334155;
+
+        .eui-chat-emoji-tab {
+            &:hover { background: #0f172a; }
+            &.eui-chat-active { background: #0f172a; }
+        }
+    }
+
+    .eui-chat-emoji-grid .eui-chat-emoji-cell:hover {
+        background: #0f172a;
+    }
+}
+
 /* ============== LIGHTBOX ============== */
 .eui-chat-lightbox {
     position: fixed;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Checkbox } from '../../../components/Checkbox';
 import { ChatConversations, ChatWindow, type ChatMessage, type ChatTheme } from '../../../components/chat';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
@@ -62,23 +63,11 @@ const ConversationsDemo: React.FC = () => {
                 centered={false}
             >
                 <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <label
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            fontSize: 13,
-                            color: 'var(--eui-text)',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        <input
-                            type="checkbox"
-                            checked={hideArchived}
-                            onChange={(e) => setHideArchived(e.target.checked)}
-                        />
-                        Hide archived conversations
-                    </label>
+                    <Checkbox
+                        checked={hideArchived}
+                        onChange={({ value }) => setHideArchived(value)}
+                        label="Hide archived conversations"
+                    />
                     <div
                         style={{
                             position: 'relative',

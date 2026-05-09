@@ -1,4 +1,3 @@
-/* Ported from zumbot/theme-modern.css via scripts/port-chat-themes.cjs. Do not edit by hand — re-run script if source changes. */
 /* ============================================================
    THEME: MODERN (Void)
    Near-black UI, header is transparent bar with glow accent,
@@ -423,4 +422,24 @@
 .eui-chat-theme-modern .eui-chat-launcher.eui-chat-beacon .eui-chat-beacon-track {
     background: linear-gradient(135deg, var(--euic-primary, #7c3aed), var(--euic-secondary, var(--euic-primary, #7c3aed)));
     color: var(--euic-font, #ffffff);
+}
+
+/* === DARK MODE OVERRIDES === */
+.eui-chat-mode-dark.eui-chat-theme-modern .eui-chat-window {
+    background: #0a0a10;
+}
+.eui-chat-mode-dark.eui-chat-theme-modern .eui-chat-body {
+    background: #0a0a10;
+}
+.eui-chat-mode-dark.eui-chat-theme-modern .eui-chat-header,
+.eui-chat-mode-dark.eui-chat-theme-modern .eui-chat-composer,
+.eui-chat-mode-dark.eui-chat-theme-modern .eui-chat-disclaimer {
+    background: #11111a;
+}
+.eui-chat-mode-dark.eui-chat-theme-modern .eui-chat-msg.eui-chat-msg-system .eui-chat-msg-content {
+    background: #11111a;
+    color: #d4d4f0;
+}
+.eui-chat-mode-dark.eui-chat-theme-modern .eui-chat-composer textarea {
+    background: #0a0a10;
 }

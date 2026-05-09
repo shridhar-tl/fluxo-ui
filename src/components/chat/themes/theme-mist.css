@@ -1,4 +1,3 @@
-/* Ported from zumbot/theme-mist.css via scripts/port-chat-themes.cjs. Do not edit by hand — re-run script if source changes. */
 /* ============================================================
    THEME: MIST (Centered Header)
    Blue-grey palette with green accent. Header is centered —
@@ -459,4 +458,79 @@
 .eui-chat-theme-mist .eui-chat-launcher.eui-chat-beacon .eui-chat-beacon-track {
     background: linear-gradient(135deg, var(--euic-primary, #10b981), var(--euic-secondary, var(--euic-primary, #10b981)));
     color: var(--euic-font, #ffffff);
+}
+
+/* === DARK MODE OVERRIDES === */
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-window {
+    background: #0c1929;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-header {
+    background: #0e2a47;
+    border-bottom-color: #155e75;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-header .eui-chat-header-icon > * {
+    background: #0c1f33;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-header .eui-chat-header-icon > *::after {
+    border-color: #0e2a47;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-header .eui-chat-header-icon svg {
+    color: #7dd3fc;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-header .eui-chat-header-title .eui-chat-title-text {
+    color: #e0f2fe;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-header .eui-chat-header-controls .eui-chat-ctrl-btn {
+    color: #7dd3fc;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-header .eui-chat-header-controls .eui-chat-ctrl-btn:hover {
+    background: #155e75;
+    color: #e0f2fe;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-body {
+    background: #0c1929;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-body::-webkit-scrollbar-thumb {
+    background: #155e75;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-body:hover::-webkit-scrollbar-thumb {
+    background: #0ea5e9;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-msg .eui-chat-msg-avatar {
+    background: #0c1f33;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-msg .eui-chat-msg-avatar svg {
+    color: #7dd3fc;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-msg .eui-chat-msg-time {
+    color: #475569;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-msg.eui-chat-msg-system .eui-chat-msg-content {
+    background: #0c1f33;
+    color: #e0f2fe;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-composer {
+    background: #0e2a47;
+    border-top-color: #155e75;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-composer textarea {
+    background: #0c1f33;
+    color: #e0f2fe;
+    border-color: #155e75;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-composer textarea::placeholder {
+    color: #475569;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-disclaimer {
+    background: #0e2a47;
+    color: #475569;
+    border-top-color: #155e75;
+}
+.eui-chat-mode-dark.eui-chat-theme-mist .eui-chat-opts-wrap .eui-chat-opts-list .eui-chat-opt-item {
+    background: #0c1f33;
+    color: #e0f2fe;
+    border-color: #155e75;
 }

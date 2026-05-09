@@ -510,6 +510,7 @@
         "themes/theme-mist.css",
         "themes/theme-modern.css",
         "themes/theme-prism.css",
+        "themes/theme-vars.css",
         "themes/themes-shared.css",
         "types.ts",
         "utils/emoji-data.ts",

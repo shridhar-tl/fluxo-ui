@@ -1,4 +1,3 @@
-/* Ported from zumbot/theme-ember.css via scripts/port-chat-themes.cjs. Do not edit by hand — re-run script if source changes. */
 /* ============================================================
    THEME: EMBER (Tall Banner Header)
    Bold coral-red. Header is extra-tall with a large centered
@@ -460,4 +459,49 @@
 .eui-chat-theme-ember .eui-chat-launcher.eui-chat-beacon .eui-chat-beacon-track {
     background: linear-gradient(135deg, var(--euic-primary, #dc2626), var(--euic-secondary, var(--euic-primary, #dc2626)));
     color: var(--euic-font, #ffffff);
+}
+
+/* === DARK MODE OVERRIDES === */
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-body {
+    background: #1c0f08;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-body::-webkit-scrollbar-thumb {
+    background: #7c2d12;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-body:hover::-webkit-scrollbar-thumb {
+    background: #9a3412;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-msg .eui-chat-msg-avatar {
+    background: rgba(220, 38, 38, 0.18);
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-msg .eui-chat-msg-avatar svg {
+    color: #fca5a5;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-msg .eui-chat-msg-time {
+    color: #7c2d12;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-msg.eui-chat-msg-system .eui-chat-msg-content {
+    color: #fff7ed;
+    border-left-color: #ef4444;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-composer {
+    background: #2a1810;
+    border-top-color: #ef4444;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-composer textarea {
+    background: #2a1810;
+    color: #fff7ed;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-composer textarea::placeholder {
+    color: #7c2d12;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-disclaimer {
+    background: #2a1810;
+    color: #7c2d12;
+    border-top-color: #3b1d10;
+}
+.eui-chat-mode-dark.eui-chat-theme-ember .eui-chat-opts-wrap .eui-chat-opts-list .eui-chat-opt-item {
+    background: #2a1810;
+    color: #fca5a5;
+    border-color: #7c2d12;
 }

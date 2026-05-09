@@ -1,4 +1,3 @@
-/* Ported from zumbot/theme-iris.css via scripts/port-chat-themes.cjs. Do not edit by hand — re-run script if source changes. */
 /* ============================================================
    THEME: IRIS (Wave)
    Rich indigo header with curved bottom clip, very-rounded
@@ -418,4 +417,55 @@
 .eui-chat-theme-iris .eui-chat-launcher.eui-chat-beacon .eui-chat-beacon-track {
     background: linear-gradient(135deg, var(--euic-primary, #4f46e5), var(--euic-secondary, var(--euic-primary, #4f46e5)));
     color: var(--euic-font, #ffffff);
+}
+
+/* === DARK MODE OVERRIDES === */
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-body {
+    background: linear-gradient(180deg, #1e1b4b 0%, #2e1065 100%);
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-body::-webkit-scrollbar-thumb {
+    background: #4c1d95;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-body:hover::-webkit-scrollbar-thumb {
+    background: #6d28d9;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-msg .eui-chat-msg-avatar {
+    background: rgba(124, 58, 237, 0.25);
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-msg .eui-chat-msg-avatar svg {
+    color: #c4b5fd;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-msg .eui-chat-msg-time {
+    color: #7c3aed;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-msg.eui-chat-msg-system .eui-chat-msg-content {
+    background: #2e1065;
+    color: #ede9fe;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-composer {
+    background: #1e1b4b;
+    border-top-color: #312e81;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-composer textarea {
+    background: #2e1065;
+    color: #ede9fe;
+    border-color: #4c1d95;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-composer textarea::placeholder {
+    color: #a78bfa;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-composer textarea:focus {
+    background: #1e1b4b;
+    border-color: #a78bfa;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-disclaimer {
+    background: #1e1b4b;
+    color: #a78bfa;
+    border-top-color: #312e81;
+}
+.eui-chat-mode-dark.eui-chat-theme-iris .eui-chat-opts-wrap .eui-chat-opts-list .eui-chat-opt-item {
+    background: #2e1065;
+    color: #c4b5fd;
+    border-color: #6d28d9;
 }
