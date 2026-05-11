@@ -36,6 +36,16 @@ $bp-2xl: 1536px;
     // Radius
     --eui-radius-sm: 0.25rem;
     --eui-radius-md: 0.375rem;
+
+    // Form control min-heights (must stay in lockstep across TextInput,
+    // NumericInput, MaskedInput, Password, Autocomplete, Multiselect,
+    // AutocompleteMulti, Dropdown, Button, ToggleButton, SelectButton,
+    // ColorPicker so adjacent controls in a row line up perfectly).
+    --eui-control-h-xs: 1.625rem;   // 26px
+    --eui-control-h-sm: 1.75rem;    // 28px
+    --eui-control-h-md: 1.9375rem;  // 31px
+    --eui-control-h-lg: 2.1875rem;  // 35px
+    --eui-control-h-xl: 2.375rem;   // 38px
 }
 
 @mixin eui-thin-scrollbar {

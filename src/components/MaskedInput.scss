@@ -10,6 +10,8 @@
 
 .eui-masked-input {
     width: 100%;
+    box-sizing: border-box;
+    min-height: var(--eui-control-h-md);
     border: 1px solid var(--eui-border);
     border-radius: var(--eui-radius-sm);
     background-color: var(--eui-bg);

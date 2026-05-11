@@ -65,6 +65,8 @@
 
 .eui-multiselect {
     width: 100%;
+    box-sizing: border-box;
+    min-height: var(--eui-control-h-md);
     padding: 0.25rem 0.5rem;
     border: 1px solid var(--eui-border);
     border-radius: var(--eui-radius-md);
@@ -75,11 +77,11 @@
     font-family: var(--eui-font-family);
     font-size: 0.8125rem;
 
-    &.eui-multiselect-xs { min-height: 1.494rem; padding: 0.15rem 0.5rem; font-size: 0.6875rem; }
-    &.eui-multiselect-sm { min-height: 1.7rem; padding: 0.2rem 0.625rem; font-size: 0.75rem; }
-    &.eui-multiselect-md { min-height: 1.906rem; padding: 0.25rem 0.75rem; font-size: 0.8125rem; }
-    &.eui-multiselect-lg { min-height: 2.113rem; padding: 0.3rem 0.875rem; font-size: 0.875rem; }
-    &.eui-multiselect-xl { min-height: 2.319rem; padding: 0.35rem 1rem; font-size: 0.9375rem; }
+    &.eui-multiselect-xs { min-height: var(--eui-control-h-xs); padding: 0.15rem 0.5rem; font-size: 0.6875rem; }
+    &.eui-multiselect-sm { min-height: var(--eui-control-h-sm); padding: 0.2rem 0.625rem; font-size: 0.75rem; }
+    &.eui-multiselect-md { min-height: var(--eui-control-h-md); padding: 0.25rem 0.75rem; font-size: 0.8125rem; }
+    &.eui-multiselect-lg { min-height: var(--eui-control-h-lg); padding: 0.3rem 0.875rem; font-size: 0.875rem; }
+    &.eui-multiselect-xl { min-height: var(--eui-control-h-xl); padding: 0.35rem 1rem; font-size: 0.9375rem; }
 
     &:focus {
         outline: none;

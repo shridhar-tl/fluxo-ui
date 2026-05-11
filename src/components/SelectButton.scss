@@ -35,14 +35,16 @@
         }
     }
 
-    &.eui-select-button-xs .eui-select-button-item { padding: 0.25rem 0.5rem; font-size: 0.6875rem; }
-    &.eui-select-button-sm .eui-select-button-item { padding: 0.3125rem 0.625rem; font-size: 0.75rem; }
-    &.eui-select-button-md .eui-select-button-item { padding: 0.375rem 0.75rem; font-size: 0.8125rem; }
-    &.eui-select-button-lg .eui-select-button-item { padding: 0.4375rem 0.875rem; font-size: 0.875rem; }
-    &.eui-select-button-xl .eui-select-button-item { padding: 0.5rem 1rem; font-size: 0.9375rem; }
+    &.eui-select-button-xs .eui-select-button-item { min-height: var(--eui-control-h-xs); padding: 0.25rem 0.5rem; font-size: 0.6875rem; }
+    &.eui-select-button-sm .eui-select-button-item { min-height: var(--eui-control-h-sm); padding: 0.3125rem 0.625rem; font-size: 0.75rem; }
+    &.eui-select-button-md .eui-select-button-item { min-height: var(--eui-control-h-md); padding: 0.375rem 0.75rem; font-size: 0.8125rem; }
+    &.eui-select-button-lg .eui-select-button-item { min-height: var(--eui-control-h-lg); padding: 0.4375rem 0.875rem; font-size: 0.875rem; }
+    &.eui-select-button-xl .eui-select-button-item { min-height: var(--eui-control-h-xl); padding: 0.5rem 1rem; font-size: 0.9375rem; }
 
     .eui-select-button-item {
         appearance: none;
+        box-sizing: border-box;
+        min-height: var(--eui-control-h-md);
         margin: 0;
         font-family: var(--eui-font-family);
         font-size: 0.8125rem;
