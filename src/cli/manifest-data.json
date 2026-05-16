@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-04T17:35:23.913Z",
+  "generatedAt": "2026-05-16T06:29:44.502Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -26,6 +26,36 @@
         "external": [
           "classnames",
           "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "action-sheet",
+      "name": "ActionSheet",
+      "kind": "directory",
+      "sourcePath": "components/action-sheet",
+      "entryFile": "components/action-sheet/index.ts",
+      "files": [
+        "ActionSheet.scss",
+        "ActionSheet.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Action Sheet",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [
+          "body-scroll-lock"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
         ],
         "optionalPeers": []
       }
@@ -827,6 +857,38 @@
       }
     },
     {
+      "id": "dashboard-layout",
+      "name": "DashboardLayout",
+      "kind": "directory",
+      "sourcePath": "components/dashboard-layout",
+      "entryFile": "components/dashboard-layout/index.ts",
+      "files": [
+        "DashboardLayout.tsx",
+        "dashboard-layout-types.ts",
+        "dashboard-layout-utils.ts",
+        "dashboard-layout.scss",
+        "index.ts"
+      ],
+      "category": "Layout",
+      "label": "Dashboard Layout",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "resizable"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "date-range",
       "name": "DateRange",
       "kind": "directory",
@@ -1043,7 +1105,9 @@
       "dependencies": {
         "components": [],
         "hooks": [],
-        "utils": [],
+        "utils": [
+          "body-scroll-lock"
+        ],
         "shared": [],
         "external": [
           "classnames",
@@ -1222,6 +1286,33 @@
       ],
       "category": "Media",
       "label": "File Upload",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "floating-label-input",
+      "name": "FloatingLabelInput",
+      "kind": "directory",
+      "sourcePath": "components/floating-label-input",
+      "entryFile": "components/floating-label-input/index.ts",
+      "files": [
+        "FloatingLabelInput.scss",
+        "FloatingLabelInput.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Floating Label Input",
       "description": "",
       "private": false,
       "dependencies": {
@@ -1719,6 +1810,33 @@
       }
     },
     {
+      "id": "mobile-tab-bar",
+      "name": "MobileTabBar",
+      "kind": "directory",
+      "sourcePath": "components/mobile-tab-bar",
+      "entryFile": "components/mobile-tab-bar/index.ts",
+      "files": [
+        "MobileTabBar.scss",
+        "MobileTabBar.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Mobile Tab Bar",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "modal",
       "name": "Modal",
       "kind": "flat",
@@ -1741,6 +1859,34 @@
           "classnames",
           "react",
           "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "moveable",
+      "name": "Moveable",
+      "kind": "directory",
+      "sourcePath": "components/moveable",
+      "entryFile": "components/moveable/index.ts",
+      "files": [
+        "Moveable.tsx",
+        "index.ts",
+        "moveable-types.ts",
+        "moveable.scss"
+      ],
+      "category": "Layout",
+      "label": "Moveable",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
         ],
         "optionalPeers": []
       }
@@ -1800,6 +1946,33 @@
         "shared": [
           "types"
         ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "nav-bar",
+      "name": "NavBar",
+      "kind": "directory",
+      "sourcePath": "components/nav-bar",
+      "entryFile": "components/nav-bar/index.ts",
+      "files": [
+        "NavBar.scss",
+        "NavBar.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Nav Bar",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
         "external": [
           "classnames",
           "react"
@@ -1986,6 +2159,60 @@
       }
     },
     {
+      "id": "picker",
+      "name": "Picker",
+      "kind": "directory",
+      "sourcePath": "components/picker",
+      "entryFile": "components/picker/index.ts",
+      "files": [
+        "Picker.scss",
+        "Picker.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Picker",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "pin-input",
+      "name": "PinInput",
+      "kind": "directory",
+      "sourcePath": "components/pin-input",
+      "entryFile": "components/pin-input/index.ts",
+      "files": [
+        "PinInput.scss",
+        "PinInput.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "PIN / OTP Input",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "pivot-table",
       "name": "PivotTable",
       "kind": "directory",
@@ -2073,6 +2300,33 @@
       ],
       "category": "Charts & Boards",
       "label": "Progress Bar",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "pull-to-refresh",
+      "name": "PullToRefresh",
+      "kind": "directory",
+      "sourcePath": "components/pull-to-refresh",
+      "entryFile": "components/pull-to-refresh/index.ts",
+      "files": [
+        "PullToRefresh.scss",
+        "PullToRefresh.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Pull To Refresh",
       "description": "",
       "private": false,
       "dependencies": {
@@ -2331,6 +2585,61 @@
       }
     },
     {
+      "id": "resizable",
+      "name": "Resizable",
+      "kind": "directory",
+      "sourcePath": "components/resizable",
+      "entryFile": "components/resizable/index.ts",
+      "files": [
+        "Resizable.tsx",
+        "index.ts",
+        "resizable-types.ts",
+        "resizable.scss"
+      ],
+      "category": "Layout",
+      "label": "Resizable",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "safe-area-view",
+      "name": "SafeAreaView",
+      "kind": "directory",
+      "sourcePath": "components/safe-area-view",
+      "entryFile": "components/safe-area-view/index.ts",
+      "files": [
+        "SafeAreaView.scss",
+        "SafeAreaView.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Safe Area View",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "scroll-to-top",
       "name": "ScrollToTop",
       "kind": "directory",
@@ -2405,6 +2714,7 @@
         "SkeletonButton.tsx",
         "SkeletonCard.tsx",
         "SkeletonImage.tsx",
+        "SkeletonList.tsx",
         "SkeletonText.tsx",
         "index.ts",
         "shimmer.scss"
@@ -2599,6 +2909,33 @@
       }
     },
     {
+      "id": "step-dots",
+      "name": "StepDots",
+      "kind": "directory",
+      "sourcePath": "components/step-dots",
+      "entryFile": "components/step-dots/index.ts",
+      "files": [
+        "StepDots.scss",
+        "StepDots.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Step Dots",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "stepper",
       "name": "Stepper",
       "kind": "flat",
@@ -2610,6 +2947,33 @@
       ],
       "category": "Navigation",
       "label": "Stepper",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "swipeable-list-item",
+      "name": "SwipeableListItem",
+      "kind": "directory",
+      "sourcePath": "components/swipeable-list-item",
+      "entryFile": "components/swipeable-list-item/index.ts",
+      "files": [
+        "SwipeableListItem.scss",
+        "SwipeableListItem.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Swipeable List Item",
       "description": "",
       "private": false,
       "dependencies": {
@@ -2871,6 +3235,33 @@
       }
     },
     {
+      "id": "touch-ripple",
+      "name": "TouchRipple",
+      "kind": "directory",
+      "sourcePath": "components/touch-ripple",
+      "entryFile": "components/touch-ripple/index.ts",
+      "files": [
+        "TouchRipple.scss",
+        "TouchRipple.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Touch Ripple",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "tour",
       "name": "StepTour",
       "kind": "directory",
@@ -2920,6 +3311,33 @@
       ],
       "category": "Data & Reports",
       "label": "TreeView",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "virtual-list",
+      "name": "VirtualList",
+      "kind": "directory",
+      "sourcePath": "components/virtual-list",
+      "entryFile": "components/virtual-list/index.ts",
+      "files": [
+        "VirtualList.scss",
+        "VirtualList.tsx",
+        "index.ts"
+      ],
+      "category": "Mobile",
+      "label": "Virtual List",
       "description": "",
       "private": false,
       "dependencies": {
@@ -3073,6 +3491,22 @@
     }
   ],
   "utils": [
+    {
+      "id": "body-scroll-lock",
+      "name": "body-scroll-lock",
+      "sourcePath": "utils/body-scroll-lock.ts",
+      "files": [
+        "body-scroll-lock.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [],
+        "optionalPeers": []
+      }
+    },
     {
       "id": "common-fns",
       "name": "common-fns",

@@ -1,0 +1,129 @@
+{
+  "resizableProps": {
+    "children": {
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "Element(s) wrapped by the resizable container."
+    },
+    "defaultWidth": {
+      "type": "number | string",
+      "description": "Initial width in pixels (uncontrolled). Strings are parsed for the leading number."
+    },
+    "defaultHeight": {
+      "type": "number | string",
+      "description": "Initial height in pixels (uncontrolled)."
+    },
+    "width": {
+      "type": "number",
+      "description": "Controlled width in pixels. Provide together with `height` and listen to `onSizeChange`."
+    },
+    "height": {
+      "type": "number",
+      "description": "Controlled height in pixels. Provide together with `width` and listen to `onSizeChange`."
+    },
+    "onSizeChange": {
+      "type": "(size: { width: number; height: number }) => void",
+      "description": "Fires on every committed size change (mouse, touch, keyboard)."
+    },
+    "onResizeStart": {
+      "type": "(event: ResizeStartEvent) => void",
+      "description": "Fires when the user grabs a handle."
+    },
+    "onResize": {
+      "type": "(event: ResizeChangeEvent) => void",
+      "description": "Fires continuously while resizing."
+    },
+    "onResizeEnd": {
+      "type": "(event: ResizeEndEvent) => void",
+      "description": "Fires when the user releases the handle."
+    },
+    "axis": {
+      "type": "'horizontal' | 'vertical' | 'both'",
+      "default": "'both'",
+      "description": "Restrict resize direction. Handles incompatible with the axis are hidden."
+    },
+    "handles": {
+      "type": "ResizeHandlePosition[] | 'all' | 'corners' | 'edges'",
+      "default": "'all'",
+      "description": "Which handles to render. `'corners'` = `['ne','nw','se','sw']`, `'edges'` = `['n','s','e','w']`."
+    },
+    "minWidth": {
+      "type": "number",
+      "default": "40",
+      "description": "Minimum width in pixels."
+    },
+    "minHeight": {
+      "type": "number",
+      "default": "40",
+      "description": "Minimum height in pixels."
+    },
+    "maxWidth": {
+      "type": "number",
+      "default": "Infinity",
+      "description": "Maximum width in pixels."
+    },
+    "maxHeight": {
+      "type": "number",
+      "default": "Infinity",
+      "description": "Maximum height in pixels."
+    },
+    "grid": {
+      "type": "[number, number]",
+      "description": "Snap size to a [widthStep, heightStep] grid."
+    },
+    "aspectRatio": {
+      "type": "number | boolean",
+      "description": "Lock to a specific aspect ratio (number) or to the starting ratio (true)."
+    },
+    "lockAspectRatio": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Convenience alias for `aspectRatio = true`."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable all resize interaction; handles are hidden."
+    },
+    "handleSize": {
+      "type": "number",
+      "default": "8",
+      "description": "Visual / hit area thickness of each handle in pixels."
+    },
+    "showHandles": {
+      "type": "'always' | 'hover' | 'never'",
+      "default": "'always'",
+      "description": "When handles are visible. `'hover'` reveals them on container hover or focus."
+    },
+    "keyboardStep": {
+      "type": "number",
+      "default": "8",
+      "description": "Pixels per arrow-key press on a focused handle."
+    },
+    "keyboardBigStep": {
+      "type": "number",
+      "default": "32",
+      "description": "Pixels per Shift+arrow press on a focused handle."
+    },
+    "bounds": {
+      "type": "'parent' | 'window' | { width: number; height: number }",
+      "description": "Optional upper bound for size. Useful inside scroll containers."
+    },
+    "className": {
+      "type": "string",
+      "description": "Class name applied to the container."
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles for the container (merged with computed width/height)."
+    },
+    "handleClassName": {
+      "type": "string",
+      "description": "Class name applied to every resize handle."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Used as the prefix for each handle's aria-label, e.g. \"Widget resize se\"."
+    }
+  }
+}

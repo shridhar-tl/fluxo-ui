@@ -1,0 +1,122 @@
+@use '../eui-vars' as *;
+
+.eui-resizable {
+    position: relative;
+    box-sizing: border-box;
+    font-family: var(--eui-font-family);
+    color: var(--eui-text);
+    display: block;
+
+    &.eui-resizable-disabled {
+        .eui-resizable-handle {
+            display: none;
+        }
+    }
+
+    &.eui-resizable-no-handles {
+        .eui-resizable-handle {
+            display: none;
+        }
+    }
+}
+
+.eui-resizable-content {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.eui-resizable-handle {
+    --eui-resizable-handle-size: 8px;
+    position: absolute;
+    box-sizing: border-box;
+    background: transparent;
+    touch-action: none;
+    z-index: 2;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: -2px;
+    }
+}
+
+.eui-resizable-hover-handles {
+    .eui-resizable-handle {
+        opacity: 0;
+        transition: opacity 0.15s ease, background-color 0.15s ease;
+    }
+
+    &:hover .eui-resizable-handle,
+    &.eui-resizable-resizing .eui-resizable-handle,
+    .eui-resizable-handle:focus-visible {
+        opacity: 1;
+    }
+}
+
+.eui-resizable-handle-n,
+.eui-resizable-handle-s {
+    left: var(--eui-resizable-handle-size);
+    right: var(--eui-resizable-handle-size);
+    height: var(--eui-resizable-handle-size);
+}
+
+.eui-resizable-handle-n { top: calc(var(--eui-resizable-handle-size) * -0.5); }
+.eui-resizable-handle-s { bottom: calc(var(--eui-resizable-handle-size) * -0.5); }
+
+.eui-resizable-handle-e,
+.eui-resizable-handle-w {
+    top: var(--eui-resizable-handle-size);
+    bottom: var(--eui-resizable-handle-size);
+    width: var(--eui-resizable-handle-size);
+}
+
+.eui-resizable-handle-e { right: calc(var(--eui-resizable-handle-size) * -0.5); }
+.eui-resizable-handle-w { left: calc(var(--eui-resizable-handle-size) * -0.5); }
+
+.eui-resizable-handle-ne,
+.eui-resizable-handle-nw,
+.eui-resizable-handle-se,
+.eui-resizable-handle-sw {
+    width: calc(var(--eui-resizable-handle-size) * 1.5);
+    height: calc(var(--eui-resizable-handle-size) * 1.5);
+    z-index: 3;
+}
+
+.eui-resizable-handle-ne { top: calc(var(--eui-resizable-handle-size) * -0.75); right: calc(var(--eui-resizable-handle-size) * -0.75); }
+.eui-resizable-handle-nw { top: calc(var(--eui-resizable-handle-size) * -0.75); left: calc(var(--eui-resizable-handle-size) * -0.75); }
+.eui-resizable-handle-se {
+    bottom: calc(var(--eui-resizable-handle-size) * -0.75);
+    right: calc(var(--eui-resizable-handle-size) * -0.75);
+
+    &::after {
+        content: '';
+        position: absolute;
+        right: 3px;
+        bottom: 3px;
+        width: 6px;
+        height: 6px;
+        border-right: 2px solid var(--eui-border);
+        border-bottom: 2px solid var(--eui-border);
+        opacity: 0.6;
+        pointer-events: none;
+    }
+}
+.eui-resizable-handle-sw { bottom: calc(var(--eui-resizable-handle-size) * -0.75); left: calc(var(--eui-resizable-handle-size) * -0.75); }
+
+.eui-resizable-handle:hover,
+.eui-resizable-handle.eui-resizable-handle-active {
+    background-color: rgba(59, 130, 246, 0.18);
+}
+
+body.mode-dark .eui-resizable-handle:hover,
+body.mode-dark .eui-resizable-handle.eui-resizable-handle-active {
+    background-color: rgba(96, 165, 250, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-resizable-handle {
+        transition: none;
+    }
+}

@@ -258,6 +258,9 @@ function Counter() {
 | Accordion         | Multi-item collapsible panel group with single/multi expand and five visual variants |
 | Card              | Content container with header, body, footer, cover media, and five visual variants   |
 | Docked Layout     | VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels      |
+| Dashboard Layout  | Grid-based dashboard — drag, resize, show/hide widgets with per-breakpoint layouts and presets |
+| Resizable         | Generic resize wrapper — 8 handles, axis lock, aspect ratio, grid snap, keyboard      |
+| Moveable          | Drag wrapper for any element — bounds, axis lock, drag handle, grid snap, keyboard    |
 
 ### Actions & Interaction
 

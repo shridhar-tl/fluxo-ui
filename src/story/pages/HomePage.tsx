@@ -42,6 +42,7 @@ const largeComponents = new Set([
     'Chat Templates',
     'Virtual List',
     'Skeleton List',
+    'Dashboard Layout',
 ]);
 
 const heavyComponents = new Set([
@@ -65,6 +66,8 @@ const heavyComponents = new Set([
     'Mobile Tab Bar',
     'Action Sheet',
     'Safe Area View',
+    'Dashboard Layout',
+    'Moveable',
 ]);
 
 const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>> = {
@@ -155,6 +158,9 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/touch-ripple': () => import('./touch-ripple/Variants'),
     '/components/picker': () => import('./picker/BasicUsage'),
     '/components/virtual-list': () => import('./virtual-list/BasicUsage'),
+    '/components/resizable': () => import('./resizable/BasicUsage'),
+    '/components/moveable': () => import('./moveable/BasicUsage'),
+    '/components/dashboard-layout': () => import('./dashboard-layout/BasicUsage'),
 };
 
 const LazyPreview: React.FC<{ path: string }> = ({ path }) => {
@@ -490,6 +496,24 @@ const layoutComponents: Omit<ComponentCardProps, 'isDark'>[] = [
         title: 'Docked Layout',
         description: 'VS Code-style panel layout — dock, auto-hide, float, resize, and re-dock panels',
         path: '/components/docked-layout',
+    },
+    {
+        title: 'Dashboard Layout',
+        description: 'Grid-based dashboard — drag, resize, show/hide widgets with per-breakpoint layouts and presets',
+        path: '/components/dashboard-layout',
+        badge: 'New',
+    },
+    {
+        title: 'Resizable',
+        description: 'Generic resize wrapper — 8 handles, axis lock, aspect ratio, grid snap, keyboard',
+        path: '/components/resizable',
+        badge: 'New',
+    },
+    {
+        title: 'Moveable',
+        description: 'Drag wrapper for any element — bounds, axis lock, drag handle, grid snap, keyboard',
+        path: '/components/moveable',
+        badge: 'New',
     },
 ];
 

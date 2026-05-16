@@ -143,4 +143,7 @@ export * from './step-dots';
 export * from './swipeable-list-item';
 export * from './touch-ripple';
 export * from './virtual-list';
+export * from './resizable';
+export * from './moveable';
+export * from './dashboard-layout';
 import '../styles/components.css';

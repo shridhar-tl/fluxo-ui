@@ -188,6 +188,9 @@ const navSections: NavSection[] = [
             { label: 'Accordion', path: '/components/accordion' },
             { label: 'Card', path: '/components/card' },
             { label: 'Docked Layout', path: '/components/docked-layout' },
+            { label: 'Dashboard Layout', path: '/components/dashboard-layout' },
+            { label: 'Resizable', path: '/components/resizable' },
+            { label: 'Moveable', path: '/components/moveable' },
         ],
     },
     {

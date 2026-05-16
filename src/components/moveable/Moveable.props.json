@@ -1,0 +1,108 @@
+{
+  "moveableProps": {
+    "children": {
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "Element(s) wrapped by the movable container."
+    },
+    "defaultPosition": {
+      "type": "{ x: number; y: number }",
+      "default": "{ x: 0, y: 0 }",
+      "description": "Initial position (uncontrolled). Translated relative to the wrapper's CSS origin."
+    },
+    "position": {
+      "type": "{ x: number; y: number }",
+      "description": "Controlled position. Provide together with `onPositionChange`."
+    },
+    "onPositionChange": {
+      "type": "(pos: { x: number; y: number }) => void",
+      "description": "Fires on every position change (mouse, touch, keyboard)."
+    },
+    "onMoveStart": {
+      "type": "(event: MoveableStartEvent) => void",
+      "description": "Fires when a drag/keypress sequence begins."
+    },
+    "onMove": {
+      "type": "(event: MoveableMoveEvent) => void",
+      "description": "Fires continuously while moving."
+    },
+    "onMoveEnd": {
+      "type": "(event: MoveableEndEvent) => void",
+      "description": "Fires when the move gesture ends."
+    },
+    "axis": {
+      "type": "'both' | 'x' | 'y'",
+      "default": "'both'",
+      "description": "Restrict movement to a single axis."
+    },
+    "bounds": {
+      "type": "'parent' | 'window' | 'none' | { left, top, right, bottom }",
+      "default": "'none'",
+      "description": "Confine movement. Numeric bounds are translate-space offsets (not CSS coords)."
+    },
+    "grid": {
+      "type": "[number, number]",
+      "description": "Snap position to a [stepX, stepY] grid (requires `snapToGrid`)."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable all interaction."
+    },
+    "handleSelector": {
+      "type": "string",
+      "description": "CSS selector for an inner handle. If set, drags only start when the pointer is on a matching element."
+    },
+    "cancelSelector": {
+      "type": "string",
+      "description": "CSS selector for inner elements that should NOT initiate drag (buttons, inputs, etc.)."
+    },
+    "cursor": {
+      "type": "string",
+      "default": "'move'",
+      "description": "Cursor used while dragging."
+    },
+    "snapToGrid": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Apply the `grid` snap. Ignored if `grid` is unset."
+    },
+    "keyboardStep": {
+      "type": "number",
+      "default": "8",
+      "description": "Pixels per arrow-key press when the wrapper is focused."
+    },
+    "keyboardBigStep": {
+      "type": "number",
+      "default": "32",
+      "description": "Pixels per Shift+arrow press."
+    },
+    "elevateOnDrag": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Add `z-index` + shadow while dragging."
+    },
+    "rememberLastPosition": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Persist the last position to `localStorage` (requires `storageKey`)."
+    },
+    "storageKey": {
+      "type": "string",
+      "description": "localStorage key for `rememberLastPosition`."
+    },
+    "className": {
+      "type": "string",
+      "description": "Class name applied to the outer wrapper."
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles for the wrapper."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Movable element'",
+      "description": "Accessible name for the draggable wrapper."
+    }
+  }
+}

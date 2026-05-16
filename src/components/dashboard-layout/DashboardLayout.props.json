@@ -1,0 +1,224 @@
+{
+  "dashboardLayoutProps": {
+    "widgets": {
+      "type": "DashboardWidget[]",
+      "required": true,
+      "description": "All widgets that can appear on the dashboard. Hidden ones are listed in the Add Widget panel."
+    },
+    "layouts": {
+      "type": "DashboardLayouts",
+      "description": "Controlled per-breakpoint layouts: { lg: WidgetLayout[], md: ..., ... }. Pair with onLayoutChange."
+    },
+    "defaultLayouts": {
+      "type": "DashboardLayouts",
+      "description": "Initial per-breakpoint layouts (uncontrolled). Auto-generated if omitted."
+    },
+    "onLayoutChange": {
+      "type": "(payload: DashboardLayoutChangePayload) => void",
+      "description": "Fires on every layout, visibility, collapse, maximize, preset or reset change."
+    },
+    "breakpoints": {
+      "type": "DashboardBreakpoint[]",
+      "default": "xl/lg/md/sm/xs",
+      "description": "Custom breakpoint definitions: { key, minWidth, columns, label? }."
+    },
+    "rowHeight": {
+      "type": "number",
+      "default": "64",
+      "description": "Pixel height of one grid row."
+    },
+    "margin": {
+      "type": "[number, number]",
+      "default": "[12, 12]",
+      "description": "Horizontal and vertical gap between widgets in pixels."
+    },
+    "containerPadding": {
+      "type": "[number, number]",
+      "default": "[12, 12]",
+      "description": "Padding inside the grid container in pixels."
+    },
+    "minWidgetWidth": {
+      "type": "number",
+      "default": "1",
+      "description": "Minimum column span for any widget."
+    },
+    "minWidgetHeight": {
+      "type": "number",
+      "default": "1",
+      "description": "Minimum row span for any widget."
+    },
+    "editMode": {
+      "type": "boolean",
+      "description": "Controlled edit mode. When true, drag/resize handles and toolbar actions are enabled."
+    },
+    "defaultEditMode": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Initial edit mode (uncontrolled)."
+    },
+    "onEditModeChange": {
+      "type": "(editing: boolean) => void",
+      "description": "Fires when the user toggles edit mode."
+    },
+    "persistKey": {
+      "type": "string",
+      "description": "localStorage key for automatic save/restore of the full DashboardLayoutState."
+    },
+    "presets": {
+      "type": "DashboardLayoutPreset[]",
+      "description": "Named layout presets to expose in the toolbar Presets menu."
+    },
+    "onPresetChange": {
+      "type": "(preset: DashboardLayoutPreset | null) => void",
+      "description": "Fires when the user selects a preset."
+    },
+    "showToolbar": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the built-in toolbar (Edit, Add Widget, Reset, Presets)."
+    },
+    "toolbarTitle": {
+      "type": "string",
+      "description": "Title rendered on the left of the toolbar (also used as the grid's aria-label)."
+    },
+    "toolbarSlotStart": {
+      "type": "React.ReactNode",
+      "description": "Custom content rendered after the toolbar title."
+    },
+    "toolbarSlotEnd": {
+      "type": "React.ReactNode",
+      "description": "Custom content rendered before the Edit button on the right side of the toolbar."
+    },
+    "addWidgetLabel": {
+      "type": "string",
+      "description": "Override the Add Widget button label."
+    },
+    "compactType": {
+      "type": "'vertical' | 'horizontal' | null",
+      "default": "'vertical'",
+      "description": "Auto-compaction direction after drag/resize. null disables compaction."
+    },
+    "allowOverlap": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Allow widgets to overlap (skip collision push-down)."
+    },
+    "emptyState": {
+      "type": "React.ReactNode",
+      "description": "Custom empty state when there are no visible widgets."
+    },
+    "locale": {
+      "type": "Partial<DashboardLayoutLocale>",
+      "description": "Override any built-in toolbar / action label."
+    },
+    "className": {
+      "type": "string",
+      "description": "Class name applied to the outer wrapper."
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline styles for the outer wrapper."
+    },
+    "widgetClassName": {
+      "type": "string",
+      "description": "Class name applied to every widget surface."
+    }
+  },
+  "dashboardWidgetProps": {
+    "id": {
+      "type": "string",
+      "required": true,
+      "description": "Unique widget id; referenced by layouts and presets."
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Widget title shown in the header bar and Add Widget panel."
+    },
+    "icon": {
+      "type": "SVGIcon",
+      "description": "Optional header icon (from fluxo-ui/icons)."
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description shown in the Add Widget panel."
+    },
+    "category": {
+      "type": "string",
+      "description": "Optional grouping label for future categorization."
+    },
+    "chrome": {
+      "type": "'card' | 'plain' | 'borderless' | 'sunken'",
+      "default": "'card'",
+      "description": "Visual chrome around the widget."
+    },
+    "headerActions": {
+      "type": "React.ReactNode",
+      "description": "Custom icons / buttons / dropdowns rendered to the left of the built-in widget actions (refresh, settings, collapse, maximize, remove). Wrap them in elements with class `eui-dashboard-widget-action` to inherit the built-in button styling, or use your own controls. Pointer events inside this slot do not trigger drag."
+    },
+    "renderSettings": {
+      "type": "(ctx: WidgetSettingsContext) => React.ReactNode",
+      "description": "Render-prop for the per-widget settings popover. Setting this enables the gear icon."
+    },
+    "onRefresh": {
+      "type": "() => void | Promise<void>",
+      "description": "Setting this enables the refresh icon. While the promise is pending the icon spins."
+    },
+    "loading": {
+      "type": "boolean",
+      "description": "Force the loading overlay independent of refresh state."
+    },
+    "error": {
+      "type": "string | null",
+      "description": "Display an error block in place of the body content."
+    },
+    "lastUpdated": {
+      "type": "Date | string | number",
+      "description": "Shown in the widget footer as 'Updated: …'."
+    },
+    "badge": {
+      "type": "React.ReactNode",
+      "description": "Pill rendered next to the widget title."
+    },
+    "defaultCollapsed": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Start with the body collapsed to just the header."
+    },
+    "hidden": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Initial visibility. Hidden widgets appear in the Add Widget panel."
+    },
+    "canDrag": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow the user to drag this widget."
+    },
+    "canResize": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow the user to resize this widget."
+    },
+    "canRemove": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow the user to hide this widget."
+    },
+    "canCollapse": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow the user to collapse this widget."
+    },
+    "canMaximize": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow the user to maximize this widget."
+    },
+    "children": {
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "Widget body content."
+    }
+  }
+}

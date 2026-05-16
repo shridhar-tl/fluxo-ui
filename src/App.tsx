@@ -147,6 +147,9 @@ const StepDotsPage = React.lazy(() => import('./story/pages/step-dots/StepDotsPa
 const SwipeableListItemPage = React.lazy(() => import('./story/pages/swipeable-list-item/SwipeableListItemPage'));
 const TouchRipplePage = React.lazy(() => import('./story/pages/touch-ripple/TouchRipplePage'));
 const VirtualListPage = React.lazy(() => import('./story/pages/virtual-list/VirtualListPage'));
+const ResizablePage = React.lazy(() => import('./story/pages/resizable/ResizablePage'));
+const MoveablePage = React.lazy(() => import('./story/pages/moveable/MoveablePage'));
+const DashboardLayoutPage = React.lazy(() => import('./story/pages/dashboard-layout/DashboardLayoutPage'));
 
 const App: React.FC = () => {
     return (
@@ -678,6 +681,9 @@ const App: React.FC = () => {
                     <Route path="/components/swipeable-list-item" element={<LayoutWrapper><SwipeableListItemPage /></LayoutWrapper>} />
                     <Route path="/components/touch-ripple" element={<LayoutWrapper><TouchRipplePage /></LayoutWrapper>} />
                     <Route path="/components/virtual-list" element={<LayoutWrapper><VirtualListPage /></LayoutWrapper>} />
+                    <Route path="/components/resizable" element={<LayoutWrapper><ResizablePage /></LayoutWrapper>} />
+                    <Route path="/components/moveable" element={<LayoutWrapper><MoveablePage /></LayoutWrapper>} />
+                    <Route path="/components/dashboard-layout" element={<LayoutWrapper><DashboardLayoutPage /></LayoutWrapper>} />
                     <Route
                         path="*"
                         element={
