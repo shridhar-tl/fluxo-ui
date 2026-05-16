@@ -1,0 +1,63 @@
+{
+  "virtualListProps": {
+    "items": {
+      "type": "T[]",
+      "required": true,
+      "description": "Source array. Only the rows in the visible window are rendered."
+    },
+    "itemHeight": {
+      "type": "number | (index: number, item: T) => number",
+      "description": "Row height. Pass a number for uniform rows or a function for per-row heights. When omitted, estimatedItemHeight is used."
+    },
+    "renderItem": {
+      "type": "(item: T, index: number) => ReactNode",
+      "required": true,
+      "description": "Renderer for each row."
+    },
+    "keyExtractor": {
+      "type": "(item: T, index: number) => Key",
+      "description": "Optional key extractor for stable row identity."
+    },
+    "overscan": {
+      "type": "number",
+      "default": "4",
+      "description": "Number of rows to render before/after the visible window."
+    },
+    "height": {
+      "type": "string | number",
+      "default": "'100%'",
+      "description": "CSS height of the scrollable container."
+    },
+    "estimatedItemHeight": {
+      "type": "number",
+      "default": "56",
+      "description": "Fallback row height when itemHeight is not provided."
+    },
+    "variant": {
+      "type": "'plain' | 'divided' | 'card'",
+      "default": "'plain'",
+      "description": "Visual style. 'divided' draws a separator between rows; 'card' renders each row in a card with margin."
+    },
+    "emptyState": {
+      "type": "ReactNode",
+      "description": "Optional content rendered when items is empty."
+    },
+    "onEndReached": {
+      "type": "() => void",
+      "description": "Fired when the scroll position is within endReachedThreshold of the bottom. Pairs with infinite loading."
+    },
+    "endReachedThreshold": {
+      "type": "number",
+      "default": "200",
+      "description": "Pixels from the bottom at which onEndReached should fire."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the scroller."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name for the list landmark."
+    }
+  }
+}

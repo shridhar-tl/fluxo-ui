@@ -1,0 +1,18 @@
+@use '../eui-vars' as *;
+
+:root {
+    --eui-safe-top: env(safe-area-inset-top, 0px);
+    --eui-safe-right: env(safe-area-inset-right, 0px);
+    --eui-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --eui-safe-left: env(safe-area-inset-left, 0px);
+}
+
+.eui-safe-area-view {
+    box-sizing: border-box;
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+
+    &.eui-safe-area-fill {
+        background-color: var(--eui-bg);
+    }
+}

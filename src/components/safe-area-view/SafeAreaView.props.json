@@ -1,0 +1,32 @@
+{
+  "safeAreaViewProps": {
+    "edges": {
+      "type": "SafeAreaEdge | SafeAreaEdge[]",
+      "default": "'all'",
+      "description": "Which insets to apply. Supports 'top' | 'right' | 'bottom' | 'left' | 'all' | 'horizontal' | 'vertical', or an array of those."
+    },
+    "mode": {
+      "type": "'padding' | 'margin'",
+      "default": "'padding'",
+      "description": "Apply the insets as padding (default) or margin."
+    },
+    "as": {
+      "type": "keyof JSX.IntrinsicElements",
+      "default": "'div'",
+      "description": "HTML element to render as (e.g., 'main', 'section', 'header', 'footer')."
+    },
+    "fillBackground": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Apply the theme background to the wrapper so notch areas look consistent."
+    },
+    "children": {
+      "type": "ReactNode",
+      "description": "Content rendered inside the safe area wrapper."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the wrapper."
+    }
+  }
+}

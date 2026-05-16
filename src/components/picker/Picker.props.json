@@ -1,0 +1,47 @@
+{
+  "pickerProps": {
+    "columns": {
+      "type": "PickerColumn[]",
+      "required": true,
+      "description": "Picker columns. Each column: { key?, label?, options: { value, label, disabled? }[], flex? }."
+    },
+    "value": {
+      "type": "string[]",
+      "required": true,
+      "description": "Selected value for each column, in order."
+    },
+    "onChange": {
+      "type": "(value: string[]) => void",
+      "required": true,
+      "description": "Called whenever any column settles on a new option."
+    },
+    "itemHeight": {
+      "type": "number",
+      "default": "36",
+      "description": "Height in pixels for each row."
+    },
+    "visibleItems": {
+      "type": "number",
+      "default": "5",
+      "description": "Number of rows visible at once. Odd numbers keep the selected row centered."
+    },
+    "variant": {
+      "type": "'wheel' | 'flat' | 'compact'",
+      "default": "'wheel'",
+      "description": "Visual style. 'wheel' fades and shrinks outer rows like an iOS picker; 'flat' is a simple highlighted row; 'compact' uses smaller text."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable interaction across all columns."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the picker root."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name for the picker group."
+    }
+  }
+}

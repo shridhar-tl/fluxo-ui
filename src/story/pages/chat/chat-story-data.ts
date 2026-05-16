@@ -14,7 +14,7 @@ export const CHAT_THEMES: { value: ChatTheme; label: string; description: string
 
 export const BOT_REPLIES: string[] = [
     'Hi there! 👋 Thanks for reaching out — how can I help you today?',
-    "FluxoUI ships with **80+ production-ready components** — buttons, tables, charts, editors, calendars, and more.",
+    "FluxoUI ships with **100+ production-ready components** — buttons, tables, charts, editors, calendars, and more.",
     'You can install it via npm: `npm install fluxo-ui`. Then import any component from `fluxo-ui`.',
     'The chat component supports **9 built-in themes**: classic, modern, iris, dusk, mist, ember, canvas, prism, and aurora.',
     'Switching themes is as simple as passing a `theme` prop. Try the theme switcher above to see it live!',

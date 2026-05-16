@@ -1,0 +1,56 @@
+@use '../eui-vars' as *;
+
+.eui-virtual-list {
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+
+    &.eui-virtual-list-empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.eui-virtual-list-inner {
+    position: relative;
+    width: 100%;
+}
+
+.eui-virtual-list-window {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    will-change: transform;
+}
+
+.eui-virtual-list-item {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.eui-virtual-list-variant-divided .eui-virtual-list-item + .eui-virtual-list-item {
+    border-top: 1px solid var(--eui-border-subtle);
+}
+
+.eui-virtual-list-variant-card {
+    padding: 0.5rem;
+
+    .eui-virtual-list-item {
+        background-color: var(--eui-bg);
+        border-radius: var(--eui-radius-md);
+        border: 1px solid var(--eui-border-subtle);
+        margin-bottom: 0.5rem;
+    }
+}
+
+body.mode-dark .eui-virtual-list-variant-card .eui-virtual-list-item {
+    background-color: var(--eui-bg-subtle);
+}

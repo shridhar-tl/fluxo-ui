@@ -1,13 +1,13 @@
 # Fluxo UI
 
-A comprehensive, accessible React component library built with TypeScript. Includes **80+ production-ready UI components**, a custom state management solution, a dependency injection container, 12 color themes, dark mode, and full keyboard navigation.
+A comprehensive, accessible React component library built with TypeScript. Includes **100+ production-ready UI components**, a custom state management solution, a dependency injection container, 12 color themes, dark mode, and full keyboard navigation.
 
 - **Website & Live Demos:** [fluxo-ui.utilsware.com](https://fluxo-ui.utilsware.com/)
 - **Repository:** [github.com/shridhar-tl/fluxo-ui](https://github.com/shridhar-tl/fluxo-ui)
 
 ## Highlights
 
-- 80+ accessible, production-ready components
+- 100+ accessible, production-ready components
 - Full TypeScript support with first-class types
 - 12 built-in color themes + dark mode out of the box
 - Custom state management (batched updates, computed properties, middleware)
@@ -285,6 +285,24 @@ function Counter() {
 | Chat Conversations | Two-pane inbox with search, pinned, archived, and unread counts                              |
 | Multi-Chat         | Render multiple independent chat windows on a single screen                                  |
 | Chat Templates     | Built-in text/image/file/options/video templates plus your own custom renderers              |
+
+### Mobile
+
+| Component            | Description                                                                  |
+| -------------------- | ---------------------------------------------------------------------------- |
+| Nav Bar              | Mobile app bar with back, title, actions, and optional sub-row              |
+| Mobile Tab Bar       | Bottom navigation with badges + four visual variants                         |
+| Action Sheet         | iOS / Material / plain bottom action list with destructive states           |
+| Pull To Refresh      | Promise-aware pull-down refresh with four indicator styles                   |
+| Swipeable List Item  | Row with reveal-on-swipe actions and full-swipe trigger                      |
+| Picker               | Wheel / flat / compact picker — single or multi-column                       |
+| PIN / OTP Input      | Auto-advancing OTP boxes with paste, masking, and error state                |
+| Floating Label Input | Material-style floating label — outlined, filled, underlined                 |
+| Step Dots            | Tiny dot / bar / numbered position indicator                                 |
+| Touch Ripple         | Drop-in Material ripple wrapper for any tappable surface                     |
+| Skeleton List        | Nine ready-made skeleton list/card placeholders                              |
+| Virtual List         | Windowed list with onEndReached for very long mobile feeds                   |
+| Safe Area View       | Wrapper that applies env(safe-area-inset-*) for iOS notches                  |
 
 ## Hooks & Utilities
 

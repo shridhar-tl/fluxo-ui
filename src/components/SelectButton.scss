@@ -3,35 +3,170 @@
 .eui-select-button {
     display: inline-flex;
 
-    &.eui-select-button-disabled { opacity: 0.5; }
-
-    // ── Horizontal ────────────────────────────────────────────────────────────
-    &.eui-select-button-horizontal {
-        flex-direction: row;
+    &.eui-select-button-full {
+        display: flex;
+        width: 100%;
 
         .eui-select-button-item {
-            border-right: none;
-
-            &.eui-select-button-item-first  { border-radius: var(--eui-radius-md) 0 0 var(--eui-radius-md); }
-            &.eui-select-button-item-last   { border-radius: 0 var(--eui-radius-md) var(--eui-radius-md) 0; border-right: 1px solid var(--eui-border); }
-            &.eui-select-button-item-middle { border-radius: 0; }
-
-            &.eui-select-button-item-selected { border-right: 1px solid var(--eui-primary); }
+            flex: 1 1 0;
         }
     }
 
-    // ── Vertical ──────────────────────────────────────────────────────────────
-    &.eui-select-button-vertical {
-        flex-direction: column;
+    &.eui-select-button-disabled { opacity: 0.5; }
+
+    // ── Variant: default (existing bordered look) ───────────────────────────────
+    &.eui-select-button-variant-default {
+        &.eui-select-button-horizontal {
+            flex-direction: row;
+
+            .eui-select-button-item {
+                border-right: none;
+
+                &.eui-select-button-item-first  { border-radius: var(--eui-radius-md) 0 0 var(--eui-radius-md); }
+                &.eui-select-button-item-last   { border-radius: 0 var(--eui-radius-md) var(--eui-radius-md) 0; border-right: 1px solid var(--eui-border); }
+                &.eui-select-button-item-middle { border-radius: 0; }
+
+                &.eui-select-button-item-selected { border-right: 1px solid var(--eui-primary); }
+
+                // The right-edge border on the selected button must match the
+                // active theme color so it merges with the filled background
+                // instead of leaving a primary-blue sliver on a green/grey fill.
+                &.eui-theme-secondary.eui-select-button-item-selected { border-right-color: #475569; }
+                &.eui-theme-success.eui-select-button-item-selected   { border-right-color: #10b981; }
+                &.eui-theme-dark.eui-select-button-item-selected      { border-right-color: #1f2937; }
+            }
+        }
+
+        &.eui-select-button-vertical {
+            flex-direction: column;
+
+            .eui-select-button-item {
+                border-bottom: none;
+
+                &.eui-select-button-item-first  { border-radius: var(--eui-radius-md) var(--eui-radius-md) 0 0; }
+                &.eui-select-button-item-last   { border-radius: 0 0 var(--eui-radius-md) var(--eui-radius-md); border-bottom: 1px solid var(--eui-border); }
+                &.eui-select-button-item-middle { border-radius: 0; }
+
+                &.eui-select-button-item-selected { border-bottom: 1px solid var(--eui-primary); }
+
+                &.eui-theme-secondary.eui-select-button-item-selected { border-bottom-color: #475569; }
+                &.eui-theme-success.eui-select-button-item-selected   { border-bottom-color: #10b981; }
+                &.eui-theme-dark.eui-select-button-item-selected      { border-bottom-color: #1f2937; }
+            }
+        }
+    }
+
+    // ── Variant: segmented (iOS-style pill segmented control) ───────────────────
+    &.eui-select-button-variant-segmented {
+        background-color: var(--eui-bg-subtle);
+        border-radius: 999px;
+        padding: 0.1875rem;
+        gap: 0;
+
+        &.eui-select-button-horizontal { flex-direction: row; }
+        &.eui-select-button-vertical { flex-direction: column; }
 
         .eui-select-button-item {
-            border-bottom: none;
+            border: none;
+            border-radius: 999px;
+            background-color: transparent;
+            color: var(--eui-text-muted);
+            font-weight: 500;
+            position: relative;
 
-            &.eui-select-button-item-first  { border-radius: var(--eui-radius-md) var(--eui-radius-md) 0 0; }
-            &.eui-select-button-item-last   { border-radius: 0 0 var(--eui-radius-md) var(--eui-radius-md); border-bottom: 1px solid var(--eui-border); }
-            &.eui-select-button-item-middle { border-radius: 0; }
+            &:not(:last-child) {
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 25%;
+                    bottom: 25%;
+                    width: 1px;
+                    background-color: var(--eui-border);
+                    opacity: 0.5;
+                    transition: opacity 0.15s ease;
+                }
+            }
 
-            &.eui-select-button-item-selected { border-bottom: 1px solid var(--eui-primary); }
+            &.eui-select-button-horizontal-tail::after,
+            &:not(:last-child)::after {
+                right: 0;
+            }
+
+            &.eui-select-button-item-selected,
+            &.eui-select-button-item-selected + .eui-select-button-item,
+            &:hover {
+                &::after { opacity: 0; }
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--eui-primary);
+                z-index: 10;
+            }
+
+            &:hover:not(:disabled):not(.eui-select-button-item-disabled):not(.eui-select-button-item-selected) {
+                color: var(--eui-text);
+                background-color: var(--eui-bg-hover);
+            }
+
+            &.eui-select-button-item-selected {
+                background-color: var(--eui-bg);
+                color: var(--eui-text);
+                box-shadow: var(--eui-shadow);
+                border: none;
+            }
+        }
+    }
+
+    // ── Variant: pill (rounded buttons with gap) ────────────────────────────────
+    &.eui-select-button-variant-pill {
+        gap: 0.5rem;
+
+        &.eui-select-button-horizontal { flex-direction: row; flex-wrap: wrap; }
+        &.eui-select-button-vertical { flex-direction: column; }
+
+        .eui-select-button-item {
+            border-radius: 999px;
+            border: 1px solid var(--eui-border);
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--eui-primary);
+            }
+        }
+    }
+
+    // ── Variant: underline (tabs-like) ──────────────────────────────────────────
+    &.eui-select-button-variant-underline {
+        border-bottom: 1px solid var(--eui-border);
+
+        &.eui-select-button-horizontal { flex-direction: row; }
+        &.eui-select-button-vertical { flex-direction: column; }
+
+        .eui-select-button-item {
+            border: none;
+            border-radius: 0;
+            background-color: transparent;
+            color: var(--eui-text-muted);
+            position: relative;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px var(--eui-primary);
+            }
+
+            &:hover:not(:disabled):not(.eui-select-button-item-disabled):not(.eui-select-button-item-selected) {
+                color: var(--eui-text);
+                background-color: transparent;
+            }
+
+            &.eui-select-button-item-selected {
+                background-color: transparent;
+                color: var(--eui-primary);
+                border-color: var(--eui-primary);
+            }
         }
     }
 
@@ -54,7 +189,7 @@
         border: 1px solid var(--eui-border);
         border-radius: 0;
         font-weight: 500;
-        transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -83,6 +218,37 @@
             z-index: 10;
         }
 
+        // ── Theme-driven active background ──────────────────────────────────────
+        // `theme` prop maps to .eui-theme-{name} on each button.
+        // Status colors (success, etc.) are intentionally hardcoded per CLAUDE.md.
+        &.eui-theme-secondary.eui-select-button-item-selected {
+            background-color: #475569;
+            border-color: #475569;
+            color: #ffffff;
+            &:hover:not(:disabled) { background-color: #334155; border-color: #334155; }
+        }
+
+        &.eui-theme-success.eui-select-button-item-selected {
+            background-color: #10b981;
+            border-color: #10b981;
+            color: #ffffff;
+            &:hover:not(:disabled) { background-color: #059669; border-color: #059669; }
+        }
+
+        &.eui-theme-dark.eui-select-button-item-selected {
+            background-color: #1f2937;
+            border-color: #1f2937;
+            color: #ffffff;
+            &:hover:not(:disabled) { background-color: #111827; border-color: #111827; }
+        }
+
+        &.eui-theme-default.eui-select-button-item-selected,
+        &.eui-theme-primary.eui-select-button-item-selected {
+            background-color: var(--eui-primary);
+            border-color: var(--eui-primary);
+            color: var(--eui-text-on-primary);
+        }
+
         &.eui-select-button-item-disabled,
         &:disabled {
             cursor: not-allowed;
@@ -94,5 +260,33 @@
             height: 1rem;
             margin-right: 0.5rem;
         }
+    }
+
+    // Segmented variant active state should follow theme too
+    &.eui-select-button-variant-segmented .eui-select-button-item.eui-select-button-item-selected {
+        &.eui-theme-secondary { background-color: var(--eui-bg); color: #475569; box-shadow: var(--eui-shadow); }
+        &.eui-theme-success   { background-color: var(--eui-bg); color: #10b981; box-shadow: var(--eui-shadow); }
+        &.eui-theme-dark      { background-color: var(--eui-bg); color: #1f2937; box-shadow: var(--eui-shadow); }
+    }
+
+    // Underline variant active state should follow theme too
+    &.eui-select-button-variant-underline .eui-select-button-item.eui-select-button-item-selected {
+        &.eui-theme-secondary { color: #475569; border-color: #475569; background: transparent; }
+        &.eui-theme-success   { color: #10b981; border-color: #10b981; background: transparent; }
+        &.eui-theme-dark      { color: #1f2937; border-color: #1f2937; background: transparent; }
+    }
+}
+
+body.mode-dark .eui-select-button {
+    .eui-select-button-item.eui-theme-dark.eui-select-button-item-selected {
+        background-color: #f3f4f6;
+        border-color: #f3f4f6;
+        color: #111827;
+        &:hover:not(:disabled) { background-color: #e5e7eb; border-color: #e5e7eb; }
+    }
+
+    &.eui-select-button-variant-underline .eui-select-button-item.eui-select-button-item-selected.eui-theme-dark {
+        color: #f3f4f6;
+        border-color: #f3f4f6;
     }
 }

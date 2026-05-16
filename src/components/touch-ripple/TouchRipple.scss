@@ -1,0 +1,84 @@
+@use '../eui-vars' as *;
+
+.eui-touch-ripple {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    isolation: isolate;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+
+    &.eui-touch-ripple-disabled {
+        pointer-events: none;
+    }
+}
+
+.eui-touch-ripple-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.eui-touch-ripple-blot {
+    position: absolute;
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: 0.18;
+    transform: translate(-50%, -50%) scale(0);
+    animation-name: eui-touch-ripple-pulse;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-fill-mode: forwards;
+}
+
+@keyframes eui-touch-ripple-pulse {
+    from {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0.28;
+    }
+    to {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
+
+.eui-touch-ripple-variant-material .eui-touch-ripple-blot {
+    background-color: currentColor;
+    opacity: 0.18;
+}
+
+.eui-touch-ripple-variant-subtle .eui-touch-ripple-blot {
+    background-color: currentColor;
+    opacity: 0.08;
+}
+
+.eui-touch-ripple-variant-highlight .eui-touch-ripple-blot {
+    background-color: var(--eui-primary);
+    opacity: 0.25;
+}
+
+.eui-touch-ripple-variant-outline {
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        border: 1px solid var(--eui-primary);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s ease;
+        z-index: 0;
+    }
+
+    &:active::after,
+    &:focus-within::after {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-touch-ripple-blot {
+        animation: none;
+        opacity: 0;
+    }
+}

@@ -15,6 +15,7 @@ import RealWorldExamples from './RealWorldExamples';
 import SizeVariants from './SizeVariants';
 import ThemeVariants from './ThemeVariants';
 import UsageNotes from './UsageNotes';
+import Variants from './Variants';
 import VerticalDirection from './VerticalDirection';
 import WithIcons from './WithIcons';
 
@@ -23,6 +24,7 @@ import _SelectButton_props_json from './../../../components/SelectButton.props.j
 const { selectButtonProps } = _SelectButton_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Single selection example' },
+    { id: 'variants', title: 'Variants', description: 'Segmented, pill, underline' },
     { id: 'multiple-selection', title: 'Multiple Selection', description: 'Multi-select mode' },
     { id: 'vertical-direction', title: 'Vertical Direction', description: 'Vertical layout' },
     { id: 'with-icons', title: 'With Icons', description: 'Buttons with icon support' },
@@ -97,6 +99,14 @@ const SelectButtonPage: React.FC = () => {
             <section id="basic-usage" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Basic Usage</h2>
                 <BasicUsage />
+            </section>
+
+            <section id="variants" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Variants</h2>
+                <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    Use the <code>variant</code> prop to switch between <code>default</code>, <code>segmented</code> (iOS-style pill), <code>pill</code> (rounded chips), and <code>underline</code> (tabs). Pair with <code>fullWidth</code> for mobile toolbars.
+                </p>
+                <Variants />
             </section>
 
             <section id="multiple-selection" className="scroll-mt-8">

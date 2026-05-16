@@ -1,16 +1,26 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../../assets/icons';
+import { lockBodyScroll, unlockBodyScroll } from '../../utils/body-scroll-lock';
 import './Drawer.scss';
 
 type DrawerPosition = 'left' | 'right' | 'top' | 'bottom';
+type DrawerVariant = 'panel' | 'sheet';
+type DrawerSnapPoint = number | string;
 
 interface DrawerProps {
     open: boolean;
     onClose: () => void;
     position?: DrawerPosition;
     size?: string;
+    variant?: DrawerVariant;
+    showDragHandle?: boolean;
+    draggable?: boolean;
+    snapPoints?: DrawerSnapPoint[];
+    initialSnap?: number;
+    onSnapChange?: (index: number) => void;
+    rounded?: boolean;
     backdrop?: boolean;
     pushContent?: boolean;
     pushContentSelector?: string;
@@ -36,10 +46,29 @@ const focusableSelector = [
 ].join(',');
 
 const EXIT_DURATION_MS = 300;
+const DISMISS_THRESHOLD_RATIO = 0.4;
+const VELOCITY_DISMISS_PX_PER_MS = 0.6;
 
 const reducedMotionMatches = () => {
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const resolveSnapPx = (snap: DrawerSnapPoint, viewportPx: number): number => {
+    if (typeof snap === 'number') {
+        if (snap <= 1) return Math.round(viewportPx * snap);
+        return snap;
+    }
+    const value = snap.trim();
+    if (value.endsWith('%')) {
+        const ratio = parseFloat(value) / 100;
+        return Math.round(viewportPx * ratio);
+    }
+    if (value.endsWith('px')) return parseFloat(value);
+    if (value.endsWith('vh')) return Math.round(viewportPx * (parseFloat(value) / 100));
+    const numeric = parseFloat(value);
+    if (!Number.isNaN(numeric)) return numeric;
+    return Math.round(viewportPx * 0.5);
 };
 
 const Drawer: React.FC<DrawerProps> = ({
@@ -47,6 +76,13 @@ const Drawer: React.FC<DrawerProps> = ({
     onClose,
     position = 'right',
     size = '400px',
+    variant,
+    showDragHandle,
+    draggable,
+    snapPoints,
+    initialSnap = 0,
+    onSnapChange,
+    rounded,
     backdrop = true,
     pushContent = false,
     pushContentSelector,
@@ -65,11 +101,46 @@ const Drawer: React.FC<DrawerProps> = ({
     const previousFocusRef = useRef<HTMLElement | null>(null);
     const onCloseRef = useRef(onClose);
     onCloseRef.current = onClose;
+    const onSnapChangeRef = useRef(onSnapChange);
+    onSnapChangeRef.current = onSnapChange;
     const generatedId = useId();
     const titleId = `eui-drawer-title-${generatedId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
+    const isSheetVariant = variant === 'sheet' || (variant === undefined && position === 'bottom' && (snapPoints || showDragHandle || draggable));
+    const isBottom = position === 'bottom';
+    const isTop = position === 'top';
+    const isVertical = isBottom || isTop;
+    const isDraggableResolved = draggable ?? (isSheetVariant && isVertical);
+    const showHandleResolved = showDragHandle ?? (isSheetVariant && isVertical);
+    const isRounded = rounded ?? isSheetVariant;
+
     const [shouldRender, setShouldRender] = useState(open);
     const [visibleClass, setVisibleClass] = useState(open);
+    const [viewportH, setViewportH] = useState(() => (typeof window !== 'undefined' ? window.innerHeight : 800));
+    const [snapIndex, setSnapIndex] = useState(initialSnap);
+    const [dragOffset, setDragOffset] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
+
+    useEffect(() => {
+        if (!snapPoints) return;
+        const onResize = () => setViewportH(window.innerHeight);
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+    }, [snapPoints]);
+
+    const resolvedSnapPxList = useMemo(() => {
+        if (!snapPoints || snapPoints.length === 0) return null;
+        const list = snapPoints.map((p) => resolveSnapPx(p, viewportH));
+        return [...list].sort((a, b) => a - b);
+    }, [snapPoints, viewportH]);
+
+    const currentSheetHeightPx = useMemo(() => {
+        if (resolvedSnapPxList) {
+            const safeIndex = Math.min(Math.max(snapIndex, 0), resolvedSnapPxList.length - 1);
+            return resolvedSnapPxList[safeIndex];
+        }
+        return null;
+    }, [resolvedSnapPxList, snapIndex]);
 
     useEffect(() => {
         if (open) {
@@ -85,6 +156,14 @@ const Drawer: React.FC<DrawerProps> = ({
         const t = window.setTimeout(() => setShouldRender(false), wait);
         return () => window.clearTimeout(t);
     }, [open]);
+
+    useEffect(() => {
+        if (!open) {
+            setSnapIndex(initialSnap);
+            setDragOffset(0);
+            setIsDragging(false);
+        }
+    }, [open, initialSnap]);
 
     const handleFocusTrap = useCallback((e: KeyboardEvent) => {
         if (e.key !== 'Tab') return;
@@ -117,8 +196,7 @@ const Drawer: React.FC<DrawerProps> = ({
         if (!shouldRender) return;
 
         previousFocusRef.current = document.activeElement as HTMLElement;
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
+        lockBodyScroll();
 
         const inerted: HTMLElement[] = [];
         const portalEl = portalRef.current;
@@ -150,7 +228,7 @@ const Drawer: React.FC<DrawerProps> = ({
 
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
-            document.body.style.overflow = previousOverflow;
+            unlockBodyScroll();
             cancelAnimationFrame(focusFrame);
             for (const el of inerted) el.removeAttribute('inert');
             previousFocusRef.current?.focus();
@@ -193,10 +271,109 @@ const Drawer: React.FC<DrawerProps> = ({
         }
     };
 
+    const dragStateRef = useRef<{
+        startY: number;
+        startTime: number;
+        lastY: number;
+        lastTime: number;
+        startHeight: number;
+    } | null>(null);
+
+    const handlePointerDown = (e: React.PointerEvent) => {
+        if (!isDraggableResolved || !isVertical) return;
+        const target = e.target as HTMLElement;
+        if (target.closest('[data-drawer-no-drag]')) return;
+        const startHeight = currentSheetHeightPx ?? drawerRef.current?.getBoundingClientRect().height ?? 0;
+        dragStateRef.current = {
+            startY: e.clientY,
+            startTime: performance.now(),
+            lastY: e.clientY,
+            lastTime: performance.now(),
+            startHeight,
+        };
+        setIsDragging(true);
+        (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+    };
+
+    const handlePointerMove = (e: React.PointerEvent) => {
+        const state = dragStateRef.current;
+        if (!state) return;
+        const delta = e.clientY - state.startY;
+        const adjusted = isBottom ? delta : -delta;
+        state.lastY = e.clientY;
+        state.lastTime = performance.now();
+        setDragOffset(Math.max(adjusted, -state.startHeight));
+    };
+
+    const finishDrag = (e: React.PointerEvent) => {
+        const state = dragStateRef.current;
+        if (!state) return;
+        dragStateRef.current = null;
+        setIsDragging(false);
+
+        const totalDelta = (isBottom ? 1 : -1) * (e.clientY - state.startY);
+        const elapsed = Math.max(performance.now() - state.startTime, 1);
+        const velocity = totalDelta / elapsed;
+        const startHeight = state.startHeight;
+
+        if (resolvedSnapPxList && resolvedSnapPxList.length > 0) {
+            const projectedHeight = startHeight - totalDelta;
+            if (projectedHeight < resolvedSnapPxList[0] * (1 - DISMISS_THRESHOLD_RATIO) || velocity > VELOCITY_DISMISS_PX_PER_MS) {
+                setDragOffset(0);
+                onClose();
+                return;
+            }
+            let closest = 0;
+            let closestDist = Infinity;
+            for (let i = 0; i < resolvedSnapPxList.length; i += 1) {
+                const dist = Math.abs(resolvedSnapPxList[i] - projectedHeight);
+                if (dist < closestDist) {
+                    closestDist = dist;
+                    closest = i;
+                }
+            }
+            setSnapIndex(closest);
+            setDragOffset(0);
+            if (closest !== snapIndex) onSnapChangeRef.current?.(closest);
+        } else {
+            const drawerH = drawerRef.current?.getBoundingClientRect().height ?? 0;
+            if (totalDelta > drawerH * DISMISS_THRESHOLD_RATIO || velocity > VELOCITY_DISMISS_PX_PER_MS) {
+                setDragOffset(0);
+                onClose();
+                return;
+            }
+            setDragOffset(0);
+        }
+    };
+
+    const handlePointerUp = (e: React.PointerEvent) => finishDrag(e);
+    const handlePointerCancel = (e: React.PointerEvent) => finishDrag(e);
+
     if (!shouldRender) return null;
 
     const isHorizontal = position === 'left' || position === 'right';
-    const sizeStyle = isHorizontal ? { width: size } : { height: size };
+    const baseSizeStyle: React.CSSProperties = isHorizontal
+        ? { width: size }
+        : currentSheetHeightPx != null
+            ? { height: `${currentSheetHeightPx}px` }
+            : { height: size };
+
+    const transformStyle = (() => {
+        if (!isDraggableResolved || !isVertical) return undefined;
+        if (dragOffset === 0) return undefined;
+        if (isBottom) {
+            const offset = Math.max(dragOffset, 0);
+            return { transform: `translateY(${offset}px)` };
+        }
+        const offset = Math.max(dragOffset, 0);
+        return { transform: `translateY(-${offset}px)` };
+    })();
+
+    const sizeStyle: React.CSSProperties = {
+        ...baseSizeStyle,
+        ...transformStyle,
+        ...(isDragging ? { transition: 'none' } : null),
+    };
 
     const titleElement = !header && title ? <span id={titleId}>{title}</span> : null;
     const headerContent = header ?? titleElement;
@@ -217,7 +394,12 @@ const Drawer: React.FC<DrawerProps> = ({
                 className={classNames(
                     'eui-drawer',
                     `eui-drawer-${position}`,
-                    { 'eui-drawer-visible': visibleClass },
+                    {
+                        'eui-drawer-visible': visibleClass,
+                        'eui-drawer-sheet': isSheetVariant,
+                        'eui-drawer-rounded': isRounded,
+                        'eui-drawer-dragging': isDragging,
+                    },
                     className,
                 )}
                 style={sizeStyle}
@@ -226,9 +408,28 @@ const Drawer: React.FC<DrawerProps> = ({
                 aria-label={computedAriaLabel}
                 aria-labelledby={computedAriaLabelledBy}
                 tabIndex={-1}
+                onPointerDown={isDraggableResolved && !showHandleResolved ? handlePointerDown : undefined}
+                onPointerMove={isDraggableResolved && !showHandleResolved ? handlePointerMove : undefined}
+                onPointerUp={isDraggableResolved && !showHandleResolved ? handlePointerUp : undefined}
+                onPointerCancel={isDraggableResolved && !showHandleResolved ? handlePointerCancel : undefined}
             >
+                {showHandleResolved && !isTop && (
+                    <div
+                        className="eui-drawer-handle-area"
+                        role="separator"
+                        aria-orientation="horizontal"
+                        aria-label="Drag to resize, press Escape to close"
+                        tabIndex={isDraggableResolved ? 0 : -1}
+                        onPointerDown={isDraggableResolved ? handlePointerDown : undefined}
+                        onPointerMove={isDraggableResolved ? handlePointerMove : undefined}
+                        onPointerUp={isDraggableResolved ? handlePointerUp : undefined}
+                        onPointerCancel={isDraggableResolved ? handlePointerCancel : undefined}
+                    >
+                        <div className="eui-drawer-handle" />
+                    </div>
+                )}
                 {headerContent !== null && (
-                    <div className="eui-drawer-header">
+                    <div className="eui-drawer-header" data-drawer-no-drag>
                         <div className="eui-drawer-header-content">{headerContent}</div>
                         <button
                             className="eui-drawer-close"
@@ -240,8 +441,8 @@ const Drawer: React.FC<DrawerProps> = ({
                         </button>
                     </div>
                 )}
-                <div className="eui-drawer-body">
-                    {headerContent === null && (
+                <div className="eui-drawer-body" data-drawer-no-drag>
+                    {headerContent === null && !showHandleResolved && (
                         <button
                             className="eui-drawer-close-floating"
                             onClick={onClose}
@@ -254,7 +455,22 @@ const Drawer: React.FC<DrawerProps> = ({
                     {children}
                 </div>
                 {footer && (
-                    <div className="eui-drawer-footer">{footer}</div>
+                    <div className="eui-drawer-footer" data-drawer-no-drag>{footer}</div>
+                )}
+                {showHandleResolved && isTop && (
+                    <div
+                        className="eui-drawer-handle-area eui-drawer-handle-area-bottom"
+                        role="separator"
+                        aria-orientation="horizontal"
+                        aria-label="Drag to resize, press Escape to close"
+                        tabIndex={isDraggableResolved ? 0 : -1}
+                        onPointerDown={isDraggableResolved ? handlePointerDown : undefined}
+                        onPointerMove={isDraggableResolved ? handlePointerMove : undefined}
+                        onPointerUp={isDraggableResolved ? handlePointerUp : undefined}
+                        onPointerCancel={isDraggableResolved ? handlePointerCancel : undefined}
+                    >
+                        <div className="eui-drawer-handle" />
+                    </div>
                 )}
             </div>
         </div>
@@ -264,4 +480,4 @@ const Drawer: React.FC<DrawerProps> = ({
 };
 
 export { Drawer };
-export type { DrawerProps, DrawerPosition };
+export type { DrawerProps, DrawerPosition, DrawerVariant, DrawerSnapPoint };

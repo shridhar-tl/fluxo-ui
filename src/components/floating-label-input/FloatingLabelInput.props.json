@@ -1,0 +1,65 @@
+{
+  "floatingLabelInputProps": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Floating label text shown above the input when focused or filled."
+    },
+    "value": {
+      "type": "string | number",
+      "description": "Controlled value."
+    },
+    "defaultValue": {
+      "type": "string | number",
+      "description": "Initial value for uncontrolled usage."
+    },
+    "onChange": {
+      "type": "(event: ChangeEvent<HTMLInputElement>) => void",
+      "description": "Change handler."
+    },
+    "helperText": {
+      "type": "ReactNode",
+      "description": "Helper line shown below the input."
+    },
+    "errorText": {
+      "type": "ReactNode",
+      "description": "Error message shown in place of the helper when set. Triggers error styling."
+    },
+    "variant": {
+      "type": "'outlined' | 'filled' | 'underlined'",
+      "default": "'outlined'",
+      "description": "Visual style. 'filled' uses a subtle background; 'underlined' shows only the bottom rule."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Field size."
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Stretch to fill its container."
+    },
+    "leadingIcon": {
+      "type": "ReactNode",
+      "description": "Icon shown before the input field."
+    },
+    "trailingIcon": {
+      "type": "ReactNode",
+      "description": "Icon shown after the input field."
+    },
+    "invalid": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Force error styling without an error message."
+    },
+    "rootClassName": {
+      "type": "string",
+      "description": "Additional CSS class for the wrapper element."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the underlying <input>."
+    }
+  }
+}

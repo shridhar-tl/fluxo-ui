@@ -1,0 +1,83 @@
+{
+  "pinInputProps": {
+    "length": {
+      "type": "number",
+      "default": "6",
+      "description": "Number of digit/character fields."
+    },
+    "value": {
+      "type": "string",
+      "description": "Controlled value of the combined code."
+    },
+    "defaultValue": {
+      "type": "string",
+      "default": "''",
+      "description": "Initial value when uncontrolled."
+    },
+    "onChange": {
+      "type": "(value: string) => void",
+      "description": "Called on every character change."
+    },
+    "onComplete": {
+      "type": "(value: string) => void",
+      "description": "Called when all fields are filled."
+    },
+    "type": {
+      "type": "'numeric' | 'alphanumeric' | 'password'",
+      "default": "'numeric'",
+      "description": "Allowed character set. 'password' also masks input."
+    },
+    "mask": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Mask characters as dots/asterisks even if type isn't password."
+    },
+    "variant": {
+      "type": "'box' | 'underline' | 'soft'",
+      "default": "'box'",
+      "description": "Visual style. 'box' is a bordered tile, 'underline' uses a bottom border only, 'soft' uses a filled background."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Visual size of each field."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable all fields."
+    },
+    "autoFocus": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Auto-focus the first field on mount."
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "''",
+      "description": "Placeholder character for empty fields."
+    },
+    "groupAfter": {
+      "type": "number",
+      "description": "Insert a visual separator after every N fields (e.g., 3 for 3-3 grouping)."
+    },
+    "invalid": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show error styling on the fields."
+    },
+    "name": {
+      "type": "string",
+      "description": "Name prefix used for each <input> (rendered as `${name}-${index}`)."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the root."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Verification code'",
+      "description": "Accessible name for the group."
+    }
+  }
+}

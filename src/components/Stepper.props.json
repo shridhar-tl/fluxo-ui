@@ -87,6 +87,16 @@
     "ariaLabel": {
       "type": "string",
       "description": "Accessible label"
+    },
+    "autoCollapse": {
+      "type": "boolean",
+      "default": "true",
+      "description": "When the horizontal stepper is wider than the space available, switch to the layout chosen by `collapseMode`. Turn off to always keep the full layout."
+    },
+    "collapseMode": {
+      "type": "'scroll' | 'compact'",
+      "default": "'scroll'",
+      "description": "How the horizontal stepper behaves when it doesn't fit. 'scroll' lets the strip scroll horizontally so labels stay readable. 'compact' shrinks every step to an equal share of the width, hides the connectors, and truncates labels with an ellipsis so the whole progression is visible at once — best on phones and narrow panels."
     }
   }
 }

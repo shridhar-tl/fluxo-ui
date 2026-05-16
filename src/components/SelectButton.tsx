@@ -4,10 +4,14 @@ import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
 import { getComponentClasses, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './SelectButton.scss';
 
+type SelectButtonVariant = 'default' | 'segmented' | 'pill' | 'underline';
+
 interface SelectButtonBaseProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'role'> {
     items: ListItem[];
     required?: boolean;
     direction?: 'horizontal' | 'vertical';
+    variant?: SelectButtonVariant;
+    fullWidth?: boolean;
     ariaLabel?: string;
     ariaLabelledBy?: string;
 }
@@ -26,6 +30,7 @@ interface SelectButtonMultiProps extends SelectButtonBaseProps {
 
 type SelectButtonProps = SelectButtonSingleProps | SelectButtonMultiProps;
 
+export type { SelectButtonVariant };
 export const SelectButton = forwardRef<HTMLDivElement, SelectButtonProps>(
     (
         {
@@ -35,6 +40,8 @@ export const SelectButton = forwardRef<HTMLDivElement, SelectButtonProps>(
             multiple = false,
             required = false,
             direction = 'horizontal',
+            variant = 'default',
+            fullWidth = false,
             disabled = false,
             className,
             name,
@@ -169,7 +176,11 @@ export const SelectButton = forwardRef<HTMLDivElement, SelectButtonProps>(
             'eui-select-button',
             `eui-select-button-${direction}`,
             `eui-select-button-${resolvedSize}`,
-            { 'eui-select-button-disabled': disabled },
+            `eui-select-button-variant-${variant}`,
+            {
+                'eui-select-button-disabled': disabled,
+                'eui-select-button-full': fullWidth,
+            },
             className,
         );
 

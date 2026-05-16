@@ -1,0 +1,57 @@
+{
+  "pullToRefreshProps": {
+    "onRefresh": {
+      "type": "() => void | Promise<void>",
+      "required": true,
+      "description": "Called when the user releases past the threshold. Return a Promise to keep the spinner visible until the work completes."
+    },
+    "children": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Scrollable content to wrap."
+    },
+    "threshold": {
+      "type": "number",
+      "default": "64",
+      "description": "Distance in pixels the user must pull before a refresh is triggered."
+    },
+    "maxPull": {
+      "type": "number",
+      "default": "120",
+      "description": "Maximum visual pull distance (after drag resistance)."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable the gesture entirely."
+    },
+    "variant": {
+      "type": "'spinner' | 'arrow' | 'dots' | 'minimal'",
+      "default": "'spinner'",
+      "description": "Indicator style. 'spinner' rotates with pull progress, 'arrow' flips on threshold, 'dots' shows three bouncing dots, 'minimal' shows a plain bar."
+    },
+    "refreshingText": {
+      "type": "string",
+      "default": "'Refreshing…'",
+      "description": "Indicator label shown while the promise is pending."
+    },
+    "pullingText": {
+      "type": "string",
+      "default": "'Pull to refresh'",
+      "description": "Indicator label shown while pulling but before threshold."
+    },
+    "releaseText": {
+      "type": "string",
+      "default": "'Release to refresh'",
+      "description": "Indicator label shown once the threshold is reached."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the wrapper."
+    },
+    "scrollContainer": {
+      "type": "HTMLElement | null",
+      "description": "External scroll container to observe instead of the wrapper. Useful when the scrollable element lives below this wrapper."
+    }
+  }
+}

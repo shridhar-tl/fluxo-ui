@@ -1,0 +1,124 @@
+@use '../eui-vars' as *;
+
+.eui-swipeable-list-item {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    user-select: none;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: stretch;
+
+    &.eui-swipeable-variant-card {
+        border-radius: var(--eui-radius-md);
+        border: 1px solid var(--eui-border-subtle);
+        margin: 0.25rem 0;
+    }
+
+    &.eui-swipeable-variant-compact .eui-swipeable-content {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    &.eui-swipeable-disabled {
+        opacity: 0.6;
+    }
+}
+
+.eui-swipeable-content {
+    flex: 1 1 0;
+    min-width: 0;
+    background-color: var(--eui-bg);
+    touch-action: pan-y;
+    padding: 0.75rem 1rem;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.eui-swipeable-actions {
+    flex: 0 0 auto;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    will-change: width;
+
+    &.eui-swipeable-actions-left .eui-swipeable-actions-inner {
+        margin-left: auto;
+    }
+
+    &.eui-swipeable-actions-right .eui-swipeable-actions-inner {
+        margin-right: auto;
+    }
+}
+
+.eui-swipeable-actions-inner {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+    flex-shrink: 0;
+}
+
+.eui-swipeable-action {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #ffffff;
+    background-color: var(--eui-bg-subtle);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0 0.625rem;
+    min-width: 4rem;
+    height: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.15s ease;
+    flex-shrink: 0;
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px var(--eui-primary);
+    }
+
+    .eui-swipeable-action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+    }
+
+    .eui-swipeable-action-label {
+        line-height: 1.1;
+        white-space: nowrap;
+    }
+}
+
+.eui-swipeable-action-color-default { background-color: #64748b; }
+.eui-swipeable-action-color-neutral { background-color: var(--eui-bg-hover); color: var(--eui-text); }
+.eui-swipeable-action-color-primary { background-color: var(--eui-primary); color: var(--eui-text-on-primary); }
+.eui-swipeable-action-color-success { background-color: #10b981; }
+.eui-swipeable-action-color-warning { background-color: #f59e0b; }
+.eui-swipeable-action-color-danger { background-color: #ef4444; }
+
+body.mode-dark .eui-swipeable-action-color-default {
+    background-color: #475569;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-swipeable-actions {
+        transition: none !important;
+    }
+}

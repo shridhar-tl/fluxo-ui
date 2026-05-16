@@ -1,0 +1,59 @@
+{
+  "swipeableListItemProps": {
+    "children": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Main row content that is revealed/translated when the user swipes."
+    },
+    "leftActions": {
+      "type": "SwipeableAction[]",
+      "description": "Actions revealed when swiping right. Each: { key?, label, icon?, color?, onTrigger?, fullSwipe?, background?, ariaLabel? }."
+    },
+    "rightActions": {
+      "type": "SwipeableAction[]",
+      "description": "Actions revealed when swiping left."
+    },
+    "threshold": {
+      "type": "number",
+      "default": "0.4",
+      "description": "Fraction of the actions strip width that must be swiped to open. Range 0-1."
+    },
+    "fullSwipeThreshold": {
+      "type": "number",
+      "default": "0.7",
+      "description": "Fraction beyond which an action marked fullSwipe is auto-triggered without tapping."
+    },
+    "variant": {
+      "type": "'inline' | 'card' | 'compact'",
+      "default": "'inline'",
+      "description": "Visual style. 'card' adds rounded corners and a border; 'compact' uses tighter padding."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable the swipe gesture."
+    },
+    "onSwipeOpen": {
+      "type": "(side: 'left' | 'right') => void",
+      "description": "Called when the row settles open on one side."
+    },
+    "onSwipeClose": {
+      "type": "() => void",
+      "description": "Called when the row returns to closed."
+    },
+    "closeOnSelect": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Auto-close after an action is tapped."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the wrapper."
+    },
+    "actionWidth": {
+      "type": "number",
+      "default": "80",
+      "description": "Pixel width per revealed action button."
+    }
+  }
+}

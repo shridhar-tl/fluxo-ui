@@ -1,0 +1,74 @@
+{
+  "actionSheetProps": {
+    "open": {
+      "type": "boolean",
+      "required": true,
+      "description": "Whether the action sheet is visible."
+    },
+    "onClose": {
+      "type": "() => void",
+      "required": true,
+      "description": "Called when the sheet should close (backdrop tap, Escape, cancel, or after a selection)."
+    },
+    "title": {
+      "type": "ReactNode",
+      "description": "Optional short title rendered at the top of the actions group."
+    },
+    "message": {
+      "type": "ReactNode",
+      "description": "Optional supporting message rendered under the title."
+    },
+    "actions": {
+      "type": "ActionSheetAction[]",
+      "required": true,
+      "description": "Action items. Each item: { key?, label, description?, icon?, disabled?, destructive?, onSelect? }."
+    },
+    "cancelLabel": {
+      "type": "string",
+      "default": "'Cancel'",
+      "description": "Label for the cancel button."
+    },
+    "showCancel": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the standalone cancel button below the actions group."
+    },
+    "onCancel": {
+      "type": "() => void",
+      "description": "Called when the cancel button is tapped, before onClose."
+    },
+    "variant": {
+      "type": "'ios' | 'material' | 'plain'",
+      "default": "'ios'",
+      "description": "Visual variant. 'ios' centers items in a rounded card with a separate cancel pill; 'material' is a flush bottom sheet with left-aligned items; 'plain' merges actions and cancel into one card."
+    },
+    "closeOnSelect": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Auto-close after an action is selected."
+    },
+    "closeOnBackdropClick": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Close on backdrop tap."
+    },
+    "closeOnEscape": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Close when Escape is pressed."
+    },
+    "safeArea": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Apply env(safe-area-inset-bottom) so the sheet clears the iOS home indicator."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the sheet root."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name for the dialog. Defaults to the title text if it's a string."
+    }
+  }
+}

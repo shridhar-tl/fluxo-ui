@@ -1,0 +1,59 @@
+{
+  "stepDotsProps": {
+    "count": {
+      "type": "number",
+      "required": true,
+      "description": "Total number of steps."
+    },
+    "activeIndex": {
+      "type": "number",
+      "required": true,
+      "description": "Zero-based index of the currently active step."
+    },
+    "onChange": {
+      "type": "(index: number) => void",
+      "description": "Called when the user activates a dot (only when interactive=true)."
+    },
+    "variant": {
+      "type": "'dot' | 'bar' | 'pill' | 'numbered'",
+      "default": "'dot'",
+      "description": "Visual style. 'dot' grows the active dot into a pill, 'bar' uses horizontal bars, 'pill' fills completed/active dots, 'numbered' shows step numbers."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Size of the dots."
+    },
+    "color": {
+      "type": "string",
+      "description": "Override color for the active dot."
+    },
+    "inactiveColor": {
+      "type": "string",
+      "description": "Override color for inactive dots."
+    },
+    "interactive": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Allow keyboard/click activation of dots."
+    },
+    "showLabels": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Add visually-hidden labels for screen readers (always on for numbered variant via aria-label)."
+    },
+    "labelFormatter": {
+      "type": "(index: number, total: number) => string",
+      "description": "Custom label formatter for each dot's accessible name."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the wrapper."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Step progress'",
+      "description": "Accessible name for the tablist."
+    }
+  }
+}

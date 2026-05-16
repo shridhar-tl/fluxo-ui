@@ -8,6 +8,7 @@ type StepperLayout = 'default' | 'rounded' | 'square' | 'rectangle' | 'dot' | 'm
 type StepperOrientation = 'horizontal' | 'vertical';
 type StepStatus = 'pending' | 'active' | 'completed' | 'error' | 'warning';
 type StepperLabelPlacement = 'bottom' | 'right' | 'alternate';
+type StepperCollapseMode = 'scroll' | 'compact';
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;
 
@@ -42,6 +43,7 @@ interface StepperProps extends Omit<React.OlHTMLAttributes<HTMLOListElement>, 'o
     ariaLabel?: string;
     connector?: React.ReactNode;
     autoCollapse?: boolean;
+    collapseMode?: StepperCollapseMode;
 }
 
 const defaultCheckIcon = (
@@ -89,6 +91,7 @@ function Stepper({
     ariaLabel,
     connector,
     autoCollapse = true,
+    collapseMode = 'scroll',
     ...rest
 }: StepperProps) {
     const containerRef = useRef<HTMLOListElement>(null);
@@ -166,21 +169,38 @@ function Stepper({
         }
     };
 
+    const naturalWidthRef = useRef<number | null>(null);
     useEffect(() => {
         if (!autoCollapse || orientation !== 'horizontal') {
             setIsCollapsed(false);
+            naturalWidthRef.current = null;
             return;
         }
         const el = containerRef.current;
         if (!el) return;
         const update = () => {
-            setIsCollapsed(el.scrollWidth > el.clientWidth + 1);
+            const clientWidth = el.clientWidth;
+            if (!isCollapsed || collapseMode === 'scroll') {
+                const naturalWidth = el.scrollWidth;
+                naturalWidthRef.current = naturalWidth;
+                setIsCollapsed(naturalWidth > clientWidth + 1);
+                return;
+            }
+            const recorded = naturalWidthRef.current;
+            if (recorded === null) {
+                setIsCollapsed(false);
+                return;
+            }
+            if (clientWidth >= recorded - 1) {
+                setIsCollapsed(false);
+                naturalWidthRef.current = null;
+            }
         };
         update();
         const ro = new ResizeObserver(update);
         ro.observe(el);
         return () => ro.disconnect();
-    }, [autoCollapse, orientation, resolvedSteps.length]);
+    }, [autoCollapse, orientation, resolvedSteps.length, collapseMode, isCollapsed]);
 
     const renderIndicator = (step: typeof resolvedSteps[0], index: number) => {
         const { resolvedStatus, icon, completedIcon: stepCompletedIcon } = step;
@@ -242,6 +262,7 @@ function Stepper({
         `eui-stepper-${orientation}`,
         `eui-stepper-variant-${variant}`,
         `eui-stepper-label-${labelPlacement}`,
+        `eui-stepper-collapse-${collapseMode}`,
         {
             'eui-stepper-clickable': clickable && !disabled,
             'eui-stepper-disabled': disabled,
@@ -308,4 +329,4 @@ function Stepper({
 }
 
 export { Stepper };
-export type { StepperProps, StepItem, StepperVariant, StepperSize, StepperLayout, StepperOrientation, StepStatus, StepperLabelPlacement };
+export type { StepperProps, StepItem, StepperVariant, StepperSize, StepperLayout, StepperOrientation, StepStatus, StepperLabelPlacement, StepperCollapseMode };

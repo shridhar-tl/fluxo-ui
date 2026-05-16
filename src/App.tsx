@@ -134,6 +134,19 @@ const ChatLauncherPage = React.lazy(() => import('./story/pages/chat/ChatLaunche
 const ChatConversationsPage = React.lazy(() => import('./story/pages/chat/ChatConversationsPage'));
 const MultiChatPage = React.lazy(() => import('./story/pages/chat/MultiChatPage'));
 const ChatTemplatesPage = React.lazy(() => import('./story/pages/chat/ChatTemplatesPage'));
+const ActionSheetPage = React.lazy(() => import('./story/pages/action-sheet/ActionSheetPage'));
+const FloatingLabelInputPage = React.lazy(() => import('./story/pages/floating-label-input/FloatingLabelInputPage'));
+const MobileTabBarPage = React.lazy(() => import('./story/pages/mobile-tab-bar/MobileTabBarPage'));
+const NavBarPage = React.lazy(() => import('./story/pages/nav-bar/NavBarPage'));
+const PickerPage = React.lazy(() => import('./story/pages/picker/PickerPage'));
+const PinInputPage = React.lazy(() => import('./story/pages/pin-input/PinInputPage'));
+const PullToRefreshPage = React.lazy(() => import('./story/pages/pull-to-refresh/PullToRefreshPage'));
+const SafeAreaViewPage = React.lazy(() => import('./story/pages/safe-area-view/SafeAreaViewPage'));
+const SkeletonListPage = React.lazy(() => import('./story/pages/skeleton-list/SkeletonListPage'));
+const StepDotsPage = React.lazy(() => import('./story/pages/step-dots/StepDotsPage'));
+const SwipeableListItemPage = React.lazy(() => import('./story/pages/swipeable-list-item/SwipeableListItemPage'));
+const TouchRipplePage = React.lazy(() => import('./story/pages/touch-ripple/TouchRipplePage'));
+const VirtualListPage = React.lazy(() => import('./story/pages/virtual-list/VirtualListPage'));
 
 const App: React.FC = () => {
     return (
@@ -652,6 +665,19 @@ const App: React.FC = () => {
                     <Route path="/components/chat-conversations" element={<LayoutWrapper><ChatConversationsPage /></LayoutWrapper>} />
                     <Route path="/components/chat-multi" element={<LayoutWrapper><MultiChatPage /></LayoutWrapper>} />
                     <Route path="/components/chat-templates" element={<LayoutWrapper><ChatTemplatesPage /></LayoutWrapper>} />
+                    <Route path="/components/action-sheet" element={<LayoutWrapper><ActionSheetPage /></LayoutWrapper>} />
+                    <Route path="/components/floating-label-input" element={<LayoutWrapper><FloatingLabelInputPage /></LayoutWrapper>} />
+                    <Route path="/components/mobile-tab-bar" element={<LayoutWrapper><MobileTabBarPage /></LayoutWrapper>} />
+                    <Route path="/components/nav-bar" element={<LayoutWrapper><NavBarPage /></LayoutWrapper>} />
+                    <Route path="/components/picker" element={<LayoutWrapper><PickerPage /></LayoutWrapper>} />
+                    <Route path="/components/pin-input" element={<LayoutWrapper><PinInputPage /></LayoutWrapper>} />
+                    <Route path="/components/pull-to-refresh" element={<LayoutWrapper><PullToRefreshPage /></LayoutWrapper>} />
+                    <Route path="/components/safe-area-view" element={<LayoutWrapper><SafeAreaViewPage /></LayoutWrapper>} />
+                    <Route path="/components/skeleton-list" element={<LayoutWrapper><SkeletonListPage /></LayoutWrapper>} />
+                    <Route path="/components/step-dots" element={<LayoutWrapper><StepDotsPage /></LayoutWrapper>} />
+                    <Route path="/components/swipeable-list-item" element={<LayoutWrapper><SwipeableListItemPage /></LayoutWrapper>} />
+                    <Route path="/components/touch-ripple" element={<LayoutWrapper><TouchRipplePage /></LayoutWrapper>} />
+                    <Route path="/components/virtual-list" element={<LayoutWrapper><VirtualListPage /></LayoutWrapper>} />
                     <Route
                         path="*"
                         element={

@@ -40,6 +40,8 @@ const largeComponents = new Set([
     'Chat Conversations',
     'Multi-Chat',
     'Chat Templates',
+    'Virtual List',
+    'Skeleton List',
 ]);
 
 const heavyComponents = new Set([
@@ -57,6 +59,12 @@ const heavyComponents = new Set([
     'Chat Conversations',
     'Multi-Chat',
     'Chat Templates',
+    'Pull To Refresh',
+    'Swipeable List Item',
+    'Nav Bar',
+    'Mobile Tab Bar',
+    'Action Sheet',
+    'Safe Area View',
 ]);
 
 const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>> = {
@@ -140,6 +148,13 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/password-strength': () => import('./password-strength/BasicUsage'),
     '/components/password-requirements': () => import('./password-requirements/BasicUsage'),
     '/components/scroll-to-top': () => import('./scroll-to-top/Variants'),
+    '/components/pin-input': () => import('./pin-input/BasicUsage'),
+    '/components/floating-label-input': () => import('./floating-label-input/BasicUsage'),
+    '/components/step-dots': () => import('./step-dots/Variants'),
+    '/components/skeleton-list': () => import('./skeleton-list/BasicUsage'),
+    '/components/touch-ripple': () => import('./touch-ripple/Variants'),
+    '/components/picker': () => import('./picker/BasicUsage'),
+    '/components/virtual-list': () => import('./virtual-list/BasicUsage'),
 };
 
 const LazyPreview: React.FC<{ path: string }> = ({ path }) => {
@@ -487,6 +502,22 @@ const chatComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Chat Templates', description: 'Built-in text/image/file/options/video templates plus your own custom renderers', path: '/components/chat-templates', badge: 'New' },
 ];
 
+const mobileComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Nav Bar', description: 'Mobile app bar with back, title, actions, and optional sub-row', path: '/components/nav-bar', badge: 'New' },
+    { title: 'Mobile Tab Bar', description: 'Bottom navigation with badges + four visual variants', path: '/components/mobile-tab-bar', badge: 'New' },
+    { title: 'Action Sheet', description: 'iOS / Material / plain bottom action list with destructive states', path: '/components/action-sheet', badge: 'New' },
+    { title: 'Pull To Refresh', description: 'Promise-aware pull-down refresh with four indicator styles', path: '/components/pull-to-refresh', badge: 'New' },
+    { title: 'Swipeable List Item', description: 'Row with reveal-on-swipe actions and full-swipe trigger', path: '/components/swipeable-list-item', badge: 'New' },
+    { title: 'Picker', description: 'Wheel / flat / compact picker — single or multi-column', path: '/components/picker', badge: 'New' },
+    { title: 'PIN / OTP Input', description: 'Auto-advancing OTP boxes with paste, masking, and error state', path: '/components/pin-input', badge: 'New' },
+    { title: 'Floating Label Input', description: 'Material-style floating label — outlined, filled, underlined', path: '/components/floating-label-input', badge: 'New' },
+    { title: 'Step Dots', description: 'Tiny dot / bar / numbered position indicator', path: '/components/step-dots', badge: 'New' },
+    { title: 'Touch Ripple', description: 'Drop-in Material ripple wrapper for any tappable surface', path: '/components/touch-ripple', badge: 'New' },
+    { title: 'Skeleton List', description: 'Nine ready-made skeleton list/card placeholders', path: '/components/skeleton-list', badge: 'New' },
+    { title: 'Virtual List', description: 'Windowed list with onEndReached for very long mobile feeds', path: '/components/virtual-list', badge: 'New' },
+    { title: 'Safe Area View', description: 'Wrapper that applies env(safe-area-inset-*) for iOS notches', path: '/components/safe-area-view', badge: 'New' },
+];
+
 const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Button', description: 'Primary action element with variants', path: '/components/button' },
     { title: 'Split Button', description: 'Primary action paired with a related-actions menu', path: '/components/split-button', badge: 'New' },
@@ -523,7 +554,7 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                     <p className={cn('text-base md:text-lg leading-relaxed mb-8', { 'text-gray-400': isDark, 'text-gray-600': !isDark })}>
-                        A comprehensive, accessible React component library built with TypeScript. Includes 80+ components, a custom state
+                        A comprehensive, accessible React component library built with TypeScript. Includes 100+ components, a custom state
                         management solution, 12 color themes, dark mode support, and full keyboard navigation. Hover over any component card
                         below for a quick interactive preview.
                     </p>
@@ -651,6 +682,12 @@ const HomePage: React.FC = () => {
                         title="Chat"
                         icon="&#9993;"
                         items={chatComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
+                    <CategorySection
+                        title="Mobile"
+                        icon="&#9883;"
+                        items={mobileComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
                 </div>

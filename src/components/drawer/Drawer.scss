@@ -55,8 +55,12 @@
     background-color: var(--eui-bg);
     color: var(--eui-text);
     box-shadow: var(--eui-shadow);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+
+    &.eui-drawer-dragging {
+        transition: none;
+    }
 
     &.eui-drawer-left {
         top: 0;
@@ -106,12 +110,77 @@
         }
     }
 
+    &.eui-drawer-rounded {
+        &.eui-drawer-bottom {
+            border-top-left-radius: var(--eui-radius-lg);
+            border-top-right-radius: var(--eui-radius-lg);
+        }
+
+        &.eui-drawer-top {
+            border-bottom-left-radius: var(--eui-radius-lg);
+            border-bottom-right-radius: var(--eui-radius-lg);
+        }
+
+        &.eui-drawer-left {
+            border-top-right-radius: var(--eui-radius-lg);
+            border-bottom-right-radius: var(--eui-radius-lg);
+        }
+
+        &.eui-drawer-right {
+            border-top-left-radius: var(--eui-radius-lg);
+            border-bottom-left-radius: var(--eui-radius-lg);
+        }
+    }
+
+    &.eui-drawer-sheet {
+        padding-bottom: env(safe-area-inset-bottom, 0);
+
+        &.eui-drawer-top {
+            padding-bottom: 0;
+            padding-top: env(safe-area-inset-top, 0);
+        }
+    }
+
     @media (max-width: $bp-md) {
         &.eui-drawer-left,
         &.eui-drawer-right {
             width: 100% !important;
         }
     }
+}
+
+.eui-drawer-handle-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 0;
+    min-height: 2.75rem;
+    flex-shrink: 0;
+    touch-action: none;
+    cursor: grab;
+    user-select: none;
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: inset 0 0 0 2px var(--eui-primary);
+    }
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.eui-drawer-handle {
+    width: 2.5rem;
+    height: 0.25rem;
+    background-color: var(--eui-border);
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+body.mode-dark .eui-drawer-handle {
+    background-color: var(--eui-border);
+    opacity: 0.6;
 }
 
 .eui-drawer-header {

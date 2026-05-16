@@ -240,6 +240,25 @@ const navSections: NavSection[] = [
         ],
     },
     {
+        title: 'Mobile',
+        key: 'mobile',
+        items: [
+            { label: 'Nav Bar', path: '/components/nav-bar' },
+            { label: 'Mobile Tab Bar', path: '/components/mobile-tab-bar' },
+            { label: 'Action Sheet', path: '/components/action-sheet' },
+            { label: 'Pull To Refresh', path: '/components/pull-to-refresh' },
+            { label: 'Swipeable List Item', path: '/components/swipeable-list-item' },
+            { label: 'Picker', path: '/components/picker' },
+            { label: 'PIN / OTP Input', path: '/components/pin-input' },
+            { label: 'Floating Label Input', path: '/components/floating-label-input' },
+            { label: 'Step Dots', path: '/components/step-dots' },
+            { label: 'Touch Ripple', path: '/components/touch-ripple' },
+            { label: 'Skeleton List', path: '/components/skeleton-list' },
+            { label: 'Virtual List', path: '/components/virtual-list' },
+            { label: 'Safe Area View', path: '/components/safe-area-view' },
+        ],
+    },
+    {
         title: 'Showcase',
         key: 'showcase',
         items: [

@@ -145,5 +145,70 @@
       "default": "true",
       "description": "Whether to render placeholder labels to the left of the chart."
     }
+  },
+  "skeletonListProps": {
+    "rows": {
+      "type": "number",
+      "default": "5",
+      "description": "Number of placeholder rows to render."
+    },
+    "variant": {
+      "type": "'simple' | 'avatar-text' | 'avatar-two-line' | 'thumbnail' | 'two-line-action' | 'card-stack' | 'chat' | 'comment' | 'media'",
+      "default": "'avatar-two-line'",
+      "description": "Layout preset. 'simple' is a single text line per row, 'avatar-two-line' is a typical mobile list row, 'card-stack' renders content cards, 'chat' alternates left/right bubbles, 'media' renders image-on-top cards."
+    },
+    "showDivider": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show a subtle separator between rows (ignored for card/media variants)."
+    },
+    "rowHeight": {
+      "type": "string | number",
+      "description": "Override the height of a row (only applies to 'simple' variant)."
+    },
+    "avatarSize": {
+      "type": "string",
+      "default": "'2.5rem'",
+      "description": "Avatar/thumbnail size used by avatar variants."
+    },
+    "avatarShape": {
+      "type": "'circle' | 'square'",
+      "default": "'circle'",
+      "description": "Shape used for avatar variants."
+    },
+    "gap": {
+      "type": "string | number",
+      "default": "'0.75rem'",
+      "description": "Gap between rows."
+    },
+    "padding": {
+      "type": "string | number",
+      "default": "'0.75rem 1rem'",
+      "description": "Outer padding of the list container."
+    },
+    "animated": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Toggle the shimmer animation."
+    },
+    "animation": {
+      "type": "'shimmer' | 'pulse'",
+      "default": "'shimmer'",
+      "description": "Animation style."
+    },
+    "level": {
+      "type": "1 | 2 | 3 | 4 | 5 | 6",
+      "default": "2",
+      "description": "Background contrast level."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the list root."
+    },
+    "loadingLabel": {
+      "type": "string",
+      "default": "'Loading list'",
+      "description": "Visually-hidden screen reader label."
+    }
   }
 }

@@ -1,0 +1,79 @@
+{
+  "navBarProps": {
+    "title": {
+      "type": "ReactNode",
+      "description": "Main title rendered in the bar (or as a large title when variant='large')."
+    },
+    "subtitle": {
+      "type": "ReactNode",
+      "description": "Optional secondary line below the title."
+    },
+    "leading": {
+      "type": "ReactNode",
+      "description": "Element placed at the start of the bar after the back button (e.g., logo, avatar, menu icon)."
+    },
+    "actions": {
+      "type": "ReactNode",
+      "description": "Right-aligned action group (icons, buttons, menus)."
+    },
+    "onBack": {
+      "type": "() => void",
+      "description": "Click handler for the back button. When provided, the back button is shown automatically."
+    },
+    "backLabel": {
+      "type": "string",
+      "default": "'Back'",
+      "description": "Accessible/text label for the back button. Hidden visually on screens below the small breakpoint."
+    },
+    "showBack": {
+      "type": "boolean",
+      "description": "Force showing/hiding the back button. Defaults to true when onBack is set."
+    },
+    "variant": {
+      "type": "'standard' | 'centered' | 'large' | 'transparent' | 'compact'",
+      "default": "'standard'",
+      "description": "Visual layout. 'centered' centers the title between leading/actions (iOS-style). 'large' renders an iOS-style large title that collapses on scroll. 'transparent' removes background and border. 'compact' is a slim toolbar."
+    },
+    "position": {
+      "type": "'top' | 'sticky' | 'fixed' | 'static'",
+      "default": "'static'",
+      "description": "Page positioning of the bar."
+    },
+    "bordered": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show a thin border under the bar."
+    },
+    "elevated": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Replace the bottom border with a soft drop shadow."
+    },
+    "safeArea": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Apply env(safe-area-inset-*) padding so the bar respects iOS notches and home indicator."
+    },
+    "collapseOnScroll": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When variant='large', shrink the large title into the inline row as the page scrolls."
+    },
+    "scrollContainer": {
+      "type": "HTMLElement | null",
+      "description": "Scrollable element to observe for collapseOnScroll. Defaults to window."
+    },
+    "children": {
+      "type": "ReactNode",
+      "description": "Optional extra row rendered below the toolbar (e.g., a search input, segmented control, tabs)."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the bar root."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name applied to the landmark <header>."
+    }
+  }
+}

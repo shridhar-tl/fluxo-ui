@@ -1,0 +1,48 @@
+{
+  "mobileTabBarProps": {
+    "items": {
+      "type": "MobileTabBarItem[]",
+      "required": true,
+      "description": "Tab items. Each: { key, label, icon?, activeIcon?, badge?, disabled?, ariaLabel? }."
+    },
+    "activeKey": {
+      "type": "string",
+      "required": true,
+      "description": "Key of the currently active tab."
+    },
+    "onChange": {
+      "type": "(key: string) => void",
+      "required": true,
+      "description": "Called when a tab is activated."
+    },
+    "variant": {
+      "type": "'flat' | 'elevated' | 'pill' | 'floating'",
+      "default": "'flat'",
+      "description": "Visual style. 'elevated' replaces the top border with a soft shadow; 'pill' fills the active item; 'floating' renders a detached rounded card."
+    },
+    "position": {
+      "type": "'fixed' | 'sticky' | 'static'",
+      "default": "'static'",
+      "description": "CSS positioning of the bar."
+    },
+    "showLabels": {
+      "type": "'always' | 'never' | 'active'",
+      "default": "'always'",
+      "description": "When to render the text label for each tab."
+    },
+    "safeArea": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Apply env(safe-area-inset-bottom) so the bar clears the iOS home indicator."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the bar root."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Primary'",
+      "description": "Accessible name for the navigation landmark."
+    }
+  }
+}

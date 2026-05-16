@@ -18,7 +18,36 @@
     "size": {
       "type": "string",
       "default": "'400px'",
-      "description": "Width (horizontal) or height (vertical) of the drawer."
+      "description": "Width (horizontal) or height (vertical) of the drawer. Ignored when snapPoints is provided."
+    },
+    "variant": {
+      "type": "'panel' | 'sheet'",
+      "description": "Visual variant. 'sheet' adds rounded top corners, drag handle, and drag-to-dismiss behavior — ideal for mobile bottom sheets. Auto-resolves to 'sheet' when position='bottom' and any sheet feature is set."
+    },
+    "showDragHandle": {
+      "type": "boolean",
+      "description": "Show a drag handle at the top of the drawer. Defaults to true for sheet variant on top/bottom positions."
+    },
+    "draggable": {
+      "type": "boolean",
+      "description": "Enable drag-to-dismiss / drag-between-snap-points gestures. Defaults to true for sheet variant on top/bottom positions."
+    },
+    "snapPoints": {
+      "type": "(number | string)[]",
+      "description": "List of snap point heights (e.g. [0.3, 0.6, 0.9] or ['30%', '60vh', '600px']). Numeric <=1 is treated as a viewport ratio."
+    },
+    "initialSnap": {
+      "type": "number",
+      "default": "0",
+      "description": "Index of the snap point used when the drawer opens."
+    },
+    "onSnapChange": {
+      "type": "(index: number) => void",
+      "description": "Called when the drawer settles on a new snap point."
+    },
+    "rounded": {
+      "type": "boolean",
+      "description": "Round the corners that face the viewport center. Defaults to true for the sheet variant."
     },
     "backdrop": {
       "type": "boolean",

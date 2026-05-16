@@ -8,6 +8,7 @@ import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
+import BottomSheet from './BottomSheet';
 import CustomContent from './CustomContent';
 import Positions from './Positions';
 
@@ -16,6 +17,7 @@ const { drawerProps } = _Drawer_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Default right-side drawer' },
     { id: 'positions', title: 'Positions', description: 'Left, right, top, bottom' },
+    { id: 'bottom-sheet', title: 'Bottom Sheet', description: 'Drag handle, snap points, drag-to-dismiss' },
     { id: 'custom-content', title: 'Custom Content', description: 'Header, footer, and form' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'props', title: 'Props', description: 'Component API reference' },
@@ -79,6 +81,14 @@ const DrawerPage: React.FC = () => {
                     Use the <code>position</code> prop to slide the drawer in from any edge.
                 </p>
                 <Positions />
+            </section>
+
+            <section id="bottom-sheet" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Bottom Sheet</h2>
+                <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    Set <code>variant="sheet"</code> with <code>position="bottom"</code> (or <code>"top"</code>) to get a drag handle, rounded corners, snap points, and drag-to-dismiss — ideal for mobile flows.
+                </p>
+                <BottomSheet />
             </section>
 
             <section id="custom-content" className="scroll-mt-8">

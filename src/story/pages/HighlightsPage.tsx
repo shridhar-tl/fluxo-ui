@@ -368,7 +368,7 @@ const HighlightsPage: React.FC = () => {
                                 to="/overview"
                                 className="px-6 py-2.5 bg-[var(--eui-primary)] hover:opacity-90 text-white font-semibold rounded-lg transition-all text-sm shadow-lg shadow-[var(--eui-primary)]/25"
                             >
-                                Browse all 80+ components →
+                                Browse all 100+ components →
                             </Link>
                             <Link
                                 to="/installation"
@@ -586,7 +586,7 @@ const HighlightsPage: React.FC = () => {
                         <div className="relative">
                             <h2 className={cn('text-2xl md:text-3xl font-bold mb-2', textPrimary)}>Want the full picture?</h2>
                             <p className={cn('text-sm md:text-base mb-6 max-w-2xl mx-auto', textBody)}>
-                                These are the headliners. The complete library has 80+ components — form inputs, tables, pickers, overlays,
+                                These are the headliners. The complete library has 100+ components — form inputs, tables, pickers, overlays,
                                 charts, navigation, feedback, and more — every one themeable and accessible out of the box.
                             </p>
                             <div className="flex flex-wrap justify-center gap-3">

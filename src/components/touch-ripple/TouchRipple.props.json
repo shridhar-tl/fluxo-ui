@@ -1,0 +1,62 @@
+{
+  "touchRippleProps": {
+    "children": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Children rendered inside the ripple host."
+    },
+    "color": {
+      "type": "string",
+      "description": "Override the ripple color (defaults to currentColor)."
+    },
+    "center": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Always start the ripple at the center, regardless of tap location."
+    },
+    "duration": {
+      "type": "number",
+      "default": "500",
+      "description": "Ripple animation duration in milliseconds."
+    },
+    "variant": {
+      "type": "'material' | 'subtle' | 'highlight' | 'outline'",
+      "default": "'material'",
+      "description": "Visual style. 'material' is the standard tap ripple, 'subtle' is a faint variant, 'highlight' uses the primary color, 'outline' adds a focus ring on activation."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disable ripple emission and pointer interaction."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the wrapper."
+    },
+    "as": {
+      "type": "keyof JSX.IntrinsicElements",
+      "default": "'div'",
+      "description": "Element type to render. Use 'button' when used as a clickable surface."
+    },
+    "onClick": {
+      "type": "(event: MouseEvent) => void",
+      "description": "Forwarded click handler."
+    },
+    "role": {
+      "type": "string",
+      "description": "ARIA role for the host element."
+    },
+    "tabIndex": {
+      "type": "number",
+      "description": "Tab order index for keyboard navigation."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name for the host element."
+    },
+    "style": {
+      "type": "React.CSSProperties",
+      "description": "Inline style passed through to the host element."
+    }
+  }
+}

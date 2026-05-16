@@ -28,6 +28,16 @@
       "default": "'horizontal'",
       "description": "Layout direction of the button group"
     },
+    "variant": {
+      "type": "'default' | 'segmented' | 'pill' | 'underline'",
+      "default": "'default'",
+      "description": "Visual style. 'segmented' renders an iOS-style pill segmented control (great for mobile). 'pill' renders rounded pill chips with gaps. 'underline' renders a tab-like underlined row."
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Stretch the group to fill its container width with items distributed evenly. Useful inside mobile toolbars."
+    },
     "disabled": {
       "type": "boolean",
       "default": "false",

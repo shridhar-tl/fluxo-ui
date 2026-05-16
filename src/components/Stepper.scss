@@ -421,13 +421,56 @@ $stepper-sizes: (
         pointer-events: none;
     }
 
-    &.eui-stepper-collapsed.eui-stepper-horizontal {
+    &.eui-stepper-collapsed.eui-stepper-horizontal.eui-stepper-collapse-scroll {
         overflow-x: auto;
         scroll-snap-type: x proximity;
         -webkit-overflow-scrolling: touch;
 
         .eui-stepper-step {
             scroll-snap-align: start;
+        }
+    }
+
+    &.eui-stepper-collapsed.eui-stepper-horizontal.eui-stepper-collapse-compact {
+        overflow: hidden;
+        align-items: stretch;
+        gap: 0;
+
+        .eui-stepper-step {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .eui-stepper-connector {
+            display: none;
+        }
+
+        .eui-stepper-content {
+            min-width: 0;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .eui-stepper-label,
+        .eui-stepper-description {
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .eui-stepper-step-pending .eui-stepper-description,
+        .eui-stepper-step-completed .eui-stepper-description {
+            display: none;
+        }
+
+        &.eui-stepper-label-right .eui-stepper-step,
+        &.eui-stepper-label-alternate .eui-stepper-step {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
     }
 }
