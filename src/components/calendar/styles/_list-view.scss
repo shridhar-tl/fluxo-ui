@@ -146,6 +146,38 @@
   font-style: italic;
 }
 
+.eui-cal-list-view-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eui-cal-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1.5rem;
+  color: var(--eui-text-muted);
+  text-align: center;
+  max-width: 24rem;
+}
+
+.eui-cal-empty-state-icon {
+  width: 4rem;
+  height: 4rem;
+  color: var(--eui-text-disabled);
+  opacity: 0.7;
+}
+
+.eui-cal-empty-state-message {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--eui-text-muted);
+  line-height: 1.5;
+}
+
 @media (max-width: $bp-sm) {
   .eui-cal-list-item-time {
     min-width: 60px;

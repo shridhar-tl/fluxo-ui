@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { CSSProperties, ReactNode, useMemo } from 'react';
+import { CSSProperties, HTMLAttributes, ReactNode, useMemo } from 'react';
 import { useDrop } from './hooks/useDrop';
 import type { DragItem, DropPosition, DropResult } from './core/types';
 
@@ -43,6 +43,8 @@ export interface DroppableProps<T = HTMLElement> {
     onDragLeave?: (item: DragItem) => void;
     onHover?: (item: DragItem, position: DropPosition | undefined) => void;
 
+    domProps?: HTMLAttributes<HTMLDivElement> & Record<`data-${string}`, string | number | boolean | undefined>;
+
     children: ReactNode | ((props: DroppableRenderProps<T>) => ReactNode);
 }
 
@@ -69,6 +71,7 @@ function Droppable<T extends HTMLElement = HTMLElement>(props: DroppableProps<T>
         onDragEnter,
         onDragLeave,
         onHover,
+        domProps,
         children,
     } = props;
 
@@ -117,7 +120,13 @@ function Droppable<T extends HTMLElement = HTMLElement>(props: DroppableProps<T>
     }
 
     return (
-        <div ref={dropRef as DndRefCallback<HTMLDivElement>} className={elClassName} style={style} data-testid={testId}>
+        <div
+            {...domProps}
+            ref={dropRef as DndRefCallback<HTMLDivElement>}
+            className={classNames(elClassName, domProps?.className)}
+            style={{ ...domProps?.style, ...style }}
+            data-testid={testId}
+        >
             {children}
         </div>
     );

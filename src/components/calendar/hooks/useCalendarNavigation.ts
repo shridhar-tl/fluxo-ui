@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { ViewMode } from '../calendar-types';
 import type { CalendarViewMode, DateRange, CalendarViewDefinition } from '../calendar-types';
 
@@ -45,21 +45,12 @@ export function useCalendarNavigation(options: UseCalendarNavigationOptions): Us
 
   const setCurrentDate = useCallback((date: Date) => {
     setCurrentDateState(date);
-    if (viewDef) {
-      const newRange = viewDef.getDateRange(date, firstDayOfWeek);
-      onDateRangeChange?.(newRange);
-    }
-  }, [viewDef, firstDayOfWeek, onDateRangeChange]);
+  }, []);
 
   const setViewMode = useCallback((mode: CalendarViewMode) => {
     setViewModeState(mode);
     onViewChange?.(mode);
-    const def = viewDefinitions.get(mode);
-    if (def) {
-      const newRange = def.getDateRange(currentDate, firstDayOfWeek);
-      onDateRangeChange?.(newRange);
-    }
-  }, [viewDefinitions, currentDate, firstDayOfWeek, onViewChange, onDateRangeChange]);
+  }, [onViewChange]);
 
   const prev = useCallback(() => {
     if (!viewDef) return;
@@ -90,6 +81,23 @@ export function useCalendarNavigation(options: UseCalendarNavigationOptions): Us
   const gotoDate = useCallback((date: Date) => {
     setCurrentDate(date);
   }, [setCurrentDate]);
+
+  const onDateRangeChangeRef = useRef(onDateRangeChange);
+  onDateRangeChangeRef.current = onDateRangeChange;
+  const lastNotifiedRangeRef = useRef<DateRange | null>(null);
+
+  useEffect(() => {
+    const last = lastNotifiedRangeRef.current;
+    if (
+      last
+      && last.start.getTime() === dateRange.start.getTime()
+      && last.end.getTime() === dateRange.end.getTime()
+    ) {
+      return;
+    }
+    lastNotifiedRangeRef.current = dateRange;
+    onDateRangeChangeRef.current?.(dateRange);
+  }, [dateRange]);
 
   return {
     currentDate,

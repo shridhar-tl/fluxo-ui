@@ -115,6 +115,7 @@ const TimeGrid: React.FC<TimeGridProps> = ({
         onEntryContextMenu={onEntryContextMenu}
         maxHeight={config.allDaySlotMaxHeight}
         allDayText={config.allDayText}
+        showAllDayRow={config.showAllDayRow}
       />
       <TimeGridBody
         days={days}

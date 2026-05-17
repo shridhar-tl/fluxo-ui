@@ -15,7 +15,7 @@ const loadThreshold = 200;
 const ScrollMonthView: React.FC<ViewProps> = ({
   currentDate, entries, config,
   onEntryClick, onEntryContextMenu, onDateClick, onDateDoubleClick,
-  onEntryCreate,
+  onEntryCreate, onVisibleRangeChange,
   renderEntry, dateBackgrounds, dateRangeBackgrounds, loadingRanges,
 }) => {
   const handleDoubleClick = useCallback((date: Date, event: React.MouseEvent) => {
@@ -43,6 +43,18 @@ const ScrollMonthView: React.FC<ViewProps> = ({
   const months = useMemo(() => {
     return monthOffsets.map(offset => addMonths(currentDate, offset));
   }, [currentDate, monthOffsets]);
+
+  const onVisibleRangeChangeRef = useRef(onVisibleRangeChange);
+  onVisibleRangeChangeRef.current = onVisibleRangeChange;
+
+  useEffect(() => {
+    if (!onVisibleRangeChangeRef.current || months.length === 0) return;
+    const firstMonth = months[0];
+    const lastMonth = months[months.length - 1];
+    const start = getMonthRange(firstMonth, config.firstDayOfWeek).start;
+    const end = getMonthRange(lastMonth, config.firstDayOfWeek).end;
+    onVisibleRangeChangeRef.current({ start, end });
+  }, [months, config.firstDayOfWeek]);
 
   const handleScroll = useCallback(() => {
     const el = scrollRef.current;

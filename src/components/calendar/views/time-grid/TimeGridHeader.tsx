@@ -26,35 +26,63 @@ const TimeGridHeader: React.FC<TimeGridHeaderProps> = ({ days, config, onDateCli
       {days.map(day => {
         const today = isToday(day);
         const isLink = config.navLinks;
+        const isInline = config.dayHeaderLayout === 'inline';
+        const inlineLabel = isInline
+          ? (config.dayHeaderFormat
+              ? format(day, config.dayHeaderFormat)
+              : `${format(day, config.weekDayHeaderFormat || 'EEE')} ${format(day, 'd')}`)
+          : null;
         return (
           <div
             key={day.toISOString()}
             className={cn('eui-cal-time-header-cell', {
               'eui-cal-time-header-cell-today': today,
               'eui-cal-time-header-cell-clickable': config.dayHeaderClick,
+              'eui-cal-time-header-cell-inline': isInline,
             })}
             role="columnheader"
             aria-label={format(day, 'EEEE, MMMM d, yyyy')}
             onClick={config.dayHeaderClick ? (e) => config.dayHeaderClick!(day, e) : undefined}
           >
-            <span className="eui-cal-time-header-day-name">{format(day, config.weekDayHeaderFormat || 'EEE')}</span>
-            {isLink ? (
-              <button
-                className={cn(
-                  'eui-cal-time-header-day-num',
-                  'eui-cal-time-header-day-num-link',
-                  { 'eui-cal-time-header-day-num-today': today }
-                )}
-                type="button"
-                onClick={(e) => onDateClick?.(day, e)}
-                aria-label={`Go to ${format(day, 'MMMM d')}`}
-              >
-                {format(day, config.dayHeaderFormat || 'd')}
-              </button>
+            {isInline ? (
+              isLink ? (
+                <button
+                  className={cn('eui-cal-time-header-inline', 'eui-cal-time-header-inline-link', {
+                    'eui-cal-time-header-inline-today': today,
+                  })}
+                  type="button"
+                  onClick={(e) => onDateClick?.(day, e)}
+                  aria-label={`Go to ${format(day, 'MMMM d')}`}
+                >
+                  {inlineLabel}
+                </button>
+              ) : (
+                <span className={cn('eui-cal-time-header-inline', { 'eui-cal-time-header-inline-today': today })}>
+                  {inlineLabel}
+                </span>
+              )
             ) : (
-              <span className={cn('eui-cal-time-header-day-num', { 'eui-cal-time-header-day-num-today': today })}>
-                {format(day, config.dayHeaderFormat || 'd')}
-              </span>
+              <>
+                <span className="eui-cal-time-header-day-name">{format(day, config.weekDayHeaderFormat || 'EEE')}</span>
+                {isLink ? (
+                  <button
+                    className={cn(
+                      'eui-cal-time-header-day-num',
+                      'eui-cal-time-header-day-num-link',
+                      { 'eui-cal-time-header-day-num-today': today }
+                    )}
+                    type="button"
+                    onClick={(e) => onDateClick?.(day, e)}
+                    aria-label={`Go to ${format(day, 'MMMM d')}`}
+                  >
+                    {format(day, config.dayHeaderFormat || 'd')}
+                  </button>
+                ) : (
+                  <span className={cn('eui-cal-time-header-day-num', { 'eui-cal-time-header-day-num-today': today })}>
+                    {format(day, config.dayHeaderFormat || 'd')}
+                  </span>
+                )}
+              </>
             )}
           </div>
         );

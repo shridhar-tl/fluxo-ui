@@ -91,10 +91,11 @@ interface TimeGridAllDayProps {
   onSlotClick?: (date: Date, event: React.MouseEvent) => void;
   maxHeight?: number;
   allDayText?: string;
+  showAllDayRow?: 'auto' | 'always';
 }
 
 const TimeGridAllDay: React.FC<TimeGridAllDayProps> = ({
-  days, entries, renderEntry, onEntryClick, onEntryContextMenu, onSlotClick, maxHeight, allDayText,
+  days, entries, renderEntry, onEntryClick, onEntryContextMenu, onSlotClick, maxHeight, allDayText, showAllDayRow,
 }) => {
   const allDayEntries = useMemo(
     () => [...getAllDayEntries(entries), ...getMultiDayEntries(entries)],
@@ -125,13 +126,13 @@ const TimeGridAllDay: React.FC<TimeGridAllDayProps> = ({
     return map;
   }, [spanned]);
 
-  if (allDayEntries.length === 0) return null;
+  if (allDayEntries.length === 0 && showAllDayRow !== 'always') return null;
 
   const numDays = days.length;
-  const visibleRows = Math.min(maxRow + 1, maxVisibleRows);
+  const visibleRows = Math.max(1, Math.min(maxRow + 1, maxVisibleRows));
   const hasOverflow = maxRow >= maxVisibleRows;
   const totalRows = visibleRows + (hasOverflow ? 1 : 0);
-  const contentHeight = totalRows * allDayRowHeight + (totalRows - 1) * allDayRowGap + 4;
+  const contentHeight = totalRows * allDayRowHeight + Math.max(0, totalRows - 1) * allDayRowGap + 4;
 
   return (
     <div

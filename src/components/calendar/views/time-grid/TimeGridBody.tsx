@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useEffect } from 'react';
+import cn from 'classnames';
 import type { ResolvedCalendarEntry, CalendarConfig, EntryRenderer, DateBackground, DateRangeBackground } from '../../calendar-types';
 import { formatHour, getEntriesForDay, getTimedEntries, format as fnsFormat, setHours, setMinutes, getHours, getMinutes as getMinutesFn } from '../../calendar-utils';
 import TimeGridColumn from './TimeGridColumn';
@@ -69,6 +70,13 @@ const TimeGridBody: React.FC<TimeGridBodyProps> = ({
     return slots;
   }, [effectiveHours]);
 
+  const labelInterval = useMemo(() => {
+    const interval = config.slotLabelInterval;
+    if (!interval || interval <= 0) return 60;
+    if (60 % interval !== 0) return 60;
+    return Math.min(interval, 60);
+  }, [config.slotLabelInterval]);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -100,19 +108,36 @@ const TimeGridBody: React.FC<TimeGridBodyProps> = ({
         <div className="eui-cal-time-gutter">
           {hourSlots.map(hour => {
             const slotsInHour = 60 / config.slotDuration;
-            return (
-              <div
-                key={hour}
-                className="eui-cal-time-gutter-cell"
-                style={{ height: `${slotsInHour * config.slotHeight}px` }}
-              >
-                <span className="eui-cal-time-gutter-label">
-                  {config.slotLabelFormat
-                    ? fnsFormat(setMinutes(setHours(new Date(), hour), 0), config.slotLabelFormat)
-                    : formatHour(hour, config.timeFormat)}
-                </span>
-              </div>
-            );
+            return Array.from({ length: slotsInHour }).map((_, slotIdx) => {
+              const minute = slotIdx * config.slotDuration;
+              const showLabel = minute % labelInterval === 0;
+              const labelDate = setMinutes(setHours(new Date(), hour), minute);
+              const text = !showLabel
+                ? ''
+                : config.slotLabelFormat
+                  ? fnsFormat(labelDate, config.slotLabelFormat)
+                  : (minute === 0
+                      ? formatHour(hour, config.timeFormat)
+                      : fnsFormat(labelDate, config.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'));
+              const isSub = showLabel && minute !== 0;
+              return (
+                <div
+                  key={`${hour}-${minute}`}
+                  className="eui-cal-time-gutter-cell"
+                  style={{ height: `${config.slotHeight}px` }}
+                >
+                  {showLabel && (
+                    <span
+                      className={cn('eui-cal-time-gutter-label', {
+                        'eui-cal-time-gutter-label-sub': isSub,
+                      })}
+                    >
+                      {text}
+                    </span>
+                  )}
+                </div>
+              );
+            });
           })}
         </div>
         <div className="eui-cal-time-columns">

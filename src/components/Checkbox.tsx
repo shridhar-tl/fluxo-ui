@@ -4,10 +4,11 @@ import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getResolvedSize, splitBaseAndNativeProps, splitVisibleAndHiddenProps } from '../utils';
 import './Checkbox.scss';
 
-interface CheckboxProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {
+interface CheckboxProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type' | 'children'> {
     checked?: boolean;
     onChange?: (event: ComponentEvent<boolean>) => void;
-    label?: string;
+    label?: React.ReactNode;
+    children?: React.ReactNode;
     indeterminate?: boolean;
     required?: boolean;
     id?: string;
@@ -19,6 +20,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             checked = false,
             onChange,
             label,
+            children,
             indeterminate = false,
             required = false,
             id,
@@ -97,7 +99,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             </div>
         );
 
-        if (!label) {
+        const labelContent = children ?? label;
+
+        if (labelContent === undefined || labelContent === null || labelContent === '') {
             return (
                 <label {...visibleProps} className={containerClasses} htmlFor={inputId}>
                     {checkbox}
@@ -113,7 +117,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
                         'eui-checkbox-label-disabled': disabled,
                     })}
                 >
-                    {label}
+                    {labelContent}
                 </span>
             </label>
         );

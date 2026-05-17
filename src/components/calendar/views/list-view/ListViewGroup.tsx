@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type ReactNode } from 'react';
 import cn from 'classnames';
 import { format, isToday } from 'date-fns';
 import type { ResolvedCalendarEntry, EntryRenderer } from '../../calendar-types';
@@ -7,13 +7,14 @@ import ListViewItem from './ListViewItem';
 interface ListViewGroupProps {
   date: Date;
   entries: ResolvedCalendarEntry[];
+  emptyDayMessage?: ReactNode;
   renderEntry?: EntryRenderer;
   onEntryClick?: (entry: ResolvedCalendarEntry, event: React.MouseEvent) => void;
   onEntryContextMenu?: (entry: ResolvedCalendarEntry, event: React.MouseEvent) => void;
 }
 
 const ListViewGroup: React.FC<ListViewGroupProps> = ({
-  date, entries, renderEntry, onEntryClick, onEntryContextMenu,
+  date, entries, emptyDayMessage, renderEntry, onEntryClick, onEntryContextMenu,
 }) => {
   const today = isToday(date);
 
@@ -27,7 +28,7 @@ const ListViewGroup: React.FC<ListViewGroupProps> = ({
       </div>
       <div className="eui-cal-list-group-items" role="list">
         {entries.length === 0 ? (
-          <div className="eui-cal-list-empty">No entries</div>
+          <div className="eui-cal-list-empty">{emptyDayMessage ?? 'No entries'}</div>
         ) : (
           entries.map(entry => (
             <ListViewItem

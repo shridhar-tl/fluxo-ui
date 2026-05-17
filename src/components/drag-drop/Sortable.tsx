@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { CSSProperties, ElementType, ReactNode, useCallback, useId, useMemo, useRef, useState } from 'react';
+import { CSSProperties, ElementType, KeyboardEvent as ReactKeyboardEvent, ReactNode, Ref, useCallback, useId, useMemo, useRef, useState } from 'react';
 import Draggable, { DraggableRenderProps } from './Draggable';
 import Droppable, { DropIndicator, DroppableRenderProps } from './Droppable';
 import type { DragItem, DropOrientation, DropResult } from './core/types';
@@ -169,7 +169,7 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
     }, []);
 
     const handleContainerKeyDown = useCallback(
-        (e: React.KeyboardEvent<HTMLElement>) => {
+        (e: ReactKeyboardEvent<HTMLElement>) => {
             if (!keyboardReorder) return;
             const target = e.target as HTMLElement;
             const slot = target.closest('[data-eui-sortable-slot]') as HTMLElement | null;
@@ -271,7 +271,7 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
 
     return (
         <Component
-            ref={containerRef as React.Ref<HTMLElement>}
+            ref={containerRef as Ref<HTMLElement>}
             className={containerClass}
             style={containerStyle}
             role={keyboardReorder ? 'listbox' : undefined}
@@ -284,8 +284,21 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
                 const ariaLabel = itemAriaLabel ? itemAriaLabel(item, i) : `Item ${i + 1} of ${items.length}`;
                 const itemKey = (getItemId(item, i) as string | number | undefined) ?? i;
 
-                const droppableNode = (
+                const slotDomProps = keyboardReorder
+                    ? {
+                          tabIndex: 0,
+                          role: 'option',
+                          'aria-selected': isGrabbed,
+                          'aria-roledescription': 'draggable',
+                          'aria-label': `${ariaLabel}${isGrabbed ? ' (grabbed)' : ''}`,
+                          'aria-grabbed': isGrabbed,
+                          'data-eui-sortable-slot': i,
+                      }
+                    : undefined;
+
+                return (
                     <Droppable
+                        key={itemKey}
                         containerId={containerId}
                         index={i}
                         accept={accept}
@@ -295,33 +308,17 @@ function Sortable<T = unknown>(props: SortableProps<T>) {
                         dropIndicator={dropIndicator}
                         dropPosition="auto"
                         edgeThreshold={10}
-                        className={classNames('eui-sortable-item', { 'eui-sortable-item-grabbed': isGrabbed })}
+                        className={classNames('eui-sortable-item', {
+                            'eui-sortable-slot': keyboardReorder,
+                            'eui-sortable-item-grabbed': isGrabbed,
+                        })}
                         canDrop={itemCanDrop ? (src) => itemCanDrop(src, i) : undefined}
+                        domProps={slotDomProps}
                     >
                         {provideDropRef
                             ? (droppable) => renderDraggable(item, i, droppable)
                             : renderDraggable(item, i)}
                     </Droppable>
-                );
-
-                if (!keyboardReorder) {
-                    return <React.Fragment key={itemKey}>{droppableNode}</React.Fragment>;
-                }
-
-                return (
-                    <div
-                        key={itemKey}
-                        className="eui-sortable-slot"
-                        data-eui-sortable-slot={i}
-                        tabIndex={0}
-                        role="option"
-                        aria-selected={isGrabbed}
-                        aria-roledescription="draggable"
-                        aria-label={`${ariaLabel}${isGrabbed ? ' (grabbed)' : ''}`}
-                        aria-grabbed={isGrabbed}
-                    >
-                        {droppableNode}
-                    </div>
                 );
             })}
             {(showPlaceholder || placeholder) && (

@@ -174,6 +174,7 @@ export interface ViewProps {
   onDateDoubleClick?: (date: Date, event: MouseEvent) => void;
   onExternalDrop?: (info: ExternalDropInfo, event: SyntheticEvent) => void;
   onEntryCreate?: (info: EntryCreateInfo) => void;
+  onVisibleRangeChange?: (range: DateRange) => void;
   renderEntry?: EntryRenderer;
   renderDateHeader?: (date: Date, view: CalendarViewMode) => ReactNode;
   renderDateCell?: (date: Date, view: CalendarViewMode) => ReactNode;
@@ -241,6 +242,7 @@ export interface CalendarConfig {
   dayHeaderFormat: string;
   weekDayHeaderFormat: string;
   monthHeaderFormat: string;
+  dayHeaderLayout: 'stacked' | 'inline';
   slotLabelFormat: string;
   slotLabelInterval: number;
   eventMinDuration: number;
@@ -277,6 +279,11 @@ export interface CalendarConfig {
   displayEventTime: boolean;
   loading: boolean;
   stickyHeaderDates: boolean;
+  hideEmptyDays: boolean;
+  emptyMessage: ReactNode;
+  emptyDayMessage: ReactNode;
+  renderEmpty?: (info: { dateRange: DateRange }) => ReactNode;
+  showAllDayRow: 'auto' | 'always';
 }
 
 export interface CalendarProps {
@@ -312,6 +319,7 @@ export interface CalendarProps {
   dayHeaderFormat?: string;
   weekDayHeaderFormat?: string;
   monthHeaderFormat?: string;
+  dayHeaderLayout?: 'stacked' | 'inline';
   slotLabelFormat?: string;
   slotLabelInterval?: number;
   eventMinDuration?: number;
@@ -348,6 +356,11 @@ export interface CalendarProps {
   displayEventTime?: boolean;
   loading?: boolean;
   stickyHeaderDates?: boolean;
+  hideEmptyDays?: boolean;
+  emptyMessage?: ReactNode;
+  emptyDayMessage?: ReactNode;
+  renderEmpty?: (info: { dateRange: DateRange }) => ReactNode;
+  showAllDayRow?: 'auto' | 'always';
   headerToolbarViews?: string[];
 
   dateBackgrounds?: DateBackground[];
@@ -356,6 +369,7 @@ export interface CalendarProps {
 
   onViewChange?: (view: CalendarViewMode) => void;
   onDateRangeChange?: (range: DateRange) => void;
+  onTitleChange?: (title: string) => void;
   onEntryClick?: (entry: ResolvedCalendarEntry, event: MouseEvent) => void;
   onEntryContextMenu?: (entry: ResolvedCalendarEntry, event: MouseEvent) => void;
   onDateSelect?: (info: SelectionInfo, event: SyntheticEvent) => void;
@@ -365,6 +379,7 @@ export interface CalendarProps {
   onDateDoubleClick?: (date: Date, event: MouseEvent) => void;
   onExternalDrop?: (info: ExternalDropInfo, event: SyntheticEvent) => void;
   onEntryCreate?: (info: EntryCreateInfo) => void;
+  onVisibleRangeChange?: (range: DateRange) => void;
   onEntryMouseEnter?: (entry: ResolvedCalendarEntry, event: MouseEvent) => void;
   onEntryMouseLeave?: (entry: ResolvedCalendarEntry, event: MouseEvent) => void;
 

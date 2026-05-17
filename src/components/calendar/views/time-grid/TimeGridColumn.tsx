@@ -128,6 +128,7 @@ const TimeGridColumn: React.FC<TimeGridColumnProps> = ({
         <NowIndicator
           minuteOfDay={nowMinute}
           visibleHoursStart={effectiveHoursStart}
+          visibleHoursEnd={effectiveHoursEnd}
           slotDuration={config.slotDuration}
           slotHeight={config.slotHeight}
         />

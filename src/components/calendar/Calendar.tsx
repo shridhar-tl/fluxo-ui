@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef, useState } from 'react';
+import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import cn from 'classnames';
 import { ViewMode } from './calendar-types';
 import type {
@@ -48,6 +48,7 @@ const Calendar: React.FC<CalendarProps> = ({
   dayHeaderFormat,
   weekDayHeaderFormat,
   monthHeaderFormat,
+  dayHeaderLayout,
   slotLabelFormat,
   slotLabelInterval,
   eventMinDuration,
@@ -84,6 +85,11 @@ const Calendar: React.FC<CalendarProps> = ({
   displayEventTime,
   loading,
   stickyHeaderDates,
+  hideEmptyDays,
+  emptyMessage,
+  emptyDayMessage,
+  renderEmpty,
+  showAllDayRow,
   headerToolbarViews,
 
   dateBackgrounds,
@@ -92,6 +98,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
   onViewChange,
   onDateRangeChange,
+  onTitleChange,
   onEntryClick,
   onEntryContextMenu,
   onDateSelect,
@@ -101,6 +108,7 @@ const Calendar: React.FC<CalendarProps> = ({
   onDateDoubleClick,
   onExternalDrop,
   onEntryCreate,
+  onVisibleRangeChange,
   renderEntry,
   renderToolbar,
   renderDateHeader,
@@ -155,6 +163,7 @@ const Calendar: React.FC<CalendarProps> = ({
     ...(dayHeaderFormat !== undefined && { dayHeaderFormat }),
     ...(weekDayHeaderFormat !== undefined && { weekDayHeaderFormat }),
     ...(monthHeaderFormat !== undefined && { monthHeaderFormat }),
+    ...(dayHeaderLayout !== undefined && { dayHeaderLayout }),
     ...(slotLabelFormat !== undefined && { slotLabelFormat }),
     ...(slotLabelInterval !== undefined && { slotLabelInterval }),
     ...(eventMinDuration !== undefined && { eventMinDuration }),
@@ -191,6 +200,11 @@ const Calendar: React.FC<CalendarProps> = ({
     ...(displayEventTime !== undefined && { displayEventTime }),
     ...(loading !== undefined && { loading }),
     ...(stickyHeaderDates !== undefined && { stickyHeaderDates }),
+    ...(hideEmptyDays !== undefined && { hideEmptyDays }),
+    ...(emptyMessage !== undefined && { emptyMessage }),
+    ...(emptyDayMessage !== undefined && { emptyDayMessage }),
+    ...(renderEmpty !== undefined && { renderEmpty }),
+    ...(showAllDayRow !== undefined && { showAllDayRow }),
   }), [
     slotDuration, visibleHoursStart, visibleHoursEnd, businessHours,
     firstDayOfWeek, hiddenDays, timeFormat, dateFormat, rowBanding,
@@ -198,7 +212,7 @@ const Calendar: React.FC<CalendarProps> = ({
     compact, snapDuration, entryOverlapMode, maxStackCount,
     weekNumbers, showNonCurrentDates, creatable, slotHeight, dragThreshold,
     titleFormat, dayHeaderFormat, weekDayHeaderFormat, monthHeaderFormat,
-    slotLabelFormat, slotLabelInterval,
+    dayHeaderLayout, slotLabelFormat, slotLabelInterval,
     eventMinDuration, eventMaxDuration, eventDefaultDuration,
     eventDurationEditable, eventStartEditable, eventOverlap,
     eventClassNames, eventConstraint, eventDataTransform,
@@ -208,6 +222,7 @@ const Calendar: React.FC<CalendarProps> = ({
     allDaySlotMaxHeight, dayMinWidth, dayMinHeight, weekText, fixedWeekCount,
     expandRows, multiMonthCount, nowIndicatorInterval, dayPopoverFormat,
     allDayText, displayEventTime, loading, stickyHeaderDates,
+    hideEmptyDays, emptyMessage, emptyDayMessage, renderEmpty, showAllDayRow,
   ]);
 
   const [registry] = useState(() => {
@@ -221,6 +236,13 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const viewDefinitions = useMemo(() => registry.getAllViews(), [registry]);
 
+  const [viewVisibleRange, setViewVisibleRange] = useState<{ start: Date; end: Date } | null>(null);
+
+  const handleNavDateRangeChange = useCallback((range: { start: Date; end: Date }) => {
+    setViewVisibleRange(null);
+    onDateRangeChange?.(range);
+  }, [onDateRangeChange]);
+
   const nav = useCalendarNavigation({
     initialDate: initialDate ? (typeof initialDate === 'string' ? new Date(initialDate) : initialDate) : undefined,
     initialView,
@@ -228,12 +250,25 @@ const Calendar: React.FC<CalendarProps> = ({
     firstDayOfWeek: config.firstDayOfWeek,
     dateAlignment: config.dateAlignment,
     onViewChange,
-    onDateRangeChange,
+    onDateRangeChange: handleNavDateRangeChange,
   });
+
+  const effectiveDateRange = useMemo(() => {
+    if (!viewVisibleRange) return nav.dateRange;
+    return {
+      start: viewVisibleRange.start < nav.dateRange.start ? viewVisibleRange.start : nav.dateRange.start,
+      end: viewVisibleRange.end > nav.dateRange.end ? viewVisibleRange.end : nav.dateRange.end,
+    };
+  }, [nav.dateRange, viewVisibleRange]);
+
+  const handleViewVisibleRangeChange = useCallback((range: { start: Date; end: Date }) => {
+    setViewVisibleRange(range);
+    onVisibleRangeChange?.(range);
+  }, [onVisibleRangeChange]);
 
   const entries = useCalendarEntries({
     entries: rawEntries,
-    dateRange: nav.dateRange,
+    dateRange: effectiveDateRange,
     eventDataTransform: config.eventDataTransform,
   });
 
@@ -303,7 +338,7 @@ const Calendar: React.FC<CalendarProps> = ({
   const contextValue = useMemo<CalendarContextValue>(() => ({
     currentDate: nav.currentDate,
     viewMode: nav.viewMode,
-    dateRange: nav.dateRange,
+    dateRange: effectiveDateRange,
     config,
     entries,
     viewDefinitions,
@@ -312,13 +347,13 @@ const Calendar: React.FC<CalendarProps> = ({
     api,
     setDragState,
     setSelectionState,
-  }), [nav.currentDate, nav.viewMode, nav.dateRange, config, entries, viewDefinitions, dragState, selectionState, api]);
+  }), [nav.currentDate, nav.viewMode, effectiveDateRange, config, entries, viewDefinitions, dragState, selectionState, api]);
 
   const containerStyle = useMemo<React.CSSProperties>(() => {
     const s: Record<string, string> = {
       height: typeof height === 'number' ? `${height}px` : height,
     };
-    if (config.slotHeight !== 36) {
+    if (config.slotHeight !== 24) {
       s['--eui-cal-slot-height'] = `${config.slotHeight}px`;
     }
     return s as React.CSSProperties;
@@ -342,7 +377,8 @@ const Calendar: React.FC<CalendarProps> = ({
 
   useEffect(() => {
     announce(nav.title);
-  }, [nav.title]);
+    onTitleChange?.(nav.title);
+  }, [nav.title]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     announce(`View changed to ${nav.viewMode}`);
@@ -397,7 +433,7 @@ const Calendar: React.FC<CalendarProps> = ({
             viewDefinition={currentViewDef}
             currentDate={nav.currentDate}
             entries={entries}
-            dateRange={nav.dateRange}
+            dateRange={effectiveDateRange}
             config={config}
             onEntryClick={onEntryClick}
             onEntryContextMenu={onEntryContextMenu}
@@ -414,6 +450,7 @@ const Calendar: React.FC<CalendarProps> = ({
             onDateDoubleClick={onDateDoubleClick}
             onExternalDrop={onExternalDrop}
             onEntryCreate={onEntryCreate}
+            onVisibleRangeChange={handleViewVisibleRangeChange}
             renderEntry={renderEntry}
             renderDateHeader={renderDateHeader}
             renderDateCell={renderDateCell}

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { Plugin } from 'vite';
+import { loadEnv, type Plugin } from 'vite';
 
 interface FluxoUiSourcePluginOptions {
     sourcePath?: string;
@@ -9,19 +9,48 @@ interface FluxoUiSourcePluginOptions {
 
 const peerDepsWithSubpaths: string[] = ['react', 'react-dom', 'react/jsx-runtime'];
 
+function resolveSourceDir(input: string): string | null {
+    const resolved = path.resolve(input);
+    if (!fs.existsSync(resolved)) return null;
+
+    const stat = fs.statSync(resolved);
+    if (!stat.isDirectory()) return null;
+
+    if (fs.existsSync(path.join(resolved, 'components/index.ts'))) {
+        return resolved;
+    }
+
+    const nestedSrc = path.join(resolved, 'src');
+    if (fs.existsSync(path.join(nestedSrc, 'components/index.ts'))) {
+        return nestedSrc;
+    }
+
+    return null;
+}
+
 function fluxoUiSource(options: FluxoUiSourcePluginOptions = {}): Plugin {
     return {
         name: 'fluxo-ui-source',
-        config() {
-            const envUseSourcePath = process.env['EUI_USE_SOURCE'];
+        config(_userConfig, env) {
+            const projectRoot = process.cwd();
+            const fileEnv = loadEnv(env.mode, projectRoot, ['EUI_']);
+
+            const envUseSourcePath = fileEnv['EUI_USE_SOURCE'] ?? process.env['EUI_USE_SOURCE'];
             const useSource = (envUseSourcePath && envUseSourcePath !== 'false') || options.useSource !== false;
             if (!useSource) return;
 
-            const projectRoot = process.cwd();
-            const sourcePath = process.env['EUI_SOURCE_PATH'] || options.sourcePath || '../fluxo-ui/src';
-            const resolvedSourcePath = path.resolve(sourcePath);
+            const rawSourcePath =
+                fileEnv['EUI_SOURCE_PATH'] || process.env['EUI_SOURCE_PATH'] || options.sourcePath || '../fluxo-ui';
 
-            if (!fs.existsSync(resolvedSourcePath)) return;
+            const resolvedSourcePath = resolveSourceDir(rawSourcePath);
+
+            if (!resolvedSourcePath) {
+                console.warn(
+                    `[fluxo-ui-source] Could not locate fluxo-ui source at "${path.resolve(rawSourcePath)}". ` +
+                        `Provide a folder containing components/index.ts (or a project root containing src/).`,
+                );
+                return;
+            }
 
             const aliases: Record<string, string> = {};
 

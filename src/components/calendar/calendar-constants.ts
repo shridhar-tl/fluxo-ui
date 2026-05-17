@@ -26,12 +26,13 @@ export const defaultConfig: CalendarConfig = {
   weekNumbers: false,
   showNonCurrentDates: true,
   creatable: false,
-  slotHeight: 36,
+  slotHeight: 24,
   dragThreshold: 5,
   titleFormat: '',
   dayHeaderFormat: 'd',
   weekDayHeaderFormat: 'EEE',
   monthHeaderFormat: 'MMMM yyyy',
+  dayHeaderLayout: 'stacked',
   slotLabelFormat: '',
   slotLabelInterval: 0,
   eventMinDuration: 0,
@@ -68,9 +69,14 @@ export const defaultConfig: CalendarConfig = {
   displayEventTime: true,
   loading: false,
   stickyHeaderDates: true,
+  hideEmptyDays: false,
+  emptyMessage: 'No entries to display',
+  emptyDayMessage: 'No entries',
+  renderEmpty: undefined,
+  showAllDayRow: 'auto',
 };
 
-export const slotHeight = 36;
+export const slotHeight = 24;
 
 export const allDayRowHeight = 28;
 

@@ -4,15 +4,17 @@ import { minuteOffsetToPixels } from '../../calendar-utils';
 interface NowIndicatorProps {
   minuteOfDay: number;
   visibleHoursStart: number;
+  visibleHoursEnd: number;
   slotDuration: number;
   slotHeight: number;
 }
 
-const NowIndicator: React.FC<NowIndicatorProps> = ({ minuteOfDay, visibleHoursStart, slotDuration, slotHeight }) => {
+const NowIndicator: React.FC<NowIndicatorProps> = ({ minuteOfDay, visibleHoursStart, visibleHoursEnd, slotDuration, slotHeight }) => {
   const startMinute = visibleHoursStart * 60;
-  const offset = minuteOfDay - startMinute;
-  if (offset < 0) return null;
+  const endMinute = visibleHoursEnd * 60;
+  if (minuteOfDay < startMinute || minuteOfDay > endMinute) return null;
 
+  const offset = minuteOfDay - startMinute;
   const top = minuteOffsetToPixels(offset, slotDuration, slotHeight);
 
   return (

@@ -76,7 +76,7 @@
     },
     "slotHeight": {
       "type": "number",
-      "default": "36",
+      "default": "24",
       "description": "Height in pixels of each time slot in time grid views. Lower values make the grid more compact."
     },
     "onEntryCreate": {
@@ -198,7 +198,7 @@
     "slotLabelInterval": {
       "type": "number",
       "default": "0",
-      "description": "Show time labels every N slots (0 = every slot). E.g., set to 2 with 15-min slots to label every 30 min."
+      "description": "Interval in minutes at which slot labels appear in the time gutter. 0 (default) = label only at the start of each hour. Must be a positive divisor of 60 (e.g. 15, 30) when set. Use slotDuration to label every slot or 2*slotDuration for every other slot."
     },
     "loading": {
       "type": "boolean",
@@ -296,6 +296,30 @@
       "type": "DateLoadingRange[]",
       "description": "Show shimmer loaders for dates being loaded. Array of {start, end}."
     },
+    "hideEmptyDays": {
+      "type": "boolean",
+      "default": "false",
+      "description": "List view only: when true, days that contain no entries are filtered out so users only see days with data. When all days in the range are empty, the empty state is rendered instead."
+    },
+    "emptyMessage": {
+      "type": "ReactNode",
+      "default": "'No entries to display'",
+      "description": "Message shown when the entire list view has zero entries for the visible range. Pass a string or any ReactNode for richer content."
+    },
+    "emptyDayMessage": {
+      "type": "ReactNode",
+      "default": "'No entries'",
+      "description": "Inline message inside a day group when that day is empty. Only shown when hideEmptyDays is false."
+    },
+    "renderEmpty": {
+      "type": "(info: { dateRange }) => ReactNode",
+      "description": "Render-prop for a fully custom empty state. When provided, overrides the default icon + emptyMessage."
+    },
+    "showAllDayRow": {
+      "type": "'auto' | 'always'",
+      "default": "auto",
+      "description": "Time grid all-day row visibility. 'auto' (default) hides the row when there are no all-day entries. 'always' keeps the row visible so the gutter label and day slots remain available as drop targets / visual anchors."
+    },
     "titleFormat": {
       "type": "string",
       "description": "Custom date-fns format string for the toolbar title."
@@ -309,6 +333,11 @@
       "type": "string",
       "default": "EEE",
       "description": "Format for weekday names in headers."
+    },
+    "dayHeaderLayout": {
+      "type": "'stacked' | 'inline'",
+      "default": "stacked",
+      "description": "Layout for time-grid day headers. 'stacked' shows weekday on top and large day-number below (modern, spacious). 'inline' shows them on a single compact line — when dayHeaderFormat is provided it is used verbatim (e.g. 'EEE, dd/MM' → 'Sun, 17/05'); otherwise weekday + day-number are joined."
     },
     "onExternalDrop": {
       "type": "(info, event) => void",
@@ -350,6 +379,10 @@
     "onDateRangeChange": {
       "type": "(range) => void",
       "description": "Date range change callback"
+    },
+    "onTitleChange": {
+      "type": "(title: string) => void",
+      "description": "Fires whenever the toolbar title changes (e.g. after navigation or a view change). Useful when the built-in toolbar is hidden (hideToolbar) and the host wants to render the title in its own header bar."
     },
     "apiRef": {
       "type": "RefObject<CalendarApi>",

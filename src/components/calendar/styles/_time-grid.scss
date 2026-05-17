@@ -16,8 +16,8 @@
 }
 
 .eui-cal-time-gutter-header {
-  width: $cal-gutter-width;
-  min-width: $cal-gutter-width;
+  width: var(--eui-cal-gutter-width, #{$cal-gutter-width});
+  min-width: var(--eui-cal-gutter-width, #{$cal-gutter-width});
   flex-shrink: 0;
 
   &.eui-cal-time-gutter-header-weeknum {
@@ -43,6 +43,41 @@
 
   &.eui-cal-time-header-cell-today {
     background: var(--eui-primary-subtle);
+  }
+
+  &.eui-cal-time-header-cell-inline {
+    padding: 0.25rem 0;
+    justify-content: center;
+  }
+}
+
+.eui-cal-time-header-inline {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--eui-text);
+  line-height: 1.2;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--eui-radius-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: background-color $cal-transition;
+
+  &.eui-cal-time-header-inline-link {
+    cursor: pointer;
+
+    &:hover {
+      background: var(--eui-bg-hover);
+      color: var(--eui-primary);
+    }
+  }
+
+  &.eui-cal-time-header-inline-today {
+    color: var(--eui-primary);
   }
 }
 
@@ -163,29 +198,32 @@
 }
 
 .eui-cal-time-gutter {
-  width: $cal-gutter-width;
-  min-width: $cal-gutter-width;
+  width: var(--eui-cal-gutter-width, #{$cal-gutter-width});
+  min-width: var(--eui-cal-gutter-width, #{$cal-gutter-width});
   flex-shrink: 0;
   position: relative;
-  padding-top: 0.5em;
 }
 
 .eui-cal-time-gutter-cell {
-  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   border-bottom: 1px solid var(--eui-border-subtle);
+  padding: 0 0.5rem;
+  box-sizing: border-box;
 }
 
 .eui-cal-time-gutter-label {
-  position: absolute;
-  top: -0.625em;
-  right: 0.5rem;
   font-size: 0.6875rem;
   color: var(--eui-text-muted);
   line-height: 1;
   pointer-events: none;
-  background: var(--eui-bg);
-  padding: 0 0.25rem;
-  z-index: 1;
+  white-space: nowrap;
+
+  &.eui-cal-time-gutter-label-sub {
+    font-size: 0.5625rem;
+    color: var(--eui-text-disabled);
+  }
 }
 
 .eui-cal-time-gutter-weeknum {
@@ -204,7 +242,6 @@
   display: flex;
   flex: 1;
   min-width: 0;
-  padding-top: 0.5em;
 }
 
 .eui-cal-time-column {
