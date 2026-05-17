@@ -287,7 +287,7 @@
 
 .eui-tab-page {
     flex: 1;
-    padding: 1rem;
+    padding: var(--eui-tab-page-padding, 1rem);
     height: 100%;
 
     &.eui-tab-page-disabled {
