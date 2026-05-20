@@ -1,0 +1,65 @@
+{
+  "stickyScrollProps": {
+    "children": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Scrollable content. New items appended at the end trigger auto-scroll when pinned"
+    },
+    "threshold": {
+      "type": "number",
+      "default": "48",
+      "description": "Distance in px from the bottom within which the view is considered pinned"
+    },
+    "initialPinned": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Start scrolled to the bottom and pinned on mount"
+    },
+    "behavior": {
+      "type": "'smooth' | 'auto'",
+      "default": "'smooth'",
+      "description": "Scroll behavior for the jump button; auto-falls back under prefers-reduced-motion"
+    },
+    "showJumpButton": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show a 'jump to latest' button while the user is scrolled up"
+    },
+    "jumpButtonLabel": {
+      "type": "string",
+      "description": "Optional visible text on the jump button (icon-only when omitted)"
+    },
+    "maxHeight": {
+      "type": "number | string",
+      "description": "Max height of the scroll viewport (number is px)"
+    },
+    "height": {
+      "type": "number | string",
+      "description": "Fixed height of the scroll viewport (number is px)"
+    },
+    "onPinnedChange": {
+      "type": "(pinned: boolean) => void",
+      "description": "Fires when the pinned-to-bottom state changes"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS classes on the outer wrapper"
+    },
+    "contentClassName": {
+      "type": "string",
+      "description": "Additional CSS classes on the inner content element"
+    },
+    "id": {
+      "type": "string",
+      "description": "HTML id attribute on the scroll viewport"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the scroll viewport"
+    },
+    "role": {
+      "type": "string",
+      "description": "ARIA role for the scroll viewport (e.g. 'log' for live activity feeds)"
+    }
+  }
+}

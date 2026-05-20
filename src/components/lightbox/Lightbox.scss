@@ -48,7 +48,7 @@
     animation: euiLightboxScaleIn 0.2s ease-out;
 
     &.eui-lightbox-positioned {
-        position: fixed;
+        position: absolute;
     }
 
     &.eui-lightbox-center {

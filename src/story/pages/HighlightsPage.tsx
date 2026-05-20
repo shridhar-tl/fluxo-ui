@@ -383,7 +383,7 @@ const HighlightsPage: React.FC = () => {
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-10 max-w-2xl">
                             {[
-                                { label: '80+', sub: 'Components' },
+                                { label: '100+', sub: 'Components' },
                                 { label: 'TS', sub: 'First-class types' },
                                 { label: 'A11y', sub: 'WCAG 2.1 AA' },
                                 { label: '12', sub: 'Brand themes' },

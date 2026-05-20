@@ -203,6 +203,7 @@ const navSections: NavSection[] = [
             { label: 'Dock', path: '/components/dock' },
             { label: 'Command Palette', path: '/components/command-palette' },
             { label: 'Scroll To Top', path: '/components/scroll-to-top' },
+            { label: 'Sticky Scroll', path: '/components/sticky-scroll' },
             { label: 'Drag & Drop', path: '/components/drag-drop' },
             { label: 'Sortable', path: '/components/sortable' },
             { label: 'Deferred View', path: '/components/deferred-view' },

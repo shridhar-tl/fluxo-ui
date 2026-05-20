@@ -128,6 +128,7 @@ const EmptyStatePage = React.lazy(() => import('./story/pages/empty-state/EmptyS
 const PasswordStrengthPage = React.lazy(() => import('./story/pages/password-strength/PasswordStrengthPage'));
 const PasswordRequirementsPage = React.lazy(() => import('./story/pages/password-requirements/PasswordRequirementsPage'));
 const ScrollToTopPage = React.lazy(() => import('./story/pages/scroll-to-top/ScrollToTopPage'));
+const StickyScrollPage = React.lazy(() => import('./story/pages/sticky-scroll/StickyScrollPage'));
 const ChatWindowPage = React.lazy(() => import('./story/pages/chat/ChatWindowPage'));
 const ChatThemesPage = React.lazy(() => import('./story/pages/chat/ChatThemesPage'));
 const ChatLauncherPage = React.lazy(() => import('./story/pages/chat/ChatLauncherPage'));
@@ -662,6 +663,7 @@ const App: React.FC = () => {
                     <Route path="/components/password-strength" element={<LayoutWrapper><PasswordStrengthPage /></LayoutWrapper>} />
                     <Route path="/components/password-requirements" element={<LayoutWrapper><PasswordRequirementsPage /></LayoutWrapper>} />
                     <Route path="/components/scroll-to-top" element={<LayoutWrapper><ScrollToTopPage /></LayoutWrapper>} />
+                    <Route path="/components/sticky-scroll" element={<LayoutWrapper><StickyScrollPage /></LayoutWrapper>} />
                     <Route path="/components/chat-window" element={<LayoutWrapper><ChatWindowPage /></LayoutWrapper>} />
                     <Route path="/components/chat-themes" element={<LayoutWrapper><ChatThemesPage /></LayoutWrapper>} />
                     <Route path="/components/chat-launcher" element={<LayoutWrapper><ChatLauncherPage /></LayoutWrapper>} />

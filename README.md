@@ -272,6 +272,7 @@ function Counter() {
 | Dock             | Floating bar of icons with magnification and auto-hide       |
 | Command Palette  | Modal launcher with fuzzy search, recents, and global hotkey |
 | Scroll To Top    | Floating FAB that returns the user to the top of the page    |
+| Sticky Scroll    | Auto-follows new content but holds when you scroll up        |
 | Drag & Drop      | Draggable and droppable containers                           |
 | Sortable         | Drag-to-reorder lists and grids                              |
 | Deferred View    | Lazy-render with visibility detection                        |

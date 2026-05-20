@@ -151,6 +151,7 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/password-strength': () => import('./password-strength/BasicUsage'),
     '/components/password-requirements': () => import('./password-requirements/BasicUsage'),
     '/components/scroll-to-top': () => import('./scroll-to-top/Variants'),
+    '/components/sticky-scroll': () => import('./sticky-scroll/BasicUsage'),
     '/components/pin-input': () => import('./pin-input/BasicUsage'),
     '/components/floating-label-input': () => import('./floating-label-input/BasicUsage'),
     '/components/step-dots': () => import('./step-dots/Variants'),
@@ -434,19 +435,34 @@ const chartBoardComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Kanban Board', description: 'Drag-and-drop task board with columns', path: '/components/kanban-board' },
     { title: 'Timeline', description: 'Vertical/horizontal event sequence', path: '/components/timeline' },
     { title: 'Progress Bar', description: 'Determinate and indeterminate progress', path: '/components/progress-bar' },
-    { title: 'Countdown Timer', description: 'Progress-aware countdown with circular, linear, segmented, and numeric variants', path: '/components/countdown-timer', badge: 'New' },
+    {
+        title: 'Countdown Timer',
+        description: 'Progress-aware countdown with circular, linear, segmented, and numeric variants',
+        path: '/components/countdown-timer',
+        badge: 'New',
+    },
     { title: 'Knob', description: 'Circular value indicator with optional drag editing', path: '/components/knob', badge: 'New' },
     { title: 'Activity Gauge', description: 'Concentric multi-series ring chart', path: '/components/activity-gauge', badge: 'New' },
 ];
 
 const codeComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'QR Code', description: 'Encode any string with optional logo overlay', path: '/components/qr-code', badge: 'New' },
-    { title: 'QR Scanner', description: 'Scan QR codes with the device camera using the native BarcodeDetector API', path: '/components/qr-scanner', badge: 'New' },
+    {
+        title: 'QR Scanner',
+        description: 'Scan QR codes with the device camera using the native BarcodeDetector API',
+        path: '/components/qr-scanner',
+        badge: 'New',
+    },
     { title: 'Barcode', description: '6 symbologies with built-in validation', path: '/components/barcode', badge: 'New' },
 ];
 
 const mediaComponents: Omit<ComponentCardProps, 'isDark'>[] = [
-    { title: 'Avatar', description: 'Circular image / initials / icon with status dots and group overflow', path: '/components/avatar', badge: 'New' },
+    {
+        title: 'Avatar',
+        description: 'Circular image / initials / icon with status dots and group overflow',
+        path: '/components/avatar',
+        badge: 'New',
+    },
     { title: 'Carousel', description: 'Image/video slider with thumbnails', path: '/components/carousel' },
     { title: 'Lightbox', description: 'Hover/click preview with zoom-out', path: '/components/lightbox' },
     { title: 'Image Editor', description: 'Crop, rotate, blur, annotate images', path: '/components/image-editor' },
@@ -468,7 +484,12 @@ const feedbackComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Page Banner', description: 'Page-level message banners', path: '/components/page-banner' },
     { title: 'Tooltip', description: 'Hover/focus information popups', path: '/components/tooltip' },
     { title: 'Shimmer / Skeleton', description: 'Loading placeholders and skeletons', path: '/components/shimmer' },
-    { title: 'Empty State', description: 'Placeholder for empty data, errors, and first-run states', path: '/components/empty-state', badge: 'New' },
+    {
+        title: 'Empty State',
+        description: 'Placeholder for empty data, errors, and first-run states',
+        path: '/components/empty-state',
+        badge: 'New',
+    },
 ];
 
 const overlayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -518,37 +539,143 @@ const layoutComponents: Omit<ComponentCardProps, 'isDark'>[] = [
 ];
 
 const chatComponents: Omit<ComponentCardProps, 'isDark'>[] = [
-    { title: 'Chat Window', description: 'Fully-controlled chat surface with composer, attachments, reactions, replies, and 9 themes', path: '/components/chat-window', badge: 'New' },
-    { title: 'Chat Themes', description: 'All 9 built-in themes side by side in light and dark mode', path: '/components/chat-themes', badge: 'New' },
-    { title: 'Chat Launcher', description: '7 floating-button variants to invite users into the chat', path: '/components/chat-launcher', badge: 'New' },
-    { title: 'Chat Conversations', description: 'Two-pane inbox with search, pinned, archived, and unread counts', path: '/components/chat-conversations', badge: 'New' },
-    { title: 'Multi-Chat', description: 'Render multiple independent chat windows on a single screen', path: '/components/chat-multi', badge: 'New' },
-    { title: 'Chat Templates', description: 'Built-in text/image/file/options/video templates plus your own custom renderers', path: '/components/chat-templates', badge: 'New' },
+    {
+        title: 'Chat Window',
+        description: 'Fully-controlled chat surface with composer, attachments, reactions, replies, and 9 themes',
+        path: '/components/chat-window',
+        badge: 'New',
+    },
+    {
+        title: 'Chat Themes',
+        description: 'All 9 built-in themes side by side in light and dark mode',
+        path: '/components/chat-themes',
+        badge: 'New',
+    },
+    {
+        title: 'Chat Launcher',
+        description: '7 floating-button variants to invite users into the chat',
+        path: '/components/chat-launcher',
+        badge: 'New',
+    },
+    {
+        title: 'Chat Conversations',
+        description: 'Two-pane inbox with search, pinned, archived, and unread counts',
+        path: '/components/chat-conversations',
+        badge: 'New',
+    },
+    {
+        title: 'Multi-Chat',
+        description: 'Render multiple independent chat windows on a single screen',
+        path: '/components/chat-multi',
+        badge: 'New',
+    },
+    {
+        title: 'Chat Templates',
+        description: 'Built-in text/image/file/options/video templates plus your own custom renderers',
+        path: '/components/chat-templates',
+        badge: 'New',
+    },
 ];
 
 const mobileComponents: Omit<ComponentCardProps, 'isDark'>[] = [
-    { title: 'Nav Bar', description: 'Mobile app bar with back, title, actions, and optional sub-row', path: '/components/nav-bar', badge: 'New' },
-    { title: 'Mobile Tab Bar', description: 'Bottom navigation with badges + four visual variants', path: '/components/mobile-tab-bar', badge: 'New' },
-    { title: 'Action Sheet', description: 'iOS / Material / plain bottom action list with destructive states', path: '/components/action-sheet', badge: 'New' },
-    { title: 'Pull To Refresh', description: 'Promise-aware pull-down refresh with four indicator styles', path: '/components/pull-to-refresh', badge: 'New' },
-    { title: 'Swipeable List Item', description: 'Row with reveal-on-swipe actions and full-swipe trigger', path: '/components/swipeable-list-item', badge: 'New' },
+    {
+        title: 'Nav Bar',
+        description: 'Mobile app bar with back, title, actions, and optional sub-row',
+        path: '/components/nav-bar',
+        badge: 'New',
+    },
+    {
+        title: 'Mobile Tab Bar',
+        description: 'Bottom navigation with badges + four visual variants',
+        path: '/components/mobile-tab-bar',
+        badge: 'New',
+    },
+    {
+        title: 'Action Sheet',
+        description: 'iOS / Material / plain bottom action list with destructive states',
+        path: '/components/action-sheet',
+        badge: 'New',
+    },
+    {
+        title: 'Pull To Refresh',
+        description: 'Promise-aware pull-down refresh with four indicator styles',
+        path: '/components/pull-to-refresh',
+        badge: 'New',
+    },
+    {
+        title: 'Swipeable List Item',
+        description: 'Row with reveal-on-swipe actions and full-swipe trigger',
+        path: '/components/swipeable-list-item',
+        badge: 'New',
+    },
     { title: 'Picker', description: 'Wheel / flat / compact picker — single or multi-column', path: '/components/picker', badge: 'New' },
-    { title: 'PIN / OTP Input', description: 'Auto-advancing OTP boxes with paste, masking, and error state', path: '/components/pin-input', badge: 'New' },
-    { title: 'Floating Label Input', description: 'Material-style floating label — outlined, filled, underlined', path: '/components/floating-label-input', badge: 'New' },
+    {
+        title: 'PIN / OTP Input',
+        description: 'Auto-advancing OTP boxes with paste, masking, and error state',
+        path: '/components/pin-input',
+        badge: 'New',
+    },
+    {
+        title: 'Floating Label Input',
+        description: 'Material-style floating label — outlined, filled, underlined',
+        path: '/components/floating-label-input',
+        badge: 'New',
+    },
     { title: 'Step Dots', description: 'Tiny dot / bar / numbered position indicator', path: '/components/step-dots', badge: 'New' },
-    { title: 'Touch Ripple', description: 'Drop-in Material ripple wrapper for any tappable surface', path: '/components/touch-ripple', badge: 'New' },
-    { title: 'Skeleton List', description: 'Nine ready-made skeleton list/card placeholders', path: '/components/skeleton-list', badge: 'New' },
-    { title: 'Virtual List', description: 'Windowed list with onEndReached for very long mobile feeds', path: '/components/virtual-list', badge: 'New' },
-    { title: 'Safe Area View', description: 'Wrapper that applies env(safe-area-inset-*) for iOS notches', path: '/components/safe-area-view', badge: 'New' },
+    {
+        title: 'Touch Ripple',
+        description: 'Drop-in Material ripple wrapper for any tappable surface',
+        path: '/components/touch-ripple',
+        badge: 'New',
+    },
+    {
+        title: 'Skeleton List',
+        description: 'Nine ready-made skeleton list/card placeholders',
+        path: '/components/skeleton-list',
+        badge: 'New',
+    },
+    {
+        title: 'Virtual List',
+        description: 'Windowed list with onEndReached for very long mobile feeds',
+        path: '/components/virtual-list',
+        badge: 'New',
+    },
+    {
+        title: 'Safe Area View',
+        description: 'Wrapper that applies env(safe-area-inset-*) for iOS notches',
+        path: '/components/safe-area-view',
+        badge: 'New',
+    },
 ];
 
 const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Button', description: 'Primary action element with variants', path: '/components/button' },
-    { title: 'Split Button', description: 'Primary action paired with a related-actions menu', path: '/components/split-button', badge: 'New' },
+    {
+        title: 'Split Button',
+        description: 'Primary action paired with a related-actions menu',
+        path: '/components/split-button',
+        badge: 'New',
+    },
     { title: 'Fab & Speed Dial', description: 'Floating action buttons', path: '/components/fab-speed-dial' },
     { title: 'Dock', description: 'Floating bar of icons with magnification and auto-hide', path: '/components/dock', badge: 'New' },
-    { title: 'Command Palette', description: 'Modal launcher with fuzzy search and recents', path: '/components/command-palette', badge: 'New' },
-    { title: 'Scroll To Top', description: 'Floating FAB that returns the user to the top', path: '/components/scroll-to-top', badge: 'New' },
+    {
+        title: 'Command Palette',
+        description: 'Modal launcher with fuzzy search and recents',
+        path: '/components/command-palette',
+        badge: 'New',
+    },
+    {
+        title: 'Scroll To Top',
+        description: 'Floating FAB that returns the user to the top',
+        path: '/components/scroll-to-top',
+        badge: 'New',
+    },
+    {
+        title: 'Sticky Scroll',
+        description: 'Auto-follows new content but holds when you scroll up',
+        path: '/components/sticky-scroll',
+        badge: 'New',
+    },
     { title: 'Drag & Drop', description: 'Draggable and droppable containers', path: '/components/drag-drop' },
     { title: 'Sortable', description: 'Drag-to-reorder lists and grids', path: '/components/sortable' },
     { title: 'Deferred View', description: 'Lazy-render with visibility detection', path: '/components/deferred-view' },
@@ -605,7 +732,7 @@ const HomePage: React.FC = () => {
             <section className="scroll-mt-8" id="highlights">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 py-8">
                     {[
-                        { icon: '80+', label: 'Components', desc: 'Production-ready UI components' },
+                        { icon: '100+', label: 'Components', desc: 'Production-ready UI components' },
                         { icon: 'TS', label: 'TypeScript', desc: 'Full type safety and IntelliSense' },
                         { icon: 'A11Y', label: 'Accessible', desc: 'WAI-ARIA compliant components' },
                         { icon: '12', label: 'Themes', desc: 'Color themes with dark mode' },
@@ -665,12 +792,7 @@ const HomePage: React.FC = () => {
                         items={chartBoardComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
-                    <CategorySection
-                        title="Codes"
-                        icon="&#9647;"
-                        items={codeComponents.map((i) => ({ ...i, isDark }))}
-                        isDark={isDark}
-                    />
+                    <CategorySection title="Codes" icon="&#9647;" items={codeComponents.map((i) => ({ ...i, isDark }))} isDark={isDark} />
                     <CategorySection title="Media" icon="&#9634;" items={mediaComponents.map((i) => ({ ...i, isDark }))} isDark={isDark} />
                     <CategorySection
                         title="Navigation"
@@ -702,12 +824,7 @@ const HomePage: React.FC = () => {
                         items={interactiveComponents.map((i) => ({ ...i, isDark }))}
                         isDark={isDark}
                     />
-                    <CategorySection
-                        title="Chat"
-                        icon="&#9993;"
-                        items={chatComponents.map((i) => ({ ...i, isDark }))}
-                        isDark={isDark}
-                    />
+                    <CategorySection title="Chat" icon="&#9993;" items={chatComponents.map((i) => ({ ...i, isDark }))} isDark={isDark} />
                     <CategorySection
                         title="Mobile"
                         icon="&#9883;"

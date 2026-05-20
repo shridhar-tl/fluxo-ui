@@ -131,6 +131,7 @@ export * from './empty-state';
 export * from './password-strength';
 export * from './password-requirements';
 export * from './scroll-to-top';
+export * from './sticky-scroll';
 export * from './action-sheet';
 export * from './floating-label-input';
 export * from './mobile-tab-bar';

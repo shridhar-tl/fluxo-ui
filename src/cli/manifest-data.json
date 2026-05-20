@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-16T06:29:44.502Z",
+  "generatedAt": "2026-05-20T04:15:02.993Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -2951,6 +2951,35 @@
       "private": false,
       "dependencies": {
         "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "sticky-scroll",
+      "name": "StickyScroll",
+      "kind": "directory",
+      "sourcePath": "components/sticky-scroll",
+      "entryFile": "components/sticky-scroll/index.ts",
+      "files": [
+        "StickyScroll.scss",
+        "StickyScroll.tsx",
+        "index.ts"
+      ],
+      "category": "Actions & Interaction",
+      "label": "Sticky Scroll",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "icon"
+        ],
         "hooks": [],
         "utils": [],
         "shared": [],

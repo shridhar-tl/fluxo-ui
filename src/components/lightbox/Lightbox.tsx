@@ -288,70 +288,78 @@ const Lightbox: React.FC<LightboxProps> = ({
             maxHeight: isCenter ? '90vh' : '80vh',
         };
 
-        const popover = (
+        const popoverPanel = (
             <div
-                className={cn('eui-lightbox-overlay', {
-                    'eui-lightbox-overlay-backdrop': backdrop && isCenter,
-                    'eui-lightbox-overlay-no-backdrop': !backdrop || !isCenter,
-                })}
-                onMouseDown={isCenter ? handleBackdropMouseDown : undefined}
-                onMouseUp={isCenter ? handleBackdropMouseUp : undefined}
+                ref={popoverRef}
+                className={cn('eui-lightbox-popover', {
+                    'eui-lightbox-center': isCenter,
+                    'eui-lightbox-positioned': !isCenter,
+                }, className)}
+                style={isCenter ? sizeStyle : { ...popoverStyle, ...sizeStyle }}
+                role="dialog"
+                aria-modal={isCenter}
+                aria-label={ariaLabel}
+                tabIndex={-1}
+                onMouseEnter={handlePopoverMouseEnter}
+                onMouseLeave={handlePopoverMouseLeave}
             >
-                <div
-                    ref={popoverRef}
-                    className={cn('eui-lightbox-popover', {
-                        'eui-lightbox-center': isCenter,
-                        'eui-lightbox-positioned': !isCenter,
-                    }, className)}
-                    style={isCenter ? sizeStyle : { ...popoverStyle, ...sizeStyle }}
-                    role="dialog"
-                    aria-modal={isCenter}
-                    aria-label={ariaLabel}
-                    tabIndex={-1}
-                    onMouseEnter={handlePopoverMouseEnter}
-                    onMouseLeave={handlePopoverMouseLeave}
-                >
-                    {(header || showCloseButton) && (
-                        <div className="eui-lightbox-header">
-                            <div className="eui-lightbox-header-content">{header}</div>
-                            {showCloseButton && (
-                                <button
-                                    className="eui-lightbox-close"
-                                    onClick={close}
-                                    type="button"
-                                    aria-label="Close preview"
-                                >
-                                    <TimesIcon aria-hidden="true" />
-                                </button>
-                            )}
-                        </div>
-                    )}
-                    <div
-                        className={cn('eui-lightbox-body', { 'eui-lightbox-body-zoom': zoomOut }, contentClassName)}
-                        style={zoomOut ? { height: scaledBodyHeight } : undefined}
-                    >
-                        {zoomOut ? (
-                            <div
-                                className="eui-lightbox-zoom-container"
-                                style={{
-                                    width: zoomWidth,
-                                    height: zoomHeight,
-                                    transform: `scale(${zoomScale})`,
-                                    transformOrigin: 'top left',
-                                }}
+                {(header || showCloseButton) && (
+                    <div className="eui-lightbox-header">
+                        <div className="eui-lightbox-header-content">{header}</div>
+                        {showCloseButton && (
+                            <button
+                                className="eui-lightbox-close"
+                                onClick={close}
+                                type="button"
+                                aria-label="Close preview"
                             >
-                                {content}
-                            </div>
-                        ) : (
-                            content
+                                <TimesIcon aria-hidden="true" />
+                            </button>
                         )}
                     </div>
-                    {footer && <div className="eui-lightbox-footer">{footer}</div>}
+                )}
+                <div
+                    className={cn('eui-lightbox-body', { 'eui-lightbox-body-zoom': zoomOut }, contentClassName)}
+                    style={zoomOut ? { height: scaledBodyHeight } : undefined}
+                >
+                    {zoomOut ? (
+                        <div
+                            className="eui-lightbox-zoom-container"
+                            style={{
+                                width: zoomWidth,
+                                height: zoomHeight,
+                                transform: `scale(${zoomScale})`,
+                                transformOrigin: 'top left',
+                            }}
+                        >
+                            {content}
+                        </div>
+                    ) : (
+                        content
+                    )}
                 </div>
+                {footer && <div className="eui-lightbox-footer">{footer}</div>}
             </div>
         );
 
-        return createPortal(popover, document.body);
+        if (!isCenter) {
+            return createPortal(popoverPanel, document.body);
+        }
+
+        const overlay = (
+            <div
+                className={cn('eui-lightbox-overlay', {
+                    'eui-lightbox-overlay-backdrop': backdrop,
+                    'eui-lightbox-overlay-no-backdrop': !backdrop,
+                })}
+                onMouseDown={handleBackdropMouseDown}
+                onMouseUp={handleBackdropMouseUp}
+            >
+                {popoverPanel}
+            </div>
+        );
+
+        return createPortal(overlay, document.body);
     };
 
     return (
