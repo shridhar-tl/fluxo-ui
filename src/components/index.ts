@@ -18,7 +18,12 @@ export { Drawer } from './drawer';
 export type { DrawerProps, DrawerPosition } from './drawer';
 export * from './calendar';
 export { Carousel } from './carousel';
-export type { CarouselProps, CarouselSlide } from './carousel';
+export type {
+    CarouselProps,
+    CarouselSlide,
+    CarouselThumbnailAction,
+    CarouselTrailingThumbnail,
+} from './carousel';
 export { InfiniteScroll } from './InfiniteScroll';
 export type { InfiniteScrollProps } from './InfiniteScroll';
 export { default as DateRangePicker } from './date-range';

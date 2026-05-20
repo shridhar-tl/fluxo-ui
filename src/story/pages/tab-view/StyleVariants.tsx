@@ -9,7 +9,8 @@ const code = `<TabView variant="pills">...</TabView>
 <TabView variant="segment">...</TabView>
 <TabView variant="editor">...</TabView>
 <TabView variant="thick-border">...</TabView>
-<TabView variant="elevated">...</TabView>`;
+<TabView variant="elevated">...</TabView>
+<TabView variant="glow">...</TabView>`;
 
 const variants: { name: string; variant: TabViewVariant; description: string }[] = [
     { name: 'Default', variant: 'default', description: 'Standard underline indicator' },
@@ -19,6 +20,7 @@ const variants: { name: string; variant: TabViewVariant; description: string }[]
     { name: 'Editor', variant: 'editor', description: 'VS Code / code editor style with top accent border' },
     { name: 'Thick Border', variant: 'thick-border', description: 'Bold top border highlight for the active tab' },
     { name: 'Elevated', variant: 'elevated', description: 'Larger active tab with font size change and thick bottom border' },
+    { name: 'Glow', variant: 'glow', description: 'Pill track with an animated, primary-tinted glowing indicator that slides behind the active tab' },
 ];
 
 const tabContent = [

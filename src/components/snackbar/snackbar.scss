@@ -140,69 +140,192 @@
     }
 }
 
+// ── Per-type color tokens ──────────────────────────────────────────────
+// Every variant composes its look from these tokens so the eight variants
+// stay DRY. --sb-accent is the brand line/icon color, --sb-accent-strong a
+// deeper shade for solid fills, --sb-tint a soft surface wash, --sb-on-solid
+// the text color on a solid accent fill, and --sb-grad-from / --sb-grad-to
+// the stops used by the gradient variant.
+//
+// The 'info' type is the brand/neutral type, so it follows the active brand
+// theme through --eui-primary* (changes with theme-blue, theme-green, etc.).
+// 'success', 'warning' and 'error' are fixed status colors per CLAUDE.md and
+// stay hardcoded so meaning is consistent across every theme.
+.eui-snackbar-t-info {
+    --sb-accent: var(--eui-primary);
+    --sb-accent-strong: var(--eui-primary-hover);
+    --sb-tint: var(--eui-primary-subtle);
+    --sb-on-solid: var(--eui-text-on-primary);
+    --sb-grad-from: var(--eui-primary-hover);
+    --sb-grad-to: var(--eui-primary);
+}
+
+.eui-snackbar-t-success {
+    --sb-accent: #22c55e;
+    --sb-accent-strong: #16a34a;
+    --sb-tint: #ecfdf5;
+    --sb-on-solid: #ffffff;
+    --sb-grad-from: #16a34a;
+    --sb-grad-to: #4ade80;
+}
+
+.eui-snackbar-t-warning {
+    --sb-accent: #f59e0b;
+    --sb-accent-strong: #d97706;
+    --sb-tint: #fffbeb;
+    --sb-on-solid: #ffffff;
+    --sb-grad-from: #d97706;
+    --sb-grad-to: #fbbf24;
+}
+
+.eui-snackbar-t-error {
+    --sb-accent: #ef4444;
+    --sb-accent-strong: #dc2626;
+    --sb-tint: #fef2f2;
+    --sb-on-solid: #ffffff;
+    --sb-grad-from: #dc2626;
+    --sb-grad-to: #f87171;
+}
+
+// info's --sb-tint comes from --eui-primary-subtle, which the themes already
+// flip for dark mode. Only the fixed status types need a darker tint here so
+// their soft surface reads correctly against the dark background.
+body.mode-dark {
+    .eui-snackbar-t-success {
+        --sb-tint: rgba(34, 197, 94, 0.16);
+    }
+    .eui-snackbar-t-warning {
+        --sb-tint: rgba(245, 158, 11, 0.16);
+    }
+    .eui-snackbar-t-error {
+        --sb-tint: rgba(239, 68, 68, 0.16);
+    }
+}
+
 .eui-snackbar {
     max-width: 24rem;
     padding: 1rem;
     border-radius: var(--eui-radius-md);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    border-left-width: 4px;
-    border-left-style: solid;
     cursor: pointer;
     overflow: hidden;
     position: relative;
     transition: all 0.3s ease;
     animation-fill-mode: forwards;
 
-    &.eui-snackbar-info-light {
-        background: linear-gradient(to right, #60a5fa, #93c5fd);
-        border-left-color: #2563eb;
-        border-left-width: 8px;
-        color: #ffffff;
+    // ── Gradient: vivid diagonal fill with white text ────────────────────
+    &.eui-snackbar-v-gradient {
+        background: linear-gradient(135deg, var(--sb-grad-from), var(--sb-grad-to));
+        color: var(--sb-on-solid);
+        box-shadow: 0 10px 28px -8px color-mix(in srgb, var(--sb-accent) 60%, transparent);
+
+        .eui-snackbar-message {
+            color: color-mix(in srgb, var(--sb-on-solid) 90%, transparent);
+        }
     }
 
-    &.eui-snackbar-success-light {
-        background: linear-gradient(to right, #86efac, #bbf7d0);
-        border-left-color: #16a34a;
-        border-left-width: 8px;
-        color: #1f2937;
+    // ── Solid: filled accent background, white text ──────────────────────
+    &.eui-snackbar-v-solid {
+        background-color: var(--sb-accent);
+        color: var(--sb-on-solid);
+        box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--sb-accent) 55%, transparent);
+
+        .eui-snackbar-message {
+            color: color-mix(in srgb, var(--sb-on-solid) 90%, transparent);
+        }
     }
 
-    &.eui-snackbar-warning-light {
-        background: linear-gradient(to right, #fbbf24, #fde68a);
-        border-left-color: #d97706;
-        border-left-width: 8px;
-        color: #111827;
+    // ── Soft: tinted surface, accent icon + colored title ────────────────
+    &.eui-snackbar-v-soft {
+        background-color: var(--sb-tint);
+        color: var(--eui-text);
+        border: 1px solid color-mix(in srgb, var(--sb-accent) 30%, transparent);
+
+        .eui-snackbar-icon {
+            color: var(--sb-accent);
+        }
+        .eui-snackbar-title {
+            color: color-mix(in srgb, var(--sb-accent-strong) 80%, var(--eui-text));
+        }
+        .eui-snackbar-message {
+            color: var(--eui-text-muted);
+        }
     }
 
-    &.eui-snackbar-error-light {
-        background: linear-gradient(to right, #fca5a5, #fecaca);
-        border-left-color: #dc2626;
-        border-left-width: 8px;
-        color: #1f2937;
+    // ── Outlined: surface bg with accent ring, accent icon ───────────────
+    &.eui-snackbar-v-outlined {
+        background-color: var(--eui-bg);
+        color: var(--eui-text);
+        border: 1.5px solid var(--sb-accent);
+        box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.25);
+
+        .eui-snackbar-icon {
+            color: var(--sb-accent);
+        }
+        .eui-snackbar-message {
+            color: var(--eui-text-muted);
+        }
     }
 
-    &.eui-snackbar-info-dark {
-        background-color: #3b82f6;
-        border-left-color: #2563eb;
-        color: #ffffff;
+    // ── Minimal: compact single-line surface chip ────────────────────────
+    &.eui-snackbar-v-minimal {
+        background-color: var(--eui-bg);
+        color: var(--eui-text);
+        border: 1px solid var(--eui-border-subtle);
+        border-left: 3px solid var(--sb-accent);
+        box-shadow: 0 4px 14px -6px rgba(0, 0, 0, 0.22);
+
+        .eui-snackbar-icon {
+            color: var(--sb-accent);
+        }
+        .eui-snackbar-message {
+            color: var(--eui-text);
+        }
     }
 
-    &.eui-snackbar-success-dark {
-        background-color: #22c55e;
-        border-left-color: #16a34a;
-        color: #ffffff;
+    // ── Glass: frosted translucent panel ─────────────────────────────────
+    &.eui-snackbar-v-glass {
+        background-color: color-mix(in srgb, var(--eui-bg) 70%, transparent);
+        backdrop-filter: blur(14px) saturate(160%);
+        -webkit-backdrop-filter: blur(14px) saturate(160%);
+        color: var(--eui-text);
+        border: 1px solid color-mix(in srgb, var(--eui-text) 12%, transparent);
+        box-shadow: 0 10px 32px -10px rgba(0, 0, 0, 0.35);
+
+        .eui-snackbar-icon {
+            color: var(--sb-accent);
+        }
+        .eui-snackbar-message {
+            color: var(--eui-text-muted);
+        }
     }
 
-    &.eui-snackbar-warning-dark {
-        background-color: #eab308;
-        border-left-color: #d97706;
-        color: #ffffff;
+    // ── Accent: surface card with bold colored top bar ───────────────────
+    &.eui-snackbar-v-accent {
+        background-color: var(--eui-bg);
+        color: var(--eui-text);
+        border: 1px solid var(--eui-border-subtle);
+        border-top: 3px solid var(--sb-accent);
+        box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.25);
+
+        .eui-snackbar-icon {
+            color: var(--sb-accent);
+        }
+        .eui-snackbar-message {
+            color: var(--eui-text-muted);
+        }
     }
 
-    &.eui-snackbar-error-dark {
-        background-color: #ef4444;
-        border-left-color: #dc2626;
-        color: #ffffff;
+    // ── Pill: rounded compact single-line solid badge ────────────────────
+    &.eui-snackbar-v-pill {
+        background-color: var(--sb-accent);
+        color: var(--sb-on-solid);
+        border-radius: 999px;
+        box-shadow: 0 8px 24px -8px color-mix(in srgb, var(--sb-accent) 55%, transparent);
+
+        .eui-snackbar-message {
+            color: var(--sb-on-solid);
+        }
     }
 
     &.eui-snackbar-anim-fade-enter {
@@ -320,24 +443,129 @@
         animation-play-state: paused;
     }
 
-    .eui-snackbar-info-light &,
-    .eui-snackbar-info-dark & {
-        background-color: #3b82f6;
+    .eui-snackbar-t-info &,
+    .eui-snackbar-t-success &,
+    .eui-snackbar-t-warning &,
+    .eui-snackbar-t-error & {
+        background-color: var(--sb-accent);
+        opacity: 0.7;
     }
 
-    .eui-snackbar-success-light &,
-    .eui-snackbar-success-dark & {
-        background-color: #22c55e;
+    .eui-snackbar-v-solid &,
+    .eui-snackbar-v-pill &,
+    .eui-snackbar-v-gradient & {
+        background-color: var(--sb-on-solid);
+        opacity: 0.5;
+    }
+}
+
+// ── Single-line variants: align everything on one row, no title ──────────
+.eui-snackbar-v-minimal,
+.eui-snackbar-v-pill {
+    max-width: 28rem;
+
+    .eui-snackbar-body {
+        align-items: center;
     }
 
-    .eui-snackbar-warning-light &,
-    .eui-snackbar-warning-dark & {
-        background-color: #eab308;
+    .eui-snackbar-icon {
+        margin-top: 0;
+
+        svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
     }
 
-    .eui-snackbar-error-light &,
-    .eui-snackbar-error-dark & {
-        background-color: #ef4444;
+    .eui-snackbar-message {
+        -webkit-line-clamp: 2;
+        font-weight: 500;
+    }
+
+    .eui-snackbar-close {
+        margin-top: 0;
+    }
+}
+
+.eui-snackbar-v-pill {
+    .eui-snackbar-icon {
+        margin-right: 0.5rem;
+    }
+}
+
+// ── Sizes (orthogonal to variant) ───────────────────────────────────────
+// md is the baseline already defined above. sm shrinks padding, type scale,
+// and icon so the snackbar is noticeably shorter. lg goes the other way.
+.eui-snackbar-size-sm {
+    max-width: 22rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--eui-radius-sm);
+
+    .eui-snackbar-icon {
+        margin-right: 0.5rem;
+        margin-top: 0.125rem;
+
+        svg {
+            width: 1.125rem;
+            height: 1.125rem;
+        }
+    }
+
+    .eui-snackbar-title {
+        font-size: 0.875rem;
+        margin-bottom: 0.0625rem;
+    }
+
+    .eui-snackbar-message {
+        font-size: 0.75rem;
+        line-height: 1.4;
+        -webkit-line-clamp: 3;
+    }
+
+    .eui-snackbar-close svg {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+
+    .eui-snackbar-progress {
+        height: 3px;
+    }
+
+    &.eui-snackbar-v-minimal,
+    &.eui-snackbar-v-pill {
+        padding: 0.375rem 0.75rem;
+
+        .eui-snackbar-icon {
+            margin-top: 0;
+
+            svg {
+                width: 1rem;
+                height: 1rem;
+            }
+        }
+    }
+}
+
+.eui-snackbar-size-lg {
+    max-width: 28rem;
+    padding: 1.25rem 1.375rem;
+
+    .eui-snackbar-icon svg {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+
+    .eui-snackbar-title {
+        font-size: 1.25rem;
+    }
+
+    .eui-snackbar-message {
+        font-size: 0.9375rem;
+    }
+
+    .eui-snackbar-close svg {
+        width: 1.125rem;
+        height: 1.125rem;
     }
 }
 
@@ -388,8 +616,15 @@
         width: 100%;
         padding: 1rem 1.125rem;
         border-radius: 14px;
-        border-left-width: 6px;
         box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    .eui-snackbar-v-pill {
+        border-radius: 999px;
+    }
+
+    .eui-snackbar-size-sm {
+        padding: 0.625rem 0.875rem;
     }
 
     .eui-snackbar-icon {

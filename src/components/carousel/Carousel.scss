@@ -289,6 +289,26 @@
     }
 }
 
+.eui-carousel-thumb-cell {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    align-items: stretch;
+
+    &:hover .eui-carousel-thumb-actions {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+.eui-carousel-thumb-cell-trailing {
+    .eui-carousel-thumb-trailing {
+        height: auto;
+        min-height: 48px;
+        align-self: stretch;
+    }
+}
+
 .eui-carousel-thumb {
     position: relative;
     flex-shrink: 0;
@@ -317,6 +337,87 @@
     &.eui-carousel-thumb-active {
         border-color: var(--eui-primary);
         opacity: 1;
+    }
+}
+
+.eui-carousel-thumb-actions {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    z-index: 2;
+    display: flex;
+    gap: 3px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+.eui-carousel-thumb-action {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: var(--eui-radius-sm);
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.85);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    &.eui-carousel-thumb-action-danger:hover {
+        background: var(--eui-danger, #dc2626);
+    }
+}
+
+.eui-carousel-thumb-actions:focus-within {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.eui-carousel-thumb-trailing {
+    opacity: 1;
+    border: 2px dashed var(--eui-border);
+    background: var(--eui-bg-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--eui-text-muted);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+
+    &:hover {
+        border-color: var(--eui-primary);
+        color: var(--eui-primary);
+        background: var(--eui-primary-subtle);
+        opacity: 1;
+    }
+}
+
+.eui-carousel-thumb-trailing-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+        width: 20px;
+        height: 20px;
     }
 }
 

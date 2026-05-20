@@ -9,17 +9,21 @@ import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import Autoplay from './Autoplay';
 import BasicUsage from './BasicUsage';
+import EditableThumbnails from './EditableThumbnails';
 import ThumbnailNav from './ThumbnailNav';
 
 import _Carousel_props_json from './../../../components/carousel/Carousel.props.json';
-const { carouselProps, slideProps } = _Carousel_props_json;
+const { carouselProps, slideProps, thumbnailActionProps, trailingThumbnailProps } = _Carousel_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Image carousel with dots' },
     { id: 'thumbnails', title: 'Thumbnail Navigation', description: 'Thumbnail strip navigation' },
+    { id: 'editable-thumbnails', title: 'Editable Thumbnails', description: 'Per-thumbnail actions + add tile' },
     { id: 'autoplay', title: 'Autoplay', description: 'Auto-advancing slides with loop' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'props', title: 'Props', description: 'Component API reference' },
     { id: 'slide-props', title: 'CarouselSlide', description: 'Slide data interface' },
+    { id: 'thumbnail-action-props', title: 'CarouselThumbnailAction', description: 'Per-thumbnail action interface' },
+    { id: 'trailing-thumbnail-props', title: 'CarouselTrailingThumbnail', description: 'Trailing tile interface' },
     { id: 'features', title: 'Features', description: 'Feature summary' },
 ];
 
@@ -87,6 +91,18 @@ const CarouselPage: React.FC = () => {
                 <ThumbnailNav />
             </section>
 
+            <section id="editable-thumbnails" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Editable Thumbnails
+                </h2>
+                <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    Pass <code>thumbnailActions</code> for per-thumbnail overlay buttons and <code>trailingThumbnail</code> for an
+                    extra tile after the strip. Both are fully generic — supply any icon and handler for delete, edit, add, or any
+                    custom action.
+                </p>
+                <EditableThumbnails />
+            </section>
+
             <section id="autoplay" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Autoplay</h2>
                 <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
@@ -97,7 +113,7 @@ const CarouselPage: React.FC = () => {
 
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
-                <CodeBlock code={`import { Carousel } from 'fluxo-ui';\nimport type { CarouselProps, CarouselSlide } from 'fluxo-ui';`} />
+                <CodeBlock code={`import { Carousel } from 'fluxo-ui';\nimport type { CarouselProps, CarouselSlide, CarouselThumbnailAction, CarouselTrailingThumbnail } from 'fluxo-ui';`} />
             </section>
 
             <section id="props" className="scroll-mt-8">
@@ -110,6 +126,20 @@ const CarouselPage: React.FC = () => {
                     CarouselSlide Interface
                 </h2>
                 <PropsTable props={slideProps} />
+            </section>
+
+            <section id="thumbnail-action-props" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    CarouselThumbnailAction Interface
+                </h2>
+                <PropsTable props={thumbnailActionProps} />
+            </section>
+
+            <section id="trailing-thumbnail-props" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    CarouselTrailingThumbnail Interface
+                </h2>
+                <PropsTable props={trailingThumbnailProps} />
             </section>
 
             <section id="features" className="scroll-mt-8">

@@ -127,6 +127,66 @@ $sizes: (
             border-radius: 0;
         }
     }
+
+    &.eui-menu-nav-select-glow {
+        &.eui-menu-nav-horizontal {
+            border-bottom: none;
+
+            .eui-menu-nav-body {
+                padding: 0.25rem;
+                border: 1px solid var(--eui-border-subtle);
+                border-radius: 0.875rem;
+                background-color: var(--eui-bg-subtle);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            }
+
+            .eui-menu-nav-list {
+                gap: 0.125rem;
+            }
+        }
+
+        .eui-menu-nav-body {
+            position: relative;
+        }
+
+        .eui-menu-nav-item-selected {
+            color: var(--eui-primary);
+
+            .eui-menu-nav-item-icon {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.eui-menu-nav-glow-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    border-radius: 0.625rem;
+    background: linear-gradient(180deg, var(--eui-primary-subtle), color-mix(in srgb, var(--eui-primary-subtle) 55%, transparent));
+    border: 1px solid color-mix(in srgb, var(--eui-primary) 50%, transparent);
+    box-shadow:
+        0 6px 18px -8px color-mix(in srgb, var(--eui-primary) 65%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        transform 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.16s ease;
+
+    &.eui-menu-nav-glow-indicator-ready {
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-menu-nav-glow-indicator {
+        transition: opacity 0.16s ease;
+    }
 }
 
 .eui-menu-nav-body {
@@ -220,6 +280,19 @@ $sizes: (
             color: var(--eui-text-on-primary);
             border-radius: var(--eui-radius-md);
         }
+
+        &.eui-menu-nav-select-glow {
+            background-color: transparent;
+
+            &:hover:not(.eui-menu-nav-item-disabled) {
+                background-color: transparent;
+            }
+        }
+    }
+
+    &.eui-menu-nav-select-glow {
+        position: relative;
+        z-index: 1;
     }
 
     &.eui-menu-nav-item-child-selected {

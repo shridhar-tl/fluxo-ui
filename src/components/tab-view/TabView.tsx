@@ -18,7 +18,7 @@ export interface TabCloseEvent {
     tab: React.ReactElement;
 }
 
-export type TabViewVariant = 'default' | 'pills' | 'enclosed' | 'segment' | 'editor' | 'thick-border' | 'elevated';
+export type TabViewVariant = 'default' | 'pills' | 'enclosed' | 'segment' | 'editor' | 'thick-border' | 'elevated' | 'glow';
 
 export interface TabViewProps {
     activeIndex?: number;

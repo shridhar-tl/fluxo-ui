@@ -4,6 +4,16 @@ import { PlacementCorners } from '../../types';
 export type SnackbarType = 'info' | 'success' | 'warning' | 'error';
 export type AnimationType = 'fade' | 'slide' | 'zoom' | 'bounce';
 export type SnackbarPosition = PlacementCorners | 'topCenter' | 'bottomCenter';
+export type SnackbarVariant =
+    | 'soft'
+    | 'solid'
+    | 'outlined'
+    | 'gradient'
+    | 'accent'
+    | 'glass'
+    | 'minimal'
+    | 'pill';
+export type SnackbarSize = 'sm' | 'md' | 'lg';
 
 export interface SnackbarItemProps {
     data: SnackbarData;
@@ -16,10 +26,11 @@ export interface SnackbarOptions {
     animation?: AnimationType;
     showCloseButton?: boolean;
     position?: SnackbarPosition;
+    variant?: SnackbarVariant;
+    size?: SnackbarSize;
     onClick?: () => void;
     onClose?: (manual: boolean) => void;
     customIcon?: SVGIcon;
-    lightBg?: boolean;
 }
 
 export interface SnackbarData {

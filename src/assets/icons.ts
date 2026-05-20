@@ -45,6 +45,7 @@ export { default as LineChartUpIcon } from './icons/line-chart-up.svg?react';
 export { default as LoadingIcon } from './icons/loading.svg?react';
 export { default as LocationIcon, default as TreeIcon } from './icons/location.svg?react';
 export { default as LogoutIcon } from './icons/logout.svg?react';
+export { default as ManageIcon } from './icons/manage.svg?react';
 export { default as MenuIcon } from './icons/menu.svg?react';
 export { default as MinusIcon } from './icons/minus.svg?react';
 export { default as NightLightIcon } from './icons/night-light.svg?react';

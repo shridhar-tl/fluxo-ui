@@ -2,7 +2,7 @@ import type React from 'react';
 
 export type MenuNavOrientation = 'vertical' | 'horizontal';
 export type MenuNavSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-export type MenuNavSelectionStyle = 'border-left' | 'border-bottom' | 'background' | 'arrow' | 'highlight';
+export type MenuNavSelectionStyle = 'border-left' | 'border-bottom' | 'background' | 'arrow' | 'highlight' | 'glow';
 export type MenuNavIconPosition = 'left' | 'right';
 
 export interface MenuNavItem {

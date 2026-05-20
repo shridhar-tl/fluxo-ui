@@ -36,7 +36,18 @@ const prefersReducedMotion = () => {
 
 function SnackbarItem({ data, onRemove }: SnackbarItemProps) {
     const { id, message, title, options } = data;
-    const { type, timeout, animation, showCloseButton, onClick, onClose, customIcon, position, lightBg = true } = options;
+    const {
+        type,
+        timeout,
+        animation,
+        showCloseButton,
+        onClick,
+        onClose,
+        customIcon,
+        position,
+        variant = 'soft',
+        size = 'md',
+    } = options;
     const [hoverPaused, setHoverPaused] = useState(false);
     const [focusPaused, setFocusPaused] = useState(false);
     const [exit, setExit] = useState(false);
@@ -125,7 +136,10 @@ function SnackbarItem({ data, onRemove }: SnackbarItemProps) {
     };
 
     const Icon = customIcon ?? icons[type] ?? FALLBACK_ICON;
-    const bgClass = `eui-snackbar-${type}-${lightBg ? 'light' : 'dark'}`;
+    const isSingleLine = variant === 'minimal' || variant === 'pill';
+    const typeClass = `eui-snackbar-t-${type}`;
+    const variantClass = `eui-snackbar-v-${variant}`;
+    const sizeClass = `eui-snackbar-size-${size}`;
     const ariaRole = ROLE_BY_TYPE[type] ?? 'status';
     const ariaLive = ARIA_LIVE_BY_TYPE[type] ?? 'polite';
     const enterAnim = reducedMotionRef.current ? '' : getAnimClass(animation, position, false);
@@ -144,14 +158,14 @@ function SnackbarItem({ data, onRemove }: SnackbarItemProps) {
             role={ariaRole}
             aria-live={ariaLive}
             aria-atomic="true"
-            className={classNames('eui-snackbar', bgClass, animClass)}
+            className={classNames('eui-snackbar', variantClass, sizeClass, typeClass, animClass)}
         >
             <div className="eui-snackbar-body">
                 <div className="eui-snackbar-icon" aria-hidden="true">
                     <Icon />
                 </div>
                 <div className="eui-snackbar-content">
-                    <div className="eui-snackbar-title">{title}</div>
+                    {!isSingleLine && <div className="eui-snackbar-title">{title}</div>}
                     <div className="eui-snackbar-message">{message}</div>
                 </div>
                 {(showCloseButton || timeout === 0 || timeout === null) && (

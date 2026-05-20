@@ -9,11 +9,12 @@ import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import AnimationsDemo from './AnimationsDemo';
 import ClickCallback from './ClickCallback';
-import LightBackground from './LightBackground';
 import PersistentTimeout from './PersistentTimeout';
 import PositionsDemo from './PositionsDemo';
 import SetupSection from './SetupSection';
+import SizesDemo from './SizesDemo';
 import TypesDemo from './TypesDemo';
+import VariantsDemo from './VariantsDemo';
 
 
 import _Snackbar_props_json from './../../../components/snackbar/Snackbar.props.json';
@@ -21,10 +22,11 @@ const { snackbarProps } = _Snackbar_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'setup', title: 'Setup', description: 'Mount SnackbarManager' },
     { id: 'types', title: 'Types', description: 'Semantic notification types' },
+    { id: 'variants', title: 'Variants', description: 'Eight visual styles' },
+    { id: 'sizes', title: 'Sizes', description: 'Compact to large' },
     { id: 'positions', title: 'Positions', description: 'Screen edge placement' },
     { id: 'animations', title: 'Animations', description: 'Entry and exit animations' },
     { id: 'persistent-timeout', title: 'Persistent & Timeout', description: 'Timeout control' },
-    { id: 'light-background', title: 'Light Background', description: 'Light variant' },
     { id: 'click-callback', title: 'Click Callback', description: 'Clickable snackbars' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'api-reference', title: 'API Reference', description: 'showSnackbar options' },
@@ -51,6 +53,17 @@ const features: FeatureItem[] = [
         icon: 'M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z',
     },
     {
+        title: 'Eight Visual Variants',
+        description:
+            'Switch the entire look and feel with one prop: soft, solid, outlined, gradient, accent, glass, plus compact minimal and pill styles.',
+        icon: 'M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42',
+    },
+    {
+        title: 'Three Sizes',
+        description: 'An orthogonal size scale (sm, md, lg) lets any variant be made shorter and more compact or roomier as needed.',
+        icon: 'M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15',
+    },
+    {
         title: 'Four Animations',
         description: 'Choose from slide, fade, zoom, or bounce entry/exit animations to match your application style.',
         icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z',
@@ -60,11 +73,6 @@ const features: FeatureItem[] = [
         description:
             'Configurable auto-dismiss timeout in milliseconds. Set timeout to 0 for persistent notifications that only close manually.',
         icon: 'M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
-    },
-    {
-        title: 'Light Background Variant',
-        description: 'The lightBg option renders a softer tinted background for a subtler appearance on light-themed interfaces.',
-        icon: 'M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z',
     },
     {
         title: 'Click & Close Callbacks',
@@ -109,6 +117,16 @@ const SnackbarPage: React.FC = () => {
                 <TypesDemo />
             </section>
 
+            <section className="scroll-mt-8" id="variants">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Variants</h2>
+                <VariantsDemo />
+            </section>
+
+            <section className="scroll-mt-8" id="sizes">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Sizes</h2>
+                <SizesDemo />
+            </section>
+
             <section className="scroll-mt-8" id="positions">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Positions</h2>
                 <PositionsDemo />
@@ -124,13 +142,6 @@ const SnackbarPage: React.FC = () => {
                     Persistent & Custom Timeout
                 </h2>
                 <PersistentTimeout />
-            </section>
-
-            <section className="scroll-mt-8" id="light-background">
-                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                    Light Background Variant
-                </h2>
-                <LightBackground />
             </section>
 
             <section className="scroll-mt-8" id="click-callback">

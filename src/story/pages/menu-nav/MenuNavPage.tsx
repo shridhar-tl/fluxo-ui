@@ -22,7 +22,7 @@ const { menuNavProps } = _MenuNav_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple vertical menu' },
     { id: 'horizontal', title: 'Horizontal', description: 'Horizontal menu with submenus' },
-    { id: 'selection-styles', title: 'Selection Styles', description: 'Five visual selection styles' },
+    { id: 'selection-styles', title: 'Selection Styles', description: 'Six visual selection styles' },
     { id: 'sizes', title: 'Sizes', description: 'All size options' },
     { id: 'nested-menus', title: 'Nested Menus', description: '3 levels of nested submenus' },
     { id: 'grouped-menus', title: 'Grouped Menus', description: 'Collapsible group sections' },
@@ -48,7 +48,7 @@ const features: FeatureItem[] = [
     },
     {
         title: 'Selection Styles',
-        description: 'Five distinct visual styles for highlighting the active menu item.',
+        description: 'Six distinct visual styles for highlighting the active menu item, including an animated glow pill.',
         icon: 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
     },
     {

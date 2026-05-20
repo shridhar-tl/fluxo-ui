@@ -231,7 +231,12 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             }),
         );
 
-        const componentStyles = { ...getComponentStyles({ ...baseProps, disabled }), padding: undefined, height: undefined, fontSize: undefined };
+        const componentStyles = {
+            ...getComponentStyles({ ...baseProps, disabled }),
+            padding: undefined,
+            height: undefined,
+            fontSize: undefined,
+        };
 
         return (
             <>
@@ -262,7 +267,9 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                 onChange={handleInputChange}
                                 onFocus={handleFocus}
                                 onKeyDown={handleKeyDown}
-                                placeholder={selectedItems.length === 0 ? placeholder : isMaxReached ? `Max ${maxSelectedItems} reached` : ''}
+                                placeholder={
+                                    selectedItems.length === 0 ? placeholder : isMaxReached ? `Max ${maxSelectedItems} reached` : ''
+                                }
                                 disabled={disabled || isMaxReached}
                                 autoFocus={autoFocus}
                                 className="eui-autocomplete-multi-input"
@@ -270,7 +277,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                 aria-expanded={isOpen}
                                 aria-haspopup="listbox"
                                 aria-controls={isOpen ? listboxId : undefined}
-                                aria-activedescendant={isOpen ? activeOptionId ?? undefined : undefined}
+                                aria-activedescendant={isOpen ? (activeOptionId ?? undefined) : undefined}
                                 aria-label={ariaLabel}
                                 aria-labelledby={ariaLabelledBy}
                                 role="combobox"
@@ -308,7 +315,13 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                     })}
                                     onClick={() => !item.disabled && handleSelect(item)}
                                 >
-                                    <Checkbox checked={isItemSelected} disabled={item.disabled} onChange={() => handleSelect(item)} />
+                                    <Checkbox
+                                    checked={isItemSelected}
+                                    disabled={item.disabled}
+                                    tabIndex={-1}
+                                    aria-hidden="true"
+                                    style={{ pointerEvents: 'none' }}
+                                />
                                     <span className="eui-autocomplete-multi-option-label">{item.label}</span>
                                 </div>
                             );

@@ -34,6 +34,13 @@ import type { MenuNavSelectionStyle } from 'fluxo-ui';
   selectionStyle="highlight"
   selectedId={selectedId}
   onSelect={(id) => setSelectedId(id)}
+/>
+
+<MenuNav
+  items={items}
+  selectionStyle="glow"
+  selectedId={selectedId}
+  onSelect={(id) => setSelectedId(id)}
 />`;
 
 const selectionStyles: { label: string; value: MenuNavSelectionStyle }[] = [
@@ -42,6 +49,7 @@ const selectionStyles: { label: string; value: MenuNavSelectionStyle }[] = [
     { label: 'Background', value: 'background' },
     { label: 'Arrow', value: 'arrow' },
     { label: 'Highlight', value: 'highlight' },
+    { label: 'Glow', value: 'glow' },
 ];
 
 const SelectionStyles: React.FC = () => {
@@ -51,11 +59,12 @@ const SelectionStyles: React.FC = () => {
         background: 'home',
         arrow: 'home',
         highlight: 'home',
+        glow: 'home',
     });
 
     return (
         <>
-            <ComponentDemo title="Selection Styles" description="Five different visual styles for the selected menu item." centered={false}>
+            <ComponentDemo title="Selection Styles" description="Six different visual styles for the selected menu item." centered={false}>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
                     {selectionStyles.map(({ label, value }) => (
                         <div key={value}>

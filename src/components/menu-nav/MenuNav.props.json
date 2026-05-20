@@ -29,9 +29,9 @@
       "description": "Callback when a menu item is selected."
     },
     "selectionStyle": {
-      "type": "'border-left' | 'border-bottom' | 'background' | 'arrow' | 'highlight'",
+      "type": "'border-left' | 'border-bottom' | 'background' | 'arrow' | 'highlight' | 'glow'",
       "default": "'border-left'",
-      "description": "Visual style for the selected item indicator."
+      "description": "Visual style for the selected item indicator. 'glow' renders an animated, primary-tinted glowing pill that slides behind the selected item (works in both vertical and horizontal orientations)."
     },
     "iconPosition": {
       "type": "'left' | 'right'",

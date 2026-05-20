@@ -78,6 +78,57 @@
       "type": "boolean",
       "default": "true",
       "description": "Show a play/pause button when autoplay is enabled (WCAG 2.2.2)."
+    },
+    "thumbnailActions": {
+      "type": "CarouselThumbnailAction[]",
+      "description": "Per-thumbnail overlay action buttons (e.g. delete, edit). Each action has { icon, label, onClick(slide, index), variant?, isVisible? }. Generic — any icon and handler."
+    },
+    "trailingThumbnail": {
+      "type": "CarouselTrailingThumbnail",
+      "description": "An extra tile rendered after the last thumbnail (e.g. an add button). Shape: { icon, label, onClick }."
+    }
+  },
+  "thumbnailActionProps": {
+    "icon": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Icon rendered inside the action button."
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Accessible label / tooltip for the action."
+    },
+    "onClick": {
+      "type": "(slide: CarouselSlide, index: number) => void",
+      "required": true,
+      "description": "Invoked with the slide and its index when the action is clicked."
+    },
+    "variant": {
+      "type": "'default' | 'danger'",
+      "default": "'default'",
+      "description": "Visual style of the action button."
+    },
+    "isVisible": {
+      "type": "(slide: CarouselSlide, index: number) => boolean",
+      "description": "Optional predicate to conditionally show the action per slide."
+    }
+  },
+  "trailingThumbnailProps": {
+    "icon": {
+      "type": "ReactNode",
+      "required": true,
+      "description": "Icon rendered inside the trailing tile (e.g. a plus icon)."
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Accessible label / tooltip for the trailing tile."
+    },
+    "onClick": {
+      "type": "() => void",
+      "required": true,
+      "description": "Invoked when the trailing tile is clicked."
     }
   },
   "slideProps": {

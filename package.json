@@ -1,6 +1,6 @@
 {
     "name": "fluxo-ui",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "description": "A comprehensive, accessible React component library built with TypeScript. Includes 100+ production-ready UI components, a custom state management solution, dependency injection container, 12 color themes, dark mode, and full keyboard navigation.",
     "keywords": [
         "react-component-library",

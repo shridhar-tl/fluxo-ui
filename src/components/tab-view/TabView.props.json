@@ -22,9 +22,9 @@
       "description": "Content rendered at the trailing end of the tab header row"
     },
     "variant": {
-      "type": "'default' | 'pills' | 'enclosed' | 'segment' | 'editor' | 'thick-border' | 'elevated'",
+      "type": "'default' | 'pills' | 'enclosed' | 'segment' | 'editor' | 'thick-border' | 'elevated' | 'glow'",
       "default": "'default'",
-      "description": "Visual style variant"
+      "description": "Visual style variant. 'glow' renders a pill track with an animated, primary-tinted glowing indicator that slides behind the active tab."
     },
     "scrollable": {
       "type": "boolean",

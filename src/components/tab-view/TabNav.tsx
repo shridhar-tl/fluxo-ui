@@ -38,30 +38,35 @@ export const TabNav: React.FC<TabNavProps> = ({
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(false);
     const [indicatorStyle, setIndicatorStyle] = useState<React.CSSProperties>({});
+    const [indicatorReady, setIndicatorReady] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(activeIndex);
-    const isSegment = variant === 'segment';
+    const hasSlidingIndicator = variant === 'segment' || variant === 'glow';
 
     useEffect(() => {
         setFocusedIndex(activeIndex);
     }, [activeIndex]);
 
     const updateIndicator = useCallback(() => {
-        if (!isSegment || !scrollContainerRef.current) return;
+        if (!hasSlidingIndicator || !scrollContainerRef.current) return;
         const activeEl = tabRefs.current[activeIndex];
-        if (!activeEl) return;
+        if (!activeEl) {
+            setIndicatorReady(false);
+            return;
+        }
         setIndicatorStyle({
             width: activeEl.offsetWidth,
             height: activeEl.offsetHeight,
-            transform: `translateX(${activeEl.offsetLeft}px)`,
+            transform: `translate(${activeEl.offsetLeft}px, ${activeEl.offsetTop}px)`,
         });
-    }, [activeIndex, isSegment]);
+        setIndicatorReady(true);
+    }, [activeIndex, hasSlidingIndicator]);
 
     useEffect(() => {
         updateIndicator();
     }, [updateIndicator, tabs.length]);
 
     useEffect(() => {
-        if (!isSegment) return;
+        if (!hasSlidingIndicator) return;
         const container = scrollContainerRef.current;
         if (!container) return;
         if (typeof ResizeObserver === 'undefined') {
@@ -72,7 +77,7 @@ export const TabNav: React.FC<TabNavProps> = ({
         const ro = new ResizeObserver(() => updateIndicator());
         ro.observe(container);
         return () => ro.disconnect();
-    }, [isSegment, updateIndicator]);
+    }, [hasSlidingIndicator, updateIndicator]);
 
     const isVertical = position === 'left' || position === 'right';
 
@@ -265,11 +270,18 @@ export const TabNav: React.FC<TabNavProps> = ({
                     paddingRight: scrollable && showRightArrow && !isVertical ? '2rem' : undefined,
                     paddingTop: scrollable && showLeftArrow && isVertical ? '2rem' : undefined,
                     paddingBottom: scrollable && showRightArrow && isVertical ? '2rem' : undefined,
-                    position: isSegment ? 'relative' : undefined,
+                    position: hasSlidingIndicator ? 'relative' : undefined,
                 }}
             >
-                {isSegment && (
-                    <div className="eui-tab-segment-indicator" style={indicatorStyle} aria-hidden="true" />
+                {hasSlidingIndicator && (
+                    <div
+                        className={classNames('eui-tab-segment-indicator', {
+                            'eui-tab-segment-indicator-glow': variant === 'glow',
+                            'eui-tab-segment-indicator-ready': indicatorReady,
+                        })}
+                        style={indicatorStyle}
+                        aria-hidden="true"
+                    />
                 )}
                 {tabs.map((tab, index) => {
                     const tabProps = tab.props as Record<string, unknown>;

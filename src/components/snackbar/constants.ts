@@ -16,5 +16,6 @@ export const defaultOptions: Required<Omit<SnackbarOptions, 'onClick' | 'onClose
     animation: 'fade',
     showCloseButton: false,
     position: 'topRight',
-    lightBg: true,
+    variant: 'soft',
+    size: 'md',
 };

@@ -4,6 +4,7 @@ import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, MenuIcon, PauseIcon, Play
 import CarouselSlideRenderer from './CarouselSlide';
 import type { CarouselSlideData } from './CarouselSlide';
 import CarouselThumbnails from './CarouselThumbnails';
+import type { CarouselThumbnailAction, CarouselTrailingThumbnail } from './CarouselThumbnails';
 import './Carousel.scss';
 
 interface CarouselSlide {
@@ -40,6 +41,8 @@ interface CarouselProps {
     aspectRatio?: string;
     ariaLabel?: string;
     showAutoplayToggle?: boolean;
+    thumbnailActions?: CarouselThumbnailAction[];
+    trailingThumbnail?: CarouselTrailingThumbnail;
 }
 
 const focusableSelector = [
@@ -76,6 +79,8 @@ function Carousel({
     aspectRatio,
     ariaLabel = 'Image carousel',
     showAutoplayToggle = true,
+    thumbnailActions,
+    trailingThumbnail,
 }: CarouselProps) {
     const [internalIndex, setInternalIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -284,6 +289,8 @@ function Carousel({
             position={pos}
             onSelect={goTo}
             showInfo={showThumbnailInfo}
+            actions={thumbnailActions}
+            trailingThumbnail={trailingThumbnail}
         />
     );
 
@@ -499,3 +506,4 @@ function Carousel({
 
 export { Carousel };
 export type { CarouselProps, CarouselSlide, ThumbnailMode };
+export type { CarouselThumbnailAction, CarouselTrailingThumbnail } from './CarouselThumbnails';

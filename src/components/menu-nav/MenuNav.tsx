@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { TimesIcon } from '../../assets/icons';
 import MenuNavItemComponent from './MenuNavItem';
 import type { MenuNavGroup, MenuNavItem, MenuNavProps } from './menu-nav-types';
@@ -111,8 +111,12 @@ const MenuNav: React.FC<MenuNavProps> = ({
         return initial;
     });
     const navRef = useRef<HTMLElement>(null);
+    const bodyRef = useRef<HTMLDivElement>(null);
     const mobileTriggerRef = useRef<HTMLButtonElement>(null);
     const mobileOverlayRef = useRef<HTMLDivElement>(null);
+    const [glowIndicator, setGlowIndicator] = useState<{ top: number; left: number; width: number; height: number; ready: boolean }>(
+        { top: 0, left: 0, width: 0, height: 0, ready: false },
+    );
     const seenGroupsRef = useRef<Set<string>>(new Set(
         items.filter(isGroup).map((g) => g.id)
     ));
@@ -202,7 +206,60 @@ const MenuNav: React.FC<MenuNavProps> = ({
         return filterSearchEntries(searchEntries, search);
     }, [searchEntries, search]);
 
-    const effectiveSelectionStyle = toolbar ? 'border-bottom' : orientation === 'horizontal' ? 'border-bottom' : selectionStyle;
+    const effectiveSelectionStyle =
+        selectionStyle === 'glow'
+            ? 'glow'
+            : toolbar
+              ? 'border-bottom'
+              : orientation === 'horizontal'
+                ? 'border-bottom'
+                : selectionStyle;
+    const isGlow = effectiveSelectionStyle === 'glow';
+
+    const updateGlowIndicator = useCallback(() => {
+        if (!isGlow) return;
+        const body = bodyRef.current;
+        if (!body) return;
+        const selectedEl = body.querySelector<HTMLElement>('.eui-menu-nav-item-selected');
+        if (!selectedEl) {
+            setGlowIndicator((prev) => (prev.ready ? { ...prev, ready: false } : prev));
+            return;
+        }
+        const bodyRect = body.getBoundingClientRect();
+        const itemRect = selectedEl.getBoundingClientRect();
+        setGlowIndicator({
+            top: itemRect.top - bodyRect.top + body.scrollTop,
+            left: itemRect.left - bodyRect.left + body.scrollLeft,
+            width: itemRect.width,
+            height: itemRect.height,
+            ready: true,
+        });
+    }, [isGlow]);
+
+    useLayoutEffect(() => {
+        updateGlowIndicator();
+    }, [updateGlowIndicator, selectedId, isCollapsed, search, expandedGroups, items]);
+
+    useEffect(() => {
+        if (!isGlow) return;
+        const body = bodyRef.current;
+        if (!body) return;
+        body.addEventListener('scroll', updateGlowIndicator);
+        window.addEventListener('resize', updateGlowIndicator);
+        if (typeof ResizeObserver === 'undefined') {
+            return () => {
+                body.removeEventListener('scroll', updateGlowIndicator);
+                window.removeEventListener('resize', updateGlowIndicator);
+            };
+        }
+        const ro = new ResizeObserver(() => updateGlowIndicator());
+        ro.observe(body);
+        return () => {
+            ro.disconnect();
+            body.removeEventListener('scroll', updateGlowIndicator);
+            window.removeEventListener('resize', updateGlowIndicator);
+        };
+    }, [isGlow, updateGlowIndicator]);
 
     useEffect(() => {
         if (!isMobile || !mobileOpen) return;
@@ -539,7 +596,22 @@ const MenuNav: React.FC<MenuNavProps> = ({
                 </div>
             )}
 
-            <div className="eui-menu-nav-body">{renderContent()}</div>
+            <div ref={bodyRef} className="eui-menu-nav-body">
+                {isGlow && !isCollapsed && (
+                    <span
+                        className={cn('eui-menu-nav-glow-indicator', {
+                            'eui-menu-nav-glow-indicator-ready': glowIndicator.ready,
+                        })}
+                        style={{
+                            transform: `translate(${glowIndicator.left}px, ${glowIndicator.top}px)`,
+                            width: glowIndicator.width,
+                            height: glowIndicator.height,
+                        }}
+                        aria-hidden="true"
+                    />
+                )}
+                {renderContent()}
+            </div>
 
             {footerSlot && <div className="eui-menu-nav-footer-slot">{footerSlot}</div>}
         </nav>

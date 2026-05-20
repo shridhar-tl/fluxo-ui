@@ -12,13 +12,23 @@
     },
     "animation": {
       "type": "'fade' | 'slide' | 'zoom' | 'bounce'",
-      "default": "slide",
+      "default": "fade",
       "description": "Entry and exit animation style."
     },
     "position": {
       "type": "'topLeft' | 'topCenter' | 'topRight' | 'bottomLeft' | 'bottomCenter' | 'bottomRight'",
-      "default": "bottomRight",
+      "default": "topRight",
       "description": "Screen corner / edge where the snackbar appears."
+    },
+    "variant": {
+      "type": "'soft' | 'solid' | 'outlined' | 'gradient' | 'accent' | 'glass' | 'minimal' | 'pill'",
+      "default": "soft",
+      "description": "Visual look and feel. 'soft' is a tinted surface card with a colored icon/title; 'solid' a filled accent card with white text; 'outlined' a surface card framed by an accent ring; 'gradient' a vivid diagonal fill; 'accent' a surface card with a colored top bar; 'glass' a frosted translucent panel; 'minimal' and 'pill' are compact single-line styles that drop the title."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "md",
+      "description": "Overall size. 'sm' yields a shorter, more compact snackbar; 'lg' a larger one. Works with any variant."
     },
     "showCloseButton": {
       "type": "boolean",
@@ -36,11 +46,6 @@
     "customIcon": {
       "type": "SVGIcon",
       "description": "Override the default type icon with a custom SVG icon component."
-    },
-    "lightBg": {
-      "type": "boolean",
-      "default": "false",
-      "description": "Use a light background variant instead of the default colored background."
     }
   }
 }
