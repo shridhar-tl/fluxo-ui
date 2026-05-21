@@ -33,63 +33,63 @@
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {
-            "types": "./dist/src/components/index.d.ts",
+            "types": "./dist/components/index.d.ts",
             "import": "./dist/index.js",
             "require": "./dist/index.cjs"
         },
         "./hooks": {
-            "types": "./dist/src/hooks/index.d.ts",
+            "types": "./dist/hooks/index.d.ts",
             "import": "./dist/hooks.js",
             "require": "./dist/hooks.cjs"
         },
         "./icons": {
-            "types": "./dist/src/assets/icons.d.ts",
+            "types": "./dist/assets/icons.d.ts",
             "import": "./dist/icons.js",
             "require": "./dist/icons.cjs"
         },
         "./store": {
-            "types": "./dist/src/store/index.d.ts",
+            "types": "./dist/store/index.d.ts",
             "import": "./dist/store.js",
             "require": "./dist/store.cjs"
         },
         "./store/middlewares": {
-            "types": "./dist/src/store/middlewares/index.d.ts",
+            "types": "./dist/store/middlewares/index.d.ts",
             "import": "./dist/store-middlewares.js",
             "require": "./dist/store-middlewares.cjs"
         },
         "./utils": {
-            "types": "./dist/src/utils/lib.d.ts",
+            "types": "./dist/utils/lib.d.ts",
             "import": "./dist/utils.js",
             "require": "./dist/utils.cjs"
         },
         "./draw": {
-            "types": "./dist/src/components/canvas-draw/index.d.ts",
+            "types": "./dist/components/canvas-draw/index.d.ts",
             "import": "./dist/draw.js",
             "require": "./dist/draw.cjs"
         },
         "./styles": "./dist/styles/components.css",
         "./services": {
-            "types": "./dist/src/services/index.d.ts",
+            "types": "./dist/services/index.d.ts",
             "import": "./dist/services.js",
             "require": "./dist/services.cjs"
         },
         "./vite-plugin": {
-            "types": "./dist/src/plugins/vite/index.d.ts",
+            "types": "./dist/plugins/vite/index.d.ts",
             "import": "./dist/vite-plugin.js",
             "require": "./dist/vite-plugin.cjs"
         },
         "./report-builder": {
-            "types": "./dist/src/components/report-builder/index.d.ts",
+            "types": "./dist/components/report-builder/index.d.ts",
             "import": "./dist/report-builder.js",
             "require": "./dist/report-builder.cjs"
         },
         "./report-viewer": {
-            "types": "./dist/src/components/report-builder/report-viewer-index.d.ts",
+            "types": "./dist/components/report-builder/report-viewer-index.d.ts",
             "import": "./dist/report-viewer.js",
             "require": "./dist/report-viewer.cjs"
         },
         "./chat": {
-            "types": "./dist/src/components/chat/index.d.ts",
+            "types": "./dist/components/chat/index.d.ts",
             "import": "./dist/chat.js",
             "require": "./dist/chat.cjs"
         },
@@ -148,6 +148,8 @@
         "@vitejs/plugin-react": "^6.0.2",
         "chart.js": "^4.5.1",
         "eslint": "^10.4.0",
+        "eslint-plugin-import-x": "^4.16.2",
+        "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^7.1.1",
         "eslint-plugin-react-refresh": "^0.5.2",
         "fs-extra": "^11.3.5",

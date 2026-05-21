@@ -121,6 +121,7 @@ const writeDistPackageJson = (): Plugin => ({
 });
 
 export default defineConfig({
+    publicDir: false,
     build: {
         emptyOutDir: true,
         lib: {
