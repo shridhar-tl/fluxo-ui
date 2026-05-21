@@ -12,6 +12,36 @@ const stripDistPrefix = (value: string): string => {
     return value.replace(/^\.\/dist\//, './').replace(/^dist\//, './');
 };
 
+const nonComponentSegments = new Set(['index', 'Icon', 'Link']);
+
+const perComponentChunkName = (id: string): string | null => {
+    const normalized = id.replace(/\\/g, '/');
+    const match = normalized.match(/\/src\/components\/([^/]+)/);
+    if (!match) return null;
+    const name = match[1].replace(/\.(tsx|ts|jsx|js)$/, '');
+    if (nonComponentSegments.has(name)) return null;
+    return `components/${name}`;
+};
+
+const perIconChunkName = (id: string): string | null => {
+    const normalized = id.replace(/\\/g, '/');
+    const match = normalized.match(/\/src\/assets\/icons\/([^/?]+)\.svg/);
+    if (!match) return null;
+    return `icons/${match[1]}`;
+};
+
+const componentChunkGroups = [
+    { name: perIconChunkName, priority: 40 },
+    { name: 'shared/editor-core', test: /[\\/]src[\\/]components[\\/]editor-core[\\/]/, priority: 30 },
+    { name: 'shared/context', test: /[\\/]src[\\/]components[\\/]context[\\/]/, priority: 30 },
+    {
+        name: 'shared/overlay',
+        test: /[\\/]src[\\/]components[\\/](Popover\.tsx|tooltip[\\/]|confirm-popover[\\/]|context-menu[\\/])/,
+        priority: 30,
+    },
+    { name: perComponentChunkName, priority: 10 },
+];
+
 const rewriteExports = (exportsObj: Record<string, unknown>): Record<string, unknown> => {
     const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(exportsObj)) {
@@ -89,6 +119,7 @@ const writeDistPackageJson = (): Plugin => ({
 
 export default defineConfig({
     build: {
+        emptyOutDir: true,
         lib: {
             entry: {
                 index: resolve(__dirname, 'src/components/index.ts'),
@@ -136,9 +167,15 @@ export default defineConfig({
                 },
                 assetFileNames: (assetInfo) => {
                     if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+                        if (assetInfo.name === 'index.css' || assetInfo.name === 'components.css') {
+                            return 'styles/components.css';
+                        }
                         return 'styles/[name][extname]';
                     }
                     return 'assets/[name][extname]';
+                },
+                codeSplitting: {
+                    groups: componentChunkGroups,
                 },
             },
         },
