@@ -14,6 +14,19 @@
       "type": "(firstPanelSize: number) => void",
       "description": "Called after the user finishes a drag with the new first-panel size in pixels."
     },
+    "responsive": {
+      "type": "number",
+      "description": "Container width in px (measured on the splitter itself, not the viewport) below which panels collapse from side-by-side into a stacked, scrollable layout. The collapse is CSS-driven so panels are never unmounted and child state is preserved. Omit to disable."
+    },
+    "collapsedLayout": {
+      "type": "'horizontal' | 'vertical'",
+      "default": "'vertical'",
+      "description": "Direction panels stack in once collapsed (only used with responsive)."
+    },
+    "onCollapseChange": {
+      "type": "(collapsed: boolean) => void",
+      "description": "Called when the splitter crosses the responsive threshold, with the new collapsed state."
+    },
     "className": {
       "type": "string",
       "description": "Additional CSS classes for the outer container."

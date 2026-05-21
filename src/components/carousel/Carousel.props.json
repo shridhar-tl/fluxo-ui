@@ -86,6 +86,20 @@
     "trailingThumbnail": {
       "type": "CarouselTrailingThumbnail",
       "description": "An extra tile rendered after the last thumbnail (e.g. an add button). Shape: { icon, label, onClick }."
+    },
+    "onAddImages": {
+      "type": "(files: File[]) => void",
+      "description": "Enables image attachment. When set, the carousel accepts drag-and-drop of image files onto the viewport (with a drop overlay) and renders a trailing 'add' tile that opens a file picker (unless a custom trailingThumbnail is provided). Receives the filtered File[]. Combine with a consumer-side clipboard paste handler that forwards pasted files to the same callback."
+    },
+    "addImagesAccept": {
+      "type": "string",
+      "default": "'image/*'",
+      "description": "Comma-separated accept filter (MIME types like 'image/png' or extensions like '.png') applied to dropped and picked files before onAddImages fires."
+    },
+    "addImagesDropLabel": {
+      "type": "string",
+      "default": "'Drop image to add'",
+      "description": "Label shown in the drop overlay and used as the trailing add tile's accessible label when onAddImages is set."
     }
   },
   "thumbnailActionProps": {

@@ -43,6 +43,7 @@ const largeComponents = new Set([
     'Virtual List',
     'Skeleton List',
     'Dashboard Layout',
+    'File Browser',
 ]);
 
 const heavyComponents = new Set([
@@ -112,6 +113,7 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/splitter': () => import('./splitter/HorizontalSplit'),
     '/components/deferred-view': () => import('./deferred-view/BasicUsageDemo'),
     '/components/infinite-scroll': () => import('./infinite-scroll/BasicUsage'),
+    '/components/file-browser': () => import('./file-browser/BasicUsage'),
     '/components/file-upload': () => import('./file-upload/BasicUsage'),
     '/components/animate-on-view': () => import('./animate-on-view/BasicUsage'),
     '/components/modal': () => import('./modal/BasicUsage'),
@@ -680,6 +682,7 @@ const interactiveComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Sortable', description: 'Drag-to-reorder lists and grids', path: '/components/sortable' },
     { title: 'Deferred View', description: 'Lazy-render with visibility detection', path: '/components/deferred-view' },
     { title: 'Infinite Scroll', description: 'Load-more on scroll with indicators', path: '/components/infinite-scroll' },
+    { title: 'File Browser', description: 'Thumbnail / list / details file & folder browser with upload', path: '/components/file-browser', badge: 'New' },
     { title: 'Animate On View', description: 'Scroll-triggered CSS animations', path: '/components/animate-on-view' },
 ];
 

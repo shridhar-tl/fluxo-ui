@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, MenuIcon, PauseIcon, PlayIcon, TimesIcon } from '../../assets/icons';
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ImageIcon, MenuIcon, PauseIcon, PlayIcon, TimesIcon } from '../../assets/icons';
 import CarouselSlideRenderer from './CarouselSlide';
 import type { CarouselSlideData } from './CarouselSlide';
 import CarouselThumbnails from './CarouselThumbnails';
@@ -43,7 +43,30 @@ interface CarouselProps {
     showAutoplayToggle?: boolean;
     thumbnailActions?: CarouselThumbnailAction[];
     trailingThumbnail?: CarouselTrailingThumbnail;
+    onAddImages?: (files: File[]) => void;
+    addImagesAccept?: string;
+    addImagesDropLabel?: string;
 }
+
+const collectImageFiles = (list: FileList | File[] | null | undefined, accept: string): File[] => {
+    if (!list) return [];
+    const files = Array.from(list);
+    if (accept === '*' || accept === '*/*' || accept.trim() === '') return files;
+    const patterns = accept.split(',').map((entry) => entry.trim().toLowerCase()).filter(Boolean);
+    if (patterns.length === 0) return files;
+    return files.filter((file) => {
+        const type = file.type.toLowerCase();
+        const name = file.name.toLowerCase();
+        return patterns.some((pattern) => {
+            if (pattern.endsWith('/*')) return type.startsWith(pattern.slice(0, -1));
+            if (pattern.startsWith('.')) return name.endsWith(pattern);
+            return type === pattern;
+        });
+    });
+};
+
+const dragEventHasFiles = (event: React.DragEvent): boolean =>
+    Array.from(event.dataTransfer?.types ?? []).includes('Files');
 
 const focusableSelector = [
     'button:not([disabled])',
@@ -81,6 +104,9 @@ function Carousel({
     showAutoplayToggle = true,
     thumbnailActions,
     trailingThumbnail,
+    onAddImages,
+    addImagesAccept = 'image/*',
+    addImagesDropLabel = 'Drop image to add',
 }: CarouselProps) {
     const [internalIndex, setInternalIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -89,6 +115,9 @@ function Carousel({
     const [autoplayActive, setAutoplayActive] = useState(autoplay);
     const [hamburgerOpen, setHamburgerOpen] = useState(false);
     const [slideAnnouncement, setSlideAnnouncement] = useState('');
+    const [isDraggingFiles, setIsDraggingFiles] = useState(false);
+    const dragDepthRef = useRef(0);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const trackRef = useRef<HTMLDivElement>(null);
     const pointerStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
     const autoplayTimerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
@@ -264,6 +293,48 @@ function Carousel({
         pointerStartRef.current = null;
     }, []);
 
+    const emitAddImages = useCallback((list: FileList | File[] | null | undefined) => {
+        if (!onAddImages) return;
+        const files = collectImageFiles(list, addImagesAccept);
+        if (files.length > 0) onAddImages(files);
+    }, [onAddImages, addImagesAccept]);
+
+    const openFilePicker = useCallback(() => {
+        fileInputRef.current?.click();
+    }, []);
+
+    const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        emitAddImages(e.target.files);
+        e.target.value = '';
+    }, [emitAddImages]);
+
+    const handleDragEnter = useCallback((e: React.DragEvent) => {
+        if (!onAddImages || !dragEventHasFiles(e)) return;
+        e.preventDefault();
+        dragDepthRef.current += 1;
+        setIsDraggingFiles(true);
+    }, [onAddImages]);
+
+    const handleDragOver = useCallback((e: React.DragEvent) => {
+        if (!onAddImages || !dragEventHasFiles(e)) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    }, [onAddImages]);
+
+    const handleDragLeave = useCallback((e: React.DragEvent) => {
+        if (!onAddImages || !dragEventHasFiles(e)) return;
+        dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
+        if (dragDepthRef.current === 0) setIsDraggingFiles(false);
+    }, [onAddImages]);
+
+    const handleDrop = useCallback((e: React.DragEvent) => {
+        if (!onAddImages || !dragEventHasFiles(e)) return;
+        e.preventDefault();
+        dragDepthRef.current = 0;
+        setIsDraggingFiles(false);
+        emitAddImages(e.dataTransfer?.files);
+    }, [onAddImages, emitAddImages]);
+
     const trackStyle: React.CSSProperties = useMemo(() => ({
         transform: `translateX(-${currentIndex * 100}%)`,
         transition: isTransitioning && !reducedMotion ? 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
@@ -282,6 +353,11 @@ function Carousel({
         hamburgerTriggerRef.current?.focus();
     }, [goTo]);
 
+    const effectiveTrailing: CarouselTrailingThumbnail | undefined = trailingThumbnail
+        ?? (onAddImages
+            ? { icon: <ImageIcon />, label: addImagesDropLabel, onClick: openFilePicker }
+            : undefined);
+
     const renderThumbnails = (pos: 'top' | 'bottom' | 'left' | 'right') => (
         <CarouselThumbnails
             slides={slides as CarouselSlideData[]}
@@ -290,7 +366,7 @@ function Carousel({
             onSelect={goTo}
             showInfo={showThumbnailInfo}
             actions={thumbnailActions}
-            trailingThumbnail={trailingThumbnail}
+            trailingThumbnail={effectiveTrailing}
         />
     );
 
@@ -365,7 +441,9 @@ function Carousel({
     return (
         <section
             ref={containerRef}
-            className={classNames('eui-carousel', layoutClass, className)}
+            className={classNames('eui-carousel', layoutClass, className, {
+                'eui-carousel-dropping': isDraggingFiles,
+            })}
             aria-roledescription="carousel"
             aria-label={ariaLabel}
             tabIndex={0}
@@ -376,7 +454,29 @@ function Carousel({
                 if (e.currentTarget.contains(e.relatedTarget as Node)) return;
                 setFocusPause(false);
             }}
+            onDragEnter={onAddImages ? handleDragEnter : undefined}
+            onDragOver={onAddImages ? handleDragOver : undefined}
+            onDragLeave={onAddImages ? handleDragLeave : undefined}
+            onDrop={onAddImages ? handleDrop : undefined}
         >
+            {onAddImages && (
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept={addImagesAccept}
+                    multiple
+                    className="eui-visually-hidden"
+                    onChange={handleFileInputChange}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                />
+            )}
+            {onAddImages && isDraggingFiles && (
+                <div className="eui-carousel-drop-overlay" aria-hidden="true">
+                    <ImageIcon />
+                    <span>{addImagesDropLabel}</span>
+                </div>
+            )}
             {thumbnailsVisible && isInline && (thumbnailPosition === 'top' || thumbnailPosition === 'left') && renderThumbnails(thumbnailPosition)}
 
             <div className="eui-carousel-viewport">

@@ -134,10 +134,10 @@ function CarouselThumbnails({
                             {showInfo && (slide.name || slide.description) && (
                                 <div className="eui-carousel-thumb-info">
                                     {slide.name && (
-                                        <span className="eui-carousel-thumb-name">{slide.name}</span>
+                                        <span className="eui-carousel-thumb-name" title={slide.name}>{slide.name}</span>
                                     )}
                                     {slide.description && (
-                                        <span className="eui-carousel-thumb-desc">{slide.description}</span>
+                                        <span className="eui-carousel-thumb-desc" title={slide.description}>{slide.description}</span>
                                     )}
                                 </div>
                             )}

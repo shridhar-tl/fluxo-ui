@@ -208,6 +208,7 @@ const navSections: NavSection[] = [
             { label: 'Sortable', path: '/components/sortable' },
             { label: 'Deferred View', path: '/components/deferred-view' },
             { label: 'Infinite Scroll', path: '/components/infinite-scroll' },
+            { label: 'File Browser', path: '/components/file-browser' },
             { label: 'Animate On View', path: '/components/animate-on-view' },
         ],
     },

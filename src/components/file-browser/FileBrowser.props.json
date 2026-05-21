@@ -1,0 +1,140 @@
+{
+    "fileBrowserProps": {
+        "items": {
+            "type": "FileBrowserItem[]",
+            "required": true,
+            "description": "Items to render. Each: { id, name, kind?, subtitle?, thumbnailUrl?, previewUrl?, mimeType?, size?, modified?, badge?, loading?, disabled?, selectable?, meta?, data? }. When kind is omitted it is inferred from mimeType then the file extension."
+        },
+        "selectedIds": {
+            "type": "string[]",
+            "description": "Controlled selected ids. Omit to let the component manage selection internally."
+        },
+        "onSelectionChange": {
+            "type": "(ids: string[]) => void",
+            "description": "Called whenever the selection changes."
+        },
+        "view": {
+            "type": "'thumbnail' | 'list' | 'details'",
+            "description": "Controlled view. Omit to use defaultView and internal state."
+        },
+        "defaultView": {
+            "type": "'thumbnail' | 'list' | 'details'",
+            "default": "'thumbnail'",
+            "description": "Initial view when uncontrolled."
+        },
+        "onViewChange": {
+            "type": "(view: FileBrowserView) => void",
+            "description": "Called when the view changes via the switcher."
+        },
+        "availableViews": {
+            "type": "FileBrowserView[]",
+            "default": "['thumbnail', 'list', 'details']",
+            "description": "Which views the built-in switcher offers."
+        },
+        "showViewSwitcher": {
+            "type": "boolean",
+            "default": "false",
+            "description": "Render the built-in thumbnail/list/details toggle in the toolbar."
+        },
+        "selectable": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Whether items can be selected."
+        },
+        "multiple": {
+            "type": "boolean",
+            "default": "true",
+            "description": "Allow selecting more than one item. Also controls whether the upload picker accepts multiple files."
+        },
+        "maxSelection": {
+            "type": "number",
+            "description": "Maximum number of items selectable at once when multiple. Also caps how many dropped/picked files are accepted for upload."
+        },
+        "thumbnailFit": {
+            "type": "'cover' | 'contain'",
+            "default": "'contain'",
+            "description": "How each image/video thumbnail fits its box."
+        },
+        "minTileWidth": {
+            "type": "number",
+            "default": "160",
+            "description": "Minimum tile width in px for the thumbnail grid."
+        },
+        "columns": {
+            "type": "FileBrowserColumn[]",
+            "default": "name / type / size / modified",
+            "description": "Columns rendered in the details view. Each: { key, header, width?, align?, render? }. The 'name' column auto-grows and shows the kind icon; built-in keys size/modified/kind format automatically, others read item.meta[key]."
+        },
+        "emptyState": {
+            "type": "React.ReactNode",
+            "description": "Custom content shown when there are no items."
+        },
+        "renderActions": {
+            "type": "(item: FileBrowserItem) => React.ReactNode",
+            "description": "Render per-item action buttons (preview, edit, remove, download…). Shown on hover in thumbnail/list and inline in details."
+        },
+        "renderPreview": {
+            "type": "(item: FileBrowserItem, kind: FileKind) => React.ReactNode",
+            "description": "Override the default thumbnail/preview rendering for an item entirely."
+        },
+        "renderItem": {
+            "type": "(item: FileBrowserItem, ctx: FileBrowserItemContext) => React.ReactNode",
+            "description": "Fully override the tile body in thumbnail/list views. ctx exposes { kind, selected, view, toggle, open }."
+        },
+        "onItemOpen": {
+            "type": "(item: FileBrowserItem) => void",
+            "description": "Called on Enter or double-click — use for folder navigation or opening a preview."
+        },
+        "onItemClick": {
+            "type": "(item: FileBrowserItem) => void",
+            "description": "Called on single click, before selection toggles."
+        },
+        "videoPreview": {
+            "type": "boolean",
+            "default": "false",
+            "description": "Play video items inline (with controls) when their thumbnail is clicked. Falls back to a poster image with a play overlay."
+        },
+        "enableUpload": {
+            "type": "boolean",
+            "default": "false",
+            "description": "Enable drag-and-drop file upload onto the browser and a hidden file input opened via the empty-state button."
+        },
+        "accept": {
+            "type": "string",
+            "description": "Comma-separated accept list applied to uploads (e.g. 'image/*,.pdf'). Files not matching are rejected with reason 'type'."
+        },
+        "maxFileSize": {
+            "type": "number",
+            "description": "Maximum size in bytes for an uploaded file. Larger files are rejected with reason 'size'."
+        },
+        "onUpload": {
+            "type": "(files: File[], rejected: RejectedFile[]) => void",
+            "description": "Called after a drop or pick with the accepted files and the rejected ones (each carrying reason 'type' | 'size' | 'count')."
+        },
+        "uploadHint": {
+            "type": "React.ReactNode",
+            "description": "Message shown in the drop overlay while dragging files over the browser."
+        },
+        "className": {
+            "type": "string",
+            "description": "Additional class for the container."
+        },
+        "style": {
+            "type": "React.CSSProperties",
+            "description": "Inline styles for the outer container (e.g. a minHeight so the drop zone stays usable when empty)."
+        },
+        "ariaLabel": {
+            "type": "string",
+            "default": "'Files'",
+            "description": "Accessible label for the collection/grid container."
+        },
+        "toolbarStart": {
+            "type": "React.ReactNode",
+            "description": "Custom content rendered at the start of the toolbar (e.g. breadcrumb, search)."
+        },
+        "toolbarEnd": {
+            "type": "React.ReactNode",
+            "description": "Custom content rendered at the end of the toolbar, before the view switcher."
+        }
+    }
+}

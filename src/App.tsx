@@ -80,6 +80,7 @@ const CarouselPage = React.lazy(() => import('./story/pages/carousel/CarouselPag
 const DrawerPage = React.lazy(() => import('./story/pages/drawer/DrawerPage'));
 const BreadcrumbPage = React.lazy(() => import('./story/pages/breadcrumb/BreadcrumbPage'));
 const InfiniteScrollPage = React.lazy(() => import('./story/pages/infinite-scroll/InfiniteScrollPage'));
+const FileBrowserPage = React.lazy(() => import('./story/pages/file-browser/FileBrowserPage'));
 const NotificationCenterPage = React.lazy(() => import('./story/pages/notification-center/NotificationCenterPage'));
 const ImageEditorPage = React.lazy(() => import('./story/pages/image-editor/ImageEditorPage'));
 const SliderPage = React.lazy(() => import('./story/pages/slider/SliderPage'));
@@ -614,6 +615,7 @@ const App: React.FC = () => {
                     <Route path="/components/drawer" element={<LayoutWrapper><DrawerPage /></LayoutWrapper>} />
                     <Route path="/components/breadcrumb" element={<LayoutWrapper><BreadcrumbPage /></LayoutWrapper>} />
                     <Route path="/components/infinite-scroll" element={<LayoutWrapper><InfiniteScrollPage /></LayoutWrapper>} />
+                    <Route path="/components/file-browser" element={<LayoutWrapper><FileBrowserPage /></LayoutWrapper>} />
                     <Route path="/components/notification-center" element={<LayoutWrapper><NotificationCenterPage /></LayoutWrapper>} />
                     <Route path="/components/image-editor" element={<LayoutWrapper><ImageEditorPage /></LayoutWrapper>} />
                     <Route path="/components/slider" element={<LayoutWrapper><SliderPage /></LayoutWrapper>} />

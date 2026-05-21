@@ -13,6 +13,11 @@
         outline-offset: 2px;
     }
 
+    &.eui-carousel-dropping {
+        outline: 2px dashed var(--eui-primary);
+        outline-offset: -2px;
+    }
+
     &.eui-carousel-layout-left,
     &.eui-carousel-layout-right {
         display: flex;
@@ -56,6 +61,27 @@
     overflow: hidden;
     flex: 1;
     min-width: 0;
+}
+
+.eui-carousel-drop-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--eui-primary-subtle);
+    color: var(--eui-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    pointer-events: none;
+
+    svg {
+        width: 28px;
+        height: 28px;
+    }
 }
 
 .eui-carousel-track {
@@ -464,7 +490,7 @@
 .eui-carousel-thumb-with-info {
     display: flex;
     flex-direction: column;
-    width: auto;
+    width: 64px;
     height: auto;
 
     .eui-carousel-thumb-media {
@@ -486,7 +512,9 @@
 
 .eui-carousel-thumb-info {
     padding: 0.125rem 0.25rem;
+    width: 100%;
     min-width: 0;
+    max-width: 100%;
     overflow: hidden;
 }
 
@@ -749,5 +777,24 @@
     .eui-carousel-thumb {
         width: 48px;
         height: 36px;
+    }
+
+    .eui-carousel-thumb-with-info {
+        width: 48px;
+
+        .eui-carousel-thumb-media {
+            width: 48px;
+            height: 36px;
+        }
+
+        .eui-carousel-thumbnails-left &,
+        .eui-carousel-thumbnails-right & {
+            width: 100%;
+
+            .eui-carousel-thumb-media {
+                width: 100%;
+                height: 36px;
+            }
+        }
     }
 }

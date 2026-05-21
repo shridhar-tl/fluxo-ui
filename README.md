@@ -277,6 +277,7 @@ function Counter() {
 | Sortable         | Drag-to-reorder lists and grids                              |
 | Deferred View    | Lazy-render with visibility detection                        |
 | Infinite Scroll  | Load-more on scroll with indicators                          |
+| File Browser     | Thumbnail / list / details file & folder browser with upload |
 | Animate On View  | Scroll-triggered CSS animations                              |
 
 ### Chat

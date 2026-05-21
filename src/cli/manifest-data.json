@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-20T04:15:02.993Z",
+  "generatedAt": "2026-05-22T16:59:08.665Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -1264,6 +1264,35 @@
         "shared": [
           "types"
         ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "file-browser",
+      "name": "FileBrowser",
+      "kind": "directory",
+      "sourcePath": "components/file-browser",
+      "entryFile": "components/file-browser/index.ts",
+      "files": [
+        "FileBrowser.scss",
+        "FileBrowser.tsx",
+        "FileKindIcon.tsx",
+        "file-browser-utils.ts",
+        "index.ts"
+      ],
+      "category": "Actions & Interaction",
+      "label": "File Browser",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
         "external": [
           "classnames",
           "react"

@@ -12,6 +12,19 @@
         flex-direction: column;
     }
 
+    &.eui-splitter-collapsed {
+        overflow: auto;
+
+        .eui-splitter-panel {
+            overflow: visible;
+        }
+    }
+
+    .eui-splitter-divider {
+        flex-shrink: 0;
+        background-color: var(--eui-border-subtle);
+    }
+
     .eui-splitter-panel {
         min-width: 0;
         min-height: 0;

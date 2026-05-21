@@ -1,0 +1,40 @@
+import type { FileBrowserItem } from '../../../components';
+
+export const sampleFiles: FileBrowserItem[] = [
+    { id: 'f1', name: 'Quarterly Reports', kind: 'folder', subtitle: '24 items', modified: '2026-04-02' },
+    { id: 'f2', name: 'Brand Assets', kind: 'folder', subtitle: '112 items', modified: '2026-03-18' },
+    {
+        id: '1',
+        name: 'mountain-sunrise.jpg',
+        kind: 'image',
+        thumbnailUrl: 'https://picsum.photos/seed/eui-fb1/320/240',
+        size: 421888,
+        modified: '2026-05-01',
+        badge: 'JPG',
+    },
+    {
+        id: '2',
+        name: 'product-demo.mp4',
+        kind: 'video',
+        thumbnailUrl: 'https://picsum.photos/seed/eui-fb2/320/240',
+        previewUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        size: 8388608,
+        modified: '2026-04-22',
+        badge: 'MP4',
+    },
+    { id: '3', name: 'annual-summary.pdf', kind: 'pdf', size: 1258291, modified: '2026-04-15', badge: 'PDF' },
+    { id: '4', name: 'release-notes.txt', kind: 'text', size: 4096, modified: '2026-05-10' },
+    { id: '5', name: 'soundtrack.mp3', kind: 'audio', size: 5242880, modified: '2026-02-28', badge: 'MP3' },
+    { id: '6', name: 'design-tokens.json', kind: 'code', size: 16384, modified: '2026-05-12' },
+    { id: '7', name: 'archive-2025.zip', kind: 'archive', size: 47185920, modified: '2026-01-09' },
+    {
+        id: '8',
+        name: 'city-night.png',
+        kind: 'image',
+        thumbnailUrl: 'https://picsum.photos/seed/eui-fb3/320/240',
+        size: 1887436,
+        modified: '2026-05-08',
+        badge: 'PNG',
+    },
+    { id: '9', name: 'proposal.docx', kind: 'document', size: 98304, modified: '2026-03-30' },
+];

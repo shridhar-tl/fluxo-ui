@@ -26,6 +26,17 @@ export type {
 } from './carousel';
 export { InfiniteScroll } from './InfiniteScroll';
 export type { InfiniteScrollProps } from './InfiniteScroll';
+export { FileBrowser, FileKindIcon } from './file-browser';
+export type {
+    FileBrowserProps,
+    FileBrowserItem,
+    FileBrowserItemContext,
+    FileBrowserView,
+    FileBrowserColumn,
+    FileBrowserThumbnailFit,
+    FileKind,
+    RejectedFile,
+} from './file-browser';
 export { default as DateRangePicker } from './date-range';
 export type { DateRangeValue, DateSelectedCallbackArg, RangeOption, SelectionMode } from './date-range';
 export { DragDropProvider, Draggable, Droppable, Sortable, useDrag, useDrop, useDragLayer } from './drag-drop';

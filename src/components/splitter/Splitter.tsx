@@ -28,6 +28,24 @@ export interface SplitterProps {
     style?: React.CSSProperties;
     gutterSize?: number;
     onResizeEnd?: (firstPanelSize: number) => void;
+    /**
+     * Width in pixels (measured on the splitter's own container, not the
+     * viewport) below which the panels collapse from side-by-side into a
+     * stacked, scrollable layout. The collapse is purely CSS-driven — panels
+     * keep their identity and are never unmounted, so child component state is
+     * preserved across the transition. Omit to disable responsive collapsing.
+     */
+    responsive?: number;
+    /**
+     * Direction panels stack in when collapsed (only used with `responsive`).
+     * Defaults to 'vertical' (first panel on top, second below).
+     */
+    collapsedLayout?: SplitterLayout;
+    /**
+     * Called when the splitter crosses the `responsive` threshold, with the
+     * current collapsed state.
+     */
+    onCollapseChange?: (collapsed: boolean) => void;
 }
 
 const DEFAULT_KEYBOARD_STEP = 20;
@@ -75,8 +93,12 @@ export const Splitter: React.FC<SplitterProps> = ({
     style,
     gutterSize = 4,
     onResizeEnd,
+    responsive,
+    collapsedLayout = 'vertical',
+    onCollapseChange,
 }) => {
-    const isHorizontal = layout === 'horizontal';
+    const [collapsed, setCollapsed] = useState(false);
+    const isHorizontal = (collapsed ? collapsedLayout : layout) === 'horizontal';
     const containerRef = useRef<HTMLDivElement>(null);
     const firstPanelRef = useRef<HTMLDivElement>(null);
     const secondPanelRef = useRef<HTMLDivElement>(null);
@@ -101,8 +123,8 @@ export const Splitter: React.FC<SplitterProps> = ({
     const firstProps = firstPanel?.props;
     const secondProps = secondPanel?.props;
 
-    const propsRef = useRef({ firstProps, secondProps, gutterSize, isHorizontal, onResizeEnd });
-    propsRef.current = { firstProps, secondProps, gutterSize, isHorizontal, onResizeEnd };
+    const propsRef = useRef({ firstProps, secondProps, gutterSize, isHorizontal, onResizeEnd, responsive, onCollapseChange });
+    propsRef.current = { firstProps, secondProps, gutterSize, isHorizontal, onResizeEnd, responsive, onCollapseChange };
 
     const getMinPx = useCallback((props: SplitterPanelProps, totalPx: number): number => {
         if (!props.minSize) return 0;
@@ -150,6 +172,31 @@ export const Splitter: React.FC<SplitterProps> = ({
         initialised.current = false;
         setFirstSize(null);
     }, [isHorizontal]);
+
+    useEffect(() => {
+        if (responsive == null) {
+            setCollapsed(false);
+            return;
+        }
+        const container = containerRef.current;
+        if (!container) return;
+
+        const evaluate = (width: number) => {
+            const next = width > 0 && width < responsive;
+            setCollapsed((prev) => {
+                if (prev !== next) propsRef.current.onCollapseChange?.(next);
+                return next;
+            });
+        };
+
+        const observer = new ResizeObserver((entries) => {
+            evaluate(entries[0].contentRect.width);
+        });
+        observer.observe(container);
+        evaluate(container.offsetWidth);
+
+        return () => observer.disconnect();
+    }, [responsive]);
 
     useEffect(() => {
         return () => {
@@ -319,22 +366,26 @@ export const Splitter: React.FC<SplitterProps> = ({
         );
     }
 
-    const firstStyle: React.CSSProperties = {
-        ...(firstProps?.style ?? {}),
-        flexShrink: 0,
-        overflow: 'hidden',
-        ...(isHorizontal
-            ? { width: firstSize !== null ? `${firstSize}px` : '50%' }
-            : { height: firstSize !== null ? `${firstSize}px` : '50%' }),
-    };
+    const firstStyle: React.CSSProperties = collapsed
+        ? { ...(firstProps?.style ?? {}), flex: '0 0 auto', minWidth: 0, overflow: 'visible' }
+        : {
+              ...(firstProps?.style ?? {}),
+              flexShrink: 0,
+              overflow: 'hidden',
+              ...(isHorizontal
+                  ? { width: firstSize !== null ? `${firstSize}px` : '50%' }
+                  : { height: firstSize !== null ? `${firstSize}px` : '50%' }),
+          };
 
-    const secondStyle: React.CSSProperties = {
-        ...(secondProps?.style ?? {}),
-        flex: '1 1 0',
-        minWidth: 0,
-        minHeight: 0,
-        overflow: 'hidden',
-    };
+    const secondStyle: React.CSSProperties = collapsed
+        ? { ...(secondProps?.style ?? {}), flex: '0 0 auto', minWidth: 0, overflow: 'visible' }
+        : {
+              ...(secondProps?.style ?? {}),
+              flex: '1 1 0',
+              minWidth: 0,
+              minHeight: 0,
+              overflow: 'hidden',
+          };
 
     const gutterStyle: React.CSSProperties = isHorizontal
         ? { width: `${gutterSize}px`, flexShrink: 0, minWidth: `${gutterSize}px` }
@@ -359,7 +410,12 @@ export const Splitter: React.FC<SplitterProps> = ({
     return (
         <div
             ref={containerRef}
-            className={classNames('eui-splitter', isHorizontal ? 'eui-splitter-horizontal' : 'eui-splitter-vertical', className)}
+            className={classNames(
+                'eui-splitter',
+                isHorizontal ? 'eui-splitter-horizontal' : 'eui-splitter-vertical',
+                collapsed && 'eui-splitter-collapsed',
+                className,
+            )}
             style={style}
             id={reactId}
         >
@@ -372,35 +428,39 @@ export const Splitter: React.FC<SplitterProps> = ({
                 {firstPanel.props.children}
             </div>
 
-            <div
-                className={classNames(
-                    'eui-splitter-gutter',
-                    isHorizontal ? 'eui-splitter-gutter-horizontal' : 'eui-splitter-gutter-vertical',
-                )}
-                style={gutterStyle}
-                role="separator"
-                aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
-                aria-label="Resize panels"
-                aria-valuenow={valueNow}
-                aria-valuemin={valueMin}
-                aria-valuemax={valueMax}
-                aria-controls={`${firstPanelId} ${secondPanelId}`}
-                tabIndex={0}
-                onMouseDown={handleMouseDown}
-                onTouchStart={handleTouchStart}
-                onKeyDown={handleKeyDown}
-            >
+            {collapsed ? (
+                <div className="eui-splitter-divider" aria-hidden="true" style={gutterStyle} />
+            ) : (
                 <div
                     className={classNames(
-                        'eui-splitter-gutter-handle',
-                        isHorizontal ? 'eui-splitter-gutter-handle-horizontal' : 'eui-splitter-gutter-handle-vertical',
+                        'eui-splitter-gutter',
+                        isHorizontal ? 'eui-splitter-gutter-horizontal' : 'eui-splitter-gutter-vertical',
                     )}
+                    style={gutterStyle}
+                    role="separator"
+                    aria-orientation={isHorizontal ? 'vertical' : 'horizontal'}
+                    aria-label="Resize panels"
+                    aria-valuenow={valueNow}
+                    aria-valuemin={valueMin}
+                    aria-valuemax={valueMax}
+                    aria-controls={`${firstPanelId} ${secondPanelId}`}
+                    tabIndex={0}
+                    onMouseDown={handleMouseDown}
+                    onTouchStart={handleTouchStart}
+                    onKeyDown={handleKeyDown}
                 >
-                    {gripDots.map((i) => (
-                        <span key={i} className="eui-splitter-grip-dot" />
-                    ))}
+                    <div
+                        className={classNames(
+                            'eui-splitter-gutter-handle',
+                            isHorizontal ? 'eui-splitter-gutter-handle-horizontal' : 'eui-splitter-gutter-handle-vertical',
+                        )}
+                    >
+                        {gripDots.map((i) => (
+                            <span key={i} className="eui-splitter-grip-dot" />
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div
                 ref={secondPanelRef}

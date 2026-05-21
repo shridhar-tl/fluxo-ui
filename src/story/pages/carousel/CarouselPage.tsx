@@ -7,6 +7,7 @@ import PageLayout from '../../PageLayout';
 import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
+import AddImages from './AddImages';
 import Autoplay from './Autoplay';
 import BasicUsage from './BasicUsage';
 import EditableThumbnails from './EditableThumbnails';
@@ -18,6 +19,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Image carousel with dots' },
     { id: 'thumbnails', title: 'Thumbnail Navigation', description: 'Thumbnail strip navigation' },
     { id: 'editable-thumbnails', title: 'Editable Thumbnails', description: 'Per-thumbnail actions + add tile' },
+    { id: 'add-images', title: 'Add Images', description: 'Drop, paste, and pick image files' },
     { id: 'autoplay', title: 'Autoplay', description: 'Auto-advancing slides with loop' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'props', title: 'Props', description: 'Component API reference' },
@@ -101,6 +103,19 @@ const CarouselPage: React.FC = () => {
                     custom action.
                 </p>
                 <EditableThumbnails />
+            </section>
+
+            <section id="add-images" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Add Images
+                </h2>
+                <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    Pass <code>onAddImages</code> to make the carousel an attachment surface. Files can be dragged onto the
+                    viewport (a drop overlay appears) or chosen via the trailing add tile&apos;s file picker. Forward clipboard
+                    paste from your form to the same callback for paste-anywhere support. Filter accepted files with
+                    <code>addImagesAccept</code>.
+                </p>
+                <AddImages />
             </section>
 
             <section id="autoplay" className="scroll-mt-8">
