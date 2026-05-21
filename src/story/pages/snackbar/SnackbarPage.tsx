@@ -18,7 +18,7 @@ import VariantsDemo from './VariantsDemo';
 
 
 import _Snackbar_props_json from './../../../components/snackbar/Snackbar.props.json';
-const { snackbarProps } = _Snackbar_props_json;
+const { snackbarProps, snackbarManagerProps } = _Snackbar_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'setup', title: 'Setup', description: 'Mount SnackbarManager' },
     { id: 'types', title: 'Types', description: 'Semantic notification types' },
@@ -162,6 +162,10 @@ const SnackbarPage: React.FC = () => {
                     showSnackbar(message, title, options?)
                 </h3>
                 <PropsTable props={snackbarProps} />
+                <h3 className={cn('text-lg font-semibold mt-8 mb-3', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    &lt;SnackbarManager /&gt;
+                </h3>
+                <PropsTable props={snackbarManagerProps} />
             </section>
 
             <section className="scroll-mt-8" id="features">

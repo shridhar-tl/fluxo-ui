@@ -35,32 +35,39 @@ const positionClassMap: Record<SnackbarPosition, string> = {
     auto: 'eui-snackbar-bottom-center',
 };
 
-function SnackbarManager() {
+interface SnackbarManagerProps {
+    defaultOptions?: SnackbarOptions;
+}
+
+function SnackbarManager({ defaultOptions: defaultOptionsOverride }: SnackbarManagerProps = {}) {
     const [snackbars, setSnackbars] = useState<SnackbarData[]>([]);
 
-    const addSnackbar: AddSnackbar = useCallback((message, title, opts) => {
-        const mergedOptions = { ...defaultOptions, ...opts };
-        if ((mergedOptions.timeout === 0 || mergedOptions.timeout === null) && !mergedOptions.showCloseButton) {
-            mergedOptions.showCloseButton = true;
-        }
-        const finalTitle =
-            title ||
-            (mergedOptions.type === 'success'
-                ? 'Success'
-                : mergedOptions.type === 'error'
-                  ? 'Error'
-                  : mergedOptions.type === 'warning'
-                    ? 'Warning'
-                    : 'Info');
-        const newSnackbar: SnackbarData = {
-            id: ++snackbarId,
-            message,
-            title: finalTitle,
-            options: { ...mergedOptions },
-        };
-        setSnackbars((prev) => [...prev, newSnackbar]);
-        return newSnackbar.id;
-    }, []);
+    const addSnackbar: AddSnackbar = useCallback(
+        (message, title, opts) => {
+            const mergedOptions = { ...defaultOptions, ...defaultOptionsOverride, ...opts };
+            if ((mergedOptions.timeout === 0 || mergedOptions.timeout === null) && !mergedOptions.showCloseButton) {
+                mergedOptions.showCloseButton = true;
+            }
+            const finalTitle =
+                title ||
+                (mergedOptions.type === 'success'
+                    ? 'Success'
+                    : mergedOptions.type === 'error'
+                      ? 'Error'
+                      : mergedOptions.type === 'warning'
+                        ? 'Warning'
+                        : 'Info');
+            const newSnackbar: SnackbarData = {
+                id: ++snackbarId,
+                message,
+                title: finalTitle,
+                options: { ...mergedOptions },
+            };
+            setSnackbars((prev) => [...prev, newSnackbar]);
+            return newSnackbar.id;
+        },
+        [defaultOptionsOverride],
+    );
 
     const removeSnackbar: RemoveSnackbar = useCallback((id) => {
         if (typeof id === 'number') {

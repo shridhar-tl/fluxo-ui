@@ -236,8 +236,12 @@ body.mode-dark {
     }
 
     // ── Soft: tinted surface, accent icon + colored title ────────────────
+    // The tint can be a translucent wash (especially the dark-mode status
+    // tints), so layer it over an opaque --eui-bg base. Otherwise the page
+    // behind the toast shows through and the muted text reads as unreadable.
     &.eui-snackbar-v-soft {
-        background-color: var(--sb-tint);
+        background-color: var(--eui-bg);
+        background-image: linear-gradient(var(--sb-tint), var(--sb-tint));
         color: var(--eui-text);
         border: 1px solid color-mix(in srgb, var(--sb-accent) 30%, transparent);
 
@@ -248,7 +252,7 @@ body.mode-dark {
             color: color-mix(in srgb, var(--sb-accent-strong) 80%, var(--eui-text));
         }
         .eui-snackbar-message {
-            color: var(--eui-text-muted);
+            color: var(--eui-text);
         }
     }
 

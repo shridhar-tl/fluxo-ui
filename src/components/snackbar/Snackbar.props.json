@@ -47,5 +47,11 @@
       "type": "SVGIcon",
       "description": "Override the default type icon with a custom SVG icon component."
     }
+  },
+  "snackbarManagerProps": {
+    "defaultOptions": {
+      "type": "SnackbarOptions",
+      "description": "Default options applied to every snackbar shown through this manager. Useful for setting an app-wide variant, size, position, or timeout in one place. Any option passed directly to showSnackbar() overrides the matching key here, which in turn overrides the library defaults."
+    }
   }
 }
