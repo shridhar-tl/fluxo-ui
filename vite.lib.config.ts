@@ -30,6 +30,8 @@ const perIconChunkName = (id: string): string | null => {
     return `icons/${match[1]}`;
 };
 
+const reportViewerSubtree = /[\\/]src[\\/]components[\\/]report-builder[\\/](ReportViewer\.tsx|report-viewer-index\.ts|viewer[\\/]|expression[\\/]|built-in-fields\.ts|dataset-schema\.ts|parameter-validation\.ts|report-builder-types\.ts|report-definition-types\.ts|report-component-helpers\.ts|table-helpers\.ts|components[\\/]ParameterPanel\.tsx|components[\\/]ParameterOptionsContext\.ts)/;
+
 const componentChunkGroups = [
     { name: perIconChunkName, priority: 40 },
     { name: 'shared/editor-core', test: /[\\/]src[\\/]components[\\/]editor-core[\\/]/, priority: 30 },
@@ -39,6 +41,7 @@ const componentChunkGroups = [
         test: /[\\/]src[\\/]components[\\/](Popover\.tsx|tooltip[\\/]|confirm-popover[\\/]|context-menu[\\/])/,
         priority: 30,
     },
+    { name: 'components/report-viewer', test: reportViewerSubtree, priority: 20 },
     { name: perComponentChunkName, priority: 10 },
 ];
 
@@ -124,6 +127,7 @@ export default defineConfig({
             entry: {
                 index: resolve(__dirname, 'src/components/index.ts'),
                 'report-builder': resolve(__dirname, 'src/components/report-builder/index.ts'),
+                'report-viewer': resolve(__dirname, 'src/components/report-builder/report-viewer-index.ts'),
                 'chat': resolve(__dirname, 'src/components/chat/index.ts'),
                 draw: resolve(__dirname, 'src/components/canvas-draw/index.ts'),
                 utils: resolve(__dirname, 'src/utils/lib.ts'),

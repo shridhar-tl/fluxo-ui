@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-22T16:59:08.665Z",
+  "generatedAt": "2026-05-21T14:32:26.051Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -2554,6 +2554,8 @@
         "report-builder.scss",
         "report-component-helpers.ts",
         "report-definition-types.ts",
+        "report-viewer-index.ts",
+        "report-viewer.scss",
         "table-helpers.ts",
         "viewer/CellItemRenderer.tsx",
         "viewer/ChartRenderer.tsx",

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Button } from '../../../../components';
-import { ReportViewer } from '../../../../components/report-builder';
+import { ReportViewer } from '../../../../components/report-builder/report-viewer-index';
 import { createHook } from '../../../../store';
 import { sampleDatasourcePlugins } from '../../report-builder/report-builder-story-data';
 import { getSubReportList, reportExamplesStore, resetReportExamples } from '../shared/report-examples-store';

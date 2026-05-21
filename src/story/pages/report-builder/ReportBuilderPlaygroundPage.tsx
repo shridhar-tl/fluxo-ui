@@ -14,8 +14,12 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'props', title: 'Props', description: 'API reference' },
 ];
 
-const importCode = `import { ReportBuilder, ReportViewer } from 'fluxo-ui/report-builder';
-import type { ReportDefinition, DatasourcePlugin } from 'fluxo-ui/report-builder';`;
+const importCode = `// Use the builder to design reports
+import { ReportBuilder } from 'fluxo-ui/report-builder';
+import type { ReportDefinition, DatasourcePlugin } from 'fluxo-ui/report-builder';
+
+// To render a report, use the viewer
+import { ReportViewer } from 'fluxo-ui/report-viewer';`;
 
 export const ReportBuilderPlaygroundPage: React.FC = () => {
     const [definition, setDefinition] = useState<ReportDefinition | undefined>(sampleReportDefinition);

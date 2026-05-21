@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import './report-viewer.scss';
 import { DownloadIcon, PrintIcon, RefreshIcon, SettingsIcon } from '../../assets/icons';
 import { builtInFieldsToExpressionContext, mergeBuiltInFields } from './built-in-fields';
 import type { Dataset } from './report-builder-types';

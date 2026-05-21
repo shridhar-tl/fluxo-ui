@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ReportViewer } from '../../../components/report-builder';
+import { ReportViewer } from '../../../components/report-builder/report-viewer-index';
 import PageLayout from '../../PageLayout';
 import type { SectionNavItem } from '../../SectionNav';
 import { PropsTable } from '../../PropsTable';
@@ -39,14 +39,14 @@ const importCode = `// Base styles (once in your app entry)
 import 'fluxo-ui/styles';
 
 // Report Viewer component and types
-import { ReportViewer } from 'fluxo-ui/report-builder';
+import { ReportViewer } from 'fluxo-ui/report-viewer';
 import type {
   ReportDefinition,
   ReportViewerProps,
   ReportViewerHandle,
   DatasourcePlugin,
   SubReportDefinition,
-} from 'fluxo-ui/report-builder';`;
+} from 'fluxo-ui/report-viewer';`;
 
 const usageCode = `<ReportViewer
   definition={reportJson}

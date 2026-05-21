@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { ReportViewer } from '../../../../components/report-builder';
-import type { ReportDefinition, SubReportDefinition } from '../../../../components/report-builder';
+import { ReportViewer } from '../../../../components/report-builder/report-viewer-index';
+import type { ReportDefinition, SubReportDefinition } from '../../../../components/report-builder/report-viewer-index';
 import { createHook } from '../../../../store';
 import { CodeBlock } from '../../../CodeBlock';
 import { sampleDatasourcePlugins } from '../../report-builder/report-builder-story-data';

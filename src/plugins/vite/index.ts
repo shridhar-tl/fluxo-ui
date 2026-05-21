@@ -62,6 +62,7 @@ function fluxoUiSource(options: FluxoUiSourcePluginOptions = {}): Plugin {
             aliases['fluxo-ui/draw'] = path.resolve(resolvedSourcePath, 'components/canvas-draw/index.ts');
             aliases['fluxo-ui/services'] = path.resolve(resolvedSourcePath, 'services/index.ts');
             aliases['fluxo-ui/report-builder'] = path.resolve(resolvedSourcePath, 'components/report-builder/index.ts');
+            aliases['fluxo-ui/report-viewer'] = path.resolve(resolvedSourcePath, 'components/report-builder/report-viewer-index.ts');
             aliases['fluxo-ui/chat'] = path.resolve(resolvedSourcePath, 'components/chat/index.ts');
             aliases['fluxo-ui/styles'] = path.resolve(resolvedSourcePath, '../dist/styles/components.css');
             aliases['fluxo-ui'] = path.resolve(resolvedSourcePath, 'components/index.ts');
