@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { CSSProperties, HTMLAttributes, ReactNode, useMemo } from 'react';
 import { useDrop } from './hooks/useDrop';
 import type { DragItem, DropPosition, DropResult } from './core/types';
+import './drag-drop.scss';
 
 export type DropIndicator = 'highlight' | 'line' | 'none';
 export type DropOrientation = 'vertical' | 'horizontal';

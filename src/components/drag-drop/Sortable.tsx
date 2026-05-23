@@ -3,6 +3,7 @@ import { CSSProperties, ElementType, KeyboardEvent as ReactKeyboardEvent, ReactN
 import Draggable, { DraggableRenderProps } from './Draggable';
 import Droppable, { DropIndicator, DroppableRenderProps } from './Droppable';
 import type { DragItem, DropOrientation, DropResult } from './core/types';
+import './drag-drop.scss';
 
 export type SortableOrientation = DropOrientation;
 
