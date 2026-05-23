@@ -108,7 +108,9 @@
         "build-cli": "node scripts/generate-manifest.mjs && vite build --config vite.cli.config.ts",
         "build-all": "npm run build-lib && npm run build-cli",
         "generate-manifest": "node scripts/generate-manifest.mjs",
-        "test": "node scripts/verify-cli.mjs",
+        "test": "node scripts/verify-cli.mjs && node scripts/css-wiring/verify-css-wiring.mjs",
+        "test:css": "node scripts/css-wiring/verify-css-wiring.mjs",
+        "test:css:fast": "node scripts/css-wiring/verify-css-wiring.mjs --no-build",
         "prepublishOnly": "npm run build-all",
         "lint": "eslint ."
     },

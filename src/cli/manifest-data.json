@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-21T14:32:26.051Z",
+  "generatedAt": "2026-05-23T10:15:50.707Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -2522,6 +2522,7 @@
         "components/design/TabDesign.tsx",
         "components/design/TableDesign.tsx",
         "components/design/TextDesign.tsx",
+        "components/parameter-panel.scss",
         "components/props/CanvasPropsPanel.tsx",
         "components/props/ChartPropsPanel.tsx",
         "components/props/ColumnsPropsPanel.tsx",
