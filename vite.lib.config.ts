@@ -14,6 +14,28 @@ const stripDistPrefix = (value: string): string => {
 
 const nonComponentSegments = new Set(['index']);
 
+const libEntries: Record<string, string> = {
+    index: resolve(__dirname, 'src/components/index.ts'),
+    'report-builder': resolve(__dirname, 'src/components/report-builder/index.ts'),
+    'report-viewer': resolve(__dirname, 'src/components/report-builder/report-viewer-index.ts'),
+    chat: resolve(__dirname, 'src/components/chat/index.ts'),
+    draw: resolve(__dirname, 'src/components/canvas-draw/index.ts'),
+    utils: resolve(__dirname, 'src/utils/lib.ts'),
+    hooks: resolve(__dirname, 'src/hooks/index.ts'),
+    icons: resolve(__dirname, 'src/assets/icons.ts'),
+    store: resolve(__dirname, 'src/store/index.ts'),
+    'store-middlewares': resolve(__dirname, 'src/store/middlewares/index.ts'),
+    services: resolve(__dirname, 'src/services/index.ts'),
+    'vite-plugin': resolve(__dirname, 'src/plugins/vite/index.ts'),
+};
+
+const entryFeatureDirs = new Set(
+    Object.values(libEntries)
+        .map((entryPath) => entryPath.replace(/\\/g, '/').match(/\/src\/components\/([^/]+)\//))
+        .filter((match): match is RegExpMatchArray => match !== null)
+        .map((match) => match[1])
+);
+
 const pureLogicModuleCache = new Map<string, boolean>();
 const computeIsPureLogic = (filePath: string): boolean => {
     try {
@@ -41,6 +63,10 @@ const perComponentChunkName = (id: string): string | null => {
     if (segment === 'report-builder') return null;
     const name = segment.replace(/\.(tsx|ts|jsx|js)$/, '');
     if (nonComponentSegments.has(name)) return null;
+    const fileMatch = normalized.match(/\/src\/components\/([^/]+)\/([^/]+)\.(tsx|ts|jsx|js)$/);
+    if (fileMatch && entryFeatureDirs.has(fileMatch[1]) && fileMatch[2] !== 'index') {
+        return `components/${fileMatch[1]}/${fileMatch[2]}`;
+    }
     return `components/${name}`;
 };
 
@@ -51,9 +77,12 @@ const pureLogicFeatureLeafName = (id: string): string | null => {
     const feature = match[1];
     if (feature === 'report-builder') return null;
     if (nonComponentSegments.has(feature)) return null;
+    const leaf = match[2];
+    const isFeatureBarrel = leaf === 'index' || leaf.endsWith('/index');
+    if (isFeatureBarrel && !entryFeatureDirs.has(feature)) return null;
     const filePath = normalized.replace(/\?.*$/, '');
     if (!isPureLogicModule(filePath)) return null;
-    const rel = match[2].replace(/\/index$/, '').replace(/\//g, '__');
+    const rel = leaf.replace(/\/index$/, '').replace(/\//g, '__');
     return `components/${feature}/${rel}`;
 };
 
@@ -76,10 +105,21 @@ const perSharedModuleName = (id: string): string | null => {
     return `shared/${dir}/${rel}`;
 };
 
+const sharedVendors = ['date-fns'];
+
+const perVendorChunkName = (id: string): string | null => {
+    const normalized = id.replace(/\\/g, '/');
+    for (const vendor of sharedVendors) {
+        if (normalized.includes(`/node_modules/${vendor}/`)) return `shared/vendor/${vendor}`;
+    }
+    return null;
+};
+
 const componentChunkGroups = [
     { name: perIconChunkName, priority: 40 },
     { name: pureLogicFeatureLeafName, priority: 35 },
     { name: perComponentChunkName, priority: 30 },
+    { name: perVendorChunkName, priority: 25 },
     { name: perSharedModuleName, priority: 20 },
 ];
 
@@ -126,13 +166,6 @@ const writeDistPackageJson = (): Plugin => ({
         for (const key of keepKeys) {
             if (rootPkg[key] !== undefined) distPkg[key] = rootPkg[key];
         }
-        const libraryRuntimeDeps = ['classnames', 'date-fns'];
-        const rootDeps = (rootPkg.dependencies ?? {}) as Record<string, string>;
-        const libDeps: Record<string, string> = {};
-        for (const dep of libraryRuntimeDeps) {
-            if (rootDeps[dep]) libDeps[dep] = rootDeps[dep];
-        }
-        if (Object.keys(libDeps).length > 0) distPkg.dependencies = libDeps;
         distPkg.main = stripDistPrefix(rootPkg.main);
         distPkg.module = stripDistPrefix(rootPkg.module);
         distPkg.types = stripDistPrefix(rootPkg.types);
@@ -173,20 +206,7 @@ export default defineConfig({
     build: {
         emptyOutDir: true,
         lib: {
-            entry: {
-                index: resolve(__dirname, 'src/components/index.ts'),
-                'report-builder': resolve(__dirname, 'src/components/report-builder/index.ts'),
-                'report-viewer': resolve(__dirname, 'src/components/report-builder/report-viewer-index.ts'),
-                'chat': resolve(__dirname, 'src/components/chat/index.ts'),
-                draw: resolve(__dirname, 'src/components/canvas-draw/index.ts'),
-                utils: resolve(__dirname, 'src/utils/lib.ts'),
-                hooks: resolve(__dirname, 'src/hooks/index.ts'),
-                icons: resolve(__dirname, 'src/assets/icons.ts'),
-                store: resolve(__dirname, 'src/store/index.ts'),
-                'store-middlewares': resolve(__dirname, 'src/store/middlewares/index.ts'),
-                services: resolve(__dirname, 'src/services/index.ts'),
-                'vite-plugin': resolve(__dirname, 'src/plugins/vite/index.ts'),
-            },
+            entry: libEntries,
             name: 'FluxoUI',
             formats: ['es', 'cjs'],
             fileName: (format, entryName) => {
@@ -210,7 +230,7 @@ export default defineConfig({
                 'path',
             ],
             output: {
-                strictExecutionOrder: true,
+                strictExecutionOrder: false,
                 globals: {
                     react: 'React',
                     'react-dom': 'ReactDOM',

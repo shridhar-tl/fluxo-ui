@@ -2,46 +2,48 @@ import { build as viteBuild } from 'vite';
 import reactPlugin from '@vitejs/plugin-react';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 /*
  * Runtime export-resolution suite.
  *
- * Guarantee under test: EVERY symbol the package advertises from a barrel
- * (`fluxo-ui`, `fluxo-ui/chat`, `fluxo-ui/report-builder`, `fluxo-ui/report-viewer`,
- * `fluxo-ui/draw`, plus the secondary entries `hooks`/`store`/`utils`/`services`/
- * `icons`) actually resolves to a DEFINED, non-null runtime value when a consumer
- * imports it from the BUILT package — exactly the way a client app does.
+ * Guarantee under test: EVERY symbol the package advertises resolves to a DEFINED,
+ * non-null runtime value when a client app imports JUST THAT ONE SYMBOL by name and
+ * ships it through a production build with tree-shaking — the exact pipeline a real
+ * consumer uses.
  *
- * Why this exists: the css-wiring / tree-shaking / exports suites prove styling,
- * chunk-isolation, and that advertised files exist on disk. NONE of them imported
- * the symbols and checked the value. A chunking change can leave a symbol exported
- * by name but `undefined` at runtime (rolldown imports the lazy `t` value of a
- * component chunk but never calls its `init_*`, so the binding is never assigned).
- * That ships a broken `import { Drawer } from 'fluxo-ui'` to every client even
- * though `Drawer` appears in the export list. This suite is the guard against that
+ * Two things make this test faithful where earlier versions silently passed:
+ *
+ *  1. ISOLATED, ONE-SYMBOL-PER-BUNDLE. A consumer writes `import { Splitter }` and
+ *     uses nothing else. Importing ALL advertised symbols into one entry keeps the
+ *     whole module graph reachable, so every lazy `init_*()` survives and the test
+ *     can't fail. The bug only appears when a single symbol is imported alone: the
+ *     tree-shaker prunes every init not reachable from that one binding, and if the
+ *     binding's value is assigned only inside a pruned init it ends up `undefined`.
+ *     So each symbol is bundled in its own entry, alone.
+ *
+ *  2. REAL CLIENT BUILD honouring `package.json` "sideEffects". `fluxo-ui` is resolved
+ *     through a node_modules symlink so its `sideEffects` field is read, and the build
+ *     is a normal client build (NOT `ssr`, NOT `import *`). SSR and namespace imports
+ *     both retain the graph and hide the bug.
+ *
+ * A symbol that comes back `BROKEN` ships a broken `import { X }` to every client even
+ * though `X` still appears in the export list. This suite is the guard against that
  * entire class of bug.
- *
- * Method: for each barrel, generate a tiny consumer entry that does
- * `import * as M from '<subpath>'` and writes, for every own-enumerable key, whether
- * `M[key]` is undefined/null. The entry is bundled with Vite (noExternal) the way a
- * client bundles, executed, and any key that came back BROKEN fails the suite with
- * the exact subpath + symbol names.
  */
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(here, '..', '..');
 const DIST = path.join(REPO, 'dist');
 const WORK = path.join(REPO, '.exports-runtime');
-const CONSUMER = path.join(WORK, 'consumer');
 
 const args = new Set(process.argv.slice(2));
 const NO_BUILD = args.has('--no-build') || process.env.EXPORTS_RUNTIME_NO_BUILD === '1';
+const POOL = Number(process.env.EXPORTS_RUNTIME_POOL || 8);
 
-// Subpaths whose barrels we import * from and value-check every symbol.
 const BARRELS = ['fluxo-ui', 'fluxo-ui/chat', 'fluxo-ui/report-builder', 'fluxo-ui/report-viewer', 'fluxo-ui/draw'];
-// Secondary entries that are also public; same value-check.
 const SECONDARY = ['fluxo-ui/hooks', 'fluxo-ui/store', 'fluxo-ui/store/middlewares', 'fluxo-ui/utils', 'fluxo-ui/services', 'fluxo-ui/icons'];
 
 const c = {
@@ -58,69 +60,109 @@ function runBuildLib() {
     execSync('npm run build-lib', { cwd: REPO, stdio: 'inherit' });
 }
 
-function ensureConsumer() {
-    fs.mkdirSync(CONSUMER, { recursive: true });
-    fs.writeFileSync(
-        path.join(CONSUMER, 'package.json'),
-        JSON.stringify({ name: 'fluxo-ui-exports-runtime-consumer', version: '0.0.0', private: true, type: 'module' }, null, 2),
-        'utf-8'
-    );
-    const nm = path.join(CONSUMER, 'node_modules');
+function ensureConsumerRoot() {
+    fs.mkdirSync(WORK, { recursive: true });
+    const root = fs.mkdtempSync(path.join(WORK, 'consumer-'));
+    const nm = path.join(root, 'node_modules');
     fs.mkdirSync(nm, { recursive: true });
-    const link = path.join(nm, 'fluxo-ui');
-    try {
-        fs.rmSync(link, { recursive: true, force: true });
-    } catch {}
-    fs.symlinkSync(DIST, link, process.platform === 'win32' ? 'junction' : 'dir');
+    const linkKind = process.platform === 'win32' ? 'junction' : 'dir';
+    fs.symlinkSync(DIST, path.join(nm, 'fluxo-ui'), linkKind);
+    for (const dep of ['react', 'react-dom']) {
+        fs.symlinkSync(path.join(REPO, 'node_modules', dep), path.join(nm, dep), linkKind);
+    }
+    return root;
 }
 
-const safe = (s) => s.replace(/[^A-Za-z0-9]/g, '_');
+const distPkg = () => JSON.parse(fs.readFileSync(path.join(DIST, 'package.json'), 'utf-8'));
 
-async function probeBarrel(subpath) {
-    const id = safe(subpath);
-    const entry = path.join(CONSUMER, `entry-${id}.mjs`);
-    const reportPath = path.join(CONSUMER, `report-${id}.json`);
-    try {
-        fs.rmSync(reportPath, { force: true });
-    } catch {}
+function builtFileFor(subpath) {
+    const pkg = distPkg();
+    const key = subpath === 'fluxo-ui' ? '.' : subpath.replace(/^fluxo-ui/, '.');
+    const entry = pkg.exports[key];
+    const imp = typeof entry === 'string' ? entry : entry && entry.import;
+    if (!imp || !imp.endsWith('.js')) return null;
+    return path.join(DIST, imp.replace(/^\.\//, ''));
+}
+
+function exportedNames(jsFile) {
+    const src = fs.readFileSync(jsFile, 'utf-8');
+    const names = new Set();
+    const exportBlock = /export\s*\{([\s\S]*?)\}\s*;?/g;
+    let m;
+    while ((m = exportBlock.exec(src)) !== null) {
+        for (const raw of m[1].split(',')) {
+            const part = raw.trim();
+            if (!part) continue;
+            const publicName = part.split(/\s+as\s+/).pop().trim();
+            if (/^[A-Za-z_$][A-Za-z0-9_$]*$/.test(publicName) && publicName !== 'default') names.add(publicName);
+        }
+    }
+    return [...names].sort();
+}
+
+const sink = (s) => `__fx_${s.replace(/[^A-Za-z0-9_$]/g, '_')}`;
+
+async function probeOne(consumerRoot, subpath, symbol) {
+    const tmp = fs.mkdtempSync(path.join(consumerRoot, 's-'));
+    const entry = path.join(tmp, 'entry.js');
     fs.writeFileSync(
         entry,
-        `import * as M from '${subpath}';\n` +
-            `import { writeFileSync } from 'fs';\n` +
-            `const out = {};\n` +
-            `for (const k of Object.keys(M)) { const v = M[k]; out[k] = (v === undefined || v === null) ? 'BROKEN' : (typeof v); }\n` +
-            `writeFileSync(${JSON.stringify(reportPath)}, JSON.stringify(out));\n`,
+        `import { ${symbol} } from '${subpath}';\n` +
+            `globalThis[${JSON.stringify(sink(symbol))}] = (typeof ${symbol} === 'undefined' || ${symbol} === null) ? 'BROKEN' : (typeof ${symbol});\n`,
         'utf-8'
     );
-    const outDir = path.join(CONSUMER, `out-${id}`);
-    await viteBuild({
-        root: CONSUMER,
-        logLevel: 'silent',
-        plugins: [reactPlugin()],
-        define: { 'process.env.NODE_ENV': '"production"' },
-        build: {
-            outDir,
-            emptyOutDir: true,
-            ssr: entry,
-            minify: false,
-            rollupOptions: { output: { format: 'es' } },
-        },
-        ssr: { noExternal: true },
-    });
-    const built = fs.readdirSync(outDir).find((f) => f.endsWith('.js'));
-    if (!built) throw new Error('no built ssr bundle');
-    await import(pathToFileURL(path.join(outDir, built)).href + `?t=${Date.now()}`);
-    if (!fs.existsSync(reportPath)) throw new Error('entry did not execute / wrote no report');
-    const rep = JSON.parse(fs.readFileSync(reportPath, 'utf-8'));
-    const total = Object.keys(rep).length;
-    const broken = Object.entries(rep)
-        .filter(([, v]) => v === 'BROKEN')
-        .map(([k]) => k)
-        .sort();
+    let value;
     try {
-        fs.rmSync(outDir, { recursive: true, force: true });
-    } catch {}
-    return { subpath, total, broken };
+        const res = await viteBuild({
+            root: consumerRoot,
+            logLevel: 'silent',
+            plugins: [reactPlugin()],
+            define: { 'process.env.NODE_ENV': '"production"' },
+            build: {
+                write: false,
+                minify: false,
+                target: 'esnext',
+                rollupOptions: { input: entry, external: [], output: { format: 'es' } },
+            },
+        });
+        const out = Array.isArray(res) ? res[0] : res;
+        const chunk = out.output.find((o) => o.type === 'chunk' && o.isEntry);
+        if (!chunk) throw new Error('no entry chunk produced');
+        const runFile = path.join(tmp, 'run.mjs');
+        fs.writeFileSync(runFile, chunk.code, 'utf-8');
+        delete globalThis[sink(symbol)];
+        await import(pathToFileURL(runFile).href + `?t=${Date.now()}`);
+        value = globalThis[sink(symbol)];
+        if (value === undefined) value = 'BROKEN';
+    } catch (e) {
+        value = 'ERROR:' + String(e).split('\n')[0];
+    } finally {
+        try {
+            fs.rmSync(tmp, { recursive: true, force: true });
+        } catch {}
+    }
+    return value;
+}
+
+async function probeBarrel(consumerRoot, subpath, onTick) {
+    const jsFile = builtFileFor(subpath);
+    if (!jsFile || !fs.existsSync(jsFile)) return { subpath, total: 0, broken: [], error: `no built js for ${subpath}` };
+    const names = exportedNames(jsFile);
+    if (names.length === 0) return { subpath, total: 0, broken: [], error: `no exported names parsed for ${subpath}` };
+
+    const broken = [];
+    let i = 0;
+    async function worker() {
+        while (i < names.length) {
+            const symbol = names[i++];
+            const v = await probeOne(consumerRoot, subpath, symbol);
+            if (v === 'BROKEN' || (typeof v === 'string' && v.startsWith('ERROR:'))) broken.push(symbol);
+            onTick(v === 'BROKEN' || (typeof v === 'string' && v.startsWith('ERROR:')));
+        }
+    }
+    await Promise.all(Array.from({ length: Math.min(POOL, names.length) }, worker));
+    broken.sort();
+    return { subpath, total: names.length, broken };
 }
 
 async function main() {
@@ -132,35 +174,51 @@ async function main() {
         process.exit(2);
     }
 
-    ensureConsumer();
+    try {
+        fs.rmSync(WORK, { recursive: true, force: true });
+    } catch {}
+    const consumerRoot = ensureConsumerRoot();
 
     const all = [...BARRELS, ...SECONDARY];
     const results = [];
-    process.stdout.write(c.gray(`Importing every exported symbol from ${all.length} entry points through a real consumer bundle…\n`));
+    console.log(
+        c.gray(
+            `Importing every exported symbol ONE-AT-A-TIME from ${all.length} entry points through real consumer client builds (production tree-shaking)…`
+        )
+    );
+    let printed = 0;
+    const onTick = (isBroken) => {
+        process.stdout.write(isBroken ? c.red('F') : c.green('.'));
+        if (++printed % 80 === 0) process.stdout.write('\n');
+    };
+
     for (const subpath of all) {
         let r;
         try {
-            r = await probeBarrel(subpath);
+            r = await probeBarrel(consumerRoot, subpath, onTick);
         } catch (e) {
             r = { subpath, total: 0, broken: [], error: String(e).split('\n').slice(0, 3).join(' | ') };
+            process.stdout.write(c.red('E'));
         }
         results.push(r);
-        if (r.error) process.stdout.write(c.red('E'));
-        else process.stdout.write(r.broken.length === 0 ? c.green('.') : c.red('F'));
     }
     process.stdout.write('\n');
+
+    try {
+        fs.rmSync(WORK, { recursive: true, force: true });
+    } catch {}
 
     report(results);
 }
 
 function report(results) {
     console.log('\n' + c.bold('═'.repeat(80)));
-    console.log(c.bold('  RUNTIME EXPORT-RESOLUTION REPORT'));
+    console.log(c.bold('  RUNTIME EXPORT-RESOLUTION REPORT  (each symbol imported ALONE, consumer client build)'));
     console.log(c.bold('═'.repeat(80)));
     console.log(
         '\n' +
-            c.bold('Every advertised symbol must resolve to a defined runtime value when imported from the built package.') +
-            c.gray('\n(A symbol exported by name but `undefined` at runtime ships a broken import to every client.)')
+            c.bold('Every advertised symbol must resolve to a defined runtime value when imported BY ITSELF.') +
+            c.gray('\n(A symbol exported by name but `undefined` after tree-shaking ships a broken import to every client.)')
     );
 
     let failed = false;
@@ -171,16 +229,16 @@ function report(results) {
         totalSymbols += r.total;
         if (r.error) {
             failed = true;
-            console.log('\n' + c.red(`  ✗ ${r.subpath} — entry failed to build/execute:`));
+            console.log('\n' + c.red(`  ✗ ${r.subpath} — could not probe:`));
             console.log(c.gray(`      ${r.error}`));
             continue;
         }
         if (r.broken.length === 0) {
-            console.log('\n' + c.green(`  ✓ ${r.subpath}`) + c.gray(`  (${r.total} symbols, all resolve)`));
+            console.log('\n' + c.green(`  ✓ ${r.subpath}`) + c.gray(`  (${r.total} symbols, each resolves when imported alone)`));
         } else {
             failed = true;
             totalBroken += r.broken.length;
-            console.log('\n' + c.red(`  ✗ ${r.subpath} — ${r.broken.length}/${r.total} symbol(s) resolve to undefined/null at runtime:`));
+            console.log('\n' + c.red(`  ✗ ${r.subpath} — ${r.broken.length}/${r.total} symbol(s) resolve to undefined/null when imported alone:`));
             for (const s of r.broken) console.log(c.red(`      • ${s}`) + c.gray(`  → import { ${s} } from '${r.subpath}'  yields undefined`));
         }
     }
@@ -189,15 +247,16 @@ function report(results) {
     console.log(c.bold('  SUMMARY'));
     console.log(`  Entry points checked: ${results.length}   Symbols checked: ${totalSymbols}`);
     if (totalBroken > 0) {
-        console.log(c.red(`  BROKEN exports (undefined at runtime): ${totalBroken}`));
+        console.log(c.red(`  BROKEN exports (undefined when imported alone): ${totalBroken}`));
         console.log(
             c.gray(
-                '  Cause: the barrel imports a component chunk’s value but never runs its initializer ' +
-                    '(rolldown chunk hoisting). Fix the chunk config / barrel so the init runs before the value is read.'
+                '  Cause: the value is assigned only inside a lazy init function whose eager call is an\n' +
+                    '  unused expression statement; with "sideEffects" marking .js pure, the consumer prunes it.\n' +
+                    '  Fix: make the export bindings survive tree-shaking (eager assignment / retained init).'
             )
         );
     } else {
-        console.log(c.green('  All advertised symbols resolve to real runtime values. ✓'));
+        console.log(c.green('  Every advertised symbol resolves to a real runtime value when imported alone. ✓'));
     }
     console.log(c.bold('─'.repeat(80)) + '\n');
 

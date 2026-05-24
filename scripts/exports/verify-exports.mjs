@@ -109,6 +109,39 @@ function checkAliasSync() {
     return { missingAliases, aliasCount: aliasKeys.size };
 }
 
+function collectBareImports(dir) {
+    const bare = new Set();
+    const bareImportRe = /(?:from\s*|import\s*|require\(\s*)['"]([^'".][^'"]*)['"]/g;
+    const walk = (d) => {
+        for (const ent of fs.readdirSync(d, { withFileTypes: true })) {
+            const full = path.join(d, ent.name);
+            if (ent.isDirectory()) walk(full);
+            else if (/\.(js|cjs|mjs)$/.test(ent.name)) {
+                const src = fs.readFileSync(full, 'utf-8');
+                let m;
+                bareImportRe.lastIndex = 0;
+                while ((m = bareImportRe.exec(src))) {
+                    const spec = m[1];
+                    if (spec.startsWith('.') || spec.startsWith('/') || spec.startsWith('node:')) continue;
+                    const pkg = spec.startsWith('@') ? spec.split('/').slice(0, 2).join('/') : spec.split('/')[0];
+                    bare.add(pkg);
+                }
+            }
+        }
+    };
+    walk(dir);
+    return bare;
+}
+
+function checkBundledNotDeclared() {
+    const distPkg = JSON.parse(fs.readFileSync(path.join(DIST, 'package.json'), 'utf-8'));
+    const declared = Object.keys(distPkg.dependencies || {});
+    if (declared.length === 0) return { phantom: [], declaredCount: 0 };
+    const bare = collectBareImports(DIST);
+    const phantom = declared.filter((dep) => !bare.has(dep));
+    return { phantom, declaredCount: declared.length };
+}
+
 function main() {
     if (!NO_BUILD) runBuildLib();
     else console.log(c.yellow('› --no-build: testing the existing dist/ as-is.'));
@@ -121,6 +154,7 @@ function main() {
     const distCheck = checkManifestTargets(path.join(DIST, 'package.json'), DIST, 'dist/package.json (shipped)');
     const rootCheck = checkManifestTargets(path.join(REPO, 'package.json'), REPO, 'package.json (root)');
     const alias = checkAliasSync();
+    const bundledDeps = checkBundledNotDeclared();
 
     console.log('\n' + c.bold('═'.repeat(78)));
     console.log(c.bold('  PACKAGE EXPORTS INTEGRITY REPORT'));
@@ -167,6 +201,21 @@ function main() {
         );
     }
 
+    console.log(
+        '\n' +
+            c.bold('CHECK 4 — no phantom runtime dependency: ') +
+            c.gray('every package in dist dependencies must be a real external import, never one bundled into the output.')
+    );
+    if (bundledDeps.phantom.length === 0) {
+        console.log(c.green(`  ✓ PASS — ${bundledDeps.declaredCount} declared dependency(ies), each is a genuine external import.`));
+    } else {
+        failed = true;
+        console.log(c.red(`  ✗ FAIL — ${bundledDeps.phantom.length} declared dependency(ies) are bundled into the output, not imported externally:`));
+        for (const dep of bundledDeps.phantom)
+            console.log(c.red(`    • "${dep}"`) + c.gray('  is bundled into dist chunks — a consumer would install an unused second copy.'));
+        console.log(c.gray('    Fix: remove it from the dist package.json dependencies (it is shipped inside the bundle already).'));
+    }
+
     console.log('\n' + c.bold('─'.repeat(78)));
     console.log(c.bold('  SUMMARY'));
     const line = (label, ok, extra) =>
@@ -174,6 +223,7 @@ function main() {
     line('CHECK 1 dist exports resolve', distCheck.missing.length === 0, `${distCheck.total} targets`);
     line('CHECK 2 root exports resolve', rootCheck.missing.length === 0, `${rootCheck.total} targets`);
     line('CHECK 3 exports ↔ alias sync', alias.missingAliases.length === 0, `${alias.aliasCount} aliases`);
+    line('CHECK 4 no phantom runtime dep', bundledDeps.phantom.length === 0, `${bundledDeps.declaredCount} declared`);
     console.log(c.bold('─'.repeat(78)) + '\n');
 
     process.exit(failed ? 1 : 0);

@@ -445,7 +445,7 @@ function collectExternalSpecs(rootFile) {
     const seen = new Set();
     const stack = [rootFile];
     const externals = new Set();
-    const importRe = /(?:import|export)\b[^'"]*?from\s*['"]([^'"]+)['"]|import\s*\(\s*['"]([^'"]+)['"]\s*\)|import\s*['"]([^'"]+)['"]/g;
+    const importRe = /(?:import|export)\b[^'"]*?from\s*['"]([^'"]+)['"]|import\s*\(\s*(?:\/\*[\s\S]*?\*\/\s*)?['"]([^'"]+)['"]\s*\)|import\s*['"]([^'"]+)['"]/g;
     while (stack.length) {
         const f = stack.pop();
         if (!f || seen.has(f)) continue;
