@@ -1,5 +1,6 @@
 import React from 'react';
 import { PlacementCorners } from '../../types';
+import { warnManagerMissing } from '../../utils/warn-manager-missing';
 
 export interface TooltipOptions {
     timeout?: number;
@@ -30,7 +31,9 @@ export function showTooltip(e: React.MouseEvent, opt: TooltipOptions | React.Rea
     if (showTooltipHandler) {
         const options: TooltipOptions = typeof opt === 'string' || React.isValidElement(opt) ? { content: opt } : (opt as TooltipOptions);
         showTooltipHandler({ event: e, options });
+        return;
     }
+    warnManagerMissing('TooltipManager', 'showTooltip', '<TooltipManager /> from fluxo-ui');
 }
 
 export function hideTooltip(params: { timeout?: number } = {}) {

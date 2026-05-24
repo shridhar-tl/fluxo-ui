@@ -83,6 +83,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     className,
     exportOptions: exportOptionsProp,
     cropModes = allCropModes,
+    editState,
+    onEditStateChange,
 }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const imageRef = useRef<HTMLImageElement | null>(null);
@@ -90,12 +92,13 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
 
     const [loaded, setLoaded] = useState(false);
     const [activeTool, setActiveTool] = useState<EditorTool>(defaultTool);
-    const [transform, setTransform] = useState<ImageTransform>({ ...defaultTransform });
-    const [cropArea, setCropArea] = useState<CropArea | null>(null);
-    const [cropMode, setCropMode] = useState<CropMode>('custom');
+    const [baseImage, setBaseImage] = useState<string>(editState?.baseImage ?? src);
+    const [transform, setTransform] = useState<ImageTransform>(editState ? { ...editState.transform } : { ...defaultTransform });
+    const [cropArea, setCropArea] = useState<CropArea | null>(editState?.cropArea ?? null);
+    const [cropMode, setCropMode] = useState<CropMode>(editState?.cropMode ?? 'custom');
     const [isCropping, setIsCropping] = useState(false);
     const [cropStart, setCropStart] = useState<{ x: number; y: number } | null>(null);
-    const [blurRegions, setBlurRegions] = useState<BlurRegion[]>([]);
+    const [blurRegions, setBlurRegions] = useState<BlurRegion[]>(editState?.blurRegions ? [...editState.blurRegions] : []);
     const [isDrawingBlur, setIsDrawingBlur] = useState(false);
     const [blurStart, setBlurStart] = useState<{ x: number; y: number } | null>(null);
     const [blurIntensity, setBlurIntensity] = useState(10);
@@ -106,13 +109,39 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         ...defaultExportOptions,
         ...exportOptionsProp,
     });
-    const [annotationData, setAnnotationData] = useState<string | null>(null);
+    const [annotationData, setAnnotationData] = useState<string | null>(editState?.annotationData ?? null);
 
     const [freehandActive, setFreehandActive] = useState(false);
     const [freehandColor, setFreehandColor] = useState('#ef4444');
     const [freehandSize, setFreehandSize] = useState(3);
     const freehandPointsRef = useRef<Array<{ x: number; y: number }>>([]);
     const annotationCanvasRef = useRef<HTMLCanvasElement>(null);
+
+    const onChangeRef = useRef(onEditStateChange);
+    useEffect(() => {
+        onChangeRef.current = onEditStateChange;
+    }, [onEditStateChange]);
+
+    const hydratedAnnotationRef = useRef(false);
+    const emitReadyRef = useRef(false);
+
+    useEffect(() => {
+        if (!loaded) return;
+        if (!emitReadyRef.current) {
+            emitReadyRef.current = true;
+            return;
+        }
+        const cb = onChangeRef.current;
+        if (!cb) return;
+        cb({
+            baseImage,
+            transform: { ...transform },
+            cropArea: cropArea ? { ...cropArea } : null,
+            cropMode,
+            blurRegions: blurRegions.map((r) => ({ ...r })),
+            annotationData,
+        });
+    }, [loaded, baseImage, transform, cropArea, cropMode, blurRegions, annotationData]);
 
     useEffect(() => {
         const img = new Image();
@@ -122,8 +151,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
             setLoaded(true);
             pushHistory({ ...defaultTransform }, null);
         };
-        img.src = src;
-    }, [src]);
+        img.src = baseImage;
+    }, [baseImage]);
 
     useEffect(() => {
         if (loaded) renderCanvas();
@@ -270,6 +299,26 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
             ctx.restore();
         }
     }, [transform, cropArea, cropMode, blurRegions, annotationData, activeTool]);
+
+    useEffect(() => {
+        if (!loaded) return;
+        const saved = editState?.annotationData ?? null;
+        if (hydratedAnnotationRef.current || !saved) return;
+        hydratedAnnotationRef.current = true;
+        const aCanvas = annotationCanvasRef.current;
+        const main = canvasRef.current;
+        if (!aCanvas || !main) return;
+        aCanvas.width = main.width;
+        aCanvas.height = main.height;
+        const ctx = aCanvas.getContext('2d');
+        if (!ctx) return;
+        const annotImg = new Image();
+        annotImg.onload = () => {
+            ctx.drawImage(annotImg, 0, 0, aCanvas.width, aCanvas.height);
+            renderCanvas();
+        };
+        annotImg.src = saved;
+    }, [loaded, editState, renderCanvas]);
 
     const applyBlurRegion = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, region: BlurRegion) => {
         const x = Math.max(0, Math.floor(region.x));
@@ -505,16 +554,18 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
             0, 0, cropArea.width, cropArea.height,
         );
 
-        const newImg = new Image();
-        newImg.onload = () => {
-            imageRef.current = newImg;
-            setCropArea(null);
-            setTransform({ ...defaultTransform });
-            pushHistory({ ...defaultTransform }, null);
-            renderCanvas();
-        };
-        newImg.src = tempCanvas.toDataURL();
-    }, [cropArea, cropMode, pushHistory, renderCanvas]);
+        const cropped = tempCanvas.toDataURL();
+        const aCanvas = annotationCanvasRef.current;
+        if (aCanvas) {
+            const actx = aCanvas.getContext('2d');
+            if (actx) actx.clearRect(0, 0, aCanvas.width, aCanvas.height);
+        }
+        setCropArea(null);
+        setTransform({ ...defaultTransform });
+        setBlurRegions([]);
+        setAnnotationData(null);
+        setBaseImage(cropped);
+    }, [cropArea, cropMode]);
 
     const rotate = useCallback(
         (degrees: number) => {
@@ -593,7 +644,8 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
             const ctx = aCanvas.getContext('2d');
             if (ctx) ctx.clearRect(0, 0, aCanvas.width, aCanvas.height);
         }
-    }, []);
+        if (baseImage !== src) setBaseImage(src);
+    }, [baseImage, src]);
 
     const renderToolOptions = () => {
         switch (activeTool) {
@@ -954,4 +1006,4 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
 };
 
 export { ImageEditor };
-export type { ImageEditorProps, EditorTool, CropMode, ExportFormat, ExportOptions, CropArea, ImageTransform, BlurRegion } from './image-editor-types';
+export type { ImageEditorProps, EditorState, EditorTool, CropMode, ExportFormat, ExportOptions, CropArea, ImageTransform, BlurRegion } from './image-editor-types';

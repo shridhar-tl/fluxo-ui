@@ -50,6 +50,14 @@
       "type": "CropMode[]",
       "default": "['custom', 'square', 'circle', '16:9', '4:3', '3:2', '1:1']",
       "description": "Available crop aspect ratio presets."
+    },
+    "editState": {
+      "type": "EditorState | null",
+      "description": "Saved editor state to restore on mount (crop, rotate, flip, blur, annotations, current base image). Pass back the object received from onEditStateChange to reopen with the same edits intact. Leave undefined for an uncontrolled editor that manages its own state."
+    },
+    "onEditStateChange": {
+      "type": "(state: EditorState) => void",
+      "description": "Called whenever the edits change, with a serializable snapshot of the full editor state. Persist it and pass it back via editState to restore the session later."
     }
   }
 }

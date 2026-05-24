@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-05-23T10:15:50.707Z",
+  "generatedAt": "2026-05-24T05:31:24.133Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -817,7 +817,9 @@
         "hooks": [
           "useMobile"
         ],
-        "utils": [],
+        "utils": [
+          "warn-manager-missing"
+        ],
         "shared": [
           "types"
         ],
@@ -2842,7 +2844,9 @@
       "dependencies": {
         "components": [],
         "hooks": [],
-        "utils": [],
+        "utils": [
+          "warn-manager-missing"
+        ],
         "shared": [
           "types"
         ],
@@ -3283,7 +3287,9 @@
       "dependencies": {
         "components": [],
         "hooks": [],
-        "utils": [],
+        "utils": [
+          "warn-manager-missing"
+        ],
         "shared": [
           "types"
         ],
@@ -3622,6 +3628,22 @@
       "sourcePath": "utils/qr-scanner.ts",
       "files": [
         "qr-scanner.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "warn-manager-missing",
+      "name": "warn-manager-missing",
+      "sourcePath": "utils/warn-manager-missing.ts",
+      "files": [
+        "warn-manager-missing.ts"
       ],
       "dependencies": {
         "components": [],

@@ -11,6 +11,7 @@ import BasicUsage from './BasicUsage';
 import CropOnly from './CropOnly';
 import CustomTools from './CustomTools';
 import ExportOptions from './ExportOptions';
+import PersistedEdits from './PersistedEdits';
 
 import _ImageEditor_props_json from './../../../components/image-editor/ImageEditor.props.json';
 const { imageEditorProps } = _ImageEditor_props_json;
@@ -19,6 +20,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'crop-only', title: 'Crop Only', description: 'Single tool mode' },
     { id: 'custom-tools', title: 'Custom Tools', description: 'Selected subset of tools' },
     { id: 'export-options', title: 'Export Options', description: 'Format and quality settings' },
+    { id: 'persisted-edits', title: 'Persisted Edits', description: 'Save and restore editor state' },
     { id: 'import', title: 'Import', description: 'Import statement' },
     { id: 'props', title: 'Props', description: 'Component API reference' },
     { id: 'features', title: 'Features', description: 'Feature summary' },
@@ -101,10 +103,18 @@ const ImageEditorPage: React.FC = () => {
                 <ExportOptions />
             </section>
 
+            <section id="persisted-edits" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Persisted Edits</h2>
+                <p className={cn('mb-4 text-sm', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    Store the snapshot from <code>onEditStateChange</code> and pass it back via <code>editState</code> to reopen the editor with crop, rotate, blur, and annotation layers intact — just like a controlled input.
+                </p>
+                <PersistedEdits />
+            </section>
+
             <section id="import" className="scroll-mt-8">
                 <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Import</h2>
                 <CodeBlock
-                    code={`import { ImageEditor } from 'fluxo-ui';\nimport type { ImageEditorProps, EditorTool, CropMode, ExportFormat, ExportOptions } from 'fluxo-ui';`}
+                    code={`import { ImageEditor } from 'fluxo-ui';\nimport type { ImageEditorProps, EditorState, EditorTool, CropMode, ExportFormat, ExportOptions } from 'fluxo-ui';`}
                 />
             </section>
 

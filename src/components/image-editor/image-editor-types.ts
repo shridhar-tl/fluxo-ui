@@ -31,6 +31,15 @@ export interface ExportOptions {
     maxHeight?: number;
 }
 
+export interface EditorState {
+    baseImage: string;
+    transform: ImageTransform;
+    cropArea: CropArea | null;
+    cropMode: CropMode;
+    blurRegions: BlurRegion[];
+    annotationData: string | null;
+}
+
 export interface BlurRegion {
     id: string;
     x: number;
@@ -53,6 +62,8 @@ export interface ImageEditorProps {
     className?: string;
     exportOptions?: Partial<ExportOptions>;
     cropModes?: CropMode[];
+    editState?: EditorState | null;
+    onEditStateChange?: (state: EditorState) => void;
 }
 
 export const aspectRatios: Record<string, number | null> = {

@@ -1,3 +1,4 @@
+import { warnManagerMissing } from '../../utils/warn-manager-missing';
 import { ContextMenuOptions, Handler, MenuItem } from './types';
 
 let externalShowContextMenu: Handler = null;
@@ -10,5 +11,7 @@ export function showContextMenu(event: React.MouseEvent, menus: MenuItem[], opti
     event.preventDefault();
     if (externalShowContextMenu) {
         externalShowContextMenu(event, menus, options);
+        return;
     }
+    warnManagerMissing('ContextMenuManager', 'showContextMenu', '<ContextMenuManager /> from fluxo-ui');
 }

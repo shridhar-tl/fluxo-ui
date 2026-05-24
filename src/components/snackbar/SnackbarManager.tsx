@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { warnManagerMissing } from '../../utils/warn-manager-missing';
 import { defaultOptions, positions } from './constants';
 import SnackbarItem from './Snackbar';
 import './snackbar.scss';
@@ -16,13 +17,16 @@ export const showSnackbar = (message: string | React.ReactElement, title?: strin
     if (externalAddSnackbar) {
         return externalAddSnackbar(message, title, options);
     }
+    warnManagerMissing('SnackbarManager', 'showSnackbar', '<SnackbarManager /> from fluxo-ui');
     return -1;
 };
 
 export const hideSnackbar = (id?: number) => {
     if (externalRemoveSnackbar) {
         externalRemoveSnackbar(id);
+        return;
     }
+    warnManagerMissing('SnackbarManager', 'hideSnackbar', '<SnackbarManager /> from fluxo-ui');
 };
 
 const positionClassMap: Record<SnackbarPosition, string> = {
