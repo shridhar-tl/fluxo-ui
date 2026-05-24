@@ -38,6 +38,7 @@ export interface EditorState {
     cropMode: CropMode;
     blurRegions: BlurRegion[];
     annotationData: string | null;
+    flattened: string;
 }
 
 export interface BlurRegion {

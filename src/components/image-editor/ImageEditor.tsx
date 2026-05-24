@@ -125,24 +125,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
 
     const hydratedAnnotationRef = useRef(false);
     const emitReadyRef = useRef(false);
-
-    useEffect(() => {
-        if (!loaded) return;
-        if (!emitReadyRef.current) {
-            emitReadyRef.current = true;
-            return;
-        }
-        const cb = onChangeRef.current;
-        if (!cb) return;
-        cb({
-            baseImage,
-            transform: { ...transform },
-            cropArea: cropArea ? { ...cropArea } : null,
-            cropMode,
-            blurRegions: blurRegions.map((r) => ({ ...r })),
-            annotationData,
-        });
-    }, [loaded, baseImage, transform, cropArea, cropMode, blurRegions, annotationData]);
+    const [imageGeneration, setImageGeneration] = useState(0);
 
     useEffect(() => {
         const img = new Image();
@@ -150,6 +133,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         img.onload = () => {
             imageRef.current = img;
             setLoaded(true);
+            setImageGeneration((g) => g + 1);
             pushHistory({ ...defaultTransform }, null);
         };
         img.src = baseImage;
@@ -362,6 +346,60 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         }
         ctx.putImageData(imgData, x, y);
     };
+
+    const flattenCanvas = useCallback((): string | null => {
+        const img = imageRef.current;
+        if (!img) return null;
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return null;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((transform.rotation * Math.PI) / 180);
+        ctx.rotate((transform.tilt * Math.PI) / 180);
+        ctx.scale(
+            transform.flipH ? -transform.zoom : transform.zoom,
+            transform.flipV ? -transform.zoom : transform.zoom,
+        );
+        ctx.globalAlpha = transform.transparency;
+        ctx.translate(-img.naturalWidth / 2, -img.naturalHeight / 2);
+        ctx.drawImage(img, 0, 0);
+        ctx.restore();
+
+        for (const region of blurRegions) {
+            applyBlurRegion(ctx, canvas, region);
+        }
+
+        const annotCanvas = annotationCanvasRef.current;
+        if (annotCanvas && annotCanvas.width > 0 && annotCanvas.height > 0) {
+            ctx.drawImage(annotCanvas, 0, 0, canvas.width, canvas.height);
+        }
+
+        return canvas.toDataURL();
+    }, [transform, blurRegions]);
+
+    useEffect(() => {
+        if (!loaded) return;
+        if (!emitReadyRef.current) {
+            emitReadyRef.current = true;
+            return;
+        }
+        const cb = onChangeRef.current;
+        if (!cb) return;
+        cb({
+            baseImage,
+            transform: { ...transform },
+            cropArea: cropArea ? { ...cropArea } : null,
+            cropMode,
+            blurRegions: blurRegions.map((r) => ({ ...r })),
+            annotationData,
+            flattened: flattenCanvas() ?? baseImage,
+        });
+    }, [loaded, imageGeneration, baseImage, transform, cropArea, cropMode, blurRegions, annotationData, flattenCanvas]);
 
     const getCanvasCoords = useCallback(
         (e: React.MouseEvent): { x: number; y: number } => {
