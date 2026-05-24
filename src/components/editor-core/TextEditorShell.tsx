@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './editor-core.scss';
 import { EditIcon, EyeIcon, SplitViewIcon } from '../../assets/icons';
 

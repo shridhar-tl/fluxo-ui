@@ -56,10 +56,9 @@ Prefer to vendor individual components into your repo instead of taking a runtim
 
 ## Usage
 
-Import the stylesheet once in your application entry file, then use components anywhere:
+Import a component and use it — its styles are applied automatically. There is no required global stylesheet import: each component ships its own CSS along with the base design tokens and dark-mode support, and your bundler includes only the CSS for the components you actually import.
 
 ```tsx
-import 'fluxo-ui/styles';
 import { Button, TextInput } from 'fluxo-ui';
 
 export default function App() {
@@ -74,13 +73,42 @@ export default function App() {
 
 ### Using a theme
 
-Apply a theme and dark mode by adding classes to the `body` element:
+Components render in the default blue palette out of the box. To switch to another brand theme, import that theme's CSS once at your app entry, then add the matching class to the `body` element:
 
 ```tsx
-document.body.classList.add('theme-blue', 'mode-dark');
+import 'fluxo-ui/themes/purple';
+
+document.body.classList.add('theme-purple');
 ```
 
-Available themes: `theme-blue`, `theme-green`, `theme-orange`, `theme-purple`, `theme-lara` (and more).
+Each theme is its own import, so only the theme you use is bundled:
+
+| Import | Class |
+| --- | --- |
+| `fluxo-ui/themes/blue` | `theme-blue` (default — already included) |
+| `fluxo-ui/themes/green` | `theme-green` |
+| `fluxo-ui/themes/orange` | `theme-orange` |
+| `fluxo-ui/themes/purple` | `theme-purple` |
+| `fluxo-ui/themes/lara` | `theme-lara` |
+| `fluxo-ui/themes/indigo` | `theme-indigo` |
+| `fluxo-ui/themes/rose` | `theme-rose` |
+| `fluxo-ui/themes/amber` | `theme-amber` |
+| `fluxo-ui/themes/teal` | `theme-teal` |
+| `fluxo-ui/themes/emerald` | `theme-emerald` |
+| `fluxo-ui/themes/fuchsia` | `theme-fuchsia` |
+| `fluxo-ui/themes/slate` | `theme-slate` |
+
+Enable dark mode by adding the `mode-dark` class (it works with or without a brand theme):
+
+```tsx
+document.body.classList.add('theme-purple', 'mode-dark');
+```
+
+To make every theme available at runtime (for a theme switcher), import the all-themes bundle instead of an individual theme:
+
+```tsx
+import 'fluxo-ui/styles';
+```
 
 ### Global managers (snackbar, tooltip, context menu)
 

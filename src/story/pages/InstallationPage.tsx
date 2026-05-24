@@ -6,10 +6,26 @@ import PageLayout from '../PageLayout';
 import type { SectionNavItem } from '../SectionNav';
 import { useStoryTheme } from '../StoryThemeContext';
 
+const themeList: { name: string; importPath: string; className: string }[] = [
+    { name: 'Blue (default)', importPath: 'fluxo-ui/themes/blue', className: 'theme-blue' },
+    { name: 'Green', importPath: 'fluxo-ui/themes/green', className: 'theme-green' },
+    { name: 'Orange', importPath: 'fluxo-ui/themes/orange', className: 'theme-orange' },
+    { name: 'Purple', importPath: 'fluxo-ui/themes/purple', className: 'theme-purple' },
+    { name: 'Lara', importPath: 'fluxo-ui/themes/lara', className: 'theme-lara' },
+    { name: 'Indigo', importPath: 'fluxo-ui/themes/indigo', className: 'theme-indigo' },
+    { name: 'Rose', importPath: 'fluxo-ui/themes/rose', className: 'theme-rose' },
+    { name: 'Amber', importPath: 'fluxo-ui/themes/amber', className: 'theme-amber' },
+    { name: 'Teal', importPath: 'fluxo-ui/themes/teal', className: 'theme-teal' },
+    { name: 'Emerald', importPath: 'fluxo-ui/themes/emerald', className: 'theme-emerald' },
+    { name: 'Fuchsia', importPath: 'fluxo-ui/themes/fuchsia', className: 'theme-fuchsia' },
+    { name: 'Slate', importPath: 'fluxo-ui/themes/slate', className: 'theme-slate' },
+];
+
 const sectionNavItems: SectionNavItem[] = [
     { id: 'prerequisites', title: 'Prerequisites', description: 'Requirements before installing' },
     { id: 'npm-install', title: 'NPM Installation', description: 'Install via npm, yarn, or pnpm' },
-    { id: 'setup', title: 'Setup', description: 'CSS, ThemeProvider, and first usage' },
+    { id: 'setup', title: 'Setup', description: 'Import a component and use it' },
+    { id: 'theming', title: 'Theming & Dark Mode', description: 'Apply a brand theme and dark mode' },
     { id: 'typescript', title: 'TypeScript Support', description: 'Built-in type definitions' },
     { id: 'ai-mcp', title: 'AI / MCP Integration', description: 'Use with Claude Code, Copilot, Cursor' },
     { id: 'next-steps', title: 'Next Steps', description: 'Explore components and theming' },
@@ -80,49 +96,18 @@ const InstallationPage: React.FC = () => {
 
                 <div className="mb-8">
                     <h3 className={cn('text-lg font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                        1. Import CSS Styles
+                        Styles are automatic
                     </h3>
                     <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                        Import the component styles in your main CSS file or at the root of your application:
+                        There is no required global stylesheet import. Importing any component applies that component's CSS along with
+                        the base design tokens and dark-mode support, and your bundler includes only the CSS for the components you
+                        actually import. To use a brand theme other than the default blue, see the Theming section below.
                     </p>
-                    <CodeBlock
-                        code={`// In your main CSS file (e.g., index.css or App.css)
-@import 'fluxo-ui/styles';
-
-// Or import directly in your entry point (main.tsx / index.tsx)
-import 'fluxo-ui/styles';`}
-                        language="css"
-                    />
                 </div>
 
                 <div className="mb-8">
                     <h3 className={cn('text-lg font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                        2. Wrap with ThemeProvider
-                    </h3>
-                    <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                        Wrap your application with the ThemeProvider to ensure consistent theming:
-                    </p>
-                    <CodeBlock
-                        code={`import React from 'react';
-import { ThemeProvider } from 'fluxo-ui';
-import App from './App';
-
-function Root() {
-  return (
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
-  );
-}
-
-export default Root;`}
-                        language="typescript"
-                    />
-                </div>
-
-                <div className="mb-8">
-                    <h3 className={cn('text-lg font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
-                        3. Start Using Components
+                        Start using components
                     </h3>
                     <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
                         Import and use components in your React application:
@@ -165,6 +150,73 @@ export default MyForm;`}
                         language="typescript"
                     />
                 </div>
+            </section>
+
+            <section className="scroll-mt-8" id="theming">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Theming &amp; Dark Mode
+                </h2>
+                <p className={cn('mb-6', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    Components render in the default blue palette out of the box. To switch to another brand theme, import that
+                    theme's CSS once at your app entry, then add the matching class to the <code>body</code> element. Each theme is a
+                    separate import, so only the theme you actually use is bundled.
+                </p>
+                <CodeBlock
+                    code={`import 'fluxo-ui/themes/purple';
+
+document.body.classList.add('theme-purple');`}
+                    language="typescript"
+                />
+
+                <h3 className={cn('text-lg font-semibold mt-8 mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Available themes
+                </h3>
+                <div
+                    className={cn('rounded-lg border overflow-hidden', {
+                        'bg-white/4 border-white/8': isDark,
+                        'bg-white border-gray-200 shadow-sm': !isDark,
+                    })}
+                >
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className={cn('text-left', { 'text-gray-300': isDark, 'text-gray-600': !isDark })}>
+                                <th className="px-4 py-3 font-semibold">Theme</th>
+                                <th className="px-4 py-3 font-semibold">Import</th>
+                                <th className="px-4 py-3 font-semibold">Body class</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {themeList.map((t) => (
+                                <tr key={t.className} className={cn('border-t', { 'border-white/8': isDark, 'border-gray-100': !isDark })}>
+                                    <td className={cn('px-4 py-3', { 'text-gray-200': isDark, 'text-gray-800': !isDark })}>{t.name}</td>
+                                    <td className="px-4 py-3">
+                                        <code className="text-(--eui-primary)">{t.importPath}</code>
+                                    </td>
+                                    <td className={cn('px-4 py-3', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                                        <code>{t.className}</code>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 className={cn('text-lg font-semibold mt-8 mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Dark mode
+                </h3>
+                <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    Add the <code>mode-dark</code> class to the <code>body</code> element. It works with or without a brand theme — no
+                    extra import is needed because dark-mode tokens ship with every component.
+                </p>
+                <CodeBlock code={`document.body.classList.add('theme-purple', 'mode-dark');`} language="typescript" />
+
+                <h3 className={cn('text-lg font-semibold mt-8 mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>
+                    Loading every theme (theme switcher)
+                </h3>
+                <p className={cn('mb-4', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
+                    If you let users switch themes at runtime, import the all-themes bundle once instead of an individual theme:
+                </p>
+                <CodeBlock code={`import 'fluxo-ui/styles';`} language="typescript" />
             </section>
 
             <section className="scroll-mt-8" id="typescript">
@@ -277,9 +329,12 @@ const MyButton: React.FC<ButtonProps> = (props) => {
                             Styles not loading?
                         </h3>
                         <p className={cn('mb-3', { 'text-gray-400': isDark, 'text-gray-500': !isDark })}>
-                            Make sure you've imported the CSS file and that your bundler is configured to handle CSS imports.
+                            Component styles are injected automatically when you import a component, so confirm your bundler is
+                            configured to handle the CSS imports that ship inside the package (the default for Vite, Next.js, and
+                            Create React App). If only the brand colors look wrong, you likely added a <code>theme-*</code> class to
+                            the <code>body</code> without importing that theme — import it once at your entry point:
                         </p>
-                        <CodeBlock code="import 'fluxo-ui/styles';" language="typescript" />
+                        <CodeBlock code="import 'fluxo-ui/themes/purple';" language="typescript" />
                     </div>
 
                     <div

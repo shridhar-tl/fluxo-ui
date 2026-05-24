@@ -375,6 +375,51 @@ function checkCssDuplication(classOwner) {
     return dups;
 }
 
+// ─── CHECK 6: base design tokens / dark-mode / global rules emitted ONCE ──────
+// The base layer (:root { --eui-* } light tokens, body.mode-dark overrides, the
+// global [class*="eui-"] scrollbar rule) is shared by EVERY component. It must be
+// emitted in exactly ONE shared base CSS file and pulled in transitively — never
+// copied into each component's CSS. If it appears in N component CSS files, every
+// consumer who imports a single component re-ships the whole token block, and N-1
+// copies are dead weight. CHECK 4 cannot see this because :root / body.mode-dark
+// selectors do not start with `.eui-`.
+const BASE_LAYER_SIGNATURES = [
+    {
+        id: 'root-eui-tokens',
+        label: ':root { --eui-* } base design tokens',
+        // a :root rule that defines the core --eui- color tokens
+        test: (css) => /:root\s*\{[^}]*--eui-bg\s*:/.test(css) && /:root\s*\{[^}]*--eui-text\s*:/.test(css),
+    },
+    {
+        id: 'dark-mode-tokens',
+        label: 'body.mode-dark { --eui-* } dark-mode overrides',
+        test: (css) => /\.mode-dark\b[^{]*\{[^}]*--eui-bg\s*:/.test(css),
+    },
+    {
+        id: 'global-scrollbar',
+        label: '[class*="eui-"] global scrollbar rule',
+        test: (css) => /\[class\*=["']?eui-["']?\]/.test(css),
+    },
+];
+
+function checkBaseLayerDuplication() {
+    const cssDir = path.join(DIST, 'styles', 'components');
+    const results = [];
+    if (!fs.existsSync(cssDir)) {
+        return BASE_LAYER_SIGNATURES.map((sig) => ({ ...sig, files: [], missing: true }));
+    }
+    const cssFiles = fs.readdirSync(cssDir).filter((x) => x.endsWith('.css'));
+    const contents = new Map();
+    for (const f of cssFiles) contents.set(f, fs.readFileSync(path.join(cssDir, f), 'utf-8'));
+
+    for (const sig of BASE_LAYER_SIGNATURES) {
+        const files = [];
+        for (const [f, css] of contents) if (sig.test(css)) files.push(f);
+        results.push({ ...sig, files, missing: files.length === 0 });
+    }
+    return results;
+}
+
 // ─── source-graph external-dep helper (for optional-dep expectations) ────────
 const depGraphCache = new Map();
 function sourceGraphUsesDep(rootFile, dep) {
@@ -447,6 +492,7 @@ async function main() {
 
     const barrelOffenders = checkNoBarrelImport();
     const cssDups = checkCssDuplication(classOwner);
+    const baseLayer = checkBaseLayerDuplication();
 
     const isoResults = [];
     let i = 0;
@@ -514,10 +560,10 @@ async function main() {
     }
     process.stdout.write('\n');
 
-    report({ isoResults, logicResults, barrelOffenders, cssDups });
+    report({ isoResults, logicResults, barrelOffenders, cssDups, baseLayer });
 }
 
-function report({ isoResults, logicResults, barrelOffenders, cssDups }) {
+function report({ isoResults, logicResults, barrelOffenders, cssDups, baseLayer }) {
     console.log('\n' + c.bold('═'.repeat(80)));
     console.log(c.bold('  TREE-SHAKING & CHUNK-ISOLATION REPORT'));
     console.log(c.bold('═'.repeat(80)));
@@ -653,6 +699,47 @@ function report({ isoResults, logicResults, barrelOffenders, cssDups }) {
         );
     }
 
+    // CHECK 6
+    const baseDupes = baseLayer.filter((b) => !b.missing && b.files.length > 1);
+    const baseMissing = baseLayer.filter((b) => b.missing);
+    console.log(
+        '\n' +
+            c.bold('CHECK 6 — Base layer emitted once: ') +
+            c.gray('shared :root tokens / dark-mode / global scrollbar must live in ONE base CSS file, not every component.')
+    );
+    if (baseDupes.length === 0 && baseMissing.length === 0) {
+        console.log(
+            c.green('  ✓ PASS — every base-layer block is emitted in exactly one component CSS file (no per-component duplication).')
+        );
+        for (const b of baseLayer) console.log(c.gray(`        ${b.label} → ${b.files[0]}`));
+    } else {
+        failed = true;
+        if (baseDupes.length) {
+            console.log(c.red(`  ✗ FAIL — ${baseDupes.length} base-layer block(s) are DUPLICATED across component CSS files:`));
+            for (const b of baseDupes) {
+                console.log(
+                    c.red(`    • ${b.label} appears in ${b.files.length} files`) +
+                        c.gray(' — this whole block is re-shipped by every consumer who imports any one of these components.')
+                );
+                console.log(c.gray(`        e.g. ${b.files.slice(0, 6).join(', ')}${b.files.length > 6 ? `, … (+${b.files.length - 6})` : ''}`));
+            }
+            console.log(
+                c.gray(
+                    '    Fix: move the shared base CSS out of the per-component SCSS (_eui-vars.scss must emit nothing) into a single ' +
+                        'base style module that every component imports transitively (the eui-base chunk). Then it ships once.'
+                )
+            );
+        }
+        if (baseMissing.length) {
+            console.log(c.red(`  ✗ FAIL — ${baseMissing.length} base-layer block(s) were NOT FOUND in any component CSS file:`));
+            for (const b of baseMissing)
+                console.log(
+                    c.red(`    • ${b.label} is missing`) +
+                        c.gray(' — components would render unstyled (no tokens). The base chunk is not being emitted/wired.')
+                );
+        }
+    }
+
     console.log('\n' + c.bold('─'.repeat(80)));
     console.log(c.bold('  SUMMARY'));
     const line = (label, ok, extra) =>
@@ -662,6 +749,9 @@ function report({ isoResults, logicResults, barrelOffenders, cssDups }) {
     line('CHECK 3 optional-dep confinement', depFail.length === 0, `${depFail.length} leaks`);
     line('CHECK 4 no big CSS duplication', cssDups.length === 0, `${cssDups.length} dup classes`);
     line('CHECK 5 pure-logic isolation', logicFail.length === 0, `${logicResults.length - logicFail.length}/${logicResults.length}`);
+    const baseDupCount = baseLayer.filter((b) => !b.missing && b.files.length > 1).length;
+    const baseMissCount = baseLayer.filter((b) => b.missing).length;
+    line('CHECK 6 base layer emitted once', baseDupCount === 0 && baseMissCount === 0, `${baseDupCount} duped, ${baseMissCount} missing`);
     console.log(c.bold('─'.repeat(80)) + '\n');
 
     process.exit(failed ? 1 : 0);

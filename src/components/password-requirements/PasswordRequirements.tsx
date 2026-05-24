@@ -10,6 +10,7 @@ import {
     PasswordRequirementsPolicy,
     buildPasswordRequirements,
 } from './password-requirements';
+import '../eui-base.scss';
 import './PasswordRequirements.scss';
 
 export type PasswordRequirementsVariant = 'list' | 'inline' | 'card';

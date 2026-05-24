@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React from 'react';
+import '../eui-base.scss';
 import './Card.scss';
 
 type CardVariant = 'elevated' | 'outlined' | 'filled' | 'ghost' | 'interactive';

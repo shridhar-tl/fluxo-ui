@@ -167,6 +167,9 @@ function classifyResolvedPath(absPath) {
     if (segments.length === 1) {
       const baseName = stripExt(first);
       if (!baseName || baseName === 'index') return null;
+      if (baseName === 'eui-base' || baseName === '_eui-vars' || baseName === 'eui-vars') {
+        return { kind: 'shared', id: 'styles' };
+      }
       return { kind: 'component', id: toKebab(baseName), origin: 'flat' };
     }
     return { kind: 'component', id: toKebab(first), origin: 'directory' };

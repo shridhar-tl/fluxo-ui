@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState, forwardRef } from 'react';
+import '../eui-base.scss';
 import './SwipeableListItem.scss';
 
 type SwipeColor = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'neutral';

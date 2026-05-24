@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './TextArea.scss';
 
 interface TextAreaProps extends BaseComponentProps, Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange' | 'size'> {

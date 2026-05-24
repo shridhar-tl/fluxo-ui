@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { ChevronDownIcon } from '../../assets/icons';
+import '../eui-base.scss';
 import './collapsible-panel.scss';
 
 export type CollapsiblePanelVariant = 'default' | 'bordered' | 'elevated' | 'ghost' | 'separated';

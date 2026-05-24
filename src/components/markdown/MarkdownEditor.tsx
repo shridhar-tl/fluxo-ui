@@ -56,6 +56,7 @@ import {
     type MarkdownToolbarAction,
     type MarkdownToolbarItem,
 } from './markdownToolbarConfig';
+import '../eui-base.scss';
 import './markdown.scss';
 
 export interface MarkdownEditorHandle {

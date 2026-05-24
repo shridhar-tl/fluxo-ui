@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getResolvedSize, splitBaseAndNativeProps, splitVisibleAndHiddenProps } from '../utils';
+import './eui-base.scss';
 import './Checkbox.scss';
 
 interface CheckboxProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type' | 'children'> {

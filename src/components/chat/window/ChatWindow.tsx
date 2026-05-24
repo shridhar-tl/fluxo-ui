@@ -26,6 +26,7 @@ import { useDragResize } from '../utils/useDragResize';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import Composer, { type ComposerHandle } from './Composer';
+import '../../eui-base.scss';
 import './chat-window.scss';
 import '../themes/index.css';
 

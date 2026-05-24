@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
 import { generateId, getComponentClasses, splitBaseAndNativeProps, splitVisibleAndHiddenProps } from '../utils';
+import './eui-base.scss';
 import './RadioButton.scss';
 
 interface RadioButtonProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {

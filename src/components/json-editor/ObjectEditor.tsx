@@ -5,6 +5,7 @@ import { copyToClipboard, countItems, doesNodeMatch } from './json-editor-utils'
 import ItemNameDisplay from './ItemNameDisplay';
 import NodeSelector from './NodeSelector';
 import AddEntry from './AddEntry';
+import '../eui-base.scss';
 import './JsonEditor.scss';
 
 const ObjectEditor: React.FC<EditorNodeProps> = ({

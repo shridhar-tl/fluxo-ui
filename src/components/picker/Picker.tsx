@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import '../eui-base.scss';
 import './Picker.scss';
 
 type PickerVariant = 'wheel' | 'flat' | 'compact';

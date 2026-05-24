@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, forwardRef } from 'react';
+import '../eui-base.scss';
 import './VirtualList.scss';
 
 type VirtualListVariant = 'plain' | 'divided' | 'card';

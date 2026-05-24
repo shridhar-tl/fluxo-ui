@@ -4,6 +4,7 @@ import { EyeIcon, EyeSlashIcon } from '../assets/icons';
 import { PasswordStrengthMeter, PasswordStrengthMeterProps } from './password-strength';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './Password.scss';
 
 interface PasswordProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {

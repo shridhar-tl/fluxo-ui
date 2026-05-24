@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import ReactDOM from 'react-dom';
 import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, TimesIcon } from '../../assets/icons';
 import { useViewport } from '../../hooks/useMobile';
+import '../eui-base.scss';
 import './context-menu.scss';
 import { ContextMenuState, isSeparator, MenuItem, MenuItemBase } from './types';
 import { setContextMenuHandler } from './utils';

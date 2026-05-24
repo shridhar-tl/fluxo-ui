@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { RefreshIcon } from '../../assets/icons';
+import '../eui-base.scss';
 import './PullToRefresh.scss';
 
 type PullToRefreshVariant = 'spinner' | 'arrow' | 'dots' | 'minimal';

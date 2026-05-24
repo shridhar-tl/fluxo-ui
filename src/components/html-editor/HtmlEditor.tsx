@@ -48,6 +48,7 @@ import {
     type HtmlToolbarAction,
     type HtmlToolbarItem,
 } from './htmlToolbarConfig';
+import '../eui-base.scss';
 import './html-editor.scss';
 
 export interface HtmlEditorHandle {

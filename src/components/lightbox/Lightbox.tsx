@@ -2,6 +2,7 @@ import cn from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../../assets/icons';
+import '../eui-base.scss';
 import './Lightbox.scss';
 
 type LightboxTrigger = 'hover' | 'click';

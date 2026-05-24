@@ -6,6 +6,7 @@ import { BaseComponentProps, ComponentEvent, ListItem, ListItemGroup } from '../
 import { filterItems, generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import { Checkbox } from './Checkbox';
 import Icon from './Icon';
+import './eui-base.scss';
 import './Multiselect.scss';
 import { Popover } from './Popover';
 

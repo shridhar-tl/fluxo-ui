@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import { chatIcon } from '../icons';
+import '../../eui-base.scss';
 import './chat-launcher.scss';
 import '../themes/index.css';
 

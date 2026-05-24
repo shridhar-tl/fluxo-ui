@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, memo, useMemo } from 'react';
 import { sanitizeHtml, type HtmlSanitizerConfig } from './htmlSanitizer';
+import '../eui-base.scss';
 import './html-editor.scss';
 
 export interface HtmlPreviewProps {

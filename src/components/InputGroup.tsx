@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { Children, isValidElement, ReactNode } from 'react';
 import { BaseComponentProps } from '../types';
 import { getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './InputGroup.scss';
 
 interface InputGroupProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> {

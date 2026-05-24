@@ -6,6 +6,7 @@ import { Button } from '../Button';
 import Icon from '../Icon';
 import { ConfirmPopoverAction, ConfirmPopoverData } from './types';
 import { useConfirmPopoverPosition } from './useConfirmPopoverPosition';
+import '../eui-base.scss';
 import './confirm-popover.scss';
 
 interface ConfirmPopoverPanelProps {

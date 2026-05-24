@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useMemo, useRef } from 'react';
+import '../eui-base.scss';
 import './WeekDaySelector.scss';
 
 type WeekDayShape = 'rounded' | 'squared' | 'circle';

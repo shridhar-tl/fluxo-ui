@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import ShimmerDiv from './ShimmerDiv';
+import '../eui-base.scss';
 import './shimmer.scss';
 
 interface SkeletonAvatarProps {

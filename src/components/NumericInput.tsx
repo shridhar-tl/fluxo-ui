@@ -3,6 +3,7 @@ import React, { forwardRef, ReactNode, useCallback, useImperativeHandle, useRef,
 import { ChevronDownIcon, ChevronUpIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './NumericInput.scss';
 
 interface NumericInputProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {

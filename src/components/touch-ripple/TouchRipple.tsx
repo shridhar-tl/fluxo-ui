@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './TouchRipple.scss';
 
 type TouchRippleVariant = 'material' | 'subtle' | 'highlight' | 'outline';

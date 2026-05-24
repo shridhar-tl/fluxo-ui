@@ -12,6 +12,7 @@ import {
     ThumbUpFilledIcon,
     ThumbUpIcon,
 } from '../../assets/icons';
+import '../eui-base.scss';
 import './Rating.scss';
 
 type RatingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';

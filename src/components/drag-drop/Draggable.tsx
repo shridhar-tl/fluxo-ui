@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { CSSProperties, ReactNode, RefObject, useMemo } from 'react';
 import { useDrag } from './hooks/useDrag';
 import type { DragItem as CoreDragItem, DropResult as CoreDropResult } from './core/types';
+import '../eui-base.scss';
 import './drag-drop.scss';
 
 export type DragItem = CoreDragItem;

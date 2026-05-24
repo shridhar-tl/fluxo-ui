@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import SkeletonAvatar from './SkeletonAvatar';
 import SkeletonText from './SkeletonText';
 import { SkeletonLine, SkeletonRect } from './Skeleton';
+import '../eui-base.scss';
 import './shimmer.scss';
 
 type SkeletonListVariant =

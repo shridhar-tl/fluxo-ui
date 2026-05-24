@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { FolderIcon } from '../../assets/icons';
 import type { FileUploadProps, UploadFile } from './file-upload-types';
 import FilePreview from './FilePreview';
+import '../eui-base.scss';
 import './FileUpload.scss';
 
 let fileIdCounter = 0;

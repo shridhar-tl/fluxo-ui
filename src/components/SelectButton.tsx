@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, useCallback, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
 import { getComponentClasses, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './SelectButton.scss';
 
 type SelectButtonVariant = 'default' | 'segmented' | 'pill' | 'underline';

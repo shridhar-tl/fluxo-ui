@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './PinInput.scss';
 
 type PinInputVariant = 'box' | 'underline' | 'soft';

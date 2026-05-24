@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../assets/icons';
+import './eui-base.scss';
 import './Modal.scss';
 
 interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role' | 'children' | 'title'> {

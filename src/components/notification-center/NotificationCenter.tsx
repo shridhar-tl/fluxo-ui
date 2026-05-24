@@ -6,6 +6,7 @@ import { useClickOutside } from '../../hooks/useClickOutside';
 import { useViewport } from '../../hooks/useMobile';
 import { usePosition } from '../../hooks/usePosition';
 import type { NotificationCenterProps } from './notification-center-types';
+import '../eui-base.scss';
 import './NotificationCenter.scss';
 import { NotificationItemRow } from './NotificationItemRow';
 

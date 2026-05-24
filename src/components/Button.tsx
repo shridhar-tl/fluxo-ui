@@ -4,6 +4,7 @@ import { ButtonVariant, PlacementCorners } from '../types';
 import { showConfirmPopover } from './confirm-popover/ConfirmPopoverManager';
 import Link from './Link';
 import { Tooltip } from './tooltip/Tooltip';
+import './eui-base.scss';
 import './Button.scss';
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;

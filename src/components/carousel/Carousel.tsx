@@ -5,6 +5,7 @@ import CarouselSlideRenderer from './CarouselSlide';
 import type { CarouselSlideData } from './CarouselSlide';
 import CarouselThumbnails from './CarouselThumbnails';
 import type { CarouselThumbnailAction, CarouselTrailingThumbnail } from './CarouselThumbnails';
+import '../eui-base.scss';
 import './Carousel.scss';
 
 interface CarouselSlide {

@@ -1,5 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 import { ensureDocumentListeners } from './core/install';
+import '../eui-base.scss';
 import './drag-drop.scss';
 
 export interface DragDropProviderProps {

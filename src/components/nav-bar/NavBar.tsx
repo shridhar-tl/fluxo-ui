@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeftIcon } from '../../assets/icons';
+import '../eui-base.scss';
 import './NavBar.scss';
 
 type NavBarVariant = 'standard' | 'centered' | 'large' | 'transparent' | 'compact';

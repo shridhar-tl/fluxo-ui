@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import TreeNodeComponent from './TreeNodeComponent';
+import '../eui-base.scss';
 import './TreeView.scss';
 import { CheckState, TreeNode, TreeViewProps } from './tree-view-types';
 

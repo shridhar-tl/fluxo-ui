@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React from 'react';
+import '../eui-base.scss';
 import './SafeAreaView.scss';
 
 type SafeAreaEdge = 'top' | 'right' | 'bottom' | 'left' | 'all' | 'horizontal' | 'vertical';

@@ -3,6 +3,7 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { useDebounce, useViewport } from '../hooks';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './Autocomplete.scss';
 import { Popover } from './Popover';
 

@@ -2,6 +2,7 @@ import cn from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ErrorIcon, InfoIcon, SuccessIcon, TimesIcon, WarningIcon } from '../../assets/icons';
+import '../eui-base.scss';
 import './PageBanner.scss';
 
 type BannerType = 'info' | 'success' | 'warning' | 'error' | 'default';

@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { hideTooltip, showTooltip } from '../tooltip/tooltip-api';
+import '../eui-base.scss';
 import './ActivityGauge.scss';
 
 export type ActivityGaugeSize = 'sm' | 'md' | 'lg' | 'xl';

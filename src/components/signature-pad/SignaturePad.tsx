@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './SignaturePad.scss';
 
 type SigBorder = 'solid' | 'dashed' | 'none';

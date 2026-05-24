@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import './eui-base.scss';
 import './InfiniteScroll.scss';
 
 interface InfiniteScrollProps extends React.HTMLAttributes<HTMLDivElement> {

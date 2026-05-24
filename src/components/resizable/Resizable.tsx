@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './resizable.scss';
 import type {
     ResizableProps,

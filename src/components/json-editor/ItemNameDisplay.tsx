@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import React, { useCallback, useRef, useState } from 'react';
 import type { ItemNameDisplayProps } from './json-editor-types';
+import '../eui-base.scss';
 import './JsonEditor.scss';
 
 const ItemNameDisplay: React.FC<ItemNameDisplayProps> = ({

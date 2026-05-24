@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import './eui-base.scss';
 import './Stepper.scss';
 
 type StepperVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';

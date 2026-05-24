@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import Icon from '../Icon';
+import '../eui-base.scss';
 import './Avatar.scss';
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;

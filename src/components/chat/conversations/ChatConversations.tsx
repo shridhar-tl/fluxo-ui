@@ -3,6 +3,7 @@ import React from 'react';
 import { Splitter, SplitterPanel } from '../../splitter';
 import { TextInput } from '../../TextInput';
 import { formatRelative } from '../utils/time';
+import '../../eui-base.scss';
 import './chat-conversations.scss';
 
 export interface ChatConversationItem {

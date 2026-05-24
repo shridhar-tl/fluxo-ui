@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import './eui-base.scss';
 import './SpeedDial.scss';
 
 type SpeedDialVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'secondary';

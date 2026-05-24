@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../../assets/icons';
 import { lockBodyScroll, unlockBodyScroll } from '../../utils/body-scroll-lock';
+import '../eui-base.scss';
 import './Drawer.scss';
 
 type DrawerPosition = 'left' | 'right' | 'top' | 'bottom';

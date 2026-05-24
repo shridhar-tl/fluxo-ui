@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { SearchIcon } from '../../assets/icons';
 import { useViewport } from '../../hooks/useMobile';
 import Icon from '../Icon';
+import '../eui-base.scss';
 import './CommandPalette.scss';
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;

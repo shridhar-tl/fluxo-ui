@@ -5,6 +5,7 @@ import { ChevronDownIcon } from '../../assets/icons';
 import { ButtonVariant } from '../../types';
 import { Button } from '../Button';
 import Icon from '../Icon';
+import '../eui-base.scss';
 import './SplitButton.scss';
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;

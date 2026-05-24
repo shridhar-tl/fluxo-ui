@@ -13,6 +13,7 @@ import type {
 import { defaultToolDefaults } from './canvas-draw-types';
 import CanvasDrawOverlay, { type CanvasDrawOverlayHandle } from './CanvasDrawOverlay';
 import CanvasDrawToolbar from './CanvasDrawToolbar';
+import '../eui-base.scss';
 import './CanvasDraw.scss';
 
 export interface CanvasDrawProps {

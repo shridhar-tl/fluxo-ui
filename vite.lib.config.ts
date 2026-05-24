@@ -1,6 +1,6 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { copyFileSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import { defineConfig, type Plugin } from 'vite';
 import dts from 'vite-plugin-dts';
@@ -154,6 +154,16 @@ const writeDistPackageJson = (): Plugin => ({
             if (existsSync(src)) {
                 copyFileSync(src, resolve(__dirname, 'dist', file));
             }
+        }
+
+        const stylesSrcDir = resolve(__dirname, 'src/styles');
+        const stylesDistDir = resolve(__dirname, 'dist/styles');
+        mkdirSync(stylesDistDir, { recursive: true });
+        const themeFiles = readdirSync(stylesSrcDir).filter(
+            (file) => file === 'base-theme.css' || /^theme-[a-z]+\.css$/.test(file)
+        );
+        for (const file of themeFiles) {
+            copyFileSync(resolve(stylesSrcDir, file), resolve(stylesDistDir, file));
         }
     },
 });

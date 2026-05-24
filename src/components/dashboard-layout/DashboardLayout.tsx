@@ -12,6 +12,7 @@ import {
     TimesIcon,
 } from '../../assets/icons';
 import { Resizable } from '../resizable';
+import '../eui-base.scss';
 import './dashboard-layout.scss';
 import type {
     DashboardBreakpoint,

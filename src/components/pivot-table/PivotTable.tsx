@@ -5,6 +5,7 @@ import PivotCellEditor from './PivotCellEditor';
 import PivotConfigPanel from './PivotConfigPanel';
 import { buildColumnTree, buildPivotTree, detectFieldType, getCellValue, getNestedValue, setNestedValue, sortPivotNodes } from './pivot-engine';
 import type { CellTemplateProps, ColumnNode, FieldDefinition, PivotNode, PivotSort, PivotTableProps } from './pivot-table-types';
+import '../eui-base.scss';
 import './PivotTable.scss';
 
 const expandIcon = (

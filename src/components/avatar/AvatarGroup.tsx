@@ -3,6 +3,7 @@ import React, { useEffect, useId, useLayoutEffect, useRef, useState } from 'reac
 import { createPortal } from 'react-dom';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { Avatar, AvatarProps, AvatarShape, AvatarSize } from './Avatar';
+import '../eui-base.scss';
 import './Avatar.scss';
 
 export interface AvatarGroupProps {

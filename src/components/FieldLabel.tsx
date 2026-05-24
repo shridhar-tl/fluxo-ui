@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { BaseComponentProps } from '../types';
 import { generateId } from '../utils';
+import './eui-base.scss';
 import './FieldLabel.scss';
 
 interface FieldLabelProps extends BaseComponentProps {

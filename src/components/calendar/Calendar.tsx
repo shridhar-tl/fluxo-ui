@@ -13,6 +13,7 @@ import { useCalendarEntries } from './hooks/useCalendarEntries';
 import { CalendarToolbar } from './toolbar';
 import { ViewRenderer } from './views';
 import { defaultPlugins } from './plugins/default-plugins';
+import '../eui-base.scss';
 import './Calendar.scss';
 
 const Calendar: React.FC<CalendarProps> = ({

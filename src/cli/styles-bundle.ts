@@ -53,6 +53,9 @@ const STYLES_INDEX_TARGET = 'styles/index.css';
 const EUI_VARS_SOURCE = 'components/_eui-vars.scss';
 const EUI_VARS_TARGET_SCSS = '_eui-vars.scss';
 const EUI_VARS_TARGET_CSS = '_eui-vars.css';
+const EUI_BASE_SOURCE = 'components/eui-base.scss';
+const EUI_BASE_TARGET_SCSS = 'eui-base.scss';
+const EUI_BASE_TARGET_CSS = 'eui-base.css';
 
 export interface BuildStylesBundleOptions {
   cssMode: boolean;
@@ -93,6 +96,11 @@ export function buildStylesBundleEntries(options: BuildStylesBundleOptions): Sty
     targetRelative: options.cssMode ? EUI_VARS_TARGET_CSS : EUI_VARS_TARGET_SCSS,
     isText: true,
   });
+  entries.push({
+    srcRelative: EUI_BASE_SOURCE,
+    targetRelative: options.cssMode ? EUI_BASE_TARGET_CSS : EUI_BASE_TARGET_SCSS,
+    isText: true,
+  });
   return entries;
 }
 
@@ -102,6 +110,7 @@ export function getStylesBundleSrcPaths(options: BuildStylesBundleOptions): stri
     ...selectedThemeFiles(options.themes),
     STYLES_INDEX_SOURCE,
     EUI_VARS_SOURCE,
+    EUI_BASE_SOURCE,
   ];
 }
 
@@ -142,7 +151,7 @@ export function rewriteStylesIndexForThemes(
 }
 
 export function isStylesBundleScssFile(srcRelative: string): boolean {
-  return srcRelative === EUI_VARS_SOURCE;
+  return srcRelative === EUI_VARS_SOURCE || srcRelative === EUI_BASE_SOURCE;
 }
 
 export function targetForStylesBundleSource(
@@ -151,6 +160,9 @@ export function targetForStylesBundleSource(
 ): string | null {
   if (srcRelative === EUI_VARS_SOURCE) {
     return options.cssMode ? EUI_VARS_TARGET_CSS : EUI_VARS_TARGET_SCSS;
+  }
+  if (srcRelative === EUI_BASE_SOURCE) {
+    return options.cssMode ? EUI_BASE_TARGET_CSS : EUI_BASE_TARGET_SCSS;
   }
   if (srcRelative === STYLES_INDEX_SOURCE) return STYLES_INDEX_TARGET;
   if (srcRelative === BASE_THEME_FILE) return srcRelative;

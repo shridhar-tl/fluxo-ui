@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import classNames from 'classnames';
 import { registerTooltipHandlers, TooltipData, TooltipOptions, unregisterTooltipHandlers } from './tooltip-api';
 import { computeTooltipPosition } from './utils';
+import '../eui-base.scss';
 import './tooltip.scss';
 
 interface TooltipState {

@@ -10,6 +10,7 @@ import {
     computePasswordStrength,
     tierLabels,
 } from './password-strength';
+import '../eui-base.scss';
 import './PasswordStrengthMeter.scss';
 
 export type PasswordStrengthMeterStyle = 'segments' | 'bar' | 'minimal';

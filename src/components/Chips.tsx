@@ -3,6 +3,7 @@ import React, { forwardRef, KeyboardEvent, useEffect, useRef, useState } from 'r
 import { TimesIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './Chips.scss';
 
 interface ChipsProps extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {

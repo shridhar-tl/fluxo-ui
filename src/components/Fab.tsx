@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
+import './eui-base.scss';
 import './Fab.scss';
 
 type FabVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'secondary';

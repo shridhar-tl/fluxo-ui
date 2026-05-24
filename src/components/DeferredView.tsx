@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import './eui-base.scss';
 import './DeferredView.scss';
 
 interface DeferredViewProps extends React.HTMLAttributes<HTMLDivElement> {

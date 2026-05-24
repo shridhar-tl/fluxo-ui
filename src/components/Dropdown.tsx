@@ -3,6 +3,7 @@ import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } 
 import { ChevronDownIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent, ListItem, ListItemGroup } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './Dropdown.scss';
 import { Popover } from './Popover';
 

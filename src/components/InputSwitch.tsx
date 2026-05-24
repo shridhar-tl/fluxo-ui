@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './InputSwitch.scss';
 
 interface InputSwitchProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'type'> {

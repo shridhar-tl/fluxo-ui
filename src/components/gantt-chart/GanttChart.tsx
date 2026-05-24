@@ -13,6 +13,7 @@ import {
 import FieldsPanel from './FieldsPanel';
 import TimelinePanel from './TimelinePanel';
 import { Splitter, SplitterPanel } from '../splitter';
+import '../eui-base.scss';
 import './GanttChart.scss';
 
 const defaultColumns: GanttColumn[] = [

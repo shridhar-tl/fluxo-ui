@@ -37,6 +37,7 @@ import { StylesPallet } from './components/StylesPallet';
 import { ToolboxPanel } from './components/ToolboxPanel';
 import { VariablesListPanel } from './components/VariablesListPanel';
 import { DesignArea } from './DesignArea';
+import '../eui-base.scss';
 import './report-builder.scss';
 
 export const ReportBuilder: React.FC<ReportBuilderProps> = ({

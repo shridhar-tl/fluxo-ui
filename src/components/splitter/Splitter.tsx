@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './splitter.scss';
 
 export interface SplitterPanelProps {

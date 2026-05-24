@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useId, useState } from 'react';
 
 import classNames from 'classnames';
+import '../eui-base.scss';
 import './tab-view.scss';
 
 import { TabNav } from './TabNav';

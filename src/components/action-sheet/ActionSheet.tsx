@@ -2,6 +2,7 @@ import cn from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { lockBodyScroll, unlockBodyScroll } from '../../utils/body-scroll-lock';
+import '../eui-base.scss';
 import './ActionSheet.scss';
 
 type ActionSheetStyle = 'ios' | 'material' | 'plain';

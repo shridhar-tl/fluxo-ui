@@ -12,6 +12,7 @@ import type {
     ToolConfig,
 } from './canvas-draw-types';
 import { colorMap } from './canvas-draw-types';
+import '../eui-base.scss';
 import './CanvasDrawToolbar.scss';
 
 const allTools: { id: DrawTool; label: string; icon: string }[] = [

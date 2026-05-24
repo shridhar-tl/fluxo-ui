@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import type { JsonEditorProps, JsonValue } from './json-editor-types';
 import NodeSelector from './NodeSelector';
 import Toolbar from './Toolbar';
+import '../eui-base.scss';
 import './JsonEditor.scss';
 
 const JsonEditor: React.FC<JsonEditorProps> = ({

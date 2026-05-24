@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './MaskedInput.scss';
 
 /**

@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { warnManagerMissing } from '../../utils/warn-manager-missing';
 import { defaultOptions, positions } from './constants';
 import SnackbarItem from './Snackbar';
+import '../eui-base.scss';
 import './snackbar.scss';
 import { SnackbarData, SnackbarOptions, SnackbarPosition } from './types';
 

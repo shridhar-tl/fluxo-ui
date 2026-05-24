@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { encode, ErrorCorrectionLevel } from './qr-encoder';
+import '../eui-base.scss';
 import './QRCode.scss';
 
 export type QRCodeShape = 'square' | 'dots' | 'rounded';

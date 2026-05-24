@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React from 'react';
+import '../eui-base.scss';
 import './StepDots.scss';
 
 type StepDotsVariant = 'dot' | 'bar' | 'pill' | 'numbered';

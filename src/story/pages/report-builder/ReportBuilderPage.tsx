@@ -45,10 +45,7 @@ const features: FeatureItem[] = [
 import _ReportBuilder_props_json from '../../../components/report-builder/ReportBuilder.props.json';
 const { builderProps } = _ReportBuilder_props_json;
 
-const importCode = `// Base styles (once in your app entry)
-import 'fluxo-ui/styles';
-
-// Report Builder component and types
+const importCode = `// Report Builder component and types — styles apply automatically on import
 import { ReportBuilder } from 'fluxo-ui/report-builder';
 import type {
   ReportDefinition,

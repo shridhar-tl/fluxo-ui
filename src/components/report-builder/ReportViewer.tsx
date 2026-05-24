@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './report-viewer.scss';
 import { DownloadIcon, PrintIcon, RefreshIcon, SettingsIcon } from '../../assets/icons';
 import { builtInFieldsToExpressionContext, mergeBuiltInFields } from './built-in-fields';

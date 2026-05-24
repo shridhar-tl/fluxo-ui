@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { CalendarIcon } from '../../assets/icons';
+import '../eui-base.scss';
 import './date-range.scss';
 import DatePopover from './DatePopover';
 import { ContextType, DatePickerPropsContext, DateRangePickerProps, DateRangeValue, RangeOption, StateProvider } from './types';

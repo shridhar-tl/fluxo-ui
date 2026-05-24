@@ -2,6 +2,7 @@ import cn from 'classnames';
 import React, { useCallback, useRef, useState } from 'react';
 import type { JsonEditorSize, JsonValue } from './json-editor-types';
 import { parseInputValue } from './json-editor-utils';
+import '../eui-base.scss';
 import './JsonEditor.scss';
 
 interface AddEntryProps {

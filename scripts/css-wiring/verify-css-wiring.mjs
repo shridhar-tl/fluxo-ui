@@ -149,6 +149,7 @@ async function main() {
         item.aMissing = own.missing;
         item.aDepMissing = dep.missing;
         item.aToken = hasTokenDefinition(css);
+        item.aTokenVerdict = item.aToken ? 'PASS' : 'FAIL';
         item.aVerdict =
             own.present.length === item.signature.length
                 ? 'PASS'
@@ -401,7 +402,7 @@ function report({ components, naSymbols, assets, selfCheck }) {
         console.log('\n' + c.cyan(c.bold(`▌ ${sub}`)) + c.gray(`  (${items.length} components)`));
         items.sort((a, b) => a.sym.localeCompare(b.sym));
         for (const it of items) {
-            const tok = it.aToken ? '' : c.yellow(' no-token');
+            const tok = it.aToken ? '' : c.red(' NO-BASE-TOKENS');
             const note =
                 it.aVerdict === 'PASS'
                     ? ''
@@ -433,6 +434,7 @@ function report({ components, naSymbols, assets, selfCheck }) {
     const aFails = components.filter((x) => x.aVerdict === 'FAIL');
     const aParts = components.filter((x) => x.aVerdict === 'PARTIAL');
     const bFails = components.filter((x) => x.bVerdict === 'FAIL');
+    const tokenFails = components.filter((x) => x.aTokenVerdict === 'FAIL');
     const assetFails = assets.filter((a) => a.verdict === 'FAIL');
 
     console.log('\n' + c.bold('─'.repeat(78)));
@@ -445,6 +447,9 @@ function report({ components, naSymbols, assets, selfCheck }) {
             `${c.gray('N/A ' + naSymbols.length)}`
     );
     console.log(`  Single-vendor-chunk (Test B) failures: ${bFails.length}`);
+    console.log(
+        `  Base-token reachability (imported alone) failures: ${tokenFails.length === 0 ? c.green('0') : c.red(tokenFails.length)}`
+    );
     console.log(`  Asset/entry failures: ${assetFails.length}`);
     console.log(`  Self-check sensitive: ${selfCheck.ok ? c.green('yes') : c.red('no')}`);
 
@@ -452,9 +457,26 @@ function report({ components, naSymbols, assets, selfCheck }) {
         console.log('\n' + c.red(c.bold('  REAL FAILURES (component imported alone ships unstyled):')));
         for (const f of aFails) console.log(c.red(`   ✗ ${f.sym} [${f.subpath}] — missing ${f.aMissing.length}/${f.signature.length} own classes`));
     }
+    if (tokenFails.length) {
+        console.log(
+            '\n' +
+                c.red(c.bold('  BASE-TOKEN FAILURES (component imported alone has no --eui-* tokens):'))
+        );
+        for (const f of tokenFails)
+            console.log(
+                c.red(`   ✗ ${f.sym} [${f.subpath}]`) +
+                    c.gray(' — its chunk does not reach the eui-base chunk; add `import \'…/eui-base\';` to its source file.')
+            );
+    }
     console.log(c.bold('─'.repeat(78)) + '\n');
 
-    const failed = aFails.length > 0 || aParts.length > 0 || bFails.length > 0 || assetFails.length > 0 || !selfCheck.ok;
+    const failed =
+        aFails.length > 0 ||
+        aParts.length > 0 ||
+        bFails.length > 0 ||
+        tokenFails.length > 0 ||
+        assetFails.length > 0 ||
+        !selfCheck.ok;
     process.exit(failed ? 1 : 0);
 }
 

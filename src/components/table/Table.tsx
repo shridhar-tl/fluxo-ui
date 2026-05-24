@@ -6,6 +6,7 @@ import TableBody from './TableBody';
 import TableFooter from './TableFooter';
 import TableHeader from './TableHeader';
 import useSortedData from './useSortedData';
+import '../eui-base.scss';
 import './table.scss';
 
 const defaultRowCounts = [10, 20, 25, 50, 75, 100];

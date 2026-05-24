@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, useState } from 'react';
 import { BaseComponentProps, ButtonVariant, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './ToggleButton.scss';
 
 interface ToggleButtonProps extends BaseComponentProps, Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {

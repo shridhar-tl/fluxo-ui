@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './CountdownTimer.scss';
 
 export type CountdownTimerVariant = 'circular' | 'linear' | 'segmented' | 'numeric' | 'rounded-square' | 'triangle';

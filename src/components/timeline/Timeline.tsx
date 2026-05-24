@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
 import TimelineItem from './TimelineItem';
+import '../eui-base.scss';
 import './Timeline.scss';
 
 type TimelineColor = 'primary' | 'success' | 'warning' | 'danger' | 'info';

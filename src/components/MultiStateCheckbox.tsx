@@ -3,6 +3,7 @@ import React, { forwardRef, useEffect, useState } from 'react';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
 import { generateId, getComponentClasses, splitBaseAndNativeProps } from '../utils';
 import Icon from './Icon';
+import './eui-base.scss';
 import './MultiStateCheckbox.scss';
 
 interface MultiStateCheckboxProps<T = any> extends BaseComponentProps, Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange' | 'size' | 'value' | 'type'> {

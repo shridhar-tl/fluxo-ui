@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef,
 import { TimesIcon } from '../../assets/icons';
 import MenuNavItemComponent from './MenuNavItem';
 import type { MenuNavGroup, MenuNavItem, MenuNavProps } from './menu-nav-types';
+import '../eui-base.scss';
 import './MenuNav.scss';
 
 const isGroup = (item: MenuNavItem | MenuNavGroup): item is MenuNavGroup =>

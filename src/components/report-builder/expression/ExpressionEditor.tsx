@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import '../../eui-base.scss';
 import './expression-editor.scss';
 import {
     getAutocompleteSuggestions,

@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { ClockIcon, TimesIcon } from '../../assets/icons';
 import { useViewport } from '../../hooks/useMobile';
 import MobileTimePanel from './MobileTimePanel';
+import '../eui-base.scss';
 import './time-picker.scss';
 import TimePanel from './TimePanel';
 import { dateToTime, formatTime, normalizeValue, parseTimeString, TimeValue, timeToDate } from './utils';

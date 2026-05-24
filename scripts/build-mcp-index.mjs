@@ -129,7 +129,9 @@ const main = () => {
         }
     }
 
-    const entryPoints = Object.keys(pkg.exports || {}).filter((k) => !k.endsWith('.css') && k !== './styles');
+    const entryPoints = Object.entries(pkg.exports || {})
+        .filter(([, value]) => value && typeof value === 'object' && (value.import || value.types))
+        .map(([key]) => key);
 
     const index = {
         generatedAt: new Date().toISOString(),
@@ -140,12 +142,15 @@ const main = () => {
         themes: {
             available: ['theme-blue', 'theme-green', 'theme-orange', 'theme-purple', 'theme-lara', 'theme-indigo', 'theme-rose', 'theme-amber', 'theme-teal', 'theme-emerald', 'theme-fuchsia', 'theme-slate'],
             darkModeClass: 'mode-dark',
+            howToApply: `Apply a theme and dark mode by adding the class names to the <body> element. Both are optional — without them components render in the default blue/light palette.\n\ndocument.body.classList.add('theme-purple', 'mode-dark');`,
+            howToImport: `Each theme ships as its own CSS subpath so only the theme you use is bundled. Import it once at your app entry:\n\nimport '${pkg.name}/themes/purple';\n\nAvailable: ${pkg.name}/themes/blue · green · orange · purple · lara · indigo · rose · amber · teal · emerald · fuchsia · slate. The default blue palette is already included with the components — only import a theme subpath if you switch to a non-blue theme.`,
             tokens,
             breakpoints,
         },
         quickStart: {
             install: `npm install ${pkg.name}`,
-            setup: `import { ThemeProvider } from '${pkg.name}';\nimport '${pkg.name}/styles';\n\nexport default function App() {\n  return (\n    <ThemeProvider>\n      <YourApp />\n    </ThemeProvider>\n  );\n}`,
+            stylesAreAutomatic: `You do NOT need to import a global stylesheet. Importing any component automatically applies that component's CSS plus the base design tokens and dark-mode support. Just import and use:\n\nimport { Button, TextInput } from '${pkg.name}';\n\nexport default function App() {\n  return (\n    <>\n      <TextInput placeholder="Your name" />\n      <Button label="Submit" />\n    </>\n  );\n}`,
+            optionalTheme: `To use a brand theme other than the default blue, import its theme CSS once and add the class to <body>:\n\nimport '${pkg.name}/themes/purple';\ndocument.body.classList.add('theme-purple');`,
         },
         managers: [
             { name: 'SnackbarManager', purpose: 'Global toast notifications', api: ['showSnackbar', 'hideSnackbar'], mountOnce: true },

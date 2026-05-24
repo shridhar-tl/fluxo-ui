@@ -4,6 +4,7 @@ import { AngleLeftIcon, AngleRightIcon, TimesIcon } from '../../assets/icons';
 import { Button } from '../Button';
 import { Placement } from './types';
 import { computeTooltipPosition } from './utils';
+import '../eui-base.scss';
 import './tour.scss';
 
 export interface TourTooltipProps {

@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { createPortal } from 'react-dom';
 import { useViewport } from '../../hooks/useMobile';
 import ColorPanel from './ColorPanel';
+import '../eui-base.scss';
 import './color-picker.scss';
 import { hexToRgb } from './utils';
 

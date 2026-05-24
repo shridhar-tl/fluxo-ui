@@ -3,6 +3,7 @@ import type { EditorNodeProps, JsonValue } from './json-editor-types';
 import { copyToClipboard, getValueType, isUrl } from './json-editor-utils';
 import ItemNameDisplay from './ItemNameDisplay';
 import ItemValueDisplay from './ItemValueDisplay';
+import '../eui-base.scss';
 import './JsonEditor.scss';
 
 const SimpleEditor: React.FC<EditorNodeProps> = ({

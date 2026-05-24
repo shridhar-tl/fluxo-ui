@@ -4,6 +4,7 @@ import { TimesIcon } from '../assets/icons';
 import { useDebounce } from '../hooks';
 import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './AutocompleteMulti.scss';
 import { Checkbox } from './Checkbox';
 import { Popover } from './Popover';

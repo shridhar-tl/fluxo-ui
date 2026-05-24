@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { forwardRef, memo, useMemo } from 'react';
 import { parseMarkdown } from './parser';
 import { renderBlocks, type RenderOptions } from './renderer';
+import '../eui-base.scss';
 import './markdown.scss';
 
 export interface MarkdownPreviewProps {

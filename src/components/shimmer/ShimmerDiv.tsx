@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
+import '../eui-base.scss';
 import './shimmer.scss';
 
 interface ShimmerDivProps extends React.HTMLAttributes<HTMLDivElement> {

@@ -3,6 +3,7 @@ import React, { forwardRef, ReactNode, useState } from 'react';
 import { TimesIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
+import './eui-base.scss';
 import './TextInput.scss';
 
 interface TextInputProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size'> {

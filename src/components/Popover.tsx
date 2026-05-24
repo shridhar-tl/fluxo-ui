@@ -9,6 +9,7 @@ import { usePosition } from '../hooks/usePosition';
 import { BaseComponentProps, ListItem, ListItemGroup } from '../types';
 import { generateId, getComponentClasses } from '../utils';
 import Icon from './Icon';
+import './eui-base.scss';
 import './Popover.scss';
 
 interface MobileSearchConfig {

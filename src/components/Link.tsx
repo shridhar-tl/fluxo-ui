@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
+import './eui-base.scss';
 import './Link.scss';
 
 type LinkProps = React.HTMLProps<HTMLAnchorElement> & { newTab?: boolean };

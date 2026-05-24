@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import '../../eui-base.scss';
 import './parameter-panel.scss';
 import { Autocomplete } from '../../Autocomplete';
 import { Button } from '../../Button';

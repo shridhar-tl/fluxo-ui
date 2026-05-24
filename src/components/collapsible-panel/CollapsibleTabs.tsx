@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './collapsible-panel.scss';
 
 export interface CollapsibleTabItem {

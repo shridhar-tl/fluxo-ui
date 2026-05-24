@@ -1,3 +1,4 @@
+import '../eui-base.scss';
 import './KanbanBoard.scss';
 import classNames from 'classnames';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';

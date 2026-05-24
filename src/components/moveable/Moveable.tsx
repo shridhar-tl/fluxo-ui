@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import '../eui-base.scss';
 import './moveable.scss';
 import type {
     MoveableAxis,

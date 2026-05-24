@@ -2,6 +2,7 @@ import cn from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { ItemValueDisplayProps, JsonValueType } from './json-editor-types';
 import { convertValueToType, parseInputValue } from './json-editor-utils';
+import '../eui-base.scss';
 import './JsonEditor.scss';
 
 const typeOptions: JsonValueType[] = ['string', 'number', 'boolean', 'null', 'object', 'array'];

@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { forwardRef, useId, useState } from 'react';
+import '../eui-base.scss';
 import './FloatingLabelInput.scss';
 
 type FloatingLabelVariant = 'outlined' | 'filled' | 'underlined';

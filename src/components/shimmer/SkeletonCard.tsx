@@ -3,6 +3,7 @@ import ShimmerDiv from './ShimmerDiv';
 import SkeletonText from './SkeletonText';
 import SkeletonAvatar from './SkeletonAvatar';
 import SkeletonButton from './SkeletonButton';
+import '../eui-base.scss';
 import './shimmer.scss';
 
 interface SkeletonCardProps {

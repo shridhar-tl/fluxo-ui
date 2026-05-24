@@ -12,6 +12,7 @@ import type {
     ImageTransform,
 } from './image-editor-types';
 import { aspectRatios } from './image-editor-types';
+import '../eui-base.scss';
 import './ImageEditor.scss';
 
 const defaultTransform: ImageTransform = {

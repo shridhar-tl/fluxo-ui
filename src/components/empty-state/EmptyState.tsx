@@ -11,6 +11,7 @@ import {
 import { ButtonVariant } from '../../types';
 import { Button } from '../Button';
 import Icon from '../Icon';
+import '../eui-base.scss';
 import './EmptyState.scss';
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;

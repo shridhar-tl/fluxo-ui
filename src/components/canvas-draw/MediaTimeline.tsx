@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import classnames from 'classnames';
 import type { DrawTransition } from './canvas-draw-types';
+import '../eui-base.scss';
 import './MediaTimeline.scss';
 
 export interface TimelineItem {

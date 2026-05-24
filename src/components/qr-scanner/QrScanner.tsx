@@ -8,6 +8,7 @@ import {
     startQrScan,
 } from '../../utils/qr-scanner';
 import type { QrScanController, QrScanFacingMode } from '../../utils/qr-scanner';
+import '../eui-base.scss';
 import './QrScanner.scss';
 
 export type QrScannerStatus = 'idle' | 'requesting' | 'scanning' | 'denied' | 'unsupported' | 'error';

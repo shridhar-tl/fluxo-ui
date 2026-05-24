@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { hideTooltip, showTooltip } from '../tooltip/tooltip-api';
 import Icon from '../Icon';
+import '../eui-base.scss';
 import './Dock.scss';
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;

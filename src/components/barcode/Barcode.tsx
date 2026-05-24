@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useId, useMemo } from 'react';
 import { BarcodeFormat, encodeBarcode } from './barcode-encoder';
+import '../eui-base.scss';
 import './Barcode.scss';
 
 export interface BarcodeProps {

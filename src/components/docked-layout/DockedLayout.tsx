@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { PanelBottomIcon, PanelFloatIcon, PanelLeftIcon, PanelRightIcon, PinIcon, TimesIcon } from '../../assets/icons';
+import '../eui-base.scss';
 import './docked-layout.scss';
 import type {
     Breakpoint,

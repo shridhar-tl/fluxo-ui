@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { useMemo } from 'react';
+import './eui-base.scss';
 import './ProgressBar.scss';
 
 type ProgressBarVariant = 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info';

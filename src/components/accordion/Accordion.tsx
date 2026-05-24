@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { ChevronDownIcon } from '../../assets/icons';
+import '../eui-base.scss';
 import './Accordion.scss';
 
 type AccordionVariant = 'default' | 'bordered' | 'filled' | 'minimal' | 'separated';

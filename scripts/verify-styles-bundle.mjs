@@ -36,6 +36,7 @@ async function main() {
   });
   const scssTargets = planScss.files.map((f) => f.targetRelative);
   check('Includes _eui-vars.scss at install root', scssTargets.includes('_eui-vars.scss'));
+  check('Includes eui-base.scss at install root', scssTargets.includes('eui-base.scss'));
   check('Includes styles/index.css', scssTargets.includes('styles/index.css'));
   check('Includes styles/base-theme.css', scssTargets.includes('styles/base-theme.css'));
   check('Includes styles/theme-blue.css', scssTargets.includes('styles/theme-blue.css'));
@@ -66,7 +67,13 @@ async function main() {
     const buttonScss = await fs.readFile(path.join(tmp, 'button', 'Button.scss'), 'utf-8');
     check("Button.scss has @use '../eui-vars'", /@use\s+['"]\.\.\/eui-vars['"]/.test(buttonScss));
     const euiVars = await fs.readFile(path.join(tmp, '_eui-vars.scss'), 'utf-8');
-    check('Vendored _eui-vars.scss exists at install root', euiVars.includes('--eui-bg'));
+    check('Vendored _eui-vars.scss exists at install root (breakpoints + mixin)', euiVars.includes('$bp-') && euiVars.includes('eui-thin-scrollbar'));
+    const euiBase = await fs.readFile(path.join(tmp, 'eui-base.scss'), 'utf-8');
+    check('Vendored eui-base.scss exists at install root (base tokens)', euiBase.includes('--eui-bg') && euiBase.includes('mode-dark'));
+    const buttonScssImportsEuiBase = buttonScss.length >= 0;
+    const buttonTsx = await fs.readFile(path.join(tmp, 'button', 'Button.tsx'), 'utf-8');
+    check("Button.tsx imports vendored '../eui-base.scss'", /import\s+['"]\.\.\/eui-base\.scss['"]/.test(buttonTsx));
+    void buttonScssImportsEuiBase;
     const indexCss = await fs.readFile(path.join(tmp, 'styles', 'index.css'), 'utf-8');
     check('Vendored styles/index.css aggregates themes', indexCss.includes('base-theme.css') && indexCss.includes('theme-blue.css'));
     const propsJsonExists = await fs.access(path.join(tmp, 'button', 'Button.props.json')).then(() => true).catch(() => false);
@@ -96,8 +103,9 @@ async function main() {
     const buttonTsx = await fs.readFile(path.join(tmp2, 'button', 'Button.tsx'), 'utf-8');
     check('Button.tsx import rewritten to .css', buttonTsx.includes("'./Button.css'"));
     check('Button.tsx no longer references .scss', !buttonTsx.includes('.scss'));
-    const euiVarsCss = await fs.readFile(path.join(tmp2, '_eui-vars.css'), 'utf-8');
-    check('_eui-vars.css written at install root', euiVarsCss.includes('--eui-bg'));
+    check("Button.tsx imports rewritten '../eui-base.css'", /import\s+['"]\.\.\/eui-base\.css['"]/.test(buttonTsx));
+    const euiBaseCss = await fs.readFile(path.join(tmp2, 'eui-base.css'), 'utf-8');
+    check('eui-base.css written at install root with base tokens', euiBaseCss.includes('--eui-bg'));
   } finally {
     await fs.rm(tmp2, { recursive: true, force: true });
   }

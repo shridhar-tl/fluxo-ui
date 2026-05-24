@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { diffLines, diffWords, pairReplacements, type LineDiffRow, type WordDiffSeg } from './diff-algo';
+import '../eui-base.scss';
 import './DiffViewer.scss';
 
 type DiffVariant = 'unified' | 'split' | 'inline' | 'minimal';

@@ -11,6 +11,7 @@ import React, {
 } from 'react';
 import { ChevronDownIcon } from '../../assets/icons';
 import Icon from '../Icon';
+import '../eui-base.scss';
 import './StickyScroll.scss';
 
 export type StickyScrollBehavior = 'smooth' | 'auto';

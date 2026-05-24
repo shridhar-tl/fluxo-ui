@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { ChevronUpIcon } from '../../assets/icons';
 import Icon from '../Icon';
+import '../eui-base.scss';
 import './ScrollToTop.scss';
 
 type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;

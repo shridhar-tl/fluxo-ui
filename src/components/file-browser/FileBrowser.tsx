@@ -14,6 +14,7 @@ import {
     type FileKind,
     type RejectedFile,
 } from './file-browser-utils';
+import '../eui-base.scss';
 import './FileBrowser.scss';
 
 export interface FileBrowserProps {
