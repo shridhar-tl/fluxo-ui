@@ -12,15 +12,49 @@ const stripDistPrefix = (value: string): string => {
     return value.replace(/^\.\/dist\//, './').replace(/^dist\//, './');
 };
 
-const nonComponentSegments = new Set(['index', 'Icon', 'Link']);
+const nonComponentSegments = new Set(['index']);
+
+const pureLogicModuleCache = new Map<string, boolean>();
+const computeIsPureLogic = (filePath: string): boolean => {
+    try {
+        const src = readFileSync(filePath, 'utf-8');
+        const importsCss = /import\s+['"][^'"]+\.(scss|sass|css)['"]/.test(src);
+        const rendersEui = /eui-[a-z]/.test(src);
+        return !importsCss && !rendersEui;
+    } catch {
+        return false;
+    }
+};
+const isPureLogicModule = (filePath: string): boolean => {
+    const cached = pureLogicModuleCache.get(filePath);
+    if (cached !== undefined) return cached;
+    const pure = computeIsPureLogic(filePath);
+    pureLogicModuleCache.set(filePath, pure);
+    return pure;
+};
 
 const perComponentChunkName = (id: string): string | null => {
     const normalized = id.replace(/\\/g, '/');
     const match = normalized.match(/\/src\/components\/([^/]+)/);
     if (!match) return null;
-    const name = match[1].replace(/\.(tsx|ts|jsx|js)$/, '');
+    const segment = match[1];
+    if (segment === 'report-builder') return null;
+    const name = segment.replace(/\.(tsx|ts|jsx|js)$/, '');
     if (nonComponentSegments.has(name)) return null;
     return `components/${name}`;
+};
+
+const pureLogicFeatureLeafName = (id: string): string | null => {
+    const normalized = id.replace(/\\/g, '/');
+    const match = normalized.match(/\/src\/components\/([^/]+)\/(.+)\.(tsx|ts|jsx|js)$/);
+    if (!match) return null;
+    const feature = match[1];
+    if (feature === 'report-builder') return null;
+    if (nonComponentSegments.has(feature)) return null;
+    const filePath = normalized.replace(/\?.*$/, '');
+    if (!isPureLogicModule(filePath)) return null;
+    const rel = match[2].replace(/\/index$/, '').replace(/\//g, '__');
+    return `components/${feature}/${rel}`;
 };
 
 const perIconChunkName = (id: string): string | null => {
@@ -30,19 +64,23 @@ const perIconChunkName = (id: string): string | null => {
     return `icons/${match[1]}`;
 };
 
-const reportViewerSubtree = /[\\/]src[\\/]components[\\/]report-builder[\\/](ReportViewer\.tsx|report-viewer-index\.ts|viewer[\\/]|expression[\\/]|built-in-fields\.ts|dataset-schema\.ts|parameter-validation\.ts|report-builder-types\.ts|report-definition-types\.ts|report-component-helpers\.ts|table-helpers\.ts|components[\\/]ParameterPanel\.tsx|components[\\/]ParameterOptionsContext\.ts)/;
+const sharedModuleDirs = ['utils', 'hooks', 'services', 'types'];
+
+const perSharedModuleName = (id: string): string | null => {
+    const normalized = id.replace(/\\/g, '/');
+    const match = normalized.match(/\/src\/(utils|hooks|services|types)\/(.+)\.(tsx|ts|jsx|js)$/);
+    if (!match) return null;
+    const dir = match[1];
+    if (!sharedModuleDirs.includes(dir)) return null;
+    const rel = match[2].replace(/\/index$/, '');
+    return `shared/${dir}/${rel}`;
+};
 
 const componentChunkGroups = [
     { name: perIconChunkName, priority: 40 },
-    { name: 'shared/editor-core', test: /[\\/]src[\\/]components[\\/]editor-core[\\/]/, priority: 30 },
-    { name: 'shared/context', test: /[\\/]src[\\/]components[\\/]context[\\/]/, priority: 30 },
-    {
-        name: 'shared/overlay',
-        test: /[\\/]src[\\/]components[\\/](Popover\.tsx|tooltip[\\/]|confirm-popover[\\/]|context-menu[\\/])/,
-        priority: 30,
-    },
-    { name: 'components/report-viewer', test: reportViewerSubtree, priority: 20 },
-    { name: perComponentChunkName, priority: 10 },
+    { name: pureLogicFeatureLeafName, priority: 35 },
+    { name: perComponentChunkName, priority: 30 },
+    { name: perSharedModuleName, priority: 20 },
 ];
 
 const rewriteExports = (exportsObj: Record<string, unknown>): Record<string, unknown> => {
@@ -147,6 +185,7 @@ export default defineConfig({
             },
         },
         rollupOptions: {
+            preserveEntrySignatures: 'allow-extension',
             external: [
                 'react',
                 'react-dom',
@@ -161,6 +200,7 @@ export default defineConfig({
                 'path',
             ],
             output: {
+                strictExecutionOrder: true,
                 globals: {
                     react: 'React',
                     'react-dom': 'ReactDOM',
@@ -180,6 +220,7 @@ export default defineConfig({
                     return 'assets/[name][extname]';
                 },
                 codeSplitting: {
+                    includeDependenciesRecursively: false,
                     groups: componentChunkGroups,
                 },
             },

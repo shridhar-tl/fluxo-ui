@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import './editor-core.scss';
 import { EditIcon, EyeIcon, SplitViewIcon } from '../../assets/icons';
 
 export type EditorViewMode = 'edit' | 'preview' | 'split';

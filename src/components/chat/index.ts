@@ -37,21 +37,4 @@ export type {
     UserActionEvent,
 } from './types';
 
-export { builtinTemplates, interactiveMessageTypes } from './templates';
-export {
-    DateMessageTemplate,
-    DateTimeMessageTemplate,
-    FileMessageTemplate,
-    ImageMessageTemplate,
-    LightboxViewer,
-    LoaderTemplate,
-    OptionsMessageTemplate,
-    TextMessageTemplate,
-    TimeMessageTemplate,
-    VideoMessageTemplate,
-    YouTubeMessageTemplate,
-} from './templates';
-
 export { COPY_MESSAGE_ACTION } from './window/MessageActionsBar';
-
-export { applyShortcodes, DEFAULT_SHORTCODES, EMOJI_CATEGORIES } from './utils/emoji-data';

@@ -17,6 +17,7 @@ import MinSize from './MinSize';
 import NestedSplitters from './NestedSplitters';
 import OnResizeEnd from './OnResizeEnd';
 import PersistingLayout from './PersistingLayout';
+import Responsive from './Responsive';
 import VerticalSplit from './VerticalSplit';
 
 
@@ -31,6 +32,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'min-size', title: 'Minimum Size', description: 'Collapse threshold' },
     { id: 'fixed-panel', title: 'Fixed Panel', description: 'Lock panel size' },
     { id: 'gutter-size', title: 'Gutter Size', description: 'Drag handle thickness' },
+    { id: 'responsive', title: 'Responsive Collapse', description: 'Stack on narrow widths' },
     { id: 'on-resize-end', title: 'onResizeEnd', description: 'Resize callback' },
     { id: 'nested', title: 'Nested Splitters', description: 'IDE-style multi-pane' },
     { id: 'persisting', title: 'Persisting Layout', description: 'Save/restore split' },
@@ -162,6 +164,18 @@ const SplitterPage: React.FC = () => {
                     are easier to grab on touch devices.
                 </p>
                 <GutterSize />
+            </section>
+
+            <section id="responsive" className="scroll-mt-8">
+                <h2 className={h2}>Responsive Collapse</h2>
+                <p className={desc}>
+                    Set <code className="font-mono">responsive</code> to a pixel width on a horizontal splitter. When the splitter's own
+                    container shrinks below that width, the side-by-side panels collapse into a vertical stack. Only the layout styles flip
+                    and the draggable gutter becomes a static divider — the panels themselves are never unmounted, so any state inside them
+                    (form values, scroll position, counters) is preserved. This applies to <code className="font-mono">layout="horizontal"</code>{' '}
+                    only; a vertical splitter is already stacked and ignores the prop.
+                </p>
+                <Responsive />
             </section>
 
             <section id="on-resize-end" className="scroll-mt-8">

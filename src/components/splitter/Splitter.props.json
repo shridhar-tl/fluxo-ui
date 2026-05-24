@@ -16,7 +16,7 @@
     },
     "responsive": {
       "type": "number",
-      "description": "Container width in px (measured on the splitter itself, not the viewport) below which panels collapse from side-by-side into a stacked, scrollable layout. The collapse is CSS-driven so panels are never unmounted and child state is preserved. Omit to disable."
+      "description": "Container width in px (measured on the splitter itself, not the viewport) below which a horizontal splitter collapses from side-by-side panels into a stacked layout. Applies to layout=\"horizontal\" only — a vertical splitter is already stacked and ignores it. The collapse only flips layout styles and swaps the draggable gutter for a static divider, so panels are never unmounted and child state is preserved. Omit to disable."
     },
     "collapsedLayout": {
       "type": "'horizontal' | 'vertical'",

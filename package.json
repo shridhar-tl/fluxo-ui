@@ -108,9 +108,13 @@
         "build-cli": "node scripts/generate-manifest.mjs && vite build --config vite.cli.config.ts",
         "build-all": "npm run build-lib && npm run build-cli",
         "generate-manifest": "node scripts/generate-manifest.mjs",
-        "test": "node scripts/verify-cli.mjs && node scripts/css-wiring/verify-css-wiring.mjs",
+        "test": "node scripts/verify-cli.mjs && node scripts/css-wiring/verify-css-wiring.mjs && node scripts/tree-shaking/verify-tree-shaking.mjs --no-build && node scripts/exports/verify-exports.mjs --no-build",
         "test:css": "node scripts/css-wiring/verify-css-wiring.mjs",
         "test:css:fast": "node scripts/css-wiring/verify-css-wiring.mjs --no-build",
+        "test:tree": "node scripts/tree-shaking/verify-tree-shaking.mjs",
+        "test:tree:fast": "node scripts/tree-shaking/verify-tree-shaking.mjs --no-build",
+        "test:exports": "node scripts/exports/verify-exports.mjs",
+        "test:exports:fast": "node scripts/exports/verify-exports.mjs --no-build",
         "prepublishOnly": "npm run build-all",
         "lint": "eslint ."
     },
@@ -135,7 +139,7 @@
     "dependencies": {
         "chalk": "5.6.2",
         "classnames": "^2.5.1",
-        "date-fns": "^4.2.1",
+        "date-fns": "^4.3.0",
         "prompts": "2.4.2",
         "sass": "^1.100.0"
     },

@@ -29,15 +29,17 @@ export interface SplitterProps {
     gutterSize?: number;
     onResizeEnd?: (firstPanelSize: number) => void;
     /**
-     * Width in pixels (measured on the splitter's own container, not the
-     * viewport) below which the panels collapse from side-by-side into a
-     * stacked, scrollable layout. The collapse is purely CSS-driven — panels
-     * keep their identity and are never unmounted, so child component state is
-     * preserved across the transition. Omit to disable responsive collapsing.
+     * Container width in pixels (measured on the splitter's own element, not
+     * the viewport) below which a `layout="horizontal"` splitter collapses from
+     * side-by-side into a stacked layout. Only applies when `layout` is
+     * 'horizontal' — a vertical splitter is already stacked and ignores this.
+     * The collapse only flips layout styles and swaps the draggable gutter for
+     * a static divider; panels keep their identity and are never unmounted, so
+     * child component state is preserved across the transition. Omit to disable.
      */
     responsive?: number;
     /**
-     * Direction panels stack in when collapsed (only used with `responsive`).
+     * Direction panels stack in once collapsed (only used with `responsive`).
      * Defaults to 'vertical' (first panel on top, second below).
      */
     collapsedLayout?: SplitterLayout;
@@ -98,6 +100,7 @@ export const Splitter: React.FC<SplitterProps> = ({
     onCollapseChange,
 }) => {
     const [collapsed, setCollapsed] = useState(false);
+    const layoutIsHorizontal = layout === 'horizontal';
     const isHorizontal = (collapsed ? collapsedLayout : layout) === 'horizontal';
     const containerRef = useRef<HTMLDivElement>(null);
     const firstPanelRef = useRef<HTMLDivElement>(null);
@@ -152,7 +155,7 @@ export const Splitter: React.FC<SplitterProps> = ({
         const observer = new ResizeObserver((entries) => {
             if (initialised.current) return;
             const entry = entries[0];
-            const totalPx = isHorizontal ? entry.contentRect.width : entry.contentRect.height;
+            const totalPx = layoutIsHorizontal ? entry.contentRect.width : entry.contentRect.height;
             if (totalPx > 0) {
                 initSize(totalPx);
             }
@@ -160,21 +163,21 @@ export const Splitter: React.FC<SplitterProps> = ({
 
         observer.observe(container);
 
-        const totalPx = isHorizontal ? container.offsetWidth : container.offsetHeight;
+        const totalPx = layoutIsHorizontal ? container.offsetWidth : container.offsetHeight;
         if (totalPx > 0 && !initialised.current) {
             initSize(totalPx);
         }
 
         return () => observer.disconnect();
-    }, [isHorizontal, initSize, singlePanel]);
+    }, [layoutIsHorizontal, initSize, singlePanel]);
 
     useEffect(() => {
         initialised.current = false;
         setFirstSize(null);
-    }, [isHorizontal]);
+    }, [layoutIsHorizontal]);
 
     useEffect(() => {
-        if (responsive == null) {
+        if (responsive == null || layout !== 'horizontal') {
             setCollapsed(false);
             return;
         }
@@ -196,7 +199,7 @@ export const Splitter: React.FC<SplitterProps> = ({
         evaluate(container.offsetWidth);
 
         return () => observer.disconnect();
-    }, [responsive]);
+    }, [responsive, layout]);
 
     useEffect(() => {
         return () => {
