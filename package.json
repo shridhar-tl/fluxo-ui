@@ -1,6 +1,6 @@
 {
     "name": "fluxo-ui",
-    "version": "0.4.8",
+    "version": "0.4.9",
     "description": "A comprehensive, accessible React component library built with TypeScript. Includes 100+ production-ready UI components, a custom state management solution, dependency injection container, 12 color themes, dark mode, and full keyboard navigation.",
     "keywords": [
         "react-component-library",
@@ -121,9 +121,11 @@
         "build-cli": "node scripts/generate-manifest.mjs && vite build --config vite.cli.config.ts",
         "build-all": "npm run build-lib && npm run build-cli",
         "generate-manifest": "node scripts/generate-manifest.mjs",
-        "test": "node scripts/verify-cli.mjs && node scripts/css-wiring/verify-css-wiring.mjs && node scripts/tree-shaking/verify-tree-shaking.mjs --no-build && node scripts/exports/verify-exports.mjs --no-build",
+        "test": "node scripts/verify-cli.mjs && node scripts/css-wiring/verify-css-wiring.mjs && node scripts/exports-runtime/verify-exports-runtime.mjs --no-build && node scripts/tree-shaking/verify-tree-shaking.mjs --no-build && node scripts/exports/verify-exports.mjs --no-build",
         "test:css": "node scripts/css-wiring/verify-css-wiring.mjs",
         "test:css:fast": "node scripts/css-wiring/verify-css-wiring.mjs --no-build",
+        "test:runtime": "node scripts/exports-runtime/verify-exports-runtime.mjs",
+        "test:runtime:fast": "node scripts/exports-runtime/verify-exports-runtime.mjs --no-build",
         "test:tree": "node scripts/tree-shaking/verify-tree-shaking.mjs",
         "test:tree:fast": "node scripts/tree-shaking/verify-tree-shaking.mjs --no-build",
         "test:exports": "node scripts/exports/verify-exports.mjs",

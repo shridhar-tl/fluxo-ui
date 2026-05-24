@@ -24,19 +24,8 @@ export type {
     GlobalStyles,
     ReportMetadata,
     ReportBreakpoint,
-    SelectOption,
-    DerivedDatasourceConfig,
-    DerivedTransform,
-    DerivedTransformType,
-    ConditionalFormat,
-    TableColumnDef,
-    TableColumnGroup,
-    TableComponentProps,
-    ChartType,
-    ChartComponentProps,
     ComponentStyleProps,
     PageSetup,
-    CanvasItemLayout,
 } from './report-definition-types';
 export { createEmptyDefinition } from './report-definition-types';
 export { exportReportToPdf, downloadReportPdf, printReport } from './viewer/pdf-export';

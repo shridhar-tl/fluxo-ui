@@ -29,7 +29,6 @@ export type {
   ModifierKeys,
   ToolbarSlotProps,
   EntryCreateInfo,
-  PositionedEntry,
   DateBackground,
   DateRangeBackground,
   ExternalDropInfo,
