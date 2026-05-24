@@ -5,8 +5,6 @@ import type {
     CropArea,
     CropMode,
     EditorTool,
-    ExportFormat,
-    ExportOptions,
     HistoryEntry,
     ImageEditorProps,
     ImageTransform,
@@ -22,11 +20,6 @@ const defaultTransform: ImageTransform = {
     tilt: 0,
     zoom: 1,
     transparency: 1,
-};
-
-const defaultExportOptions: ExportOptions = {
-    format: 'png',
-    quality: 0.92,
 };
 
 const allTools: EditorTool[] = ['crop', 'rotate', 'flip', 'blur', 'annotate', 'transparency', 'tilt'];
@@ -76,13 +69,10 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     alt: _alt = 'Image',
     width = '100%',
     height = 500,
-    onSave,
-    onCancel,
     tools = allTools,
     defaultTool = 'crop',
     maxHistory = 50,
     className,
-    exportOptions: exportOptionsProp,
     cropModes = allCropModes,
     editState,
     onEditStateChange,
@@ -105,11 +95,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     const [blurIntensity, setBlurIntensity] = useState(10);
     const [history, setHistory] = useState<HistoryEntry[]>([]);
     const [historyIndex, setHistoryIndex] = useState(-1);
-    const [showExport, setShowExport] = useState(false);
-    const [exportOpts, setExportOpts] = useState<ExportOptions>({
-        ...defaultExportOptions,
-        ...exportOptionsProp,
-    });
     const [annotationData, setAnnotationData] = useState<string | null>(editState?.annotationData ?? null);
 
     const [freehandActive, setFreehandActive] = useState(false);
@@ -141,7 +126,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
 
     useEffect(() => {
         if (loaded) renderCanvas();
-    }, [loaded, transform, cropArea, blurRegions, annotationData]);
+    }, [loaded, imageGeneration, transform, cropArea, blurRegions, annotationData]);
 
     const pushHistory = useCallback(
         (t: ImageTransform, crop: CropArea | null) => {
@@ -566,10 +551,36 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
     );
 
     const applyCrop = useCallback(() => {
-        if (!cropArea || !canvasRef.current || !imageRef.current) return;
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
+        if (!cropArea || !imageRef.current) return;
+
+        const sourceCanvas = document.createElement('canvas');
+        sourceCanvas.width = imageRef.current.naturalWidth;
+        sourceCanvas.height = imageRef.current.naturalHeight;
+        const sourceCtx = sourceCanvas.getContext('2d');
+        if (!sourceCtx) return;
+
+        const img = imageRef.current;
+        sourceCtx.save();
+        sourceCtx.translate(sourceCanvas.width / 2, sourceCanvas.height / 2);
+        sourceCtx.rotate((transform.rotation * Math.PI) / 180);
+        sourceCtx.rotate((transform.tilt * Math.PI) / 180);
+        sourceCtx.scale(
+            transform.flipH ? -transform.zoom : transform.zoom,
+            transform.flipV ? -transform.zoom : transform.zoom,
+        );
+        sourceCtx.globalAlpha = transform.transparency;
+        sourceCtx.translate(-img.naturalWidth / 2, -img.naturalHeight / 2);
+        sourceCtx.drawImage(img, 0, 0);
+        sourceCtx.restore();
+
+        for (const region of blurRegions) {
+            applyBlurRegion(sourceCtx, sourceCanvas, region);
+        }
+
+        const annotCanvas = annotationCanvasRef.current;
+        if (annotCanvas && annotCanvas.width > 0 && annotCanvas.height > 0) {
+            sourceCtx.drawImage(annotCanvas, 0, 0, sourceCanvas.width, sourceCanvas.height);
+        }
 
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = cropArea.width;
@@ -588,7 +599,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         }
 
         tempCtx.drawImage(
-            canvas,
+            sourceCanvas,
             cropArea.x, cropArea.y, cropArea.width, cropArea.height,
             0, 0, cropArea.width, cropArea.height,
         );
@@ -604,7 +615,7 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         setBlurRegions([]);
         setAnnotationData(null);
         setBaseImage(cropped);
-    }, [cropArea, cropMode]);
+    }, [cropArea, cropMode, transform, blurRegions]);
 
     const rotate = useCallback(
         (degrees: number) => {
@@ -642,36 +653,6 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
         },
         [],
     );
-
-    const handleSave = useCallback(() => {
-        const canvas = canvasRef.current;
-        if (!canvas || !onSave) return;
-
-        const mimeType = `image/${exportOpts.format === 'jpeg' ? 'jpeg' : exportOpts.format}`;
-        let exportCanvas = canvas;
-
-        if (exportOpts.maxWidth || exportOpts.maxHeight) {
-            const maxW = exportOpts.maxWidth || Infinity;
-            const maxH = exportOpts.maxHeight || Infinity;
-            const scale = Math.min(maxW / canvas.width, maxH / canvas.height, 1);
-
-            if (scale < 1) {
-                exportCanvas = document.createElement('canvas');
-                exportCanvas.width = Math.round(canvas.width * scale);
-                exportCanvas.height = Math.round(canvas.height * scale);
-                const ctx = exportCanvas.getContext('2d');
-                if (ctx) ctx.drawImage(canvas, 0, 0, exportCanvas.width, exportCanvas.height);
-            }
-        }
-
-        exportCanvas.toBlob(
-            (blob) => {
-                if (blob) onSave(blob, exportOpts.format);
-            },
-            mimeType,
-            exportOpts.quality,
-        );
-    }, [onSave, exportOpts]);
 
     const resetAll = useCallback(() => {
         setTransform({ ...defaultTransform });
@@ -977,72 +958,9 @@ const ImageEditor: React.FC<ImageEditorProps> = ({
                     style={{ display: 'none' }}
                 />
             </div>
-
-            <div className="eui-image-editor-footer">
-                {showExport ? (
-                    <div className="eui-image-editor-export-options">
-                        <select
-                            value={exportOpts.format}
-                            onChange={(e) => setExportOpts((prev) => ({ ...prev, format: e.target.value as ExportFormat }))}
-                            className="eui-image-editor-select"
-                        >
-                            <option value="png">PNG</option>
-                            <option value="jpeg">JPEG</option>
-                            <option value="webp">WebP</option>
-                        </select>
-                        <div className="eui-image-editor-quality">
-                            <span>Quality:</span>
-                            <input
-                                type="range"
-                                min={10}
-                                max={100}
-                                value={Math.round(exportOpts.quality * 100)}
-                                onChange={(e) => setExportOpts((prev) => ({ ...prev, quality: Number(e.target.value) / 100 }))}
-                                className="eui-image-editor-range"
-                            />
-                            <span>{Math.round(exportOpts.quality * 100)}%</span>
-                        </div>
-                        <div className="eui-image-editor-size-opts">
-                            <input
-                                type="number"
-                                placeholder="Max Width"
-                                value={exportOpts.maxWidth || ''}
-                                onChange={(e) => setExportOpts((prev) => ({ ...prev, maxWidth: Number(e.target.value) || undefined }))}
-                                className="eui-image-editor-number-input"
-                            />
-                            <input
-                                type="number"
-                                placeholder="Max Height"
-                                value={exportOpts.maxHeight || ''}
-                                onChange={(e) => setExportOpts((prev) => ({ ...prev, maxHeight: Number(e.target.value) || undefined }))}
-                                className="eui-image-editor-number-input"
-                            />
-                        </div>
-                        <button className="eui-image-editor-save-btn" onClick={() => { handleSave(); setShowExport(false); }} type="button">
-                            Export
-                        </button>
-                        <button className="eui-image-editor-cancel-btn" onClick={() => setShowExport(false)} type="button">
-                            Cancel
-                        </button>
-                    </div>
-                ) : (
-                    <div className="eui-image-editor-footer-actions">
-                        {onCancel && (
-                            <button className="eui-image-editor-cancel-btn" onClick={onCancel} type="button">
-                                Cancel
-                            </button>
-                        )}
-                        {onSave && (
-                            <button className="eui-image-editor-save-btn" onClick={() => setShowExport(true)} type="button">
-                                Save
-                            </button>
-                        )}
-                    </div>
-                )}
-            </div>
         </div>
     );
 };
 
 export { ImageEditor };
-export type { ImageEditorProps, EditorState, EditorTool, CropMode, ExportFormat, ExportOptions, CropArea, ImageTransform, BlurRegion } from './image-editor-types';
+export type { ImageEditorProps, EditorState, EditorTool, CropMode, CropArea, ImageTransform, BlurRegion } from './image-editor-types';

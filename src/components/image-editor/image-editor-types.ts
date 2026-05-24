@@ -1,5 +1,4 @@
 export type CropMode = 'custom' | 'square' | 'circle' | '16:9' | '4:3' | '3:2' | '1:1' | '9:16' | '3:4' | '2:3';
-export type ExportFormat = 'png' | 'jpeg' | 'webp';
 export type EditorTool = 'crop' | 'rotate' | 'flip' | 'blur' | 'annotate' | 'transparency' | 'tilt';
 
 export interface CropArea {
@@ -22,13 +21,6 @@ export interface HistoryEntry {
     imageData: string;
     transform: ImageTransform;
     cropArea: CropArea | null;
-}
-
-export interface ExportOptions {
-    format: ExportFormat;
-    quality: number;
-    maxWidth?: number;
-    maxHeight?: number;
 }
 
 export interface EditorState {
@@ -55,13 +47,10 @@ export interface ImageEditorProps {
     alt?: string;
     width?: number | string;
     height?: number | string;
-    onSave?: (data: Blob, format: ExportFormat) => void;
-    onCancel?: () => void;
     tools?: EditorTool[];
     defaultTool?: EditorTool;
     maxHistory?: number;
     className?: string;
-    exportOptions?: Partial<ExportOptions>;
     cropModes?: CropMode[];
     editState?: EditorState | null;
     onEditStateChange?: (state: EditorState) => void;

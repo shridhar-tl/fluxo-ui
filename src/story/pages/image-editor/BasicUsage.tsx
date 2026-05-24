@@ -1,55 +1,88 @@
-import React, { useCallback, useState } from 'react';
-import type { ExportFormat } from '../../../components';
+import React, { useState } from 'react';
+import type { EditorState } from '../../../components';
 import { ImageEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
 const sampleImage = 'https://picsum.photos/seed/fluxo/800/600';
 
-const code = `import { ImageEditor } from 'fluxo-ui';
+const code = `import { ImageEditor, type EditorState } from 'fluxo-ui';
 
-const handleSave = (blob: Blob, format: ExportFormat) => {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = \`edited-image.\${format}\`;
-  a.click();
-  URL.revokeObjectURL(url);
-};
+function Editor() {
+  const [editState, setEditState] = useState<EditorState | null>(null);
 
-<ImageEditor
-  src="https://picsum.photos/seed/fluxo/800/600"
-  alt="Sample landscape"
-  onSave={handleSave}
-  onCancel={() => console.log('Cancelled')}
-/>`;
+  const download = () => {
+    if (!editState) return;
+    const a = document.createElement('a');
+    a.href = editState.flattened;
+    a.download = 'edited-image.png';
+    a.click();
+  };
+
+  return (
+    <>
+      <ImageEditor
+        src="https://picsum.photos/seed/fluxo/800/600"
+        alt="Sample landscape"
+        editState={editState}
+        onEditStateChange={setEditState}
+      />
+      <button onClick={download}>Download</button>
+    </>
+  );
+}`;
 
 const BasicUsage: React.FC = () => {
-    const [savedUrl, setSavedUrl] = useState<string | null>(null);
+    const [editState, setEditState] = useState<EditorState | null>(null);
 
-    const handleSave = useCallback((blob: Blob, format: ExportFormat) => {
-        const url = URL.createObjectURL(blob);
-        setSavedUrl(url);
+    const download = () => {
+        if (!editState) return;
         const a = document.createElement('a');
-        a.href = url;
-        a.download = `edited-image.${format}`;
+        a.href = editState.flattened;
+        a.download = 'edited-image.png';
         a.click();
-    }, []);
-
-    const handleCancel = useCallback(() => {
-        setSavedUrl(null);
-    }, []);
+    };
 
     return (
         <>
             <ComponentDemo
                 title="Full Editor"
-                description="Image editor with all tools enabled. Edit the image and click Save to download."
+                description="Image editor with all tools enabled. Edits are emitted through onEditStateChange; the consumer decides what to do with the result."
             >
-                <div className="w-full" style={{ height: 500 }}>
-                    <ImageEditor src={sampleImage} alt="Sample landscape" onSave={handleSave} onCancel={handleCancel} />
+                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    <div style={{ width: '100%', height: 500 }}>
+                        <ImageEditor
+                            src={sampleImage}
+                            alt="Sample landscape"
+                            editState={editState}
+                            onEditStateChange={setEditState}
+                        />
+                    </div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            gap: 12,
+                            alignItems: 'center',
+                            padding: '12px 16px',
+                            background: 'var(--eui-bg-subtle)',
+                            border: '1px solid var(--eui-border-subtle)',
+                            borderRadius: 6,
+                        }}
+                    >
+                        <button
+                            type="button"
+                            onClick={download}
+                            disabled={!editState}
+                            className="eui-image-editor-action-btn"
+                            style={{ cursor: editState ? 'pointer' : 'not-allowed' }}
+                        >
+                            Download result
+                        </button>
+                        <span style={{ color: 'var(--eui-text-muted)' }}>
+                            Edits captured: <strong>{editState ? 'yes' : 'none'}</strong>
+                        </span>
+                    </div>
                 </div>
-                {savedUrl && <p className="mt-2 text-sm text-green-600">Image saved and downloaded successfully.</p>}
             </ComponentDemo>
             <div className="mt-4">
                 <CodeBlock code={code} language="tsx" />

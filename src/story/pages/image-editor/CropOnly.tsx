@@ -1,30 +1,26 @@
-import React, { useCallback } from 'react';
-import type { ExportFormat } from '../../../components';
+import React, { useState } from 'react';
+import type { EditorState } from '../../../components';
 import { ImageEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
 const sampleImage = 'https://picsum.photos/seed/fluxo/800/600';
 
-const code = `import { ImageEditor } from 'fluxo-ui';
+const code = `import { ImageEditor, type EditorState } from 'fluxo-ui';
+
+const [editState, setEditState] = useState<EditorState | null>(null);
 
 <ImageEditor
   src="https://picsum.photos/seed/fluxo/800/600"
   tools={['crop']}
   defaultTool="crop"
   cropModes={['custom', 'square', '16:9', '4:3', '1:1']}
-  onSave={handleSave}
+  editState={editState}
+  onEditStateChange={setEditState}
 />`;
 
 const CropOnly: React.FC = () => {
-    const handleSave = useCallback((blob: Blob, format: ExportFormat) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `cropped-image.${format}`;
-        a.click();
-        URL.revokeObjectURL(url);
-    }, []);
+    const [editState, setEditState] = useState<EditorState | null>(null);
 
     return (
         <>
@@ -36,7 +32,8 @@ const CropOnly: React.FC = () => {
                         tools={['crop']}
                         defaultTool="crop"
                         cropModes={['custom', 'square', '16:9', '4:3', '1:1']}
-                        onSave={handleSave}
+                        editState={editState}
+                        onEditStateChange={setEditState}
                     />
                 </div>
             </ComponentDemo>

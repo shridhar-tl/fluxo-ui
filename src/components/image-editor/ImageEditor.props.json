@@ -17,14 +17,6 @@
       "type": "number | string",
       "description": "Height of the editor container."
     },
-    "onSave": {
-      "type": "(data: Blob, format: ExportFormat) => void",
-      "description": "Called when the user saves the edited image."
-    },
-    "onCancel": {
-      "type": "() => void",
-      "description": "Called when the user cancels editing."
-    },
     "tools": {
       "type": "EditorTool[]",
       "default": "['crop', 'rotate', 'flip', 'blur', 'annotate', 'transparency', 'tilt']",
@@ -41,10 +33,6 @@
     "className": {
       "type": "string",
       "description": "Additional CSS class for the editor container."
-    },
-    "exportOptions": {
-      "type": "Partial<ExportOptions>",
-      "description": "Export settings: format (png, jpeg, webp), quality (0-1), maxWidth, maxHeight."
     },
     "cropModes": {
       "type": "CropMode[]",

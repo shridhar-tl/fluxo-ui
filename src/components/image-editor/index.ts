@@ -4,8 +4,6 @@ export type {
     EditorState,
     EditorTool,
     CropMode,
-    ExportFormat,
-    ExportOptions,
     CropArea,
     ImageTransform,
     BlurRegion,

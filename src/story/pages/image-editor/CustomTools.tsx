@@ -1,31 +1,26 @@
-import React, { useCallback } from 'react';
-import type { ExportFormat } from '../../../components';
+import React, { useState } from 'react';
+import type { EditorState } from '../../../components';
 import { ImageEditor } from '../../../components';
 import { CodeBlock } from '../../CodeBlock';
 import { ComponentDemo } from '../../ComponentDemo';
 
 const sampleImage = 'https://picsum.photos/seed/fluxo/800/600';
 
-const code = `import { ImageEditor } from 'fluxo-ui';
+const code = `import { ImageEditor, type EditorState } from 'fluxo-ui';
+
+const [editState, setEditState] = useState<EditorState | null>(null);
 
 <ImageEditor
   src="https://picsum.photos/seed/fluxo/800/600"
   tools={['crop', 'rotate', 'flip', 'blur']}
   defaultTool="rotate"
   maxHistory={20}
-  onSave={handleSave}
-  onCancel={handleCancel}
+  editState={editState}
+  onEditStateChange={setEditState}
 />`;
 
 const CustomTools: React.FC = () => {
-    const handleSave = useCallback((blob: Blob, format: ExportFormat) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `custom-edited.${format}`;
-        a.click();
-        URL.revokeObjectURL(url);
-    }, []);
+    const [editState, setEditState] = useState<EditorState | null>(null);
 
     return (
         <>
@@ -40,7 +35,8 @@ const CustomTools: React.FC = () => {
                         tools={['crop', 'rotate', 'flip', 'blur']}
                         defaultTool="rotate"
                         maxHistory={20}
-                        onSave={handleSave}
+                        editState={editState}
+                        onEditStateChange={setEditState}
                     />
                 </div>
             </ComponentDemo>
