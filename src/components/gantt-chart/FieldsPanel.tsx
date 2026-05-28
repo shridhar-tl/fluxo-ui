@@ -9,9 +9,10 @@ interface FieldsPanelProps {
     width?: number | string;
     bodyRef: React.RefObject<HTMLDivElement | null>;
     headerHeight: number;
+    scrollbarGutter: number;
 }
 
-function FieldsPanel({ columns, bodyRef, headerHeight }: FieldsPanelProps) {
+function FieldsPanel({ columns, bodyRef, headerHeight, scrollbarGutter }: FieldsPanelProps) {
     const { flatTasks, rowHeight, collapsedIds, toggleCollapse, onExpandToggle } = useGanttContext();
     const headerRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +53,7 @@ function FieldsPanel({ columns, bodyRef, headerHeight }: FieldsPanelProps) {
             <div
                 className="eui-gantt-fields-body"
                 ref={bodyRef}
+                style={scrollbarGutter ? { paddingBottom: scrollbarGutter } : undefined}
             >
                 {visibleTasks.map(ft => (
                     <FieldRow

@@ -76,8 +76,17 @@ function TooltipProvider() {
         }
     };
 
+    const onHideById = (id: string) => {
+        setState((s) => {
+            if (!s.visible || s.options.id !== id) return s;
+            clearHideTimer();
+            targetRef.current = null;
+            return { ...s, visible: false };
+        });
+    };
+
     useEffect(() => {
-        registerTooltipHandlers(onShow, onHide);
+        registerTooltipHandlers(onShow, onHide, onHideById);
         const handleClick = (e: MouseEvent) => {
             if (tooltipRef.current && !tooltipRef.current.contains(e.target as Node)) {
                 clearHideTimer();

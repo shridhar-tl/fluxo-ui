@@ -16,15 +16,22 @@ export interface TooltipData {
 
 let showTooltipHandler: ((data: TooltipData) => void) | null = null;
 let hideTooltipHandler: ((timeout: number) => void) | null = null;
+let hideTooltipByIdHandler: ((id: string) => void) | null = null;
 
-export function registerTooltipHandlers(show: (data: TooltipData) => void, hide: (timeout: number) => void) {
+export function registerTooltipHandlers(
+    show: (data: TooltipData) => void,
+    hide: (timeout: number) => void,
+    hideById?: (id: string) => void,
+) {
     showTooltipHandler = show;
     hideTooltipHandler = hide;
+    hideTooltipByIdHandler = hideById ?? null;
 }
 
 export function unregisterTooltipHandlers(show: (data: TooltipData) => void, hide: (timeout: number) => void) {
     if (showTooltipHandler === show) showTooltipHandler = null;
     if (hideTooltipHandler === hide) hideTooltipHandler = null;
+    hideTooltipByIdHandler = null;
 }
 
 export function showTooltip(e: React.MouseEvent, opt: TooltipOptions | React.ReactNode | string) {
@@ -41,4 +48,8 @@ export function hideTooltip(params: { timeout?: number } = {}) {
     if (hideTooltipHandler) {
         hideTooltipHandler(timeout);
     }
+}
+
+export function hideTooltipById(id: string) {
+    hideTooltipByIdHandler?.(id);
 }

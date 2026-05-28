@@ -1,6 +1,6 @@
-import React, { Children, cloneElement, isValidElement, useCallback, useId, useRef } from 'react';
+import React, { Children, cloneElement, isValidElement, useCallback, useEffect, useId, useRef } from 'react';
 import { PlacementCorners } from '../../types';
-import { hideTooltip, showTooltip } from './tooltip-api';
+import { hideTooltip, hideTooltipById, showTooltip } from './tooltip-api';
 
 interface TooltipProps {
     content: React.ReactNode | string;
@@ -34,6 +34,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
         }
     }, []);
 
+    useEffect(() => () => hideTooltipById(tooltipId), [tooltipId]);
+
     const handleMouseEnter = useCallback(
         (e: React.MouseEvent) => {
             if (!canHover()) return;
@@ -44,8 +46,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
     const handleMouseLeave = useCallback(() => {
         if (!canHover()) return;
-        hideTooltip({ timeout: 0 });
-    }, []);
+        hideTooltip({ timeout });
+    }, [timeout]);
 
     const handleFocus = useCallback(
         (e: React.FocusEvent) => {

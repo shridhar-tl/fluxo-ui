@@ -190,6 +190,7 @@ function GanttChart({
     const timelinePanelBodyRef = useRef<HTMLDivElement>(null);
     const timelineHeaderRef = useRef<HTMLDivElement>(null);
     const [headerHeight, setHeaderHeight] = useState(0);
+    const [scrollbarGutter, setScrollbarGutter] = useState(0);
 
     useLayoutEffect(() => {
         if (timelineHeaderRef.current) {
@@ -197,6 +198,19 @@ function GanttChart({
             setHeaderHeight(h);
         }
     }, [viewMode, dateCells]);
+
+    useLayoutEffect(() => {
+        const body = timelinePanelBodyRef.current;
+        if (!body) return;
+        const measure = () => {
+            const gutter = body.offsetHeight - body.clientHeight;
+            setScrollbarGutter(prev => (prev === gutter ? prev : gutter));
+        };
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(body);
+        return () => observer.disconnect();
+    }, [totalWidth, totalHeight, viewMode]);
 
     const handleTimelineVerticalScroll = useCallback((scrollTop: number) => {
         if (fieldsPanelBodyRef.current) {
@@ -266,6 +280,7 @@ function GanttChart({
                                     columns={columns}
                                     bodyRef={fieldsPanelBodyRef}
                                     headerHeight={headerHeight}
+                                    scrollbarGutter={scrollbarGutter}
                                 />
                             </SplitterPanel>
                             <SplitterPanel minSize="200px">
