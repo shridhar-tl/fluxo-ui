@@ -199,6 +199,24 @@ export const sampleEntries: CalendarEntry[] = [
         editable: true,
         entryType: 'meeting',
     },
+    {
+        id: '18',
+        title: 'Parallel Meeting C',
+        start: today(10, 15),
+        end: today(11, 15),
+        color: '#f43f5e',
+        editable: true,
+        entryType: 'meeting',
+    },
+    {
+        id: '19',
+        title: 'Parallel Meeting D',
+        start: today(10, 45),
+        end: today(11, 45),
+        color: '#0ea5e9',
+        editable: true,
+        entryType: 'meeting',
+    },
 ];
 
 export const sampleDateBackgrounds: DateBackground[] = [

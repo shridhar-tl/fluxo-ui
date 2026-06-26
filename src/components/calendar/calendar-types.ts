@@ -411,6 +411,8 @@ export interface PositionedEntry {
   width: number;
   column: number;
   totalColumns: number;
+  cluster: number;
+  isOverflow: boolean;
 }
 
 export interface DragState {

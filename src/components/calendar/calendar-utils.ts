@@ -171,53 +171,86 @@ export function positionTimedEntries(
     (a, b) => a.start.getTime() - b.start.getTime() || b.end.getTime() - a.end.getTime()
   );
 
-  const columns: ResolvedCalendarEntry[][] = [];
-
+  const bounds = new Map<string | number, { startMin: number; endMin: number }>();
   for (const entry of dayEntries) {
-    let placed = false;
-    for (const col of columns) {
-      const last = col[col.length - 1];
-      if (!isAfter(entry.start, last.end) && !isSameDay(entry.start, last.end)) {
-        continue;
-      }
-      if (entry.start >= last.end) {
-        col.push(entry);
-        placed = true;
-        break;
-      }
-    }
-    if (!placed) {
-      columns.push([entry]);
-    }
-  }
-
-  const entryColumnMap = new Map<string | number, { col: number; total: number }>();
-  for (let c = 0; c < columns.length; c++) {
-    for (const entry of columns[c]) {
-      entryColumnMap.set(entry.id, { col: c, total: columns.length });
-    }
-  }
-
-  return dayEntries.map(entry => {
     const startMin = Math.max(getMinuteOffset(entry.start, dayStart), 0);
-    const endMin = Math.max(getMinuteOffset(entry.end, dayStart), startMin + config.slotDuration);
-    const top = minuteOffsetToPixels(startMin, config.slotDuration, config.slotHeight);
-    const rawHeight = minuteOffsetToPixels(endMin - startMin, config.slotDuration, config.slotHeight);
-    const height = Math.max(rawHeight, config.minEntryHeight);
-    const info = entryColumnMap.get(entry.id) ?? { col: 0, total: 1 };
-    const width = 100 / info.total;
-    const left = info.col * width;
+    const rawEndMin = Math.max(getMinuteOffset(entry.end, dayStart), startMin + config.slotDuration);
+    const minHeightMin = pixelsToMinuteOffset(config.minEntryHeight, config.slotDuration, config.slotHeight);
+    const endMin = Math.max(rawEndMin, startMin + minHeightMin);
+    bounds.set(entry.id, { startMin, endMin });
+  }
 
-    return {
-      entry,
-      top,
-      height,
-      left,
-      width,
-      column: info.col,
-      totalColumns: info.total,
-    };
+  const clusters: ResolvedCalendarEntry[][] = [];
+  let current: ResolvedCalendarEntry[] = [];
+  let clusterEndMin = -Infinity;
+  for (const entry of dayEntries) {
+    const { startMin, endMin } = bounds.get(entry.id)!;
+    if (current.length === 0 || startMin < clusterEndMin) {
+      current.push(entry);
+      clusterEndMin = Math.max(clusterEndMin, endMin);
+    } else {
+      clusters.push(current);
+      current = [entry];
+      clusterEndMin = endMin;
+    }
+  }
+  if (current.length > 0) {
+    clusters.push(current);
+  }
+
+  const maxStack = config.maxStackCount > 0 ? config.maxStackCount : Infinity;
+  const positioned: PositionedEntry[] = [];
+
+  clusters.forEach((cluster, clusterIndex) => {
+    const lanes: ResolvedCalendarEntry[][] = [];
+    const laneOf = new Map<string | number, number>();
+    for (const entry of cluster) {
+      const { startMin } = bounds.get(entry.id)!;
+      let placed = false;
+      for (let l = 0; l < lanes.length; l++) {
+        const last = lanes[l][lanes[l].length - 1];
+        if (startMin >= bounds.get(last.id)!.endMin) {
+          lanes[l].push(entry);
+          laneOf.set(entry.id, l);
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        laneOf.set(entry.id, lanes.length);
+        lanes.push([entry]);
+      }
+    }
+
+    const laneCount = lanes.length;
+    const hasOverflow = laneCount > maxStack;
+    const entryLaneLimit = hasOverflow ? maxStack - 1 : laneCount;
+    const totalSlots = hasOverflow ? maxStack : laneCount;
+    const slotWidth = 100 / totalSlots;
+
+    for (const entry of cluster) {
+      const { startMin, endMin } = bounds.get(entry.id)!;
+      const lane = laneOf.get(entry.id) ?? 0;
+      const top = minuteOffsetToPixels(startMin, config.slotDuration, config.slotHeight);
+      const height = minuteOffsetToPixels(endMin - startMin, config.slotDuration, config.slotHeight);
+      const isOverflow = lane >= entryLaneLimit;
+      const left = isOverflow ? 0 : lane * slotWidth;
+
+      positioned.push({
+        entry,
+        top,
+        height,
+        left,
+        width: slotWidth,
+        column: lane,
+        totalColumns: laneCount,
+        cluster: clusterIndex,
+        isOverflow,
+      });
+    }
   });
+
+  return positioned;
 }
 
 export function isBusinessHour(

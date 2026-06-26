@@ -274,11 +274,34 @@
 
 .eui-cal-time-column-overflow {
   position: absolute;
-  bottom: 4px;
-  left: 2px;
-  right: 2px;
-  z-index: 4;
+  z-index: 5;
+  padding: 1px 2px;
   pointer-events: auto;
+
+  .eui-cal-overflow-trigger {
+    width: 100%;
+    height: 100%;
+    min-height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    color: var(--eui-text-muted);
+    background: var(--eui-bg-subtle);
+    border: 1px dashed var(--eui-border);
+    border-radius: var(--eui-cal-entry-radius, 4px);
+    transition: background-color $cal-transition, color $cal-transition, border-color $cal-transition;
+
+    &:hover {
+      color: var(--eui-text);
+      background: var(--eui-bg-hover);
+      border-color: var(--eui-border-strong, var(--eui-border));
+    }
+  }
 }
 
 .eui-cal-time-slot {

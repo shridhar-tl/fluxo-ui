@@ -12,6 +12,15 @@ import { useCalendarContext } from '../../CalendarContext';
 import TimeGridSlot from './TimeGridSlot';
 import NowIndicator from './NowIndicator';
 
+interface OverflowGroup {
+  cluster: number;
+  top: number;
+  height: number;
+  left: number;
+  width: number;
+  entries: ResolvedCalendarEntry[];
+}
+
 interface TimeGridColumnProps {
   date: Date;
   entries: ResolvedCalendarEntry[];
@@ -58,15 +67,34 @@ const TimeGridColumn: React.FC<TimeGridColumnProps> = ({
     [entries, date, effectiveConfig]
   );
 
-  const { visible, overflow } = useMemo(() => {
-    const max = config.maxStackCount;
-    if (positioned.length <= max) {
-      return { visible: positioned, overflow: [] as ResolvedCalendarEntry[] };
+  const { visible, overflowGroups } = useMemo(() => {
+    const vis = positioned.filter(p => !p.isOverflow);
+    const hidden = positioned.filter(p => p.isOverflow);
+    if (hidden.length === 0) {
+      return { visible: vis, overflowGroups: [] as OverflowGroup[] };
     }
-    const vis = positioned.slice(0, max);
-    const ovf = positioned.slice(max).map(p => p.entry);
-    return { visible: vis, overflow: ovf };
-  }, [positioned, config.maxStackCount]);
+    const byCluster = new Map<number, { top: number; bottom: number; left: number; width: number; entries: ResolvedCalendarEntry[] }>();
+    for (const p of hidden) {
+      const group = byCluster.get(p.cluster);
+      const bottom = p.top + p.height;
+      if (group) {
+        group.entries.push(p.entry);
+        group.top = Math.min(group.top, p.top);
+        group.bottom = Math.max(group.bottom, bottom);
+      } else {
+        byCluster.set(p.cluster, { top: p.top, bottom, left: 100 - p.width, width: p.width, entries: [p.entry] });
+      }
+    }
+    const groups: OverflowGroup[] = Array.from(byCluster.entries()).map(([cluster, g]) => ({
+      cluster,
+      top: g.top,
+      height: g.bottom - g.top,
+      left: g.left,
+      width: g.width,
+      entries: g.entries,
+    }));
+    return { visible: vis, overflowGroups: groups };
+  }, [positioned]);
 
   const { selectionState } = useCalendarContext();
 
@@ -112,17 +140,26 @@ const TimeGridColumn: React.FC<TimeGridColumnProps> = ({
             showResizeHandles
           />
         ))}
-        {overflow.length > 0 && (
-          <div className="eui-cal-time-column-overflow">
+        {overflowGroups.map(group => (
+          <div
+            key={group.cluster}
+            className="eui-cal-time-column-overflow"
+            style={{
+              top: `${group.top}px`,
+              height: `${group.height}px`,
+              left: `${group.left}%`,
+              width: `${group.width}%`,
+            }}
+          >
             <OverflowPopover
-              entries={overflow}
-              triggerLabel={`+${overflow.length} more`}
+              entries={group.entries}
+              triggerLabel={`+${group.entries.length}`}
               renderEntry={renderEntry}
               onEntryClick={onEntryClick}
               onEntryContextMenu={onEntryContextMenu}
             />
           </div>
-        )}
+        ))}
       </div>
       {showNowIndicator && today && nowMinute !== undefined && (
         <NowIndicator
