@@ -12,7 +12,7 @@ import { useCalendarNavigation } from './hooks/useCalendarNavigation';
 import { useCalendarEntries } from './hooks/useCalendarEntries';
 import { CalendarToolbar } from './toolbar';
 import { ViewRenderer } from './views';
-import { defaultPlugins } from './plugins/default-plugins';
+import { getDefaultPlugins } from './plugins/default-plugins';
 import '../eui-base.scss';
 import './Calendar.scss';
 
@@ -228,7 +228,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
   const [registry] = useState(() => {
     const reg = new PluginRegistry();
-    const allPlugins = plugins.length > 0 ? plugins : defaultPlugins;
+    const allPlugins = plugins.length > 0 ? plugins : getDefaultPlugins();
     for (const plugin of allPlugins) {
       reg.register(plugin);
     }

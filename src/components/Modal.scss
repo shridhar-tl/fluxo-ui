@@ -126,6 +126,12 @@
     top: 0;
     background-color: var(--eui-bg);
     z-index: 1;
+
+    @media (max-width: $bp-sm) {
+        padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));
+        padding-right: calc(1.25rem + env(safe-area-inset-right, 0px));
+        padding-left: calc(1.25rem + env(safe-area-inset-left, 0px));
+    }
 }
 
 .eui-modal-title {
@@ -183,6 +189,19 @@
     &.eui-modal-body-no-title {
         padding-top: 1.75rem;
     }
+
+    @media (max-width: $bp-sm) {
+        padding-right: calc(1.25rem + env(safe-area-inset-right, 0px));
+        padding-left: calc(1.25rem + env(safe-area-inset-left, 0px));
+
+        &.eui-modal-body-no-title {
+            padding-top: calc(1.75rem + env(safe-area-inset-top, 0px));
+        }
+
+        &.eui-modal-body-no-footer {
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+        }
+    }
 }
 
 .eui-modal-close-floating {
@@ -191,6 +210,11 @@
     top: 0.75rem;
     right: 0.75rem;
     z-index: 10;
+
+    @media (max-width: $bp-sm) {
+        top: calc(0.75rem + env(safe-area-inset-top, 0px));
+        right: calc(0.75rem + env(safe-area-inset-right, 0px));
+    }
     display: flex;
     align-items: center;
     justify-content: center;
@@ -226,4 +250,10 @@
     bottom: 0;
     background-color: var(--eui-bg);
     z-index: 1;
+
+    @media (max-width: $bp-sm) {
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+        padding-right: calc(1.25rem + env(safe-area-inset-right, 0px));
+        padding-left: calc(1.25rem + env(safe-area-inset-left, 0px));
+    }
 }

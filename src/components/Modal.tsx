@@ -183,7 +183,12 @@ const Modal: React.FC<ModalProps> = ({
                         </button>
                     </div>
                 )}
-                <div className={classNames('eui-modal-body', { 'eui-modal-body-no-title': !title })}>
+                <div
+                    className={classNames('eui-modal-body', {
+                        'eui-modal-body-no-title': !title,
+                        'eui-modal-body-no-footer': !footer,
+                    })}
+                >
                     {!title && (
                         <button
                             type="button"

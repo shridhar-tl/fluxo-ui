@@ -14,6 +14,12 @@ export class PluginRegistry {
 
     if (plugin.views) {
       for (const view of plugin.views) {
+        if (!view?.name) {
+          console.error(
+            `[fluxo-ui] Calendar plugin "${plugin.name}" supplied an invalid view definition; skipping it.`,
+          );
+          continue;
+        }
         this.viewMap.set(view.name, view);
       }
     }
