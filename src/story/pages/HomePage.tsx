@@ -32,6 +32,7 @@ const largeComponents = new Set([
     'Kanban Board',
     'Diff Viewer',
     'Docked Layout',
+    'PDF Toolkit',
     'Report Builder',
     'Report Builder Examples',
     'Report Viewer',
@@ -394,6 +395,12 @@ const dataReportComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Table', description: 'Data grid with sort, filter, pagination', path: '/components/table' },
     { title: 'Pivot Table', description: 'Aggregation, pivoting, expand/collapse', path: '/components/pivot-table' },
     { title: 'TreeView', description: 'Hierarchical tree with expand/collapse', path: '/components/tree-view' },
+    {
+        title: 'PDF Toolkit',
+        description: 'Generate PDF documents from code or from an existing HTML table',
+        path: '/components/pdf-toolkit',
+        badge: 'New',
+    },
     {
         title: 'Report Builder',
         description: 'Visual report designer with datasource plugins, parameters, and JSON export',

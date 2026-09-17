@@ -19,6 +19,8 @@ const libEntries: Record<string, string> = {
     'report-builder': resolve(__dirname, 'src/components/report-builder/index.ts'),
     'report-viewer': resolve(__dirname, 'src/components/report-builder/report-viewer-index.ts'),
     chat: resolve(__dirname, 'src/components/chat/index.ts'),
+    pdf: resolve(__dirname, 'src/pdf/index.ts'),
+    'pdf-html': resolve(__dirname, 'src/pdf/html/index.ts'),
     draw: resolve(__dirname, 'src/components/canvas-draw/index.ts'),
     utils: resolve(__dirname, 'src/utils/lib.ts'),
     hooks: resolve(__dirname, 'src/hooks/index.ts'),
@@ -105,6 +107,15 @@ const perSharedModuleName = (id: string): string | null => {
     return `shared/${dir}/${rel}`;
 };
 
+const perPdfModuleName = (id: string): string | null => {
+    const normalized = id.replace(/\\/g, '/');
+    const match = normalized.match(/\/src\/pdf\/(.+)\.(tsx|ts|jsx|js)$/);
+    if (!match) return null;
+    const rel = match[1].replace(/\/index$/, '');
+    if (rel === 'index') return null;
+    return `pdf/${rel}`;
+};
+
 const sharedVendors = ['date-fns'];
 
 const perVendorChunkName = (id: string): string | null => {
@@ -117,6 +128,7 @@ const perVendorChunkName = (id: string): string | null => {
 
 const componentChunkGroups = [
     { name: perIconChunkName, priority: 40 },
+    { name: perPdfModuleName, priority: 38 },
     { name: pureLogicFeatureLeafName, priority: 35 },
     { name: perComponentChunkName, priority: 30 },
     { name: perVendorChunkName, priority: 25 },

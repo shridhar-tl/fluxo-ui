@@ -81,6 +81,7 @@ const navSections: NavSection[] = [
             { label: 'Table', path: '/components/table' },
             { label: 'Pivot Table', path: '/components/pivot-table' },
             { label: 'TreeView', path: '/components/tree-view' },
+            { label: 'PDF Toolkit', path: '/components/pdf-toolkit' },
         ],
     },
     {

@@ -203,6 +203,7 @@ function Counter() {
 | Table          | Data grid with sort, filter, pagination                                            |
 | Pivot Table    | Aggregation, pivoting, expand/collapse                                             |
 | TreeView       | Hierarchical tree with expand/collapse                                             |
+| PDF Toolkit    | Generate PDF documents from code or from an existing HTML table                    |
 | Report Builder | Visual report designer with datasource plugins, parameters, and JSON export        |
 | Report Viewer  | Renders report definitions with sorting, drill-through, PDF export, and parameters |
 

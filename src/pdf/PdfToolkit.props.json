@@ -1,0 +1,328 @@
+{
+  "documentOptions": {
+    "unit": {
+      "type": "'pt' | 'mm' | 'cm' | 'in' | 'px' | 'pc'",
+      "default": "'pt'",
+      "description": "Measurement unit for every coordinate and size passed to the document"
+    },
+    "format": {
+      "type": "string | [number, number] | { width: number; height: number }",
+      "default": "'a4'",
+      "description": "Page size preset name (a0-a8, b3-b6, c3-c6, letter, legal, tabloid, ledger, executive, folio, statement, creditcard) or explicit dimensions"
+    },
+    "orientation": {
+      "type": "'portrait' | 'landscape'",
+      "default": "'portrait'",
+      "description": "Page orientation applied to the default page size"
+    },
+    "margin": {
+      "type": "number | number[] | { top, right, bottom, left }",
+      "default": "40pt",
+      "description": "Page margin used as the default content area for every page"
+    },
+    "metadata": {
+      "type": "DocumentMetadata",
+      "description": "Title, author, subject, keywords, creator and dates written to the document information dictionary"
+    },
+    "compress": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Compress page content streams"
+    },
+    "defaultFont": {
+      "type": "string",
+      "default": "'Helvetica'",
+      "description": "Font family used until setFont is called"
+    },
+    "defaultFontSize": {
+      "type": "number",
+      "default": "11",
+      "description": "Font size used until setFontSize is called"
+    },
+    "lineHeightFactor": {
+      "type": "number",
+      "default": "1.15",
+      "description": "Multiplier applied to the font size to derive line height"
+    },
+    "language": {
+      "type": "string",
+      "description": "Document language tag exposed to assistive technology"
+    }
+  },
+  "textOptions": {
+    "font": {
+      "type": "string",
+      "description": "Font family for this call, falling back to the document font"
+    },
+    "fontSize": {
+      "type": "number",
+      "description": "Font size in document units"
+    },
+    "bold": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Select the bold face of the family"
+    },
+    "italic": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Select the italic or oblique face of the family"
+    },
+    "color": {
+      "type": "ColorInput",
+      "description": "Text colour as a hex string, CSS colour function, named colour, packed integer or channel array"
+    },
+    "align": {
+      "type": "'left' | 'center' | 'right' | 'justify'",
+      "default": "'left'",
+      "description": "Horizontal alignment within the measure defined by maxWidth"
+    },
+    "anchor": {
+      "type": "'box' | 'point'",
+      "default": "'box'",
+      "description": "Whether x is the left edge of an alignment box or the alignment point itself"
+    },
+    "maxWidth": {
+      "type": "number",
+      "description": "Wrap the text to this measure"
+    },
+    "maxLines": {
+      "type": "number",
+      "description": "Truncate after this many lines and append the ellipsis marker"
+    },
+    "ellipsis": {
+      "type": "string",
+      "default": "'…'",
+      "description": "Marker appended when text is truncated"
+    },
+    "lineHeightFactor": {
+      "type": "number",
+      "description": "Line height multiplier for this call"
+    },
+    "characterSpacing": {
+      "type": "number",
+      "default": "0",
+      "description": "Extra space inserted between characters"
+    },
+    "wordSpacing": {
+      "type": "number",
+      "default": "0",
+      "description": "Extra space inserted at each space character"
+    },
+    "rotation": {
+      "type": "number",
+      "default": "0",
+      "description": "Rotation in degrees about the text origin"
+    },
+    "baseline": {
+      "type": "'alphabetic' | 'top' | 'middle' | 'bottom'",
+      "default": "'alphabetic'",
+      "description": "Which part of the glyph box the y coordinate refers to"
+    },
+    "underline": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Draw a rule beneath each line"
+    },
+    "strikeThrough": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Draw a rule through each line"
+    },
+    "opacity": {
+      "type": "number",
+      "default": "1",
+      "description": "Text opacity between 0 and 1"
+    }
+  },
+  "shapeStyle": {
+    "fillColor": {
+      "type": "ColorInput",
+      "description": "Interior colour; omit to leave the shape unfilled"
+    },
+    "strokeColor": {
+      "type": "ColorInput",
+      "description": "Outline colour; omit to leave the shape unstroked"
+    },
+    "lineWidth": {
+      "type": "number",
+      "description": "Outline width in document units"
+    },
+    "lineCap": {
+      "type": "'butt' | 'round' | 'square'",
+      "default": "'butt'",
+      "description": "How open path ends are drawn"
+    },
+    "lineJoin": {
+      "type": "'miter' | 'round' | 'bevel'",
+      "default": "'miter'",
+      "description": "How corners between segments are drawn"
+    },
+    "dashPattern": {
+      "type": "number[]",
+      "description": "Alternating dash and gap lengths"
+    },
+    "opacity": {
+      "type": "number",
+      "default": "1",
+      "description": "Opacity applied to both fill and stroke"
+    },
+    "radius": {
+      "type": "number",
+      "default": "0",
+      "description": "Corner radius, accepted by drawRectangle"
+    }
+  },
+  "gridOptions": {
+    "columns": {
+      "type": "ColumnDefinition[]",
+      "description": "Column keys, headers, widths and per-column styles; inferred from the data when omitted"
+    },
+    "head": {
+      "type": "RowDefinition[]",
+      "description": "Header rows; derived from the column headers when omitted"
+    },
+    "body": {
+      "type": "RowDefinition[]",
+      "description": "Body rows as arrays or as objects keyed by column key"
+    },
+    "foot": {
+      "type": "RowDefinition[]",
+      "description": "Footer rows; derived from the column footers when omitted"
+    },
+    "preset": {
+      "type": "'lined' | 'ruled' | 'zebra' | 'minimal' | 'boxed'",
+      "default": "'lined'",
+      "description": "Built-in visual treatment for the table"
+    },
+    "palette": {
+      "type": "GridPalette",
+      "description": "Colour overrides layered on top of the chosen preset"
+    },
+    "styles": {
+      "type": "SectionStyles",
+      "description": "Style overrides for all cells, a section, the stripe rows, or named columns"
+    },
+    "startY": {
+      "type": "number",
+      "description": "Vertical position where the table begins; defaults to the top margin"
+    },
+    "margin": {
+      "type": "number | number[] | EdgeInsets",
+      "description": "Margin used to compute the available width and page break threshold"
+    },
+    "width": {
+      "type": "number | 'full' | 'auto'",
+      "default": "'full'",
+      "description": "Target table width"
+    },
+    "align": {
+      "type": "'left' | 'center' | 'right'",
+      "default": "'left'",
+      "description": "Horizontal placement of the table within the content area"
+    },
+    "repeat": {
+      "type": "{ header?: 'everyPage' | 'firstPage' | 'never'; footer?: 'everyPage' | 'lastPage' | 'never' }",
+      "default": "{ header: 'everyPage', footer: 'lastPage' }",
+      "description": "Whether header and footer rows repeat when the table spans pages"
+    },
+    "minRowHeight": {
+      "type": "number",
+      "default": "0",
+      "description": "Minimum height applied to every row"
+    },
+    "outerBorderWidth": {
+      "type": "number",
+      "default": "0",
+      "description": "Width of a border drawn around the whole table"
+    },
+    "onCellBeforeDraw": {
+      "type": "(context: CellRenderContext) => boolean | void",
+      "description": "Called before each cell is painted; mutate the style or return false to skip the cell"
+    },
+    "onCellAfterDraw": {
+      "type": "(context: CellRenderContext) => void",
+      "description": "Called after each cell is painted, for drawing decorations over it"
+    },
+    "onPageStart": {
+      "type": "(context: PageRenderContext) => void",
+      "description": "Called when the table starts laying out on a page"
+    },
+    "onPageEnd": {
+      "type": "(context: PageRenderContext) => void",
+      "description": "Called when the table finishes on a page"
+    }
+  },
+  "extractOptions": {
+    "includeHidden": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Include rows and cells whose computed style hides them"
+    },
+    "inheritStyles": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Carry the table's computed CSS into the generated document"
+    },
+    "ignoreColors": {
+      "type": "boolean",
+      "default": "false",
+      "description": "When inheriting styles, keep the spacing, alignment and borders but leave the page's colours behind so the table prints in the preset's palette"
+    },
+    "view": {
+      "type": "Window",
+      "description": "Window used to resolve computed styles; defaults to the table's own view"
+    },
+    "skipColumns": {
+      "type": "number[]",
+      "description": "Column indices to leave out of the export"
+    },
+    "transformText": {
+      "type": "(text: string, element: HTMLTableCellElement) => string",
+      "description": "Rewrite each cell's text before it is measured"
+    }
+  },
+  "columnDefinition": {
+    "key": {
+      "type": "string | number",
+      "description": "Identifies the column; object rows are read by this key and array rows by position"
+    },
+    "header": {
+      "type": "CellValue",
+      "description": "Header cell content when no explicit head rows are supplied"
+    },
+    "footer": {
+      "type": "CellValue",
+      "description": "Footer cell content when no explicit foot rows are supplied"
+    },
+    "width": {
+      "type": "number | 'auto' | 'shrink'",
+      "default": "'auto'",
+      "description": "Fixed width in document units, or let the solver size the column from its content"
+    },
+    "minWidth": {
+      "type": "number",
+      "description": "Lower bound the solver may not shrink past"
+    },
+    "maxWidth": {
+      "type": "number",
+      "description": "Upper bound the solver may not grow past"
+    },
+    "style": {
+      "type": "Partial<CellStyle>",
+      "description": "Styles for the whole column — header, body and footer cells alike. Set align here to align a column's header with its values"
+    },
+    "headerStyle": {
+      "type": "Partial<CellStyle>",
+      "description": "Overrides layered on top of style for this column's header cells only"
+    },
+    "footerStyle": {
+      "type": "Partial<CellStyle>",
+      "description": "Overrides layered on top of style for this column's footer cells only"
+    },
+    "format": {
+      "type": "(value: CellValue, rowIndex: number) => string",
+      "description": "Formats each body value before it is measured and drawn"
+    }
+  }
+}

@@ -64,6 +64,8 @@ function fluxoUiSource(options: FluxoUiSourcePluginOptions = {}): Plugin {
             aliases['fluxo-ui/report-builder'] = path.resolve(resolvedSourcePath, 'components/report-builder/index.ts');
             aliases['fluxo-ui/report-viewer'] = path.resolve(resolvedSourcePath, 'components/report-builder/report-viewer-index.ts');
             aliases['fluxo-ui/chat'] = path.resolve(resolvedSourcePath, 'components/chat/index.ts');
+            aliases['fluxo-ui/pdf/html'] = path.resolve(resolvedSourcePath, 'pdf/html/index.ts');
+            aliases['fluxo-ui/pdf'] = path.resolve(resolvedSourcePath, 'pdf/index.ts');
             aliases['fluxo-ui/styles'] = path.resolve(resolvedSourcePath, '../dist/styles/components.css');
             aliases['fluxo-ui/themes/base'] = path.resolve(resolvedSourcePath, 'styles/base-theme.css');
             for (const theme of ['amber', 'blue', 'emerald', 'fuchsia', 'green', 'indigo', 'lara', 'orange', 'purple', 'rose', 'slate', 'teal']) {

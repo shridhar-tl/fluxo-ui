@@ -48,6 +48,7 @@ const SplitterPage = React.lazy(() => import('./story/pages/splitter/SplitterPag
 const TablePage = React.lazy(() => import('./story/pages/table/TablePage'));
 const GanttChartPage = React.lazy(() => import('./story/pages/gantt-chart/GanttChartPage'));
 const KanbanBoardPage = React.lazy(() => import('./story/pages/kanban-board/KanbanBoardPage'));
+const PdfToolkitPage = React.lazy(() => import('./story/pages/pdf-toolkit/PdfToolkitPage'));
 const CanvasDrawPage = React.lazy(() => import('./story/pages/canvas-draw/CanvasDrawPage'));
 const ProgressBarPage = React.lazy(() => import('./story/pages/progress-bar/ProgressBarPage'));
 const StepperPage = React.lazy(() => import('./story/pages/stepper/StepperPage'));
@@ -437,6 +438,14 @@ const App: React.FC = () => {
                         element={
                             <LayoutWrapper>
                                 <KanbanBoardPage />
+                            </LayoutWrapper>
+                        }
+                    />
+                    <Route
+                        path="/components/pdf-toolkit"
+                        element={
+                            <LayoutWrapper>
+                                <PdfToolkitPage />
                             </LayoutWrapper>
                         }
                     />
