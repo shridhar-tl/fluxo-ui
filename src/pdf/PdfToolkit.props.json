@@ -277,6 +277,14 @@
       "type": "number[]",
       "description": "Column indices to leave out of the export"
     },
+    "includeRow": {
+      "type": "(row: HTMLTableRowElement) => boolean",
+      "description": "Return false to leave a row out of the export"
+    },
+    "includeCell": {
+      "type": "(cell: HTMLTableCellElement) => boolean",
+      "description": "Return false to leave a cell out of the export"
+    },
     "transformText": {
       "type": "(text: string, element: HTMLTableCellElement) => string",
       "description": "Rewrite each cell's text before it is measured"

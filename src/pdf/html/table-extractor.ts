@@ -7,6 +7,8 @@ export interface ExtractOptions {
     ignoreColors?: boolean;
     view?: Window;
     skipColumns?: number[];
+    includeRow?: (row: HTMLTableRowElement) => boolean;
+    includeCell?: (cell: HTMLTableCellElement) => boolean;
     transformText?: (text: string, element: HTMLTableCellElement) => string;
 }
 
@@ -110,6 +112,7 @@ function extractRow(
     view: Window,
 ): CellSpec[] | null {
     if (!options.includeHidden && !isElementVisible(row, view)) return null;
+    if (options.includeRow && !options.includeRow(row)) return null;
 
     const cells: CellSpec[] = [];
     const skip = new Set(options.skipColumns ?? []);
@@ -118,6 +121,7 @@ function extractRow(
         const cell = row.cells[index];
         if (skip.has(index)) continue;
         if (!options.includeHidden && !isElementVisible(cell, view)) continue;
+        if (options.includeCell && !options.includeCell(cell)) continue;
 
         const rawText = readCellText(cell);
         const text = options.transformText ? options.transformText(rawText, cell) : rawText;
