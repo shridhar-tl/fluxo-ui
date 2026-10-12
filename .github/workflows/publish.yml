@@ -30,6 +30,9 @@ jobs:
                   node-version: '24'
                   registry-url: 'https://registry.npmjs.org'
 
+            - name: Update npm for trusted publishing
+              run: npm install -g npm@latest
+
             - name: Install dependencies
               run: npm install --no-package-lock --force
 
@@ -44,13 +47,9 @@ jobs:
             - name: Publish library to npm
               if: ${{ inputs.target == 'both' || inputs.target == 'library' }}
               working-directory: ./dist
-              run: npm publish --access public
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: npm publish --access public --provenance
 
             - name: Publish CLI to npm
               if: ${{ inputs.target == 'both' || inputs.target == 'cli' }}
               working-directory: ./cli
-              run: npm publish --access public
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: npm publish --access public --provenance
