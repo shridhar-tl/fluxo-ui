@@ -188,6 +188,7 @@ function Button({
     const combinedDisabled = disabled || loading || remainingTime !== null;
     const isIconOnly = Boolean(!label && !children && (LeftIcon || RightIcon));
     const isSolid = layout !== 'plain' && layout !== 'outlined';
+    const showLoadingMessage = Boolean(loading && loadingMessage && !isIconOnly);
 
     const buttonClasses = classNames(
         'eui-button',
@@ -210,14 +211,17 @@ function Button({
             {loading && renderSpinner(size)}
             {!loading && LeftIcon && renderIcon(LeftIcon, size)}
             {children}
-            {(label || remainingTime !== null) && (
-                <span className="eui-button-label">
-                    {label}
-                    {remainingTime !== null && ` (${remainingTime}s)`}
-                </span>
+            {showLoadingMessage ? (
+                <span className="eui-button-label">{loadingMessage}</span>
+            ) : (
+                (label || remainingTime !== null) && (
+                    <span className="eui-button-label">
+                        {label}
+                        {remainingTime !== null && ` (${remainingTime}s)`}
+                    </span>
+                )
             )}
             {!loading && RightIcon && renderIcon(RightIcon, size)}
-            {loading && loadingMessage && !isIconOnly && <span className="eui-button-label">{loadingMessage}</span>}
             {loading && loadingMessage && (
                 <span className="eui-visually-hidden" aria-live="polite" role="status">
                     {loadingMessage}

@@ -252,7 +252,7 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
                     groups={groups}
                     onSelect={(item) => handleSelect(item)}
                     selectedIndex={selectedIndex}
-                    renderItem={renderItem}
+                    renderItemContent={renderItem}
                     filter={searchable ? filterValue : ''}
                     loading={loading}
                     emptyMessage={emptyMessage}

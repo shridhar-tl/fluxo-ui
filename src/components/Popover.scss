@@ -271,6 +271,15 @@
     white-space: nowrap;
 }
 
+.eui-popover-item-content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
+}
+
 .eui-popover-item-check {
     width: 0.875rem;
     height: 0.875rem;

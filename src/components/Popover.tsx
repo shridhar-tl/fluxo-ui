@@ -27,6 +27,7 @@ interface PopoverProps extends BaseComponentProps {
     onSelect: (item: ListItem, index: number) => void;
     selectedIndex?: number;
     renderItem?: (item: ListItem, index: number, isSelected: boolean, isHighlighted: boolean) => React.ReactNode;
+    renderItemContent?: (item: ListItem, index: number, isSelected: boolean, isHighlighted: boolean) => React.ReactNode;
     maxHeight?: string;
     width?: string;
     filter?: string;
@@ -50,6 +51,7 @@ export const Popover = ({
     onSelect,
     selectedIndex = -1,
     renderItem,
+    renderItemContent,
     maxHeight = '300px',
     width,
     filter = '',
@@ -255,8 +257,14 @@ export const Popover = ({
                 onClick={() => !item.disabled && onSelect(item, index)}
                 onMouseEnter={() => !item.disabled && setHighlightedIndex(index)}
             >
-                {!!itemIcon && <Icon icon={itemIcon} className="eui-popover-item-icon" />}
-                <span className="eui-popover-item-label">{item.label}</span>
+                {renderItemContent ? (
+                    <span className="eui-popover-item-content">{renderItemContent(item, index, isSelected, isHighlighted)}</span>
+                ) : (
+                    <>
+                        {!!itemIcon && <Icon icon={itemIcon} className="eui-popover-item-icon" />}
+                        <span className="eui-popover-item-label">{item.label}</span>
+                    </>
+                )}
                 {isSelected && (
                     <svg
                         className="eui-popover-item-check"

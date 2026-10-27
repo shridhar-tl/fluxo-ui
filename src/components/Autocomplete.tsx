@@ -224,7 +224,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                         items={items}
                         onSelect={(item) => handleSelect(item)}
                         selectedIndex={selectedIndex}
-                        renderItem={renderItem}
+                        renderItemContent={renderItem}
                         filter={currentValue}
                         loading={loading}
                         emptyMessage={emptyMessage}

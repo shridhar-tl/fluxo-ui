@@ -62,7 +62,7 @@
     },
     "renderItem": {
       "type": "function",
-      "description": "Custom render function for dropdown items: (item, index, isSelected, isHighlighted) => ReactNode"
+      "description": "Custom content for each dropdown item: (item, index, isSelected, isHighlighted) => ReactNode. The item keeps its standard styling, hover, keyboard highlight and click-to-select."
     },
     "renderValue": {
       "type": "function",

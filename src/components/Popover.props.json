@@ -36,7 +36,11 @@
     },
     "renderItem": {
       "type": "(item, index, isSelected, isHighlighted) => ReactNode",
-      "description": "Custom render function for each list item."
+      "description": "Renders the whole row of each list item, including its click handling. Use renderItemContent to keep the standard row behaviour."
+    },
+    "renderItemContent": {
+      "type": "(item, index, isSelected, isHighlighted) => ReactNode",
+      "description": "Custom content inside the standard row. The row keeps its styling, hover, keyboard highlight, selected check and click-to-select."
     },
     "maxHeight": {
       "type": "string",

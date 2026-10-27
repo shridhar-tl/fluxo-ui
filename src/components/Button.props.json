@@ -52,7 +52,7 @@
     "loadingMessage": {
       "type": "string",
       "default": "'Loading...'",
-      "description": "Message to display while loading (also announced via aria-live for screen readers)"
+      "description": "Message shown in place of the label while loading (also announced via aria-live for screen readers)"
     },
     "waitFor": {
       "type": "number",
