@@ -272,6 +272,7 @@ export interface CalendarConfig {
   weekText: string;
   fixedWeekCount: boolean;
   expandRows: boolean;
+  dayMaxEntries: number | boolean;
   multiMonthCount: number;
   nowIndicatorInterval: number;
   dayPopoverFormat: string;
@@ -349,6 +350,7 @@ export interface CalendarProps {
   weekText?: string;
   fixedWeekCount?: boolean;
   expandRows?: boolean;
+  dayMaxEntries?: number | boolean;
   multiMonthCount?: number;
   nowIndicatorInterval?: number;
   dayPopoverFormat?: string;

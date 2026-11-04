@@ -62,6 +62,7 @@ export const defaultConfig: CalendarConfig = {
   weekText: '',
   fixedWeekCount: true,
   expandRows: false,
+  dayMaxEntries: 3,
   multiMonthCount: 3,
   nowIndicatorInterval: 60000,
   dayPopoverFormat: 'EEEE, MMMM d',

@@ -225,6 +225,11 @@
       "default": "false",
       "description": "Expand month grid rows to fill available space."
     },
+    "dayMaxEntries": {
+      "type": "number | boolean",
+      "default": "3",
+      "description": "Maximum entries shown per day cell in month view before collapsing the rest into a \"+N more\" link. true fits as many as the cell height allows, false shows all."
+    },
     "multiMonthCount": {
       "type": "number",
       "default": "3",

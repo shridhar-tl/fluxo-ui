@@ -4,7 +4,7 @@ import type { ViewProps, CalendarViewDefinition, SelectionState, DragState } fro
 import {
   getDaysInRange, getWeekRange, getDayRange,
   format, addWeeks, subWeeks, addDays, subDays,
-  isSameMonth, isSameYear, dateFromMinuteOffset,
+  isSameMonth, isSameYear, dateFromMinuteOffset, getDragRange,
 } from '../../calendar-utils';
 import { useNowIndicator } from '../../hooks';
 import { useDragMove } from '../../interactions/useDragMove';
@@ -41,10 +41,7 @@ const TimeGrid: React.FC<TimeGridProps> = ({
   const onDragEnd = useCallback((state: DragState) => {
     const entry = entries.find(e => e.id === state.entryId);
     if (!entry) return;
-    const minuteDelta = state.offsetMinutes;
-    const dayDelta = state.dayOffset * 24 * 60 * 60 * 1000;
-    const newStart = new Date(state.originalStart.getTime() + minuteDelta * 60000 + dayDelta);
-    const newEnd = new Date(state.originalEnd.getTime() + minuteDelta * 60000 + dayDelta);
+    const { start: newStart, end: newEnd } = getDragRange(state);
     const syntheticEvent = new Event('dragend') as unknown as React.SyntheticEvent;
     const modifiers = state.modifiers || { alt: false, ctrl: false, shift: false, meta: false };
     onEntryDrop?.({ entry, newStart, newEnd, modifiers }, syntheticEvent);
@@ -60,13 +57,7 @@ const TimeGrid: React.FC<TimeGridProps> = ({
   const onResizeEnd = useCallback((state: DragState) => {
     const entry = entries.find(e => e.id === state.entryId);
     if (!entry) return;
-    const minuteDelta = state.offsetMinutes;
-    const newStart = state.edge === 'top'
-      ? new Date(state.originalStart.getTime() + minuteDelta * 60000)
-      : state.originalStart;
-    const newEnd = state.edge === 'bottom'
-      ? new Date(state.originalEnd.getTime() + minuteDelta * 60000)
-      : state.originalEnd;
+    const { start: newStart, end: newEnd } = getDragRange(state);
     const syntheticEvent = new Event('resizeend') as unknown as React.SyntheticEvent;
     onEntryResize?.({ entry, newStart, newEnd, edge: state.edge ?? 'bottom', modifiers: { alt: false, ctrl: false, shift: false, meta: false } }, syntheticEvent);
   }, [entries, onEntryResize]);

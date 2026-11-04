@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import cn from 'classnames';
 import { format, isToday, isSameMonth } from 'date-fns';
 import { ViewMode } from '../../calendar-types';
@@ -17,9 +17,11 @@ interface MonthGridCellProps {
   onDateDoubleClick?: (date: Date, event: React.MouseEvent) => void;
   onEntryClick?: (entry: ResolvedCalendarEntry, event: React.MouseEvent) => void;
   onEntryContextMenu?: (entry: ResolvedCalendarEntry, event: React.MouseEvent) => void;
+  onEntryPointerDown?: (entry: ResolvedCalendarEntry, event: React.PointerEvent) => void;
+  isDropTarget?: boolean;
   showNonCurrentDates: boolean;
   navLinks: boolean;
-  maxVisible?: number;
+  maxVisible?: number | boolean;
   dateBackgrounds?: DateBackground[];
   dateRangeBackgrounds?: DateRangeBackground[];
   loadingRanges?: DateLoadingRange[];
@@ -30,17 +32,48 @@ interface MonthGridCellProps {
 const MonthGridCell: React.FC<MonthGridCellProps> = ({
   date, currentMonth, entries, renderEntry,
   onDateClick, onDateDoubleClick, onEntryClick, onEntryContextMenu,
+  onEntryPointerDown, isDropTarget,
   showNonCurrentDates, navLinks, maxVisible = 3,
   dateBackgrounds, dateRangeBackgrounds, loadingRanges, businessHours,
   moreLinkClick,
 }) => {
   const { api } = useCalendarContext();
+  const entriesRef = useRef<HTMLDivElement>(null);
+  const [fitCount, setFitCount] = useState<number | null>(null);
+  const autoFit = maxVisible === true;
   const isCurrentMonth = isSameMonth(date, currentMonth);
   const today = isToday(date);
   const dayNumber = format(date, 'd');
-  const hiddenCount = Math.max(0, entries.length - maxVisible);
-  const visibleEntries = entries.slice(0, maxVisible);
-  const hiddenEntries = entries.slice(maxVisible);
+
+  useLayoutEffect(() => {
+    const container = entriesRef.current;
+    if (!autoFit || !container) return;
+
+    const measure = () => {
+      const firstRow = container.firstElementChild as HTMLElement | null;
+      if (!firstRow) return;
+      const gap = parseFloat(getComputedStyle(container).rowGap) || 0;
+      const rowHeight = firstRow.offsetHeight + gap;
+      if (rowHeight <= 0) return;
+      setFitCount(Math.floor((container.clientHeight + gap) / rowHeight));
+    };
+
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [autoFit, entries.length]);
+
+  const limit = maxVisible === false ? entries.length
+    : autoFit ? (fitCount ?? entries.length)
+      : maxVisible;
+  const visibleCount = entries.length <= limit ? entries.length
+    : autoFit ? Math.max(0, limit - 1)
+      : limit;
+  const hiddenCount = entries.length - visibleCount;
+  const visibleEntries = entries.slice(0, visibleCount);
+  const hiddenEntries = entries.slice(visibleCount);
   const bgColor = getDateBackgroundColor(date, dateBackgrounds, dateRangeBackgrounds);
   const isNonBusinessDay = businessHours ? !businessHours.daysOfWeek.includes(getDay(date)) : false;
   const loading = isDateLoading(date, loadingRanges);
@@ -66,12 +99,14 @@ const MonthGridCell: React.FC<MonthGridCellProps> = ({
         'eui-cal-month-cell-other': !isCurrentMonth,
         'eui-cal-month-cell-nonbusiness': isNonBusinessDay,
         'eui-cal-month-cell-loading': loading,
+        'eui-cal-month-cell-drop-target': isDropTarget,
       })}
       style={cellStyle}
       onClick={handleDateClick}
       onDoubleClick={handleDoubleClick}
       role="gridcell"
       aria-label={format(date, 'EEEE, MMMM d, yyyy')}
+      data-date={format(date, 'yyyy-MM-dd')}
     >
       <div className="eui-cal-month-cell-header">
         {navLinks ? (
@@ -95,7 +130,7 @@ const MonthGridCell: React.FC<MonthGridCellProps> = ({
           <div className="eui-cal-loader-bar" />
         </div>
       ) : (
-        <div className="eui-cal-month-cell-entries">
+        <div className="eui-cal-month-cell-entries" ref={entriesRef}>
           {visibleEntries.map(entry => (
             <CalendarEntry
               key={entry.id}
@@ -113,6 +148,7 @@ const MonthGridCell: React.FC<MonthGridCellProps> = ({
               renderEntry={renderEntry}
               onClick={onEntryClick}
               onContextMenu={onEntryContextMenu}
+              onPointerDown={onEntryPointerDown}
             />
           ))}
           {hiddenCount > 0 && (

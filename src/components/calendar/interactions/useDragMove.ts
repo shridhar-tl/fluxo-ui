@@ -1,24 +1,12 @@
 import { useCallback, useRef, useEffect } from 'react';
 import type { ResolvedCalendarEntry, CalendarConfig, DragState } from '../calendar-types';
-import { snapToSlot, pixelsToMinuteOffset } from '../calendar-utils';
+import { snapToSlot, pixelsToMinuteOffset, isMoveAllowed } from '../calendar-utils';
 
 interface UseDragMoveOptions {
   config: CalendarConfig;
   entries: ResolvedCalendarEntry[];
   onDragEnd?: (state: DragState) => void;
   setDragState: (state: DragState | null) => void;
-}
-
-function wouldOverlap(
-  state: DragState, entries: ResolvedCalendarEntry[]
-): boolean {
-  const dayDelta = state.dayOffset * 24 * 60 * 60 * 1000;
-  const newStart = new Date(state.originalStart.getTime() + state.offsetMinutes * 60000 + dayDelta);
-  const newEnd = new Date(state.originalEnd.getTime() + state.offsetMinutes * 60000 + dayDelta);
-  return entries.some(e => {
-    if (e.id === state.entryId) return false;
-    return newStart < e.end && newEnd > e.start;
-  });
 }
 
 export function useDragMove(options: UseDragMoveOptions) {
@@ -91,24 +79,7 @@ export function useDragMove(options: UseDragMoveOptions) {
       if (!state || state.type !== 'move') return;
 
       if (isDragging.current && (state.offsetMinutes !== 0 || state.dayOffset !== 0)) {
-        const cfg = configRef.current;
-        let cancelled = false;
-
-        if (!cfg.eventOverlap && wouldOverlap(state, entriesRef.current)) {
-          cancelled = true;
-        }
-
-        if (!cancelled && cfg.eventAllow) {
-          const dayDelta = state.dayOffset * 24 * 60 * 60 * 1000;
-          const newStart = new Date(state.originalStart.getTime() + state.offsetMinutes * 60000 + dayDelta);
-          const newEnd = new Date(state.originalEnd.getTime() + state.offsetMinutes * 60000 + dayDelta);
-          const entry = entriesRef.current.find(e => e.id === state.entryId);
-          if (entry && !cfg.eventAllow({ start: newStart, end: newEnd, entry })) {
-            cancelled = true;
-          }
-        }
-
-        if (!cancelled) {
+        if (isMoveAllowed(state, entriesRef.current, configRef.current)) {
           state.modifiers = { alt: e.altKey, ctrl: e.ctrlKey, shift: e.shiftKey, meta: e.metaKey };
           onDragEndRef.current?.(state);
         }

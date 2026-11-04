@@ -110,7 +110,8 @@ const TimeGridColumn: React.FC<TimeGridColumnProps> = ({
             date={date}
             hour={slot.hour}
             minute={slot.minute}
-            isBusinessHour={isBusinessHour(date, slot.hour, config.businessHours)}
+            isHourEnd={(slot.minute + config.slotDuration) % 60 === 0}
+            isBusinessHour={isBusinessHour(date, slot.hour * 60 + slot.minute, config.businessHours)}
             isBanded={config.rowBanding && i % 2 === 1}
             onPointerDown={onSlotPointerDown}
             onExternalDrop={onSlotExternalDrop}

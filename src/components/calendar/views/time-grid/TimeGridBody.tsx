@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useEffect } from 'react';
 import cn from 'classnames';
 import type { ResolvedCalendarEntry, CalendarConfig, EntryRenderer, DateBackground, DateRangeBackground } from '../../calendar-types';
-import { formatHour, getEntriesForDay, getTimedEntries, format as fnsFormat, setHours, setMinutes, getHours, getMinutes as getMinutesFn } from '../../calendar-utils';
+import { formatHour, getEntriesForDay, getTimeSlots, getTimedEntries, format as fnsFormat, setHours, setMinutes, getHours, getMinutes as getMinutesFn } from '../../calendar-utils';
 import TimeGridColumn from './TimeGridColumn';
 
 interface TimeGridBodyProps {
@@ -62,13 +62,10 @@ const TimeGridBody: React.FC<TimeGridBodyProps> = ({
     return { start: minHour, end: maxHour };
   }, [entriesByDay, config.visibleHoursStart, config.visibleHoursEnd]);
 
-  const hourSlots = useMemo(() => {
-    const slots: number[] = [];
-    for (let h = effectiveHours.start; h < effectiveHours.end; h++) {
-      slots.push(h);
-    }
-    return slots;
-  }, [effectiveHours]);
+  const gutterSlots = useMemo(
+    () => getTimeSlots(effectiveHours.start, effectiveHours.end, config.slotDuration),
+    [effectiveHours, config.slotDuration]
+  );
 
   const labelInterval = useMemo(() => {
     const interval = config.slotLabelInterval;
@@ -106,38 +103,34 @@ const TimeGridBody: React.FC<TimeGridBodyProps> = ({
     <div className="eui-cal-time-body" ref={scrollRef}>
       <div className="eui-cal-time-body-inner">
         <div className="eui-cal-time-gutter">
-          {hourSlots.map(hour => {
-            const slotsInHour = 60 / config.slotDuration;
-            return Array.from({ length: slotsInHour }).map((_, slotIdx) => {
-              const minute = slotIdx * config.slotDuration;
-              const showLabel = minute % labelInterval === 0;
-              const labelDate = setMinutes(setHours(new Date(), hour), minute);
-              const text = !showLabel
-                ? ''
-                : config.slotLabelFormat
-                  ? fnsFormat(labelDate, config.slotLabelFormat)
-                  : (minute === 0
-                      ? formatHour(hour, config.timeFormat)
-                      : fnsFormat(labelDate, config.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'));
-              const isSub = showLabel && minute !== 0;
-              return (
-                <div
-                  key={`${hour}-${minute}`}
-                  className="eui-cal-time-gutter-cell"
-                  style={{ height: `${config.slotHeight}px` }}
-                >
-                  {showLabel && (
-                    <span
-                      className={cn('eui-cal-time-gutter-label', {
-                        'eui-cal-time-gutter-label-sub': isSub,
-                      })}
-                    >
-                      {text}
-                    </span>
-                  )}
-                </div>
-              );
-            });
+          {gutterSlots.map(({ hour, minute }) => {
+            const showLabel = minute % labelInterval === 0;
+            const labelDate = setMinutes(setHours(new Date(), hour), minute);
+            const text = !showLabel
+              ? ''
+              : config.slotLabelFormat
+                ? fnsFormat(labelDate, config.slotLabelFormat)
+                : (minute === 0
+                    ? formatHour(hour, config.timeFormat)
+                    : fnsFormat(labelDate, config.timeFormat === '12h' ? 'h:mm a' : 'HH:mm'));
+            const isSub = showLabel && minute !== 0;
+            return (
+              <div
+                key={`${hour}-${minute}`}
+                className="eui-cal-time-gutter-cell"
+                style={{ height: `${config.slotHeight}px` }}
+              >
+                {showLabel && (
+                  <span
+                    className={cn('eui-cal-time-gutter-label', {
+                      'eui-cal-time-gutter-label-sub': isSub,
+                    })}
+                  >
+                    {text}
+                  </span>
+                )}
+              </div>
+            );
           })}
         </div>
         <div className="eui-cal-time-columns">

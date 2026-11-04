@@ -310,7 +310,7 @@
   cursor: pointer;
   transition: background-color $cal-transition;
 
-  &.eui-cal-time-slot-hour {
+  &.eui-cal-time-slot-hour-end {
     border-bottom-color: var(--eui-border);
   }
 

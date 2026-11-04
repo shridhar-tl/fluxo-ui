@@ -1,17 +1,22 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef } from 'react';
 import cn from 'classnames';
 import { ViewMode } from '../../calendar-types';
-import type { ViewProps, CalendarViewDefinition } from '../../calendar-types';
-import { getDaysInRange, getEntriesForDay, getMonthRange, format, addMonths, subMonths, addDays, getWeekNumber } from '../../calendar-utils';
+import type { ViewProps, CalendarViewDefinition, DragState } from '../../calendar-types';
+import { getDaysInRange, getEntriesForDay, getMonthRange, format, addMonths, subMonths, addDays, getWeekNumber, getDragRange } from '../../calendar-utils';
+import { useCalendarContext } from '../../CalendarContext';
+import { useDayGridDrag } from '../../interactions/useDayGridDrag';
 import MonthGridHeader from './MonthGridHeader';
 import MonthGridCell from './MonthGridCell';
 
 const MonthGrid: React.FC<ViewProps> = ({
   currentDate, entries, dateRange, config,
   onEntryClick, onEntryContextMenu, onDateClick, onDateDoubleClick,
-  onEntryCreate,
+  onEntryCreate, onEntryDrop,
   renderEntry, dateBackgrounds, dateRangeBackgrounds, loadingRanges,
 }) => {
+  const { setDragState } = useCalendarContext();
+  const gridRef = useRef<HTMLDivElement>(null);
+
   const days = useMemo(
     () => getDaysInRange(dateRange, config.hiddenDays),
     [dateRange, config.hiddenDays]
@@ -44,11 +49,28 @@ const MonthGrid: React.FC<ViewProps> = ({
     for (const day of allDays) {
       const key = format(day, 'yyyy-MM-dd');
       if (!map.has(key)) {
-        map.set(key, getEntriesForDay(entries, day));
+        map.set(key, getEntriesForDay(entries, day, config.entryOrder));
       }
     }
     return map;
-  }, [entries, weeks]);
+  }, [entries, weeks, config.entryOrder]);
+
+  const handleDrop = useCallback((state: DragState) => {
+    const entry = entries.find(e => e.id === state.entryId);
+    if (!entry) return;
+    const { start: newStart, end: newEnd } = getDragRange(state);
+    const syntheticEvent = new Event('dragend') as unknown as React.SyntheticEvent;
+    const modifiers = state.modifiers || { alt: false, ctrl: false, shift: false, meta: false };
+    onEntryDrop?.({ entry, newStart, newEnd, modifiers }, syntheticEvent);
+  }, [entries, onEntryDrop]);
+
+  const { handlePointerDown, dropTargetDate } = useDayGridDrag({
+    config,
+    entries,
+    containerRef: gridRef,
+    setDragState,
+    onDrop: handleDrop,
+  });
 
   const handleDoubleClick = useCallback((date: Date, event: React.MouseEvent) => {
     onDateDoubleClick?.(date, event);
@@ -68,7 +90,13 @@ const MonthGrid: React.FC<ViewProps> = ({
   const gridStyle = { '--eui-cal-day-cols': cols } as React.CSSProperties;
 
   return (
-    <div className="eui-cal-month-grid" role="grid" aria-label="Month view" style={gridStyle}>
+    <div
+      ref={gridRef}
+      className={cn('eui-cal-month-grid', { 'eui-cal-month-grid-dragging': !!dropTargetDate })}
+      role="grid"
+      aria-label="Month view"
+      style={gridStyle}
+    >
       <MonthGridHeader
         firstDayOfWeek={config.firstDayOfWeek}
         hiddenDays={config.hiddenDays}
@@ -103,6 +131,9 @@ const MonthGrid: React.FC<ViewProps> = ({
                   onDateDoubleClick={handleDoubleClick}
                   onEntryClick={onEntryClick}
                   onEntryContextMenu={onEntryContextMenu}
+                  onEntryPointerDown={handlePointerDown}
+                  isDropTarget={dropTargetDate === key}
+                  maxVisible={config.dayMaxEntries}
                   showNonCurrentDates={config.showNonCurrentDates}
                   navLinks={config.navLinks}
                   dateBackgrounds={dateBackgrounds}

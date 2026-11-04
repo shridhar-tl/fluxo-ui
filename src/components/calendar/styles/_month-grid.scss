@@ -72,6 +72,8 @@
 }
 
 .eui-cal-month-cell {
+  display: flex;
+  flex-direction: column;
   border-right: 1px solid var(--eui-border-subtle);
   padding: 0.25rem;
   min-height: 100px;
@@ -103,6 +105,17 @@
   &.eui-cal-month-cell-hidden {
     visibility: hidden;
   }
+
+  &.eui-cal-month-cell-drop-target {
+    background: var(--eui-primary-subtle);
+    outline: 2px dashed var(--eui-primary);
+    outline-offset: -2px;
+  }
+}
+
+.eui-cal-month-grid-dragging,
+.eui-cal-month-grid-dragging * {
+  cursor: grabbing;
 }
 
 .eui-cal-month-header-weeknum {
@@ -169,8 +182,15 @@
 .eui-cal-month-cell-entries {
   display: flex;
   flex-direction: column;
+  flex: 1;
   gap: 1px;
   min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+
+  > * {
+    flex-shrink: 0;
+  }
 }
 
 .eui-cal-month-cell-more {

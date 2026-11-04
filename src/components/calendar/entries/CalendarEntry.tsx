@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { ResolvedCalendarEntry, EntryRenderContext, PositionedEntry, EntryRenderer } from '../calendar-types';
+import { getDragRange } from '../calendar-utils';
+import { useCalendarContext } from '../CalendarContext';
 import DefaultEntry from './DefaultEntry';
 import EntryContainer from './EntryContainer';
 
@@ -25,9 +27,17 @@ const CalendarEntryComponent: React.FC<CalendarEntryProps> = ({
   renderEntry, onClick, onContextMenu, onMouseEnter, onMouseLeave,
   onPointerDown, onResizePointerDown, showResizeHandles,
 }) => {
+  const { dragState } = useCalendarContext();
+  const activeDrag = dragState?.entryId === entry.id ? dragState : null;
+
+  const displayEntry = useMemo<ResolvedCalendarEntry>(
+    () => (activeDrag ? { ...entry, ...getDragRange(activeDrag) } : entry),
+    [entry, activeDrag]
+  );
+
   const content = renderEntry
-    ? renderEntry(entry, context)
-    : <DefaultEntry entry={entry} context={context} />;
+    ? renderEntry(displayEntry, context)
+    : <DefaultEntry entry={displayEntry} context={context} />;
 
   return (
     <EntryContainer

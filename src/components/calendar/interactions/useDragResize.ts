@@ -1,6 +1,6 @@
 import { useCallback, useRef, useEffect } from 'react';
 import type { ResolvedCalendarEntry, CalendarConfig, DragState } from '../calendar-types';
-import { snapToSlot, pixelsToMinuteOffset } from '../calendar-utils';
+import { snapToSlot, pixelsToMinuteOffset, getDragRange } from '../calendar-utils';
 
 interface UseDragResizeOptions {
   config: CalendarConfig;
@@ -56,15 +56,7 @@ export function useDragResize(options: UseDragResizeOptions) {
 
       if (isDragging.current && state.offsetMinutes !== 0) {
         const cfg = configRef.current;
-        let newStart = state.originalStart;
-        let newEnd = state.originalEnd;
-
-        if (state.edge === 'top') {
-          newStart = new Date(state.originalStart.getTime() + state.offsetMinutes * 60000);
-        } else {
-          newEnd = new Date(state.originalEnd.getTime() + state.offsetMinutes * 60000);
-        }
-
+        const { start: newStart, end: newEnd } = getDragRange(state);
         const durationMs = newEnd.getTime() - newStart.getTime();
         const durationMinutes = durationMs / 60000;
         let cancelled = false;

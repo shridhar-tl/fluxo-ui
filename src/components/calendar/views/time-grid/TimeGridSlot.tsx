@@ -5,6 +5,7 @@ interface TimeGridSlotProps {
   date: Date;
   hour: number;
   minute: number;
+  isHourEnd: boolean;
   isBusinessHour: boolean;
   isBanded: boolean;
   onPointerDown?: (date: Date, slotMinute: number, allDay: boolean, event: React.PointerEvent) => void;
@@ -12,7 +13,7 @@ interface TimeGridSlotProps {
 }
 
 const TimeGridSlot: React.FC<TimeGridSlotProps> = ({
-  date, hour, minute, isBusinessHour, isBanded,
+  date, hour, minute, isHourEnd, isBusinessHour, isBanded,
   onPointerDown, onExternalDrop,
 }) => {
   const slotMinute = (hour * 60) + minute;
@@ -37,6 +38,7 @@ const TimeGridSlot: React.FC<TimeGridSlotProps> = ({
     <div
       className={cn('eui-cal-time-slot', {
         'eui-cal-time-slot-hour': isHourStart,
+        'eui-cal-time-slot-hour-end': isHourEnd,
         'eui-cal-time-slot-business': isBusinessHour,
         'eui-cal-time-slot-banded': isBanded,
       })}

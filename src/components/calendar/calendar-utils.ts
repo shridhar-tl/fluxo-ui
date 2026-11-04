@@ -10,7 +10,7 @@ import {
 } from 'date-fns';
 import type {
   CalendarEntry, ResolvedCalendarEntry, DateRange, TimeFormat,
-  PositionedEntry, CalendarConfig, ModifierKeys,
+  PositionedEntry, CalendarConfig, ModifierKeys, DragState,
 } from './calendar-types';
 import { slotHeight } from './calendar-constants';
 
@@ -120,11 +120,9 @@ export function getTimeSlots(
   slotDuration: number
 ): { hour: number; minute: number }[] {
   const slots: { hour: number; minute: number }[] = [];
-  const totalMinutes = (endHour - startHour) * 60;
-  for (let m = 0; m < totalMinutes; m += slotDuration) {
-    const hour = startHour + Math.floor(m / 60);
-    const minute = m % 60;
-    slots.push({ hour, minute });
+  const endMinute = Math.round(endHour * 60);
+  for (let m = Math.round(startHour * 60); m < endMinute; m += slotDuration) {
+    slots.push({ hour: Math.floor(m / 60), minute: m % 60 });
   }
   return slots;
 }
@@ -153,6 +151,39 @@ export function pixelsToMinuteOffset(
 
 export function snapToSlot(minutes: number, snapDuration: number): number {
   return Math.round(minutes / snapDuration) * snapDuration;
+}
+
+export function getDragRange(state: DragState): DateRange {
+  const minuteDelta = state.offsetMinutes * 60000;
+
+  if (state.type === 'resize') {
+    return {
+      start: state.edge === 'top' ? new Date(state.originalStart.getTime() + minuteDelta) : state.originalStart,
+      end: state.edge === 'top' ? state.originalEnd : new Date(state.originalEnd.getTime() + minuteDelta),
+    };
+  }
+
+  return {
+    start: new Date(addDays(state.originalStart, state.dayOffset).getTime() + minuteDelta),
+    end: new Date(addDays(state.originalEnd, state.dayOffset).getTime() + minuteDelta),
+  };
+}
+
+export function isMoveAllowed(state: DragState, entries: ResolvedCalendarEntry[], config: CalendarConfig): boolean {
+  const { start, end } = getDragRange(state);
+
+  if (!config.eventOverlap && entries.some(e => e.id !== state.entryId && start < e.end && end > e.start)) {
+    return false;
+  }
+
+  if (config.eventAllow) {
+    const entry = entries.find(e => e.id === state.entryId);
+    if (entry && !config.eventAllow({ start, end, entry })) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function dateFromMinuteOffset(baseDate: Date, minutes: number, _startHour: number): Date {
@@ -253,16 +284,19 @@ export function positionTimedEntries(
   return positioned;
 }
 
+function timeToMinutes(time: string): number {
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + (m || 0);
+}
+
 export function isBusinessHour(
   date: Date,
-  hour: number,
+  minuteOfDay: number,
   businessHours: { daysOfWeek: number[]; startTime: string; endTime: string }
 ): boolean {
   const dayOfWeek = getDay(date);
   if (!businessHours.daysOfWeek.includes(dayOfWeek)) return false;
-  const [startH] = businessHours.startTime.split(':').map(Number);
-  const [endH] = businessHours.endTime.split(':').map(Number);
-  return hour >= startH && hour < endH;
+  return minuteOfDay >= timeToMinutes(businessHours.startTime) && minuteOfDay < timeToMinutes(businessHours.endTime);
 }
 
 export function isCurrentMonth(date: Date, currentDate: Date): boolean {
@@ -344,5 +378,5 @@ export {
   addDays, addWeeks, addMonths, subDays, subWeeks, subMonths,
   addYears, subYears,
   format, getDay, getHours, getMinutes, setHours, setMinutes,
-  differenceInMinutes, differenceInDays, parseISO,
+  differenceInMinutes, differenceInDays, differenceInCalendarDays, parseISO,
 };
