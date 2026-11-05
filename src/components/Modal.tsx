@@ -104,6 +104,10 @@ const Modal: React.FC<ModalProps> = ({
                 initialFocus.current.focus();
                 return;
             }
+            const activeElement = document.activeElement;
+            if (modalRef.current && activeElement && activeElement !== modalRef.current && modalRef.current.contains(activeElement)) {
+                return;
+            }
             const focusables = getFocusable(modalRef.current);
             if (focusables.length > 0) {
                 focusables[0].focus();
