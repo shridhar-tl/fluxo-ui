@@ -270,13 +270,14 @@ function Counter() {
 
 ### Overlays
 
-| Component       | Description                      |
-| --------------- | -------------------------------- |
-| Modal           | Dialog overlays with backdrop    |
-| Drawer          | Slide-in panel from any edge     |
-| Popover         | Click-triggered content popovers |
-| Confirm Popover | Inline confirmation dialogs      |
-| Context Menu    | Right-click context menus        |
+| Component       | Description                                 |
+| --------------- | ------------------------------------------- |
+| Modal           | Dialog overlays with backdrop               |
+| Drawer          | Slide-in panel from any edge                |
+| Popover         | Click-triggered content popovers            |
+| Confirm Popover | Inline confirmation dialogs                 |
+| Overlay Panel   | Anchored panels for details and hover cards |
+| Context Menu    | Right-click context menus                   |
 
 ### Layout
 

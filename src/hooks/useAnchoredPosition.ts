@@ -1,10 +1,20 @@
 import { useCallback, useState } from 'react';
-import { ConfirmPopoverPlacement } from './types';
 
-export interface PopoverPosition {
+export type AnchoredPlacement =
+    | 'top'
+    | 'topLeft'
+    | 'topRight'
+    | 'bottom'
+    | 'bottomLeft'
+    | 'bottomRight'
+    | 'left'
+    | 'right'
+    | 'auto';
+
+export interface AnchoredPosition {
     top: number;
     left: number;
-    resolvedPlacement: ConfirmPopoverPlacement;
+    resolvedPlacement: AnchoredPlacement;
 }
 
 const padding = 8;
@@ -13,8 +23,8 @@ const computePosition = (
     triggerRect: DOMRect,
     popoverWidth: number,
     popoverHeight: number,
-    placement: ConfirmPopoverPlacement
-): PopoverPosition => {
+    placement: AnchoredPlacement
+): AnchoredPosition => {
     const scrollX = window.scrollX;
     const scrollY = window.scrollY;
     const vw = window.innerWidth;
@@ -25,7 +35,7 @@ const computePosition = (
     const spaceLeft = triggerRect.left;
     const spaceRight = vw - triggerRect.right;
 
-    const resolvedBase = (base: ConfirmPopoverPlacement): ConfirmPopoverPlacement => {
+    const resolvedBase = (base: AnchoredPlacement): AnchoredPlacement => {
         if (base !== 'auto') return base;
         if (spaceBottom >= popoverHeight + padding) return 'bottom';
         if (spaceTop >= popoverHeight + padding) return 'top';
@@ -88,11 +98,11 @@ const computePosition = (
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-export const useConfirmPopoverPosition = () => {
-    const [position, setPosition] = useState<PopoverPosition>({ top: 0, left: 0, resolvedPlacement: 'bottom' });
+export const useAnchoredPosition = () => {
+    const [position, setPosition] = useState<AnchoredPosition>({ top: 0, left: 0, resolvedPlacement: 'bottom' });
 
     const calculatePosition = useCallback(
-        (triggerElement: HTMLElement, popoverElement: HTMLElement, placement: ConfirmPopoverPlacement) => {
+        (triggerElement: HTMLElement, popoverElement: HTMLElement, placement: AnchoredPlacement) => {
             const triggerRect = triggerElement.getBoundingClientRect();
             const popoverRect = popoverElement.getBoundingClientRect();
             const computed = computePosition(triggerRect, popoverRect.width, popoverRect.height, placement);

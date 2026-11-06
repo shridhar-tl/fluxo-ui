@@ -92,6 +92,7 @@ export { MultiStateCheckbox } from './MultiStateCheckbox';
 export { NumericInput } from './NumericInput';
 export { Password } from './Password';
 export { Popover } from './Popover';
+export * from './overlay-panel';
 export { ProgressBar } from './ProgressBar';
 export type { ProgressBarLayout, ProgressBarProps, ProgressBarSegment, ProgressBarSize, ProgressBarVariant } from './ProgressBar';
 export { RadioButton, RadioButtonGroup } from './RadioButton';

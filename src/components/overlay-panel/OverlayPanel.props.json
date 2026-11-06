@@ -1,0 +1,75 @@
+{
+  "overlayPanelProps": {
+    "isOpen": {
+      "type": "boolean",
+      "required": true,
+      "description": "Controls whether the panel is visible"
+    },
+    "target": {
+      "type": "HTMLElement | null",
+      "required": true,
+      "description": "The element the panel is anchored to (typically event.currentTarget)"
+    },
+    "onClose": {
+      "type": "() => void",
+      "required": true,
+      "description": "Called when the panel should close: close button, Escape key or a click outside the panel and the target"
+    },
+    "children": {
+      "type": "React.ReactNode",
+      "required": true,
+      "description": "Panel content. Scrolls when it is taller than maxHeight"
+    },
+    "title": {
+      "type": "React.ReactNode",
+      "description": "Heading shown at the top of the panel. Also used as the accessible name of the panel"
+    },
+    "footer": {
+      "type": "React.ReactNode",
+      "description": "Content shown below the body, typically action buttons"
+    },
+    "placement": {
+      "type": "'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft' | 'bottomRight' | 'left' | 'right' | 'auto'",
+      "default": "auto",
+      "description": "Where to place the panel relative to the target. 'auto' picks the side with enough space"
+    },
+    "width": {
+      "type": "string | number",
+      "default": "20rem",
+      "description": "Panel width on desktop. Numbers are treated as pixels"
+    },
+    "maxHeight": {
+      "type": "string | number",
+      "default": "24rem",
+      "description": "Maximum height of the scrollable body on desktop. Numbers are treated as pixels"
+    },
+    "showCloseButton": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Shows a close button in the header"
+    },
+    "closeOnOutsideClick": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Closes the panel when clicking outside the panel and the target"
+    },
+    "closeOnEscape": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Closes the panel when Escape is pressed"
+    },
+    "autoFocus": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Moves focus into the panel when it opens and restores it when it closes. Set to false for panels opened on hover"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible name of the panel when no title is provided"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class for the panel"
+    }
+  }
+}

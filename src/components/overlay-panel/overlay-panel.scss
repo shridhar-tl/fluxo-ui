@@ -1,0 +1,154 @@
+@use '../eui-vars' as *;
+
+.eui-overlay-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10050;
+    display: flex;
+    flex-direction: column;
+    max-width: calc(100vw - 1rem);
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-md);
+    box-shadow: var(--eui-shadow);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease;
+    outline: none;
+
+    &.eui-overlay-panel-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    &:focus-visible {
+        box-shadow:
+            var(--eui-shadow),
+            0 0 0 2px var(--eui-primary);
+    }
+
+    .eui-overlay-panel-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        padding: 0.75rem 0.75rem 0.5rem 1rem;
+        border-bottom: 1px solid var(--eui-border-subtle);
+    }
+
+    .eui-overlay-panel-title {
+        flex: 1;
+        min-width: 0;
+        font-weight: 600;
+        color: var(--eui-text);
+    }
+
+    .eui-overlay-panel-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 1.75rem;
+        height: 1.75rem;
+        margin-left: auto;
+        padding: 0;
+        border: none;
+        border-radius: var(--eui-radius-sm);
+        background: transparent;
+        color: var(--eui-text-muted);
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--eui-bg-subtle);
+            color: var(--eui-text);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--eui-primary);
+            outline-offset: 1px;
+        }
+
+        svg {
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+    }
+
+    .eui-overlay-panel-body {
+        overflow-y: auto;
+        padding: 0.75rem 1rem;
+    }
+
+    .eui-overlay-panel-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem 0.75rem;
+        border-top: 1px solid var(--eui-border-subtle);
+    }
+}
+
+.eui-overlay-panel-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background-color: rgba(15, 23, 42, 0.55);
+    animation: eui-overlay-panel-backdrop-in 0.18s ease-out;
+}
+
+.eui-overlay-panel.eui-overlay-panel-compact {
+    position: relative;
+    width: 100%;
+    max-width: 32rem;
+    max-height: 85vh;
+    border-radius: 16px 16px 0 0;
+    animation: eui-overlay-panel-sheet-in 0.22s ease-out;
+
+    .eui-overlay-panel-close {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    .eui-overlay-panel-body {
+        flex: 1;
+        min-height: 0;
+    }
+}
+
+@keyframes eui-overlay-panel-backdrop-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes eui-overlay-panel-sheet-in {
+    from {
+        transform: translateY(16px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-overlay-panel,
+    .eui-overlay-panel-backdrop,
+    .eui-overlay-panel.eui-overlay-panel-compact {
+        transition: none;
+        animation: none;
+        transform: none;
+    }
+}

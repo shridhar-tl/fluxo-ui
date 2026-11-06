@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-10-27T04:33:14.192Z",
+  "generatedAt": "2026-11-06T05:38:09.651Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -339,6 +339,7 @@
         "hooks/useViewTitle.ts",
         "index.ts",
         "interactions/index.ts",
+        "interactions/useDayGridDrag.ts",
         "interactions/useDragMove.ts",
         "interactions/useDragResize.ts",
         "interactions/useSelection.ts",
@@ -771,8 +772,7 @@
         "ConfirmPopoverPanel.tsx",
         "confirm-popover.scss",
         "index.ts",
-        "types.ts",
-        "useConfirmPopoverPosition.ts"
+        "types.ts"
       ],
       "category": "Overlays",
       "label": "Confirm Popover",
@@ -784,6 +784,7 @@
           "icon"
         ],
         "hooks": [
+          "useAnchoredPosition",
           "useClickOutside",
           "useMobile"
         ],
@@ -2151,6 +2152,39 @@
         "external": [
           "classnames",
           "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "overlay-panel",
+      "name": "OverlayPanel",
+      "kind": "directory",
+      "sourcePath": "components/overlay-panel",
+      "entryFile": "components/overlay-panel/index.ts",
+      "files": [
+        "OverlayPanel.tsx",
+        "index.ts",
+        "overlay-panel.scss"
+      ],
+      "category": "Overlays",
+      "label": "Overlay Panel",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useAnchoredPosition",
+          "useMobile"
+        ],
+        "utils": [],
+        "shared": [
+          "styles"
+        ],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
         ],
         "optionalPeers": []
       }
@@ -3594,6 +3628,24 @@
     }
   ],
   "hooks": [
+    {
+      "id": "useAnchoredPosition",
+      "name": "useAnchoredPosition",
+      "sourcePath": "hooks/useAnchoredPosition.ts",
+      "files": [
+        "useAnchoredPosition.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
     {
       "id": "useClickOutside",
       "name": "useClickOutside",

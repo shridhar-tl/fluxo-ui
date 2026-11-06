@@ -177,6 +177,7 @@ const navSections: NavSection[] = [
             { label: 'Drawer', path: '/components/drawer' },
             { label: 'Popover', path: '/components/popover' },
             { label: 'Confirm Popover', path: '/components/confirm-popover' },
+            { label: 'Overlay Panel', path: '/components/overlay-panel' },
             { label: 'Context Menu', path: '/components/context-menu' },
         ],
     },

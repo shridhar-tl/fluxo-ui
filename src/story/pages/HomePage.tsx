@@ -123,6 +123,7 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/popover': () => import('./popover/BasicUsage'),
     '/components/snackbar': () => import('./snackbar/PositionsDemo'),
     '/components/confirm-popover': () => import('./confirm-popover/ConfirmCustomDemo'),
+    '/components/overlay-panel': () => import('./overlay-panel/ClickToOpen'),
     '/components/context-menu': () => import('./context-menu/RightClickMenu'),
     '/components/breadcrumb': () => import('./breadcrumb/BasicUsage'),
     '/components/notification-center': () => import('./notification-center/BasicUsage'),
@@ -506,6 +507,7 @@ const overlayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Drawer', description: 'Slide-in panel from any edge', path: '/components/drawer' },
     { title: 'Popover', description: 'Click-triggered content popovers', path: '/components/popover' },
     { title: 'Confirm Popover', description: 'Inline confirmation dialogs', path: '/components/confirm-popover' },
+    { title: 'Overlay Panel', description: 'Anchored panels for details and hover cards', path: '/components/overlay-panel', badge: 'New' },
     { title: 'Context Menu', description: 'Right-click context menus', path: '/components/context-menu' },
 ];
 

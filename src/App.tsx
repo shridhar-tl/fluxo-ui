@@ -40,6 +40,7 @@ const IconsPage = React.lazy(() => import('./story/pages/IconsPage'));
 const FieldLabelPage = React.lazy(() => import('./story/pages/field-label/FieldLabelPage'));
 
 const ConfirmPopoverPage = React.lazy(() => import('./story/pages/confirm-popover/ConfirmPopoverPage'));
+const OverlayPanelPage = React.lazy(() => import('./story/pages/overlay-panel/OverlayPanelPage'));
 const ModalPage = React.lazy(() => import('./story/pages/modal/ModalPage'));
 const TooltipPage = React.lazy(() => import('./story/pages/tooltip/TooltipPage'));
 const DragDropPage = React.lazy(() => import('./story/pages/drag-drop/DragDropPage'));
@@ -374,6 +375,14 @@ const App: React.FC = () => {
                         element={
                             <LayoutWrapper>
                                 <ConfirmPopoverPage />
+                            </LayoutWrapper>
+                        }
+                    />
+                    <Route
+                        path="/components/overlay-panel"
+                        element={
+                            <LayoutWrapper>
+                                <OverlayPanelPage />
                             </LayoutWrapper>
                         }
                     />

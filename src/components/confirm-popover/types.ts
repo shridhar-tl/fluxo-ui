@@ -1,15 +1,7 @@
 import React from 'react';
+import type { AnchoredPlacement } from '../../hooks/useAnchoredPosition';
 
-export type ConfirmPopoverPlacement =
-    | 'top'
-    | 'topLeft'
-    | 'topRight'
-    | 'bottom'
-    | 'bottomLeft'
-    | 'bottomRight'
-    | 'left'
-    | 'right'
-    | 'auto';
+export type ConfirmPopoverPlacement = AnchoredPlacement;
 
 export interface ConfirmPopoverAction {
     label: string;

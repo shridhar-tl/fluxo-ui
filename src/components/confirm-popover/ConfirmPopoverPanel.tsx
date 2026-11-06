@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useAnchoredPosition } from '../../hooks/useAnchoredPosition';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useViewport } from '../../hooks/useMobile';
 import { Button } from '../Button';
 import Icon from '../Icon';
 import { ConfirmPopoverAction, ConfirmPopoverData } from './types';
-import { useConfirmPopoverPosition } from './useConfirmPopoverPosition';
 import '../eui-base.scss';
 import './confirm-popover.scss';
 
@@ -43,7 +43,7 @@ const ConfirmPopoverPanel = ({ data, onDismiss }: ConfirmPopoverPanelProps) => {
     const previousFocusRef = useRef<HTMLElement | null>(null);
     const actionsContainerRef = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
-    const { calculatePosition } = useConfirmPopoverPosition();
+    const { calculatePosition } = useAnchoredPosition();
     const { isCompact, isMobile, isTablet } = useViewport();
     const generatedId = useId();
     const safeId = generatedId.replace(/[^a-zA-Z0-9_-]/g, '');
