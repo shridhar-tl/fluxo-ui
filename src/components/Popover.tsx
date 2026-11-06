@@ -407,7 +407,7 @@ export const Popover = ({
     return createPortal(
         <div ref={popoverRef} className={componentClasses} style={componentStyles}>
             {children}
-            {listContent}
+            <div className="eui-popover-body">{listContent}</div>
             {footer && <div className="eui-popover-footer">{footer}</div>}
         </div>,
         document.body,

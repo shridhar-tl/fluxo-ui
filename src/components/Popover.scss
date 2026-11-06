@@ -3,12 +3,25 @@
 .eui-popover {
     position: absolute;
     z-index: 10050;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     background-color: var(--eui-bg);
     border: 1px solid var(--eui-border);
     border-radius: var(--eui-radius-md);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     transition: opacity 0.15s ease;
+}
+
+.eui-popover > * {
+    flex-shrink: 0;
+}
+
+.eui-popover-body {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
 }
 
 .eui-popover-backdrop {
@@ -127,7 +140,9 @@
 }
 
 .eui-popover-mobile-body {
+    position: relative;
     flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     background-color: var(--eui-bg);
@@ -152,8 +167,6 @@
     align-items: center;
     justify-content: flex-end;
     gap: 0.5rem;
-    position: sticky;
-    bottom: 0;
 }
 
 .eui-popover-compact .eui-popover-item {
