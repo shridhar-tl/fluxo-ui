@@ -131,8 +131,8 @@
 
         &.eui-button-outlined {
             background-color: transparent;
-            color: var(--eui-btn-default-bg, #4b5563);
-            border-color: var(--eui-btn-default-bg, #4b5563);
+            color: var(--eui-btn-default-tone, #4b5563);
+            border-color: var(--eui-btn-default-tone, #4b5563);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(75, 85, 99, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(75, 85, 99, 0.15); }
@@ -157,8 +157,8 @@
 
         &.eui-button-outlined {
             background-color: transparent;
-            color: var(--eui-primary);
-            border-color: var(--eui-primary);
+            color: var(--eui-btn-primary-tone, var(--eui-primary));
+            border-color: var(--eui-btn-primary-tone, var(--eui-primary));
 
             &:hover:not(.eui-button-disabled)  { background-color: var(--eui-primary-subtle); }
             &:active:not(.eui-button-disabled) { background-color: var(--eui-primary-subtle); filter: brightness(0.95); }
@@ -166,7 +166,7 @@
 
         &.eui-button-plain {
             background-color: transparent;
-            color: var(--eui-primary);
+            color: var(--eui-btn-primary-tone, var(--eui-primary));
 
             &:hover:not(.eui-button-disabled)  { background-color: var(--eui-primary-subtle); }
             &:active:not(.eui-button-disabled) { background-color: var(--eui-primary-subtle); filter: brightness(0.95); }
@@ -183,8 +183,8 @@
 
         &.eui-button-outlined {
             background-color: transparent;
-            color: #16a34a;
-            border-color: #16a34a;
+            color: var(--eui-btn-success-tone, #16a34a);
+            border-color: var(--eui-btn-success-tone, #16a34a);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(22, 163, 74, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(22, 163, 74, 0.15); }
@@ -192,7 +192,7 @@
 
         &.eui-button-plain {
             background-color: transparent;
-            color: #16a34a;
+            color: var(--eui-btn-success-tone, #16a34a);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(22, 163, 74, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(22, 163, 74, 0.15); }
@@ -209,8 +209,8 @@
 
         &.eui-button-outlined {
             background-color: transparent;
-            color: #d97706;
-            border-color: #d97706;
+            color: var(--eui-btn-warning-tone, #d97706);
+            border-color: var(--eui-btn-warning-tone, #d97706);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(245, 158, 11, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(245, 158, 11, 0.15); }
@@ -218,7 +218,7 @@
 
         &.eui-button-plain {
             background-color: transparent;
-            color: #d97706;
+            color: var(--eui-btn-warning-tone, #d97706);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(245, 158, 11, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(245, 158, 11, 0.15); }
@@ -235,8 +235,8 @@
 
         &.eui-button-outlined {
             background-color: transparent;
-            color: #dc2626;
-            border-color: #dc2626;
+            color: var(--eui-btn-danger-tone, #dc2626);
+            border-color: var(--eui-btn-danger-tone, #dc2626);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(220, 38, 38, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(220, 38, 38, 0.15); }
@@ -244,7 +244,7 @@
 
         &.eui-button-plain {
             background-color: transparent;
-            color: #dc2626;
+            color: var(--eui-btn-danger-tone, #dc2626);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(220, 38, 38, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(220, 38, 38, 0.15); }
@@ -261,8 +261,8 @@
 
         &.eui-button-outlined {
             background-color: transparent;
-            color: #0891b2;
-            border-color: #0891b2;
+            color: var(--eui-btn-info-tone, #0891b2);
+            border-color: var(--eui-btn-info-tone, #0891b2);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(8, 145, 178, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(8, 145, 178, 0.15); }
@@ -270,7 +270,7 @@
 
         &.eui-button-plain {
             background-color: transparent;
-            color: #0891b2;
+            color: var(--eui-btn-info-tone, #0891b2);
 
             &:hover:not(.eui-button-disabled)  { background-color: rgba(8, 145, 178, 0.08); }
             &:active:not(.eui-button-disabled) { background-color: rgba(8, 145, 178, 0.15); }

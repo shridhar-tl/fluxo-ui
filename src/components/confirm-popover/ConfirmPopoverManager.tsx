@@ -7,8 +7,8 @@ let popoverId = 0;
 type ShowFn = (options: ConfirmPopoverOptions) => number;
 type CloseFn = (id?: number) => void;
 
-let externalShow: ShowFn;
-let externalClose: CloseFn;
+let externalShow: ShowFn | undefined;
+let externalClose: CloseFn | undefined;
 
 export const showConfirmPopover = (options: ConfirmPopoverOptions): number => {
     if (externalShow) return externalShow(options);
@@ -140,6 +140,14 @@ function ConfirmPopoverManager() {
     useEffect(() => {
         externalShow = show;
         externalClose = close;
+        return () => {
+            if (externalShow === show) {
+                externalShow = undefined;
+            }
+            if (externalClose === close) {
+                externalClose = undefined;
+            }
+        };
     }, [show, close]);
 
     const handleDismiss = (id: number) => {

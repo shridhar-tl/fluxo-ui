@@ -62,8 +62,8 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const [inputId] = useState(id || generateId());
         const listboxId = `${inputId}-listbox`;
-        const [isOpen, setIsOpen] = useState(false);
         const [isFocused, setIsFocused] = useState(false);
+        const [isDismissed, setIsDismissed] = useState(false);
         const [internalValue, setInternalValue] = useState('');
         const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
         const inputRef = useRef<HTMLInputElement>(null);
@@ -97,16 +97,14 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             }
         }, [debouncedValue, minLength, onFilter]);
 
-        useEffect(() => {
-            const shouldOpen = isFocused && currentValue.length >= minLength && items.length > 0;
-            setIsOpen(shouldOpen);
-        }, [isFocused, currentValue.length, minLength, items.length]);
+        const isOpen = isFocused && !isDismissed && currentValue.length >= minLength && (items.length > 0 || loading);
 
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const newValue = e.target.value;
             if (!isControlled) {
                 setInternalValue(newValue);
             }
+            setIsDismissed(false);
             onChange?.({
                 event: e,
                 value: newValue,
@@ -119,44 +117,42 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             if (!isControlled) {
                 setInternalValue(item.label);
             }
-            onSelect?.({
-                event: e,
-                value: item.value,
-                name,
-                args,
-            });
+            // onChange goes first so a consumer can reset the text from onSelect.
             onChange?.({
                 event: e,
                 value: item.label,
                 name,
                 args,
             });
-            setIsFocused(false);
-            setIsOpen(false);
+            onSelect?.({
+                event: e,
+                value: item.value,
+                name,
+                args,
+            });
+            setIsDismissed(true);
             combinedRef.current?.blur();
         };
 
         const handleFocus = () => {
             setIsFocused(true);
+            setIsDismissed(false);
         };
 
         const handleBlur = () => {
             if (isCompact) return;
-            setTimeout(() => {
-                setIsFocused(false);
-                setIsOpen(false);
-            }, 200);
+            setTimeout(() => setIsFocused(false), 200);
         };
 
         const handleClose = () => {
-            setIsOpen(false);
-            setIsFocused(false);
+            setIsDismissed(true);
         };
 
         const handleMobileSearchChange = (newValue: string) => {
             if (!isControlled) {
                 setInternalValue(newValue);
             }
+            setIsDismissed(false);
             onChange?.({
                 event: undefined,
                 value: newValue,
@@ -225,7 +221,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                         onSelect={(item) => handleSelect(item)}
                         selectedIndex={selectedIndex}
                         renderItemContent={renderItem}
-                        filter={currentValue}
+                        filter={onFilter ? undefined : currentValue}
                         loading={loading}
                         emptyMessage={emptyMessage}
                         mobileTitle={placeholder}

@@ -65,6 +65,7 @@ export function create<T extends object | Array<any>>(initializer: () => T, midd
         }
 
         batchedCalls.push({ stateOrUpdater, afterApply, replace });
+        pendingState = null;
 
         if (!isBatching) {
             isBatching = true;

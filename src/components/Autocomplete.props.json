@@ -20,11 +20,11 @@
     },
     "onSelect": {
       "type": "(event: ComponentEvent<any>) => void",
-      "description": "Callback fired when a suggestion is selected. Receives the selected item value"
+      "description": "Callback fired when a suggestion is selected, after onChange receives its label. Receives the selected item value"
     },
     "onFilter": {
       "type": "(query: string) => void | Promise<void>",
-      "description": "Callback for filtering items or loading async data based on input"
+      "description": "Callback for filtering items or loading async data based on input. When set, items are shown as given (not filtered again by the typed text)"
     },
     "placeholder": {
       "type": "string",

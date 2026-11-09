@@ -17,6 +17,16 @@
     --eui-primary-subtle: #dbeafe;
     --eui-primary-border: #bfdbfe;
 
+    --eui-btn-default-bg: #4b5563;
+    --eui-btn-default-hover: #374151;
+    --eui-btn-default-active: #1f2937;
+    --eui-btn-default-tone: #4b5563;
+    --eui-btn-primary-tone: #2563eb;
+    --eui-btn-success-tone: #15803d;
+    --eui-btn-warning-tone: #b45309;
+    --eui-btn-danger-tone: #dc2626;
+    --eui-btn-info-tone: #0e7490;
+
     --eui-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
 
     --eui-font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -92,6 +102,16 @@ body.mode-dark,
     --eui-primary-hover: #3b82f6;
     --eui-primary-subtle: #1e3a5f;
     --eui-primary-border: #1d4ed8;
+
+    --eui-btn-default-bg: #4b5563;
+    --eui-btn-default-hover: #6b7280;
+    --eui-btn-default-active: #374151;
+    --eui-btn-default-tone: #d1d5db;
+    --eui-btn-primary-tone: #60a5fa;
+    --eui-btn-success-tone: #4ade80;
+    --eui-btn-warning-tone: #fbbf24;
+    --eui-btn-danger-tone: #f87171;
+    --eui-btn-info-tone: #22d3ee;
 
     --eui-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.4);
 
