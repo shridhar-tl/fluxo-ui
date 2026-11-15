@@ -124,9 +124,11 @@ export const InputSwitch = forwardRef<HTMLInputElement, InputSwitchProps>(
                         {label}
                     </span>
                 )}
-                <span className={classNames('eui-input-switch-label', { 'eui-input-switch-label-muted': disabled || checked })}>
-                    {offLabel}
-                </span>
+                {offLabel && (
+                    <span className={classNames('eui-input-switch-label', { 'eui-input-switch-label-muted': disabled || checked })}>
+                        {offLabel}
+                    </span>
+                )}
                 <button
                     {...nativeProps}
                     type="button"
@@ -147,11 +149,13 @@ export const InputSwitch = forwardRef<HTMLInputElement, InputSwitchProps>(
                 >
                     <span className={thumbClasses} aria-hidden="true" />
                 </button>
-                <span
-                    className={classNames('eui-input-switch-label', { 'eui-input-switch-label-muted': disabled || !checked })}
-                >
-                    {onLabel}
-                </span>
+                {onLabel && (
+                    <span
+                        className={classNames('eui-input-switch-label', { 'eui-input-switch-label-muted': disabled || !checked })}
+                    >
+                        {onLabel}
+                    </span>
+                )}
             </div>
         );
     },

@@ -67,6 +67,8 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         const [internalValue, setInternalValue] = useState('');
         const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
         const inputRef = useRef<HTMLInputElement>(null);
+        const onFilterRef = useRef(onFilter);
+        onFilterRef.current = onFilter;
         const combinedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
         const { isCompact } = useViewport();
 
@@ -92,10 +94,10 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         const selectedIndex = selectedItem ? items.findIndex((item) => compare(item.value, selectedValue)) : -1;
 
         useEffect(() => {
-            if (debouncedValue.length >= minLength && onFilter) {
-                onFilter(debouncedValue);
+            if (debouncedValue.length >= minLength && onFilterRef.current) {
+                onFilterRef.current(debouncedValue);
             }
-        }, [debouncedValue, minLength, onFilter]);
+        }, [debouncedValue, minLength]);
 
         const isOpen = isFocused && !isDismissed && currentValue.length >= minLength && (items.length > 0 || loading);
 

@@ -74,6 +74,9 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         const [maxReachedAnnouncement, setMaxReachedAnnouncement] = useState('');
         const containerRef = useRef<HTMLDivElement>(null);
         const inputRef = useRef<HTMLInputElement>(null);
+        const knownSelectedItemsRef = useRef<ListItem[]>([]);
+        const onFilterRef = useRef(onFilter);
+        onFilterRef.current = onFilter;
         const combinedRef = (ref as React.RefObject<HTMLDivElement>) || containerRef;
 
         const compare = (a: any, b: any) => {
@@ -91,14 +94,23 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         };
 
         const debouncedValue = useDebounce(inputValue, debounceMs);
-        const selectedItems = items.filter((item) => value.some((v) => compare(v, item.value)));
+        // Selected items are resolved from the current items first and then from previously seen selections,
+        // so that selections remain visible when items are replaced (e.g. by a new server-side search).
+        const selectedItems = value
+            .map(
+                (v) =>
+                    items.find((item) => compare(v, item.value)) ??
+                    knownSelectedItemsRef.current.find((item) => compare(v, item.value)),
+            )
+            .filter((item): item is ListItem => !!item);
+        knownSelectedItemsRef.current = selectedItems;
         const isMaxReached = !!maxSelectedItems && value.length >= maxSelectedItems;
 
         useEffect(() => {
-            if (debouncedValue.length >= minLength && onFilter) {
-                onFilter(debouncedValue);
+            if (debouncedValue.length >= minLength && onFilterRef.current) {
+                onFilterRef.current(debouncedValue);
             }
-        }, [debouncedValue, minLength, onFilter]);
+        }, [debouncedValue, minLength]);
 
         useEffect(() => {
             if (isFocused && inputValue.length >= minLength && items.length > 0) {

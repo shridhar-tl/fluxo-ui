@@ -12,12 +12,12 @@
     "onLabel": {
       "type": "string",
       "default": "'On'",
-      "description": "Label text displayed when switch is on"
+      "description": "Label text displayed after the switch. Pass an empty string to hide it"
     },
     "offLabel": {
       "type": "string",
       "default": "'Off'",
-      "description": "Label text displayed when switch is off"
+      "description": "Label text displayed before the switch. Pass an empty string to hide it"
     },
     "label": {
       "type": "string",
