@@ -161,18 +161,17 @@ export const TabView: React.FC<TabViewProps> = ({
 
             <div className={contentClasses}>
                 {preMount ? (
-                    visibleTabs.map((tab, idx) => (
-                        <div
-                            key={idx}
-                            style={{ display: idx === safeActiveIndex ? undefined : 'none' }}
-                            aria-hidden={idx !== safeActiveIndex}
-                        >
-                            {React.cloneElement(tab, {
-                                id: `${baseId}-panel-${idx}`,
-                                'aria-labelledby': `${baseId}-tab-${idx}`,
-                            } as Record<string, unknown>)}
-                        </div>
-                    ))
+                    visibleTabs.map((tab, idx) => {
+                        const isActive = idx === safeActiveIndex;
+                        const tabStyle = (tab.props as { style?: React.CSSProperties }).style;
+                        return React.cloneElement(tab, {
+                            key: idx,
+                            id: `${baseId}-panel-${idx}`,
+                            'aria-labelledby': `${baseId}-tab-${idx}`,
+                            'aria-hidden': !isActive,
+                            style: isActive ? tabStyle : { ...tabStyle, display: 'none' },
+                        } as Record<string, unknown>);
+                    })
                 ) : (
                     React.cloneElement(activeTab, {
                         key: safeActiveIndex,

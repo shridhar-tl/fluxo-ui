@@ -2,3 +2,4 @@ allowBuilds:
   '@parcel/watcher': false
   puppeteer: false
   unrs-resolver: false
+minimumReleaseAge: 0
