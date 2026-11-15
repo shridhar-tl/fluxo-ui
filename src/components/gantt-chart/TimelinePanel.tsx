@@ -4,9 +4,10 @@ import TimelineHeader from './TimelineHeader';
 import TimelineGrid from './TimelineGrid';
 import TaskBar from './TaskBar';
 import Markers from './Markers';
+import Bands from './Bands';
 import DependencyLines from './DependencyLines';
 import { getTaskBarPosition, columnToDate } from './gantt-utils';
-import { GanttTaskBarInfo } from './gantt-types';
+import { GanttTask, GanttTaskBarInfo } from './gantt-types';
 
 interface TimelinePanelProps {
     bodyRef: React.RefObject<HTMLDivElement | null>;
@@ -39,6 +40,42 @@ function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMe
 
         for (let i = 0; i < visibleTasks.length; i++) {
             const ft = visibleTasks[i];
+
+            if (ft.task.segments?.length) {
+                for (const segment of ft.task.segments) {
+                    const segmentTask: GanttTask = {
+                        id: `${ft.task.id}::${segment.id}`,
+                        name: segment.label || ft.task.name,
+                        start: segment.start,
+                        end: segment.end,
+                        color: segment.color ?? ft.task.color,
+                        textColor: segment.textColor ?? ft.task.textColor,
+                        cssClass: segment.cssClass ?? ft.task.cssClass,
+                        draggable: segment.draggable ?? ft.task.draggable,
+                        resizable: segment.resizable ?? ft.task.resizable,
+                        tooltip: ft.task.tooltip,
+                        data: segment.data ?? ft.task.data,
+                    };
+                    const segmentPos = getTaskBarPosition(segmentTask, startDate, columnWidth, viewMode);
+                    if (!segmentPos) continue;
+                    bars.push({
+                        task: segmentTask,
+                        flatIndex: i,
+                        depth: ft.depth,
+                        left: segmentPos.left,
+                        width: segmentPos.width,
+                        startCol: segmentPos.startCol,
+                        endCol: segmentPos.endCol,
+                        isGroup: false,
+                        isMilestone: false,
+                        parentId: ft.parentId,
+                        segment,
+                        ownerTask: ft.task,
+                    });
+                }
+                continue;
+            }
+
             const pos = getTaskBarPosition(ft.task, startDate, columnWidth, viewMode);
             if (!pos) continue;
 
@@ -73,7 +110,7 @@ function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMe
         if (e.button !== 0 || !allowTaskCreate || readOnly) return;
 
         const target = e.target as HTMLElement;
-        if (target.closest('.eui-gantt-taskbar, .eui-gantt-milestone, .eui-gantt-taskbar-handle')) return;
+        if (target.closest('.eui-gantt-taskbar, .eui-gantt-milestone, .eui-gantt-taskbar-handle, .eui-gantt-taskbar-connector, .eui-gantt-dependency-hit')) return;
 
         const body = e.currentTarget as HTMLDivElement;
         const rect = body.getBoundingClientRect();
@@ -141,6 +178,7 @@ function TimelinePanel({ bodyRef, onVerticalScroll, onHorizontalScroll, headerMe
             >
                 <div className="eui-gantt-timeline-canvas" style={{ width: totalWidth, minHeight: totalHeight }}>
                     <TimelineGrid />
+                    <Bands />
 
                     {visibleTasks.map((_, i) => (
                         <div

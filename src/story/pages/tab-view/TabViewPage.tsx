@@ -23,7 +23,7 @@ const { tabViewProps, tabPageProps } = _TabView_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple tab navigation' },
     { id: 'style-variants', title: 'Style Variants', description: 'Visual style options' },
-    { id: 'scrollable-tabs', title: 'Scrollable', description: 'Scroll arrows for overflow' },
+    { id: 'scrollable-tabs', title: 'Scrollable', description: 'Overflow menu for extra tabs' },
     { id: 'positions', title: 'Positions', description: 'Header placement options' },
     { id: 'with-icons', title: 'With Icons', description: 'Left and right icons' },
     { id: 'closable-tabs', title: 'Closable Tabs', description: 'Dynamic tab management' },

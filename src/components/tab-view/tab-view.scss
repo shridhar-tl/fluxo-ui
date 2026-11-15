@@ -125,61 +125,22 @@
         flex-wrap: wrap;
     }
 
+    &.eui-tab-scroll-fit {
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: 0;
+        flex-wrap: nowrap;
+
+        .eui-tab-header {
+            flex-shrink: 0;
+        }
+    }
+
     scrollbar-width: none;
     -ms-overflow-style: none;
 
     &::-webkit-scrollbar {
         display: none;
-    }
-}
-
-.eui-tab-arrow {
-    @include btn-reset;
-    position: absolute;
-    z-index: 10;
-    border-radius: var(--eui-radius-sm);
-    padding: 0.125rem;
-    width: 1.25rem;
-    height: 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--eui-bg);
-    color: var(--eui-text-muted);
-    opacity: 0.7;
-
-    svg {
-        width: 0.75rem;
-        height: 0.75rem;
-    }
-
-    &:hover {
-        opacity: 1;
-        color: var(--eui-text);
-    }
-
-    &.eui-tab-arrow-left {
-        left: 0.125rem;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    &.eui-tab-arrow-right {
-        right: 0.125rem;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    &.eui-tab-arrow-up {
-        top: 0.125rem;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    &.eui-tab-arrow-down {
-        bottom: 0.125rem;
-        left: 50%;
-        transform: translateX(-50%);
     }
 }
 
@@ -226,6 +187,11 @@
     &.eui-tab-header-disabled {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+
+    &.eui-tab-header-overflowed {
+        visibility: hidden;
+        pointer-events: none;
     }
 
     &:focus-visible {

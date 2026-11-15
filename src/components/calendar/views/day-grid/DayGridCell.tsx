@@ -4,6 +4,7 @@ import { format, isToday, getDay } from 'date-fns';
 import { ViewMode } from '../../calendar-types';
 import type { ResolvedCalendarEntry, EntryRenderer, BusinessHours } from '../../calendar-types';
 import { getEntriesForDay } from '../../calendar-utils';
+import { useCalendarContext } from '../../CalendarContext';
 import { CalendarEntry } from '../../entries';
 
 interface DayGridCellProps {
@@ -22,6 +23,7 @@ const DayGridCell: React.FC<DayGridCellProps> = ({
   date, entries, renderEntry, navLinks,
   onDateClick, onDateDoubleClick, onEntryClick, onEntryContextMenu, businessHours,
 }) => {
+  const { api, config } = useCalendarContext();
   const today = isToday(date);
   const isNonBusinessDay = businessHours ? !businessHours.daysOfWeek.includes(getDay(date)) : false;
   const dayEntries = useMemo(() => getEntriesForDay(entries, date), [entries, date]);
@@ -29,6 +31,12 @@ const DayGridCell: React.FC<DayGridCellProps> = ({
   const handleClick = useCallback((e: React.MouseEvent) => {
     onDateClick?.(date, e);
   }, [date, onDateClick]);
+
+  const handleNavLinkClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    api.gotoDate(date);
+    api.changeView(config.navLinkView);
+  }, [api, date, config.navLinkView]);
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     onDateDoubleClick?.(date, e);
@@ -50,6 +58,8 @@ const DayGridCell: React.FC<DayGridCellProps> = ({
           <button
             className={cn('eui-cal-daygrid-cell-day', { 'eui-cal-daygrid-cell-day-today': today })}
             type="button"
+            onClick={handleNavLinkClick}
+            aria-label={`Go to ${format(date, 'MMMM d')}`}
           >
             {format(date, 'EEE d')}
           </button>

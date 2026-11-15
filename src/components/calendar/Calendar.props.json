@@ -24,6 +24,10 @@
       "type": "string[]",
       "description": "Restrict which view modes appear in the toolbar dropdown. Array of view name strings (e.g. [\\\"timeGridWeek\\\", \\\"dayGridMonth\\\"]). When omitted, all registered views are shown."
     },
+    "viewLabels": {
+      "type": "Partial<Record<CalendarViewMode, string>>",
+      "description": "Labels shown in the toolbar view dropdown, by view name (e.g. { dayGridWeek: \"Week\" }). Views without a label use their own label."
+    },
     "slotDuration": {
       "type": "number",
       "default": "30",
@@ -67,7 +71,7 @@
     "selectable": {
       "type": "boolean",
       "default": "true",
-      "description": "Enable time range selection"
+      "description": "Enable range selection by dragging across time slots or across days in the month view"
     },
     "creatable": {
       "type": "boolean",
@@ -263,7 +267,12 @@
     "navLinks": {
       "type": "boolean",
       "default": "true",
-      "description": "Date headers as navigation links"
+      "description": "Day numbers in the month view link to the day. Without onDateClick, clicking a day cell also opens the day."
+    },
+    "navLinkView": {
+      "type": "CalendarViewMode",
+      "default": "\"timeGridDay\"",
+      "description": "View opened by a day link and by the +N more link when moreLinkClick is day"
     },
     "compact": {
       "type": "boolean",
@@ -367,7 +376,7 @@
     },
     "onDateSelect": {
       "type": "(info, event) => void",
-      "description": "Time range selection callback"
+      "description": "Range selection callback. Fires after dragging across time slots in the time grid, or across days in the month view (all-day, start and end are the first and last selected day)"
     },
     "onEntryDrop": {
       "type": "(info, event) => void",

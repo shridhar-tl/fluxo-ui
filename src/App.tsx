@@ -49,6 +49,7 @@ const SplitterPage = React.lazy(() => import('./story/pages/splitter/SplitterPag
 const TablePage = React.lazy(() => import('./story/pages/table/TablePage'));
 const GanttChartPage = React.lazy(() => import('./story/pages/gantt-chart/GanttChartPage'));
 const KanbanBoardPage = React.lazy(() => import('./story/pages/kanban-board/KanbanBoardPage'));
+const ResourceTimelinePage = React.lazy(() => import('./story/pages/resource-timeline/ResourceTimelinePage'));
 const PdfToolkitPage = React.lazy(() => import('./story/pages/pdf-toolkit/PdfToolkitPage'));
 const CanvasDrawPage = React.lazy(() => import('./story/pages/canvas-draw/CanvasDrawPage'));
 const ProgressBarPage = React.lazy(() => import('./story/pages/progress-bar/ProgressBarPage'));
@@ -447,6 +448,14 @@ const App: React.FC = () => {
                         element={
                             <LayoutWrapper>
                                 <KanbanBoardPage />
+                            </LayoutWrapper>
+                        }
+                    />
+                    <Route
+                        path="/components/resource-timeline"
+                        element={
+                            <LayoutWrapper>
+                                <ResourceTimelinePage />
                             </LayoutWrapper>
                         }
                     />

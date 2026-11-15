@@ -15,9 +15,20 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
         readOnly, startDate, viewMode, taskBarTemplate: Template,
         tooltipTemplate, showTooltip,
         onTaskChange, onTaskClick, onTaskDoubleClick,
+        onSegmentChange, onSegmentClick, onSegmentDoubleClick,
+        allowDependencyCreate, startDependencyDrag,
     } = useGanttContext();
 
-    const { task, left, width, isMilestone, isGroup } = barInfo;
+    const { task, left, width, isMilestone, isGroup, segment, ownerTask } = barInfo;
+    const linkTask = ownerTask ?? task;
+    const emitChange = useCallback((start: Date, end: Date) => {
+        if (segment && ownerTask) {
+            onSegmentChange?.({ task: ownerTask, segment, start, end });
+        } else {
+            onTaskChange?.({ task: { ...task, start, end }, originalTask: task, start, end });
+        }
+    }, [segment, ownerTask, task, onSegmentChange, onTaskChange]);
+    const hasChangeHandler = segment ? !!onSegmentChange : !!onTaskChange;
 
     const barRef = useRef<HTMLDivElement>(null);
     const [dragState, setDragState] = useState<GanttDragState | null>(null);
@@ -88,7 +99,7 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
 
         const handleUp = () => {
             const ds = dragStateRef.current;
-            if (ds && onTaskChange) {
+            if (ds && hasChangeHandler) {
                 const deltaX = ds.currentX - ds.startX;
                 if (Math.abs(deltaX) > 2) {
                     let newLeft: number;
@@ -113,12 +124,7 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
                     newEnd.setDate(newEnd.getDate() - (viewMode === 'day' || viewMode === 'week' ? 1 : 0));
 
                     if (newEnd >= newStart) {
-                        onTaskChange({
-                            task: { ...task, start: newStart, end: newEnd },
-                            originalTask: task,
-                            start: newStart,
-                            end: newEnd,
-                        });
+                        emitChange(newStart, newEnd);
                     }
                 }
             }
@@ -135,19 +141,30 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
     }, [!!dragState]);
 
     const handleClick = useCallback((e: React.MouseEvent) => {
-        if (onTaskClick) {
+        if (segment && ownerTask) {
+            onSegmentClick?.({ task: ownerTask, segment, event: e });
+        } else if (onTaskClick) {
             onTaskClick({ task, event: e });
         }
-    }, [task, onTaskClick]);
+    }, [task, segment, ownerTask, onTaskClick, onSegmentClick]);
 
     const handleDoubleClick = useCallback((e: React.MouseEvent) => {
-        if (onTaskDoubleClick) {
+        if (segment && ownerTask) {
+            onSegmentDoubleClick?.({ task: ownerTask, segment, event: e });
+        } else if (onTaskDoubleClick) {
             onTaskDoubleClick({ task, event: e });
         }
-    }, [task, onTaskDoubleClick]);
+    }, [task, segment, ownerTask, onTaskDoubleClick, onSegmentDoubleClick]);
+
+    const handleConnectorMouseDown = useCallback((e: React.MouseEvent) => {
+        if (e.button !== 0) return;
+        e.stopPropagation();
+        e.preventDefault();
+        startDependencyDrag(linkTask, e.clientX, e.clientY);
+    }, [linkTask, startDependencyDrag]);
 
     const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (readOnly || !onTaskChange) return;
+        if (readOnly || !hasChangeHandler) return;
         const isLeft = e.key === 'ArrowLeft';
         const isRight = e.key === 'ArrowRight';
         if (!isLeft && !isRight) return;
@@ -176,8 +193,8 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
             return;
         }
 
-        onTaskChange({ task, originalTask: task, start: nextStart, end: nextEnd });
-    }, [readOnly, onTaskChange, task, canDrag, canResize]);
+        emitChange(nextStart, nextEnd);
+    }, [readOnly, hasChangeHandler, emitChange, task, canDrag, canResize]);
 
     const handleMouseEnter = useCallback((e: React.MouseEvent) => {
         if (!showTooltip || dragState) return;
@@ -216,6 +233,7 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
                     onMouseEnter={handleMouseEnter}
                     onMouseLeave={handleMouseLeave}
                     onMouseMove={handleTooltipMouseMove}
+                    data-gantt-task-id={linkTask.id}
                     role="button"
                     tabIndex={0}
                     aria-label={`Milestone: ${task.name}. Use arrow keys to move.`}
@@ -229,7 +247,7 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
         <>
             <div
                 ref={barRef}
-                className={classNames('eui-gantt-taskbar', {
+                className={classNames('eui-gantt-taskbar', task.cssClass, {
                     'is-group': isGroup,
                     'is-dragging': !!dragState,
                     'is-editable': canDrag || canResize,
@@ -248,6 +266,7 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onMouseMove={handleTooltipMouseMove}
+                data-gantt-task-id={linkTask.id}
                 role="button"
                 tabIndex={0}
                 aria-label={`Task: ${task.name}, ${progress}% complete. Use arrow keys to move; Alt+arrow to resize end; Ctrl+arrow to resize start.`}
@@ -271,7 +290,7 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
 
                 <div className="eui-gantt-taskbar-content" onMouseDown={canDrag ? (e) => handleMouseDown(e, 'move') : undefined}>
                     {Template ? (
-                        <Template task={task} width={clampedWidth} isGroup={isGroup} isMilestone={false} />
+                        <Template task={task} width={clampedWidth} isGroup={isGroup} isMilestone={false} segment={segment} ownerTask={ownerTask} />
                     ) : (
                         <span className="eui-gantt-taskbar-label">{task.name}</span>
                     )}
@@ -281,6 +300,15 @@ function TaskBar({ barInfo, rowTop }: TaskBarProps) {
                     <div
                         className="eui-gantt-taskbar-handle eui-gantt-taskbar-handle-right"
                         onMouseDown={(e) => handleMouseDown(e, 'resize-end')}
+                    />
+                )}
+
+                {allowDependencyCreate && !isGroup && (
+                    <div
+                        className="eui-gantt-taskbar-connector"
+                        onMouseDown={handleConnectorMouseDown}
+                        title="Drag to another bar to add a dependency"
+                        role="presentation"
                     />
                 )}
 

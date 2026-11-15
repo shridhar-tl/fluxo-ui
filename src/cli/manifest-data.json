@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-11-06T05:38:09.651Z",
+  "generatedAt": "2026-11-15T16:54:06.497Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -340,6 +340,7 @@
         "index.ts",
         "interactions/index.ts",
         "interactions/useDayGridDrag.ts",
+        "interactions/useDayGridSelection.ts",
         "interactions/useDragMove.ts",
         "interactions/useDragResize.ts",
         "interactions/useSelection.ts",
@@ -1419,6 +1420,7 @@
       "sourcePath": "components/gantt-chart",
       "entryFile": "components/gantt-chart/index.ts",
       "files": [
+        "Bands.tsx",
         "DependencyLines.tsx",
         "FieldsPanel.tsx",
         "GanttChart.scss",
@@ -2787,6 +2789,36 @@
       }
     },
     {
+      "id": "resource-timeline",
+      "name": "ResourceTimeline",
+      "kind": "directory",
+      "sourcePath": "components/resource-timeline",
+      "entryFile": "components/resource-timeline/index.ts",
+      "files": [
+        "ResourceTimeline.scss",
+        "ResourceTimeline.tsx",
+        "TimelineEventBar.tsx",
+        "index.ts",
+        "resource-timeline-types.ts",
+        "resource-timeline-utils.ts"
+      ],
+      "category": "Charts & Boards",
+      "label": "Resource Timeline",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "safe-area-view",
       "name": "SafeAreaView",
       "kind": "directory",
@@ -3226,10 +3258,12 @@
       "files": [
         "TabHeader.tsx",
         "TabNav.tsx",
+        "TabOverflowMenu.tsx",
         "TabPage.tsx",
         "TabView.css",
         "TabView.tsx",
         "index.ts",
+        "tab-overflow-menu.scss",
         "tab-view.scss",
         "tabview-utils.tsx"
       ],
@@ -3238,7 +3272,9 @@
       "description": "",
       "private": false,
       "dependencies": {
-        "components": [],
+        "components": [
+          "overlay-panel"
+        ],
         "hooks": [],
         "utils": [],
         "shared": [],

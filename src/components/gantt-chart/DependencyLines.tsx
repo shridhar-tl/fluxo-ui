@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import { useGanttContext } from './GanttContext';
-import { FlatTask } from './gantt-types';
+import { FlatTask, GanttDependency, GanttTask } from './gantt-types';
 import { getTaskBarPosition } from './gantt-utils';
 
 interface DependencyPath {
@@ -8,12 +8,15 @@ interface DependencyPath {
     d: string;
     color: string;
     arrowD: string;
+    fromTask: GanttTask;
+    toTask: GanttTask;
+    dependency: GanttDependency;
 }
 
 function DependencyLines() {
     const {
         flatTasks, showDependencies, columnWidth, rowHeight,
-        startDate, viewMode, totalWidth, totalHeight,
+        startDate, viewMode, totalWidth, totalHeight, onDependencyClick,
     } = useGanttContext();
 
     const paths = useMemo(() => {
@@ -99,6 +102,9 @@ function DependencyLines() {
                     d,
                     color,
                     arrowD,
+                    fromTask: sourceInfo.flat.task,
+                    toTask: ft.task,
+                    dependency: dep,
                 });
             }
         }
@@ -115,6 +121,16 @@ function DependencyLines() {
         >
             {paths.map(path => (
                 <g key={path.id}>
+                    {onDependencyClick && (
+                        <path
+                            className="eui-gantt-dependency-hit"
+                            d={path.d}
+                            fill="none"
+                            stroke="transparent"
+                            strokeWidth={10}
+                            onClick={(event) => onDependencyClick({ fromTask: path.fromTask, toTask: path.toTask, dependency: path.dependency, event })}
+                        />
+                    )}
                     <path
                         d={path.d}
                         fill="none"

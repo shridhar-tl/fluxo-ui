@@ -97,7 +97,7 @@ function KanbanColumnHeader({ column, cardCount, isCollapsed }: KanbanColumnHead
     if (columnHeaderTemplate) {
         return (
             <div className="eui-kanban-column-header" role="heading" aria-level={3}>
-                {columnHeaderTemplate(column, cardCount)}
+                {columnHeaderTemplate(column, cardCount, { toggleCollapse: handleCollapse, isCollapsed: false })}
             </div>
         );
     }

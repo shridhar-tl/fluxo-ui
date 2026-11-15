@@ -105,6 +105,11 @@ export interface KanbanSearchFilter {
     assignees?: string[];
 }
 
+export interface KanbanColumnHeaderHelpers {
+    toggleCollapse: () => void;
+    isCollapsed: boolean;
+}
+
 export type KanbanLayout = 'horizontal' | 'vertical';
 export type KanbanCardSize = 'compact' | 'default' | 'detailed';
 
@@ -134,7 +139,7 @@ export interface KanbanBoardProps {
     stickyColumnHeaders?: boolean;
 
     cardTemplate?: (card: KanbanCardData, column: KanbanColumnData) => ReactNode;
-    columnHeaderTemplate?: (column: KanbanColumnData, cardCount: number) => ReactNode;
+    columnHeaderTemplate?: (column: KanbanColumnData, cardCount: number, helpers: KanbanColumnHeaderHelpers) => ReactNode;
     columnFooterTemplate?: (column: KanbanColumnData, cards: KanbanCardData[]) => ReactNode;
     emptyColumnTemplate?: (column: KanbanColumnData) => ReactNode;
     cardActionsTemplate?: (card: KanbanCardData, column: KanbanColumnData) => ReactNode;

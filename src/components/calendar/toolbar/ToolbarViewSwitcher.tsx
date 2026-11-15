@@ -4,15 +4,14 @@ import type { CalendarViewMode, CalendarViewDefinition } from '../calendar-types
 
 interface ToolbarViewSwitcherProps {
   currentView: CalendarViewMode;
+  currentLabel: string;
   views: CalendarViewDefinition[];
   onViewChange: (view: CalendarViewMode) => void;
 }
 
-const ToolbarViewSwitcher: React.FC<ToolbarViewSwitcherProps> = ({ currentView, views, onViewChange }) => {
+const ToolbarViewSwitcher: React.FC<ToolbarViewSwitcherProps> = ({ currentView, currentLabel, views, onViewChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  const currentLabel = views.find(v => v.name === currentView)?.label ?? currentView;
 
   const handleToggle = useCallback(() => {
     setIsOpen(prev => !prev);

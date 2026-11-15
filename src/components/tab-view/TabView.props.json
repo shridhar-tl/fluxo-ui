@@ -29,7 +29,7 @@
     "scrollable": {
       "type": "boolean",
       "default": "false",
-      "description": "Show scroll arrows when tabs overflow"
+      "description": "Keep tabs on a single line and move tabs that do not fit into an overflow menu. The menu button shows the selected tab name when that tab is hidden."
     },
     "position": {
       "type": "'top' | 'bottom' | 'left' | 'right'",

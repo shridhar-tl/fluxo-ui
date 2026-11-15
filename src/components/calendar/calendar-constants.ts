@@ -1,3 +1,4 @@
+import { ViewMode } from './calendar-types';
 import type { CalendarConfig } from './calendar-types';
 
 export const defaultConfig: CalendarConfig = {
@@ -19,6 +20,7 @@ export const defaultConfig: CalendarConfig = {
   selectable: true,
   nowIndicator: true,
   navLinks: true,
+  navLinkView: ViewMode.timeGridDay,
   compact: false,
   snapDuration: 15,
   entryOverlapMode: 'stack',

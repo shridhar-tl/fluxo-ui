@@ -21,6 +21,7 @@ interface TabHeaderProps {
     className?: string;
     closeAriaLabel?: string;
     tabRef?: (el: HTMLDivElement | null) => void;
+    overflowed?: boolean;
 }
 
 const stringifyHeader = (header: React.ReactNode): string => {
@@ -47,6 +48,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
     className,
     closeAriaLabel,
     tabRef,
+    overflowed = false,
 }) => {
     const isVertical = position === 'left' || position === 'right';
 
@@ -57,6 +59,7 @@ export const TabHeader: React.FC<TabHeaderProps> = ({
         {
             'eui-tab-header-active': active,
             'eui-tab-header-disabled': disabled,
+            'eui-tab-header-overflowed': overflowed,
         },
         className
     );

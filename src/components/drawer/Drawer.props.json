@@ -101,6 +101,14 @@
     "className": {
       "type": "string",
       "description": "Additional CSS class for the drawer panel."
+    },
+    "bodyClassName": {
+      "type": "string",
+      "description": "Additional CSS class for the scrollable body."
+    },
+    "bodyStyle": {
+      "type": "CSSProperties",
+      "description": "Inline style for the scrollable body, for example to change its padding."
     }
   }
 }

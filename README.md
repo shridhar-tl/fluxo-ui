@@ -222,6 +222,7 @@ function Counter() {
 | --------------- | ------------------------------------------------------------------------------- |
 | Gantt Chart     | Project timeline and task visualization                                         |
 | Kanban Board    | Drag-and-drop task board with columns                                           |
+| Resource Timeline | Day-based scheduler with rows per resource, drag to reschedule and reassign   |
 | Timeline        | Vertical/horizontal event sequence                                              |
 | Progress Bar    | Determinate and indeterminate progress                                          |
 | Countdown Timer | Progress-aware countdown with circular, linear, segmented, and numeric variants |

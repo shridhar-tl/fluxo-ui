@@ -5,7 +5,7 @@ import { useGanttContext } from './GanttContext';
 function TimelineGrid() {
     const {
         dateCells, columnWidth, totalWidth, totalHeight,
-        todayColumnIndex, weekendColor, holidayColor, todayColor,
+        todayColumnIndex, todayLeft, weekendColor, holidayColor, todayColor,
         viewMode,
     } = useGanttContext();
 
@@ -54,7 +54,7 @@ function TimelineGrid() {
             {todayColumnIndex >= 0 && (
                 <div
                     className="eui-gantt-today-line"
-                    style={{ left: todayColumnIndex * columnWidth + columnWidth / 2 }}
+                    style={{ left: todayLeft }}
                 />
             )}
         </div>

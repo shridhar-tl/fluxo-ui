@@ -141,6 +141,7 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/card': () => import('./card/BasicUsage'),
     '/components/diff-viewer': () => import('./diff-viewer/BasicUsage'),
     '/components/kanban-board': () => import('./kanban-board/BasicUsage'),
+    '/components/resource-timeline': () => import('./resource-timeline/BasicUsage'),
     '/components/drag-drop': () => import('./drag-drop/BasicDragDrop'),
     '/components/docked-layout': () => import('./docked-layout/BasicUsage'),
     '/components/countdown-timer': () => import('./countdown-timer/BasicUsage'),
@@ -443,6 +444,7 @@ const editorComponents: Omit<ComponentCardProps, 'isDark'>[] = [
 const chartBoardComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Gantt Chart', description: 'Project timeline and task visualization', path: '/components/gantt-chart' },
     { title: 'Kanban Board', description: 'Drag-and-drop task board with columns', path: '/components/kanban-board' },
+    { title: 'Resource Timeline', description: 'Day-based scheduler with rows per resource, drag to reschedule and reassign', path: '/components/resource-timeline' },
     { title: 'Timeline', description: 'Vertical/horizontal event sequence', path: '/components/timeline' },
     { title: 'Progress Bar', description: 'Determinate and indeterminate progress', path: '/components/progress-bar' },
     {

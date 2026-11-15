@@ -5,13 +5,15 @@ import type { ViewProps, CalendarViewDefinition, DragState } from '../../calenda
 import { getDaysInRange, getEntriesForDay, getMonthRange, format, addMonths, subMonths, addDays, getWeekNumber, getDragRange } from '../../calendar-utils';
 import { useCalendarContext } from '../../CalendarContext';
 import { useDayGridDrag } from '../../interactions/useDayGridDrag';
+import { useDayGridSelection, isDateInSelection } from '../../interactions/useDayGridSelection';
+import type { DayGridSelectionResult } from '../../interactions/useDayGridSelection';
 import MonthGridHeader from './MonthGridHeader';
 import MonthGridCell from './MonthGridCell';
 
 const MonthGrid: React.FC<ViewProps> = ({
   currentDate, entries, dateRange, config,
   onEntryClick, onEntryContextMenu, onDateClick, onDateDoubleClick,
-  onEntryCreate, onEntryDrop,
+  onEntryCreate, onEntryDrop, onDateSelect,
   renderEntry, dateBackgrounds, dateRangeBackgrounds, loadingRanges,
 }) => {
   const { setDragState } = useCalendarContext();
@@ -72,6 +74,18 @@ const MonthGrid: React.FC<ViewProps> = ({
     onDrop: handleDrop,
   });
 
+  const handleSelect = useCallback((result: DayGridSelectionResult) => {
+    const syntheticEvent = new Event('select') as unknown as React.SyntheticEvent;
+    onDateSelect?.({ start: result.start, end: result.end, allDay: true, modifiers: result.modifiers }, syntheticEvent);
+  }, [onDateSelect]);
+
+  const { selection, handleCellPointerDown } = useDayGridSelection({
+    config,
+    entries,
+    containerRef: gridRef,
+    onSelect: handleSelect,
+  });
+
   const handleDoubleClick = useCallback((date: Date, event: React.MouseEvent) => {
     onDateDoubleClick?.(date, event);
     if (config.creatable && onEntryCreate) {
@@ -92,7 +106,10 @@ const MonthGrid: React.FC<ViewProps> = ({
   return (
     <div
       ref={gridRef}
-      className={cn('eui-cal-month-grid', { 'eui-cal-month-grid-dragging': !!dropTargetDate })}
+      className={cn('eui-cal-month-grid', {
+        'eui-cal-month-grid-dragging': !!dropTargetDate,
+        'eui-cal-month-grid-selecting': !!selection,
+      })}
       role="grid"
       aria-label="Month view"
       style={gridStyle}
@@ -133,6 +150,8 @@ const MonthGrid: React.FC<ViewProps> = ({
                   onEntryContextMenu={onEntryContextMenu}
                   onEntryPointerDown={handlePointerDown}
                   isDropTarget={dropTargetDate === key}
+                  isSelected={isDateInSelection(key, selection)}
+                  onCellPointerDown={config.selectable && onDateSelect ? handleCellPointerDown : undefined}
                   maxVisible={config.dayMaxEntries}
                   showNonCurrentDates={config.showNonCurrentDates}
                   navLinks={config.navLinks}

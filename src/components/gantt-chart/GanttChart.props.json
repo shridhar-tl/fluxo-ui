@@ -35,7 +35,12 @@
     },
     "columnWidth": {
       "type": "number",
-      "description": "Width of each timeline column. Defaults vary by view mode"
+      "description": "Width of each timeline column. Defaults vary by view mode. With fillWidth it is the minimum width"
+    },
+    "fillWidth": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Widens the columns so the timeline fills the available width when it is narrower than the panel"
     },
     "fieldsPanelWidth": {
       "type": "number | string",
@@ -70,7 +75,12 @@
     "markers": {
       "type": "GanttMarker[]",
       "default": "[]",
-      "description": "Vertical date markers (deadlines, milestones, events)"
+      "description": "Vertical date markers (deadlines, milestones, events). Labels are shown in a header row and stacked when they collide; labels that do not fit show as a tick with a tooltip"
+    },
+    "bands": {
+      "type": "GanttBand[]",
+      "default": "[]",
+      "description": "Shaded date ranges behind the task bars (sprints, release windows, freeze periods) with an optional label in the header. Overlapping bands get their own header row, and shortLabel is shown when the label does not fit"
     },
     "isHoliday": {
       "type": "(date: Date) => boolean",
@@ -97,7 +107,7 @@
       "description": "Disable all drag, resize, and create interactions"
     },
     "taskBarTemplate": {
-      "type": "(props: TaskBarTemplateProps) => JSX.Element",
+      "type": "(props: TaskBarTemplateProps) => ReactNode",
       "description": "Custom render function for task bar content"
     },
     "tooltipTemplate": {
@@ -127,6 +137,31 @@
     "onExpandToggle": {
       "type": "(task: GanttTask, expanded: boolean) => void",
       "description": "Fires when a group task is expanded or collapsed"
+    },
+    "allowDependencyCreate": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Shows a connector on each bar that can be dragged onto another bar to create a dependency (requires onDependencyCreate)"
+    },
+    "onSegmentChange": {
+      "type": "(event: GanttSegmentChangeEvent) => void",
+      "description": "Called after a segment of a task is moved or resized"
+    },
+    "onSegmentClick": {
+      "type": "(event: GanttSegmentClickEvent) => void",
+      "description": "Called when a segment of a task is clicked"
+    },
+    "onSegmentDoubleClick": {
+      "type": "(event: GanttSegmentClickEvent) => void",
+      "description": "Called when a segment of a task is double-clicked"
+    },
+    "onDependencyCreate": {
+      "type": "(event: GanttDependencyCreateEvent) => void",
+      "description": "Called when a dependency is drawn from one bar (fromTask) to another (toTask)"
+    },
+    "onDependencyClick": {
+      "type": "(event: GanttDependencyClickEvent) => void",
+      "description": "Makes dependency lines clickable, for example to remove a dependency"
     }
   },
   "taskProps": {
@@ -202,6 +237,10 @@
     "data": {
       "type": "Record<string, unknown>",
       "description": "Arbitrary extra data accessible in templates"
+    },
+    "segments": {
+      "type": "GanttSegment[]",
+      "description": "Several bars on the same row (for example work split into phases). The task start and end still define its overall span"
     }
   }
 }

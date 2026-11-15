@@ -2,13 +2,20 @@ import { useState, useMemo, useCallback, useRef, useEffect, useLayoutEffect } fr
 import classNames from 'classnames';
 import { GanttContext } from './GanttContext';
 import {
-    GanttProps, GanttViewMode, GanttContextValue,
-    GanttColumn, GanttDateCell, GanttTaskBarInfo,
+    GanttProps,
+    GanttViewMode,
+    GanttContextValue,
+    GanttColumn,
+    GanttDateCell,
+    GanttTaskBarInfo,
+    GanttTask,
+    GanttMarker,
+    GanttBand,
 } from './gantt-types';
 import {
     generateDateCells, generateMonthCells, generateQuarterCells,
     generateYearCells, flattenTasks, getTaskBarPosition,
-    getTodayColumnIndex, getDefaultColumnWidth, computeDateRange,
+    getTodayColumnIndex, getDefaultColumnWidth, computeDateRange, getMarkerPosition,
 } from './gantt-utils';
 import FieldsPanel from './FieldsPanel';
 import TimelinePanel from './TimelinePanel';
@@ -21,6 +28,16 @@ const defaultColumns: GanttColumn[] = [
 ];
 
 const defaultIsHoliday = () => false;
+const noMarkers: GanttMarker[] = [];
+const noBands: GanttBand[] = [];
+
+interface LinkDragState {
+    task: GanttTask;
+    startX: number;
+    startY: number;
+    x: number;
+    y: number;
+}
 
 function GanttChart({
     tasks,
@@ -31,6 +48,7 @@ function GanttChart({
     height = 500,
     rowHeight = 40,
     columnWidth: columnWidthProp,
+    fillWidth = true,
     fieldsPanelWidth = 300,
     showFieldsPanel = true,
     showToday = true,
@@ -39,11 +57,13 @@ function GanttChart({
     showDependencies = true,
     showProgress = true,
     showTooltip = true,
-    markers = [],
+    markers = noMarkers,
+    bands = noBands,
     isHoliday = defaultIsHoliday,
     allowTaskDrag = true,
     allowTaskResize = true,
     allowTaskCreate = false,
+    allowDependencyCreate = false,
     allowSort: _allowSort = false,
     readOnly = false,
     todayColor,
@@ -56,10 +76,17 @@ function GanttChart({
     onTaskClick,
     onTaskDoubleClick,
     onTaskCreate,
+    onSegmentChange,
+    onSegmentClick,
+    onSegmentDoubleClick,
+    onDependencyCreate,
+    onDependencyClick,
     onViewModeChange,
     onScroll,
     onExpandToggle,
 }: GanttProps) {
+    const [linkDrag, setLinkDrag] = useState<LinkDragState | null>(null);
+    const linkDragRef = useRef<LinkDragState | null>(null);
     const [internalViewMode, setInternalViewMode] = useState<GanttViewMode>(controlledViewMode ?? 'day');
     const viewMode = controlledViewMode ?? internalViewMode;
 
@@ -75,7 +102,8 @@ function GanttChart({
         return set;
     });
 
-    const columnWidth = columnWidthProp ?? getDefaultColumnWidth(viewMode);
+    const [availableWidth, setAvailableWidth] = useState(0);
+    const minColumnWidth = columnWidthProp ?? getDefaultColumnWidth(viewMode);
 
     const dateRange = useMemo(
         () => computeDateRange(tasks, viewMode, startDateProp, endDateProp),
@@ -96,6 +124,10 @@ function GanttChart({
         }
     }, [dateRange, viewMode, isHoliday]);
 
+    const columnWidth = fillWidth && dateCells.length && availableWidth > minColumnWidth * dateCells.length
+        ? Math.floor((availableWidth / dateCells.length) * 100) / 100
+        : minColumnWidth;
+
     const flatTasks = useMemo(
         () => flattenTasks(tasks, collapsedIds),
         [tasks, collapsedIds]
@@ -113,6 +145,13 @@ function GanttChart({
         () => showToday ? getTodayColumnIndex(dateRange.start, dateCells) : -1,
         [showToday, dateRange.start, dateCells]
     );
+
+    const todayLeft = useMemo(() => {
+        if (todayColumnIndex < 0) return -1;
+        return viewMode === 'day' || viewMode === 'week'
+            ? todayColumnIndex * columnWidth + columnWidth / 2
+            : getMarkerPosition(new Date(), dateRange.start, columnWidth, viewMode);
+    }, [todayColumnIndex, columnWidth, viewMode, dateRange.start]);
 
     const toggleCollapse = useCallback((taskId: string) => {
         setCollapsedIds(prev => {
@@ -144,6 +183,47 @@ function GanttChart({
         };
     }, [flatTasks, dateRange.start, columnWidth, viewMode]);
 
+    const startDependencyDrag = useCallback((task: GanttTask, clientX: number, clientY: number) => {
+        const state = { task, startX: clientX, startY: clientY, x: clientX, y: clientY };
+        linkDragRef.current = state;
+        setLinkDrag(state);
+    }, []);
+
+    useEffect(() => {
+        if (!linkDrag) return;
+
+        const handleMove = (e: MouseEvent) => {
+            const prev = linkDragRef.current;
+            if (!prev) return;
+            const updated = { ...prev, x: e.clientX, y: e.clientY };
+            linkDragRef.current = updated;
+            setLinkDrag(updated);
+        };
+
+        const handleUp = (e: MouseEvent) => {
+            const ds = linkDragRef.current;
+            linkDragRef.current = null;
+            setLinkDrag(null);
+            if (!ds || !onDependencyCreate) return;
+
+            const element = document.elementFromPoint(e.clientX, e.clientY);
+            const targetId = (element?.closest('[data-gantt-task-id]') as HTMLElement | null)?.dataset.ganttTaskId;
+            if (!targetId || targetId === ds.task.id) return;
+
+            const target = flatTasks.find(ft => ft.task.id === targetId)?.task;
+            if (target) {
+                onDependencyCreate({ fromTask: ds.task, toTask: target });
+            }
+        };
+
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleUp);
+        return () => {
+            window.removeEventListener('mousemove', handleMove);
+            window.removeEventListener('mouseup', handleUp);
+        };
+    }, [!!linkDrag, flatTasks, onDependencyCreate]);
+
     const contextValue = useMemo((): GanttContextValue => ({
         viewMode,
         dateCells,
@@ -161,8 +241,10 @@ function GanttChart({
         allowTaskDrag: !readOnly && allowTaskDrag,
         allowTaskResize: !readOnly && allowTaskResize,
         allowTaskCreate: !readOnly && allowTaskCreate,
+        allowDependencyCreate: !readOnly && allowDependencyCreate && !!onDependencyCreate,
         readOnly,
         todayColumnIndex,
+        todayLeft,
         collapsedIds,
         toggleCollapse,
         getTaskBarInfo,
@@ -172,8 +254,15 @@ function GanttChart({
         onTaskClick,
         onTaskDoubleClick,
         onTaskCreate,
+        onSegmentChange,
+        onSegmentClick,
+        onSegmentDoubleClick,
+        onDependencyCreate,
+        onDependencyClick,
+        startDependencyDrag,
         onExpandToggle,
         markers,
+        bands,
         weekendColor: weekendColor ?? 'var(--eui-bg-subtle)',
         holidayColor: holidayColor ?? 'var(--eui-primary-subtle)',
         todayColor: todayColor ?? 'rgba(59, 130, 246, 0.08)',
@@ -181,9 +270,10 @@ function GanttChart({
     }), [
         viewMode, dateCells, flatTasks, columnWidth, rowHeight, totalWidth, totalHeight,
         dateRange, showProgress, showDependencies, showTooltip, allowTaskDrag, allowTaskResize,
-        allowTaskCreate, readOnly, todayColumnIndex, collapsedIds, toggleCollapse, getTaskBarInfo,
+        allowTaskCreate, readOnly, todayColumnIndex, todayLeft, collapsedIds, toggleCollapse, getTaskBarInfo,
         taskBarTemplate, tooltipTemplate, onTaskChange, onTaskClick, onTaskDoubleClick,
-        onTaskCreate, onExpandToggle, markers, weekendColor, holidayColor, todayColor, isHoliday,
+        onTaskCreate, onSegmentChange, onSegmentClick, onSegmentDoubleClick, onDependencyCreate, onDependencyClick,
+        startDependencyDrag, allowDependencyCreate, onExpandToggle, markers, bands, weekendColor, holidayColor, todayColor, isHoliday,
     ]);
 
     const fieldsPanelBodyRef = useRef<HTMLDivElement>(null);
@@ -205,6 +295,8 @@ function GanttChart({
         const measure = () => {
             const gutter = body.offsetHeight - body.clientHeight;
             setScrollbarGutter(prev => (prev === gutter ? prev : gutter));
+            const width = body.clientWidth;
+            setAvailableWidth(prev => (prev === width ? prev : width));
         };
         measure();
         const observer = new ResizeObserver(measure);
@@ -232,11 +324,11 @@ function GanttChart({
     }, [controlledViewMode, onViewModeChange]);
 
     const scrollToToday = useCallback(() => {
-        if (todayColumnIndex >= 0 && timelinePanelBodyRef.current) {
-            const scrollLeft = todayColumnIndex * columnWidth - timelinePanelBodyRef.current.clientWidth / 3;
+        if (todayLeft >= 0 && timelinePanelBodyRef.current) {
+            const scrollLeft = todayLeft - timelinePanelBodyRef.current.clientWidth / 3;
             timelinePanelBodyRef.current.scrollTo({ left: Math.max(0, scrollLeft), behavior: 'smooth' });
         }
-    }, [todayColumnIndex, columnWidth]);
+    }, [todayLeft]);
 
     useEffect(() => {
         if (todayColumnIndex >= 0) {
@@ -301,6 +393,11 @@ function GanttChart({
                         />
                     )}
                 </div>
+                {linkDrag && (
+                    <svg className="eui-gantt-link-preview" aria-hidden="true">
+                        <line x1={linkDrag.startX} y1={linkDrag.startY} x2={linkDrag.x} y2={linkDrag.y} />
+                    </svg>
+                )}
             </div>
         </GanttContext.Provider>
     );

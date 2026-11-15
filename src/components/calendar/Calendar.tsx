@@ -36,6 +36,7 @@ const Calendar: React.FC<CalendarProps> = ({
   selectable,
   nowIndicator,
   navLinks,
+  navLinkView,
   compact,
   snapDuration,
   entryOverlapMode,
@@ -93,6 +94,7 @@ const Calendar: React.FC<CalendarProps> = ({
   renderEmpty,
   showAllDayRow,
   headerToolbarViews,
+  viewLabels,
 
   dateBackgrounds,
   dateRangeBackgrounds,
@@ -152,6 +154,7 @@ const Calendar: React.FC<CalendarProps> = ({
     ...(selectable !== undefined && { selectable }),
     ...(nowIndicator !== undefined && { nowIndicator }),
     ...(navLinks !== undefined && { navLinks }),
+    ...(navLinkView !== undefined && { navLinkView }),
     ...(compact !== undefined && { compact }),
     ...(snapDuration !== undefined && { snapDuration }),
     ...(entryOverlapMode !== undefined && { entryOverlapMode }),
@@ -211,7 +214,7 @@ const Calendar: React.FC<CalendarProps> = ({
   }), [
     slotDuration, visibleHoursStart, visibleHoursEnd, businessHours,
     firstDayOfWeek, hiddenDays, timeFormat, dateFormat, rowBanding,
-    minEntryHeight, editable, selectable, nowIndicator, navLinks,
+    minEntryHeight, editable, selectable, nowIndicator, navLinks, navLinkView,
     compact, snapDuration, entryOverlapMode, maxStackCount,
     weekNumbers, showNonCurrentDates, creatable, slotHeight, dragThreshold,
     titleFormat, dayHeaderFormat, weekDayHeaderFormat, monthHeaderFormat,
@@ -333,10 +336,11 @@ const Calendar: React.FC<CalendarProps> = ({
   const currentViewDef = viewDefinitions.get(nav.viewMode);
   const pluginActions = useMemo(() => registry.getToolbarActions(), [registry]);
   const viewList = useMemo(() => {
-    const all = registry.getViewList();
+    const all = registry.getViewList().map(v => (viewLabels?.[v.name] ? { ...v, label: viewLabels[v.name] as string } : v));
     if (!headerToolbarViews || headerToolbarViews.length === 0) return all;
     return all.filter(v => headerToolbarViews.includes(v.name));
-  }, [registry, headerToolbarViews]);
+  }, [registry, headerToolbarViews, viewLabels]);
+  const currentViewLabel = viewLabels?.[nav.viewMode] ?? currentViewDef?.label ?? nav.viewMode;
 
   const contextValue = useMemo<CalendarContextValue>(() => ({
     currentDate: nav.currentDate,
@@ -410,6 +414,7 @@ const Calendar: React.FC<CalendarProps> = ({
               title={nav.title}
               currentDate={nav.currentDate}
               currentView={nav.viewMode}
+              currentViewLabel={currentViewLabel}
               views={viewList}
               pluginActions={pluginActions}
               api={api}
@@ -444,9 +449,9 @@ const Calendar: React.FC<CalendarProps> = ({
             onEntryDrop={onEntryDrop}
             onEntryResize={onEntryResize}
             onDateClick={(date, event) => {
-              if (config.navLinks) {
+              if (config.navLinks && !onDateClick) {
                 nav.gotoDate(date);
-                nav.setViewMode(ViewMode.timeGridDay);
+                nav.setViewMode(config.navLinkView);
               }
               onDateClick?.(date, event);
             }}

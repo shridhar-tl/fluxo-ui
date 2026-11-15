@@ -508,7 +508,7 @@
     align-items: center;
     width: 100%;
     height: 100%;
-    padding: 0 10px;
+    padding: 0 6px;
     z-index: 1;
     overflow: hidden;
 }
@@ -588,33 +588,95 @@
     border-left: 2px dashed #ef4444;
 }
 
-.eui-gantt-marker-label {
+.eui-gantt-bands {
     position: absolute;
-    top: 6px;
-    left: 10px;
-    padding: 3px 10px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.eui-gantt-band {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    background-color: var(--eui-primary-subtle);
+    border-left: 1px solid var(--eui-border-subtle);
+    opacity: 0.1;
+
+    &.is-alt {
+        opacity: 0.04;
+    }
+}
+
+.eui-gantt-timeline-header-bands,
+.eui-gantt-timeline-header-markers {
+    position: relative;
+    border-top: 1px solid var(--eui-border-subtle);
+}
+
+
+.eui-gantt-header-band {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    padding: 0 6px;
     font-size: 11px;
     font-weight: 500;
+    line-height: 18px;
     white-space: nowrap;
-    border-radius: 10px;
-    background-color: #fecaca;
-    color: #ef4444;
-    pointer-events: auto;
-    max-width: 180px;
+    overflow: hidden;
+    box-sizing: border-box;
+    color: var(--eui-text);
+    border-left: 2px solid var(--eui-primary);
+    border-radius: 0 var(--eui-radius-sm) var(--eui-radius-sm) 0;
+}
+
+.eui-gantt-header-band-fill {
+    position: absolute;
+    inset: 0;
+    background-color: var(--eui-primary);
+    opacity: 0.18;
+
+    .is-alt > & {
+        opacity: 0.1;
+    }
+}
+
+.eui-gantt-header-band-label {
+    position: relative;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.eui-gantt-marker-arrow {
+.eui-gantt-header-marker {
     position: absolute;
-    left: -7px;
-    top: 50%;
-    transform: translateY(-50%);
+    height: 16px;
+    padding: 0 6px;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    color: #ef4444;
+    border-left: 2px solid #ef4444;
+    cursor: default;
+}
+
+.eui-gantt-header-marker-more {
+    position: absolute;
+    bottom: 2px;
     width: 0;
     height: 0;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-    border-right: 7px solid #fecaca;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid #ef4444;
+    cursor: default;
 }
 
 // ── Dependencies ────────────────────────���───────────────
@@ -722,5 +784,46 @@
             flex: 1 !important;
             width: 100% !important;
         }
+    }
+}
+
+.eui-gantt-taskbar-connector {
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
+    border-radius: 50%;
+    border: 2px solid var(--eui-primary);
+    background: var(--eui-bg);
+    cursor: crosshair;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 5;
+}
+
+.eui-gantt-taskbar:hover .eui-gantt-taskbar-connector,
+.eui-gantt-taskbar:focus-visible .eui-gantt-taskbar-connector {
+    opacity: 1;
+}
+
+.eui-gantt-dependency-hit {
+    pointer-events: stroke;
+    cursor: pointer;
+}
+
+.eui-gantt-link-preview {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1000;
+
+    line {
+        stroke: var(--eui-primary);
+        stroke-width: 2;
+        stroke-dasharray: 4 3;
     }
 }

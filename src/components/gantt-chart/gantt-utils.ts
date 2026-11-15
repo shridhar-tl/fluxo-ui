@@ -1,6 +1,6 @@
 import {
     GanttDateCell, GanttWeekGroup, GanttViewMode, GanttTask,
-    FlatTask
+    FlatTask, GanttBand
 } from './gantt-types';
 
 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -603,3 +603,100 @@ export function getMarkerPosition(markerDate: Date | string, startDate: Date, co
 }
 
 export { normalizeDate, addDays, diffDays, isSameDay };
+
+export interface TimelineLabel {
+    id: string;
+    left: number;
+    text: string;
+}
+
+export interface PlacedTimelineLabel extends TimelineLabel {
+    width: number;
+    lane: number;
+}
+
+const labelCharWidth = 6.4;
+const labelPadding = 18;
+const labelMaxWidth = 180;
+const labelGap = 4;
+
+export function estimateLabelWidth(text: string, padding = labelPadding): number {
+    return text.length * labelCharWidth + padding;
+}
+
+export function layoutTimelineLabels(labels: TimelineLabel[], maxLanes: number): PlacedTimelineLabel[] {
+    const laneEnds: number[] = [];
+    return [...labels]
+        .sort((a, b) => a.left - b.left)
+        .map(label => {
+            const width = Math.min(labelMaxWidth, estimateLabelWidth(label.text));
+            let lane = laneEnds.findIndex(end => end <= label.left);
+            if (lane < 0 && laneEnds.length < maxLanes) {
+                lane = laneEnds.length;
+            }
+            if (lane >= 0) {
+                laneEnds[lane] = label.left + width + labelGap;
+            }
+            return { ...label, width, lane };
+        });
+}
+
+export interface PositionedBand {
+    band: GanttBand;
+    index: number;
+    left: number;
+    width: number;
+    lane: number;
+    order: number;
+}
+
+export function layoutBands(bands: GanttBand[], startDate: Date, columnWidth: number, viewMode: GanttViewMode): PositionedBand[] {
+    const laneEnds: Date[] = [];
+    const laneCounts: number[] = [];
+    const placed = bands
+        .map((band, index) => ({ band, index, start: normalizeDate(band.start), end: normalizeDate(band.end) }))
+        .filter(item => item.end >= item.start)
+        .sort((a, b) => a.start.getTime() - b.start.getTime())
+        .map(item => {
+            let lane = laneEnds.findIndex(end => end <= item.start);
+            if (lane < 0) {
+                lane = laneEnds.length;
+            }
+            laneEnds[lane] = item.end;
+            laneCounts[lane] = (laneCounts[lane] ?? 0) + 1;
+            const position = getRangePosition(item.start, item.end, startDate, columnWidth, viewMode);
+            return { band: item.band, index: item.index, lane, order: laneCounts[lane] - 1, ...position };
+        });
+
+    const lastInLane = new Map<number, PositionedBand>();
+    for (const item of placed) {
+        const previous = lastInLane.get(item.lane);
+        if (previous && previous.left + previous.width > item.left) {
+            previous.width = Math.max(0, item.left - previous.left);
+        }
+        lastInLane.set(item.lane, item);
+    }
+    return placed;
+}
+
+export function fitBandLabel(band: GanttBand, width: number, padding: number): string {
+    if (band.label && estimateLabelWidth(band.label, padding) <= width) {
+        return band.label;
+    }
+    if (band.shortLabel && estimateLabelWidth(band.shortLabel, padding) <= width) {
+        return band.shortLabel;
+    }
+    return '';
+}
+
+export function getRangePosition(
+    start: Date | string,
+    end: Date | string,
+    startDate: Date,
+    columnWidth: number,
+    viewMode: GanttViewMode
+): { left: number; width: number } {
+    const left = getMarkerPosition(start, startDate, columnWidth, viewMode);
+    const right = getMarkerPosition(addDays(normalizeDate(end), 1), startDate, columnWidth, viewMode);
+    return { left, width: Math.max(0, right - left) };
+}

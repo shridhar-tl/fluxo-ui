@@ -38,6 +38,7 @@ const componentLocationOverrides = {
     'image-editor': { subdir: 'image-editor', name: 'ImageEditor' },
     'json-editor': { subdir: 'json-editor', name: 'JsonEditor' },
     'kanban-board': { subdir: 'kanban-board', name: 'KanbanBoard' },
+    'resource-timeline': { subdir: 'resource-timeline', name: 'ResourceTimeline' },
     'menu-nav': { subdir: 'menu-nav', name: 'MenuNav' },
     'notification-center': { subdir: 'notification-center', name: 'NotificationCenter' },
     'page-banner': { subdir: 'page-banner', name: 'PageBanner' },

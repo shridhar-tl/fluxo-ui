@@ -1,0 +1,127 @@
+{
+  "timelineProps": {
+    "resources": {
+      "type": "ResourceTimelineResource[]",
+      "required": true,
+      "description": "Rows of the timeline, for example people or rooms"
+    },
+    "events": {
+      "type": "ResourceTimelineEvent[]",
+      "required": true,
+      "description": "Bars placed on the rows by resourceId, start and end. Overlapping bars of a row are placed in separate lanes"
+    },
+    "startDate": {
+      "type": "Date | string",
+      "required": true,
+      "description": "First day shown on the timeline"
+    },
+    "endDate": {
+      "type": "Date | string",
+      "required": true,
+      "description": "Last day shown on the timeline"
+    },
+    "dayWidth": {
+      "type": "number",
+      "default": "32",
+      "description": "Width of one day in pixels"
+    },
+    "laneHeight": {
+      "type": "number",
+      "default": "28",
+      "description": "Height of one lane of bars in pixels"
+    },
+    "resourceWidth": {
+      "type": "number | string",
+      "default": "200",
+      "description": "Width of the sticky resource column"
+    },
+    "height": {
+      "type": "number | string",
+      "default": "480",
+      "description": "Height of the component. The body scrolls inside it"
+    },
+    "markers": {
+      "type": "ResourceTimelineMarker[]",
+      "default": "[]",
+      "description": "Vertical dashed lines on given dates, for example milestones"
+    },
+    "readOnly": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disables moving, resizing and dropping"
+    },
+    "allowResourceChange": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allows dragging a bar to another row (and moving it with the up / down arrow keys)"
+    },
+    "showToday": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Highlights today in the header and draws a line on every row"
+    },
+    "isNonWorkingDay": {
+      "type": "(date: Date, resourceId: string) => boolean",
+      "description": "Shades the days a resource does not work, per row"
+    },
+    "resourceTemplate": {
+      "type": "(resource) => ReactNode",
+      "description": "Custom content of the resource column"
+    },
+    "eventTemplate": {
+      "type": "(item, width) => ReactNode",
+      "description": "Custom content of a bar"
+    },
+    "dayCellTemplate": {
+      "type": "(resource, date) => ReactNode",
+      "description": "Renders a row of day cells under the bars of each resource, for example the daily load"
+    },
+    "dayCellHeight": {
+      "type": "number",
+      "default": "24",
+      "description": "Height of the day cell row"
+    },
+    "emptyMessage": {
+      "type": "ReactNode",
+      "default": "'No resources'",
+      "description": "Shown when there are no resources"
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class of the root element"
+    },
+    "ariaLabel": {
+      "type": "string",
+      "default": "'Resource timeline'",
+      "description": "Accessible name of the grid"
+    },
+    "onEventChange": {
+      "type": "(event: ResourceTimelineEventChangeEvent) => void",
+      "description": "Called after a bar is moved, resized or moved to another row, with the new start, end and resource"
+    },
+    "onEventClick": {
+      "type": "(event: ResourceTimelineEventClickEvent) => void",
+      "description": "Called when a bar is clicked without being dragged"
+    },
+    "onEventDoubleClick": {
+      "type": "(event: ResourceTimelineEventClickEvent) => void",
+      "description": "Called on double click or Enter on a bar"
+    },
+    "onExternalDrop": {
+      "type": "(event: ResourceTimelineDropEvent) => void",
+      "description": "Enables dropping items dragged with the HTML drag and drop API onto a row. Receives the row, the day and the dataTransfer"
+    }
+  },
+  "eventProps": {
+    "id": { "type": "string", "required": true, "description": "Unique id of the bar" },
+    "resourceId": { "type": "string", "required": true, "description": "Row the bar belongs to" },
+    "start": { "type": "Date | string", "required": true, "description": "First day of the bar" },
+    "end": { "type": "Date | string", "required": true, "description": "Last day of the bar (inclusive)" },
+    "title": { "type": "string", "required": true, "description": "Label and tooltip of the bar" },
+    "color": { "type": "string", "description": "Background colour" },
+    "textColor": { "type": "string", "description": "Text colour" },
+    "draggable": { "type": "boolean", "default": "true", "description": "Set to false to prevent moving the bar" },
+    "resizable": { "type": "boolean", "default": "true", "description": "Set to false to prevent resizing the bar" },
+    "data": { "type": "Record<string, unknown>", "description": "Any data used by the templates" }
+  }
+}

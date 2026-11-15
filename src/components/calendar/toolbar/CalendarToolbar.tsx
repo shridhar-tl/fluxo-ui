@@ -18,6 +18,7 @@ interface CalendarToolbarProps {
   title: string;
   currentDate: Date;
   currentView: CalendarViewMode;
+  currentViewLabel: string;
   views: CalendarViewDefinition[];
   pluginActions: CalendarPluginToolbarAction[];
   api: CalendarApi;
@@ -39,7 +40,7 @@ interface CalendarToolbarProps {
 }
 
 const CalendarToolbar: React.FC<CalendarToolbarProps> = ({
-  title, currentDate, currentView, views, pluginActions, api,
+  title, currentDate, currentView, currentViewLabel, views, pluginActions, api,
   firstDayOfWeek, onPrev, onNext, onToday, onViewChange, onDateSelect,
   hideNavigation, hideTitle, hideViewSwitcher, showNavigationPicker,
   navigationPickerIconOnly, compact, startSlot, endSlot, renderToolbarEnd,
@@ -62,6 +63,7 @@ const CalendarToolbar: React.FC<CalendarToolbarProps> = ({
   const viewSwitcherNode = !hideViewSwitcher ? (
     <ToolbarViewSwitcher
       currentView={currentView}
+      currentLabel={currentViewLabel}
       views={views}
       onViewChange={onViewChange}
     />

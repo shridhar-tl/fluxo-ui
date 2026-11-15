@@ -66,6 +66,7 @@ export type { FabPosition, FabProps, FabSize, FabVariant } from './Fab';
 export { FieldLabel } from './FieldLabel';
 export * from './file-upload';
 export * from './gantt-chart';
+export * from './resource-timeline';
 export * from './image-editor';
 export * from './lightbox';
 export * from './menu-nav';

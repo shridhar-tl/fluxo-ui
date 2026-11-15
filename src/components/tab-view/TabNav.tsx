@@ -1,8 +1,9 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { TabHeader } from './TabHeader';
+import { TabOverflowMenu } from './TabOverflowMenu';
 import type { TabViewVariant } from './TabView';
-import { calculateScrollPosition, isTabDisabled } from './tabview-utils';
+import { isTabDisabled } from './tabview-utils';
 
 interface TabNavProps {
     tabs: React.ReactElement[];
@@ -35,8 +36,8 @@ export const TabNav: React.FC<TabNavProps> = ({
 }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const tabRefs = useRef<Array<HTMLDivElement | null>>([]);
-    const [showLeftArrow, setShowLeftArrow] = useState(false);
-    const [showRightArrow, setShowRightArrow] = useState(false);
+    const overflowTriggerRef = useRef<HTMLButtonElement | null>(null);
+    const [hiddenIndices, setHiddenIndices] = useState<number[]>([]);
     const [indicatorStyle, setIndicatorStyle] = useState<React.CSSProperties>({});
     const [indicatorReady, setIndicatorReady] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState(activeIndex);
@@ -49,7 +50,8 @@ export const TabNav: React.FC<TabNavProps> = ({
     const updateIndicator = useCallback(() => {
         if (!hasSlidingIndicator || !scrollContainerRef.current) return;
         const activeEl = tabRefs.current[activeIndex];
-        if (!activeEl) {
+        if (!activeEl || hiddenIndices.includes(activeIndex)) {
+            setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }));
             setIndicatorReady(false);
             return;
         }
@@ -59,7 +61,7 @@ export const TabNav: React.FC<TabNavProps> = ({
             transform: `translate(${activeEl.offsetLeft}px, ${activeEl.offsetTop}px)`,
         });
         setIndicatorReady(true);
-    }, [activeIndex, hasSlidingIndicator]);
+    }, [activeIndex, hasSlidingIndicator, hiddenIndices]);
 
     useEffect(() => {
         updateIndicator();
@@ -80,99 +82,54 @@ export const TabNav: React.FC<TabNavProps> = ({
     }, [hasSlidingIndicator, updateIndicator]);
 
     const isVertical = position === 'left' || position === 'right';
+    const tabCount = tabs.length;
 
-    const checkScrollButtons = useCallback(() => {
-        if (!scrollContainerRef.current || !scrollable) return;
-
+    const measureOverflow = useCallback(() => {
         const container = scrollContainerRef.current;
-        const scrollLeft = container.scrollLeft;
-        const scrollTop = container.scrollTop;
-        const scrollWidth = container.scrollWidth;
-        const scrollHeight = container.scrollHeight;
-        const clientWidth = container.clientWidth;
-        const clientHeight = container.clientHeight;
-
-        if (isVertical) {
-            setShowLeftArrow(scrollTop > 5);
-            setShowRightArrow(scrollTop < scrollHeight - clientHeight - 5);
-        } else {
-            setShowLeftArrow(scrollLeft > 5);
-            setShowRightArrow(scrollLeft < scrollWidth - clientWidth - 5);
+        if (!container || !scrollable) {
+            setHiddenIndices((prev) => (prev.length === 0 ? prev : []));
+            return;
         }
-    }, [scrollable, isVertical]);
 
-    const scrollToTab = (direction: 'left' | 'right') => {
-        if (!scrollContainerRef.current) return;
+        const limit = isVertical ? container.clientHeight : container.clientWidth;
+        const next: number[] = [];
+        tabRefs.current.forEach((el, index) => {
+            if (!el || index >= tabCount) return;
+            const end = isVertical ? el.offsetTop + el.offsetHeight : el.offsetLeft + el.offsetWidth;
+            if (end > limit + 1) next.push(index);
+        });
 
-        const container = scrollContainerRef.current;
-        const scrollAmount = isVertical ? 100 : 150;
+        setHiddenIndices((prev) => (prev.length === next.length && prev.every((value, i) => value === next[i]) ? prev : next));
+    }, [scrollable, isVertical, tabCount]);
 
-        if (isVertical) {
-            container.scrollTo({
-                top: container.scrollTop + (direction === 'right' ? scrollAmount : -scrollAmount),
-                behavior: 'smooth',
-            });
-        } else {
-            container.scrollTo({
-                left: container.scrollLeft + (direction === 'right' ? scrollAmount : -scrollAmount),
-                behavior: 'smooth',
-            });
-        }
-    };
+    const hasOverflow = hiddenIndices.length > 0;
 
-    const ensureActiveTabVisible = useCallback(() => {
-        if (!scrollContainerRef.current || !scrollable) return;
-
-        const container = scrollContainerRef.current;
-        const activeTab = tabRefs.current[activeIndex];
-
-        if (!activeTab) return;
-
-        if (isVertical) {
-            const containerRect = container.getBoundingClientRect();
-            const activeRect = activeTab.getBoundingClientRect();
-
-            if (activeRect.top < containerRect.top) {
-                container.scrollTo({
-                    top: container.scrollTop - (containerRect.top - activeRect.top) - 10,
-                    behavior: 'smooth',
-                });
-            } else if (activeRect.bottom > containerRect.bottom) {
-                container.scrollTo({
-                    top: container.scrollTop + (activeRect.bottom - containerRect.bottom) + 10,
-                    behavior: 'smooth',
-                });
-            }
-        } else {
-            const newScrollLeft = calculateScrollPosition(container, activeTab);
-            if (newScrollLeft !== container.scrollLeft) {
-                container.scrollTo({
-                    left: newScrollLeft,
-                    behavior: 'smooth',
-                });
-            }
-        }
-    }, [activeIndex, isVertical, scrollable]);
-
-    useEffect(() => {
-        checkScrollButtons();
-        ensureActiveTabVisible();
-    }, [activeIndex, tabs.length, checkScrollButtons, ensureActiveTabVisible]);
+    useLayoutEffect(() => {
+        measureOverflow();
+    }, [measureOverflow, tabs, hasOverflow, activeIndex]);
 
     useEffect(() => {
         const container = scrollContainerRef.current;
-        if (!container) return;
+        if (!container || !scrollable || typeof ResizeObserver === 'undefined') return;
 
-        container.addEventListener('scroll', checkScrollButtons);
-
-        const resizeObserver = new ResizeObserver(() => checkScrollButtons());
+        const resizeObserver = new ResizeObserver(() => measureOverflow());
         resizeObserver.observe(container);
+        tabRefs.current.forEach((el) => {
+            if (el) resizeObserver.observe(el);
+        });
 
-        return () => {
-            container.removeEventListener('scroll', checkScrollButtons);
-            resizeObserver.disconnect();
-        };
-    }, [scrollable, checkScrollButtons]);
+        return () => resizeObserver.disconnect();
+    }, [scrollable, measureOverflow, tabCount]);
+
+    const hiddenSet = useMemo(() => new Set(hiddenIndices), [hiddenIndices]);
+    const overflowItems = useMemo(
+        () => hiddenIndices.filter((index) => !!tabs[index]).map((index) => ({ index, tab: tabs[index] })),
+        [hiddenIndices, tabs],
+    );
+
+    const setOverflowTrigger = useCallback((el: HTMLButtonElement | null) => {
+        overflowTriggerRef.current = el;
+    }, []);
 
     const focusTab = (index: number) => {
         const target = tabRefs.current[index];
@@ -213,7 +170,14 @@ export const TabNav: React.FC<TabNavProps> = ({
                 } else {
                     setFocusedIndex(nextIndex);
                 }
-                requestAnimationFrame(() => focusTab(nextIndex));
+                const targetIndex = nextIndex;
+                requestAnimationFrame(() => {
+                    if (hiddenSet.has(targetIndex)) {
+                        overflowTriggerRef.current?.focus();
+                    } else {
+                        focusTab(targetIndex);
+                    }
+                });
             }
         }
     };
@@ -233,6 +197,7 @@ export const TabNav: React.FC<TabNavProps> = ({
         'eui-tab-scroll-vertical': isVertical,
         'eui-tab-scroll-horizontal': !isVertical,
         'eui-tab-scroll-hidden': scrollable,
+        'eui-tab-scroll-fit': scrollable,
         'eui-tab-scroll-x': !scrollable && !isVertical,
         'eui-tab-scroll-y': !scrollable && isVertical,
         'eui-tab-scroll-wrap': !scrollable && !isVertical,
@@ -241,37 +206,19 @@ export const TabNav: React.FC<TabNavProps> = ({
     const tabbableIndex = activationMode === 'manual' ? focusedIndex : activeIndex;
     const orientation: 'horizontal' | 'vertical' = isVertical ? 'vertical' : 'horizontal';
 
+    const handleOverflowTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (hiddenSet.has(tabbableIndex)) handleKeyDown(e, tabbableIndex);
+    };
+
     return (
         <div className={containerClasses}>
-            {scrollable && showLeftArrow && (
-                <button
-                    type="button"
-                    className={classNames('eui-tab-arrow', {
-                        'eui-tab-arrow-left': !isVertical,
-                        'eui-tab-arrow-up': isVertical,
-                    })}
-                    onClick={() => scrollToTab('left')}
-                    aria-label={isVertical ? 'Scroll up' : 'Scroll left'}
-                >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        {isVertical ? <polyline points="18 15 12 9 6 15" /> : <polyline points="15 18 9 12 15 6" />}
-                    </svg>
-                </button>
-            )}
-
             <div
                 ref={scrollContainerRef}
                 className={scrollContainerClasses}
                 role="tablist"
                 aria-label={ariaLabel}
                 aria-orientation={orientation}
-                style={{
-                    paddingLeft: scrollable && showLeftArrow && !isVertical ? '2rem' : undefined,
-                    paddingRight: scrollable && showRightArrow && !isVertical ? '2rem' : undefined,
-                    paddingTop: scrollable && showLeftArrow && isVertical ? '2rem' : undefined,
-                    paddingBottom: scrollable && showRightArrow && isVertical ? '2rem' : undefined,
-                    position: hasSlidingIndicator ? 'relative' : undefined,
-                }}
+                style={{ position: hasSlidingIndicator || scrollable ? 'relative' : undefined }}
             >
                 {hasSlidingIndicator && (
                     <div
@@ -302,6 +249,7 @@ export const TabNav: React.FC<TabNavProps> = ({
                             onClose={() => onTabClose?.(index, tab)}
                             onKeyDown={(e) => handleKeyDown(e, index)}
                             tabIndex={index === tabbableIndex ? 0 : -1}
+                            overflowed={hiddenSet.has(index)}
                             position={position}
                             variant={variant}
                             tabRef={(el) => { tabRefs.current[index] = el; }}
@@ -310,20 +258,17 @@ export const TabNav: React.FC<TabNavProps> = ({
                 })}
             </div>
 
-            {scrollable && showRightArrow && (
-                <button
-                    type="button"
-                    className={classNames('eui-tab-arrow', {
-                        'eui-tab-arrow-right': !isVertical,
-                        'eui-tab-arrow-down': isVertical,
-                    })}
-                    onClick={() => scrollToTab('right')}
-                    aria-label={isVertical ? 'Scroll down' : 'Scroll right'}
-                >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        {isVertical ? <polyline points="6 9 12 15 18 9" /> : <polyline points="9 18 15 12 9 6" />}
-                    </svg>
-                </button>
+            {scrollable && overflowItems.length > 0 && (
+                <TabOverflowMenu
+                    items={overflowItems}
+                    activeIndex={activeIndex}
+                    position={position}
+                    variant={variant}
+                    onSelect={onTabClick}
+                    onClose={onTabClose}
+                    onTriggerKeyDown={handleOverflowTriggerKeyDown}
+                    triggerRef={setOverflowTrigger}
+                />
             )}
 
             {headerEnd && !isVertical && (

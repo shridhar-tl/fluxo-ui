@@ -106,6 +106,11 @@
     visibility: hidden;
   }
 
+  &.eui-cal-month-cell-selected {
+    background: var(--eui-primary-subtle);
+    box-shadow: inset 0 0 0 1px var(--eui-primary);
+  }
+
   &.eui-cal-month-cell-drop-target {
     background: var(--eui-primary-subtle);
     outline: 2px dashed var(--eui-primary);
@@ -116,6 +121,11 @@
 .eui-cal-month-grid-dragging,
 .eui-cal-month-grid-dragging * {
   cursor: grabbing;
+}
+
+.eui-cal-month-grid-selecting,
+.eui-cal-month-grid-selecting * {
+  user-select: none;
 }
 
 .eui-cal-month-header-weeknum {

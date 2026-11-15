@@ -20,7 +20,7 @@ const ScrollableTabs: React.FC = () => {
 
     return (
         <>
-            <ComponentDemo title="Scrollable Tabs" description="Tab navigation with scroll arrows when tabs overflow">
+            <ComponentDemo title="Scrollable Tabs" description="Tabs that do not fit collapse into a menu on the right. Selecting a hidden tab shows its name on the menu button. Resize the container to try it.">
                 <div className="w-full max-w-md">
                     <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)} scrollable>
                         {tabNames.map((name) => (

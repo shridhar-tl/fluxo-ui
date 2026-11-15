@@ -1,20 +1,5 @@
 import React from 'react';
 
-export const calculateScrollPosition = (container: HTMLElement, targetElement: HTMLElement): number => {
-    const containerRect = container.getBoundingClientRect();
-    const targetRect = targetElement.getBoundingClientRect();
-
-    if (targetRect.left < containerRect.left) {
-        return container.scrollLeft - (containerRect.left - targetRect.left);
-    }
-
-    if (targetRect.right > containerRect.right) {
-        return container.scrollLeft + (targetRect.right - containerRect.right);
-    }
-
-    return container.scrollLeft;
-};
-
 export const getVisibleTabs = (children: React.ReactNode): React.ReactElement[] => {
     return React.Children.toArray(children).filter((child: any): child is React.ReactElement<any> => {
         return React.isValidElement(child) && (child.props as any).visible !== false;

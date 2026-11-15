@@ -10,6 +10,7 @@ import ViewModes from './ViewModes';
 import CustomRendering from './CustomRendering';
 import TimeGridConfig from './TimeGridConfig';
 import DragDropResize from './DragDropResize';
+import MonthRangeSelection from './MonthRangeSelection';
 import ImperativeApi from './ImperativeApi';
 import PluginSystem from './PluginSystem';
 import CompactMode from './CompactMode';
@@ -27,6 +28,7 @@ const sectionNavItems = [
   { id: 'custom-rendering', title: 'Custom Rendering', description: 'Custom entry templates' },
   { id: 'time-grid-config', title: 'Time Grid Config', description: 'Slot duration, hours, format' },
   { id: 'drag-drop-resize', title: 'Drag, Drop & Resize', description: 'Interactive entry manipulation' },
+  { id: 'month-range-selection', title: 'Day Range Selection', description: 'Select several days in the month view' },
   { id: 'imperative-api', title: 'Imperative API', description: 'Programmatic control via ref' },
   { id: 'plugin-views', title: 'Plugin Views', description: 'Tree-shakeable view plugins' },
   { id: 'plugin-system', title: 'Plugin System', description: 'Extend with custom plugins' },
@@ -88,6 +90,10 @@ const CalendarPage: React.FC = () => {
 
       <section id="drag-drop-resize" className="scroll-mt-8">
         <DragDropResize />
+      </section>
+
+      <section id="month-range-selection" className="scroll-mt-8">
+        <MonthRangeSelection />
       </section>
 
       <section id="imperative-api" className="scroll-mt-8">

@@ -118,6 +118,7 @@ const navSections: NavSection[] = [
         items: [
             { label: 'Gantt Chart', path: '/components/gantt-chart' },
             { label: 'Kanban Board', path: '/components/kanban-board' },
+            { label: 'Resource Timeline', path: '/components/resource-timeline' },
             { label: 'Timeline', path: '/components/timeline' },
             { label: 'Progress Bar', path: '/components/progress-bar' },
             { label: 'Countdown Timer', path: '/components/countdown-timer' },

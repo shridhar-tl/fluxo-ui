@@ -28,6 +28,8 @@ interface DrawerProps {
     closeOnEscape?: boolean;
     closeOnBackdropClick?: boolean;
     className?: string;
+    bodyClassName?: string;
+    bodyStyle?: React.CSSProperties;
     children: React.ReactNode;
     header?: React.ReactNode;
     footer?: React.ReactNode;
@@ -90,6 +92,8 @@ const Drawer: React.FC<DrawerProps> = ({
     closeOnEscape = true,
     closeOnBackdropClick = true,
     className,
+    bodyClassName,
+    bodyStyle,
     children,
     header,
     footer,
@@ -442,7 +446,7 @@ const Drawer: React.FC<DrawerProps> = ({
                         </button>
                     </div>
                 )}
-                <div className="eui-drawer-body" data-drawer-no-drag>
+                <div className={classNames('eui-drawer-body', bodyClassName)} style={bodyStyle} data-drawer-no-drag>
                     {headerContent === null && !showHandleResolved && (
                         <button
                             className="eui-drawer-close-floating"

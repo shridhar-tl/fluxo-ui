@@ -6,6 +6,19 @@ export type DependencyType = 'finish-to-start' | 'start-to-start' | 'finish-to-f
 
 export type TaskType = 'task' | 'milestone' | 'group';
 
+export interface GanttSegment {
+    id: string;
+    start: Date | string;
+    end: Date | string;
+    label?: string;
+    color?: string;
+    textColor?: string;
+    cssClass?: string;
+    draggable?: boolean;
+    resizable?: boolean;
+    data?: Record<string, unknown>;
+}
+
 export interface GanttTask {
     id: string;
     name: string;
@@ -15,6 +28,7 @@ export interface GanttTask {
     type?: TaskType;
     color?: string;
     textColor?: string;
+    cssClass?: string;
     dependencies?: GanttDependency[];
     children?: GanttTask[];
     collapsed?: boolean;
@@ -23,6 +37,7 @@ export interface GanttTask {
     data?: Record<string, unknown>;
     draggable?: boolean;
     resizable?: boolean;
+    segments?: GanttSegment[];
 }
 
 export interface GanttDependency {
@@ -56,6 +71,16 @@ export interface GanttMarker {
     cssClass?: string;
 }
 
+export interface GanttBand {
+    id?: string;
+    start: Date | string;
+    end: Date | string;
+    label?: string;
+    shortLabel?: string;
+    color?: string;
+    cssClass?: string;
+}
+
 export interface GanttDateCell {
     date: Date;
     dateStr: string;
@@ -85,6 +110,8 @@ export interface GanttTaskBarInfo {
     isGroup: boolean;
     isMilestone: boolean;
     parentId?: string;
+    segment?: GanttSegment;
+    ownerTask?: GanttTask;
 }
 
 export interface GanttDragState {
@@ -110,6 +137,31 @@ export interface GanttTaskClickEvent {
     event: React.MouseEvent;
 }
 
+export interface GanttSegmentChangeEvent {
+    task: GanttTask;
+    segment: GanttSegment;
+    start: Date;
+    end: Date;
+}
+
+export interface GanttSegmentClickEvent {
+    task: GanttTask;
+    segment: GanttSegment;
+    event: React.MouseEvent;
+}
+
+export interface GanttDependencyCreateEvent {
+    fromTask: GanttTask;
+    toTask: GanttTask;
+}
+
+export interface GanttDependencyClickEvent {
+    fromTask: GanttTask;
+    toTask: GanttTask;
+    dependency: GanttDependency;
+    event: React.MouseEvent;
+}
+
 export interface GanttTaskCreateEvent {
     start: Date;
     end: Date;
@@ -127,6 +179,7 @@ export interface GanttProps {
     height?: number | string;
     rowHeight?: number;
     columnWidth?: number;
+    fillWidth?: boolean;
     fieldsPanelWidth?: number | string;
     showFieldsPanel?: boolean;
     showToday?: boolean;
@@ -136,10 +189,12 @@ export interface GanttProps {
     showProgress?: boolean;
     showTooltip?: boolean;
     markers?: GanttMarker[];
+    bands?: GanttBand[];
     isHoliday?: (date: Date) => boolean;
     allowTaskDrag?: boolean;
     allowTaskResize?: boolean;
     allowTaskCreate?: boolean;
+    allowDependencyCreate?: boolean;
     allowSort?: boolean;
     readOnly?: boolean;
     locale?: string;
@@ -147,12 +202,17 @@ export interface GanttProps {
     weekendColor?: string;
     holidayColor?: string;
     className?: string;
-    taskBarTemplate?: (props: TaskBarTemplateProps) => JSX.Element;
+    taskBarTemplate?: (props: TaskBarTemplateProps) => ReactNode;
     tooltipTemplate?: (task: GanttTask) => ReactNode;
     onTaskChange?: (event: GanttTaskChangeEvent) => void;
     onTaskClick?: (event: GanttTaskClickEvent) => void;
     onTaskDoubleClick?: (event: GanttTaskClickEvent) => void;
     onTaskCreate?: (event: GanttTaskCreateEvent) => void;
+    onSegmentChange?: (event: GanttSegmentChangeEvent) => void;
+    onSegmentClick?: (event: GanttSegmentClickEvent) => void;
+    onSegmentDoubleClick?: (event: GanttSegmentClickEvent) => void;
+    onDependencyCreate?: (event: GanttDependencyCreateEvent) => void;
+    onDependencyClick?: (event: GanttDependencyClickEvent) => void;
     onViewModeChange?: (mode: GanttViewMode) => void;
     onScroll?: (scrollLeft: number, scrollTop: number) => void;
     onExpandToggle?: (task: GanttTask, expanded: boolean) => void;
@@ -163,6 +223,8 @@ export interface TaskBarTemplateProps {
     width: number;
     isGroup: boolean;
     isMilestone: boolean;
+    segment?: GanttSegment;
+    ownerTask?: GanttTask;
 }
 
 export interface FlatTask {
@@ -192,19 +254,28 @@ export interface GanttContextValue {
     allowTaskDrag: boolean;
     allowTaskResize: boolean;
     allowTaskCreate: boolean;
+    allowDependencyCreate: boolean;
     readOnly: boolean;
     todayColumnIndex: number;
+    todayLeft: number;
     collapsedIds: Set<string>;
     toggleCollapse: (taskId: string) => void;
     getTaskBarInfo: (task: GanttTask) => GanttTaskBarInfo | null;
-    taskBarTemplate?: (props: TaskBarTemplateProps) => JSX.Element;
+    taskBarTemplate?: (props: TaskBarTemplateProps) => ReactNode;
     tooltipTemplate?: (task: GanttTask) => ReactNode;
     onTaskChange?: (event: GanttTaskChangeEvent) => void;
     onTaskClick?: (event: GanttTaskClickEvent) => void;
     onTaskDoubleClick?: (event: GanttTaskClickEvent) => void;
     onTaskCreate?: (event: GanttTaskCreateEvent) => void;
+    onSegmentChange?: (event: GanttSegmentChangeEvent) => void;
+    onSegmentClick?: (event: GanttSegmentClickEvent) => void;
+    onSegmentDoubleClick?: (event: GanttSegmentClickEvent) => void;
+    onDependencyCreate?: (event: GanttDependencyCreateEvent) => void;
+    onDependencyClick?: (event: GanttDependencyClickEvent) => void;
+    startDependencyDrag: (task: GanttTask, clientX: number, clientY: number) => void;
     onExpandToggle?: (task: GanttTask, expanded: boolean) => void;
     markers: GanttMarker[];
+    bands: GanttBand[];
     weekendColor: string;
     holidayColor: string;
     todayColor: string;

@@ -19,6 +19,8 @@ interface MonthGridCellProps {
   onEntryContextMenu?: (entry: ResolvedCalendarEntry, event: React.MouseEvent) => void;
   onEntryPointerDown?: (entry: ResolvedCalendarEntry, event: React.PointerEvent) => void;
   isDropTarget?: boolean;
+  isSelected?: boolean;
+  onCellPointerDown?: (date: string, event: React.PointerEvent) => void;
   showNonCurrentDates: boolean;
   navLinks: boolean;
   maxVisible?: number | boolean;
@@ -32,12 +34,12 @@ interface MonthGridCellProps {
 const MonthGridCell: React.FC<MonthGridCellProps> = ({
   date, currentMonth, entries, renderEntry,
   onDateClick, onDateDoubleClick, onEntryClick, onEntryContextMenu,
-  onEntryPointerDown, isDropTarget,
+  onEntryPointerDown, isDropTarget, isSelected, onCellPointerDown,
   showNonCurrentDates, navLinks, maxVisible = 3,
   dateBackgrounds, dateRangeBackgrounds, loadingRanges, businessHours,
   moreLinkClick,
 }) => {
-  const { api } = useCalendarContext();
+  const { api, config } = useCalendarContext();
   const entriesRef = useRef<HTMLDivElement>(null);
   const [fitCount, setFitCount] = useState<number | null>(null);
   const autoFit = maxVisible === true;
@@ -82,6 +84,16 @@ const MonthGridCell: React.FC<MonthGridCellProps> = ({
     onDateClick?.(date, e);
   }, [date, onDateClick]);
 
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
+    onCellPointerDown?.(format(date, 'yyyy-MM-dd'), e);
+  }, [date, onCellPointerDown]);
+
+  const handleNavLinkClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    api.gotoDate(date);
+    api.changeView(config.navLinkView);
+  }, [api, date, config.navLinkView]);
+
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     onDateDoubleClick?.(date, e);
   }, [date, onDateDoubleClick]);
@@ -100,11 +112,14 @@ const MonthGridCell: React.FC<MonthGridCellProps> = ({
         'eui-cal-month-cell-nonbusiness': isNonBusinessDay,
         'eui-cal-month-cell-loading': loading,
         'eui-cal-month-cell-drop-target': isDropTarget,
+        'eui-cal-month-cell-selected': isSelected,
       })}
       style={cellStyle}
       onClick={handleDateClick}
       onDoubleClick={handleDoubleClick}
+      onPointerDown={onCellPointerDown ? handlePointerDown : undefined}
       role="gridcell"
+      aria-selected={isSelected || undefined}
       aria-label={format(date, 'EEEE, MMMM d, yyyy')}
       data-date={format(date, 'yyyy-MM-dd')}
     >
@@ -114,6 +129,7 @@ const MonthGridCell: React.FC<MonthGridCellProps> = ({
             className={cn('eui-cal-month-cell-day', { 'eui-cal-month-cell-day-today': today })}
             type="button"
             tabIndex={0}
+            onClick={handleNavLinkClick}
             aria-label={`Go to ${format(date, 'MMMM d')}`}
           >
             {dayNumber}
@@ -159,7 +175,7 @@ const MonthGridCell: React.FC<MonthGridCellProps> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   api.gotoDate(date);
-                  api.changeView(ViewMode.timeGridDay);
+                  api.changeView(config.navLinkView);
                 }}
                 aria-label={`Show ${hiddenCount} more entries`}
               >

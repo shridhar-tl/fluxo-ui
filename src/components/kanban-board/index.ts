@@ -12,6 +12,7 @@ export type {
     KanbanCardSize,
     KanbanColumnCreateEvent,
     KanbanColumnData,
+    KanbanColumnHeaderHelpers,
     KanbanColumnDeleteEvent,
     KanbanColumnId,
     KanbanColumnReorderEvent,

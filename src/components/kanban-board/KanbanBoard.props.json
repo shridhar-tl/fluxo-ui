@@ -101,8 +101,8 @@
       "description": "Custom render function for card content."
     },
     "columnHeaderTemplate": {
-      "type": "(column, count) => ReactNode",
-      "description": "Custom render function for column headers."
+      "type": "(column, count, helpers) => ReactNode",
+      "description": "Custom render function for column headers. helpers.toggleCollapse collapses the column when allowCollapse is set."
     },
     "columnFooterTemplate": {
       "type": "(column, cards) => ReactNode",

@@ -229,6 +229,7 @@ export interface CalendarConfig {
   selectable: boolean;
   nowIndicator: boolean;
   navLinks: boolean;
+  navLinkView: CalendarViewMode;
   compact: boolean;
   snapDuration: number;
   entryOverlapMode: 'stack' | 'lane';
@@ -307,6 +308,7 @@ export interface CalendarProps {
   selectable?: boolean;
   nowIndicator?: boolean;
   navLinks?: boolean;
+  navLinkView?: CalendarViewMode;
   compact?: boolean;
   snapDuration?: number;
   entryOverlapMode?: 'stack' | 'lane';
@@ -364,6 +366,7 @@ export interface CalendarProps {
   renderEmpty?: (info: { dateRange: DateRange }) => ReactNode;
   showAllDayRow?: 'auto' | 'always';
   headerToolbarViews?: string[];
+  viewLabels?: Partial<Record<CalendarViewMode, string>>;
 
   dateBackgrounds?: DateBackground[];
   dateRangeBackgrounds?: DateRangeBackground[];

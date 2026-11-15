@@ -389,3 +389,15 @@ export const externalDragCode = `<Calendar
     // Create new entry from the dropped data
   }}
 />`;
+
+export const monthRangeSelectionCode = `<Calendar
+  entries={entries}
+  initialView={ViewMode.dayGridMonth}
+  headerToolbarViews={[ViewMode.dayGridMonth, ViewMode.dayGridWeek, ViewMode.dayGridDay]}
+  viewLabels={{ [ViewMode.dayGridWeek]: 'Week', [ViewMode.dayGridDay]: 'Day' }}
+  navLinkView={ViewMode.dayGridDay}
+  selectable
+  onDateSelect={(info) => {
+    addBooking({ start: info.start, end: info.end, allDay: true });
+  }}
+/>`;

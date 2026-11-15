@@ -3,16 +3,18 @@ import { useGanttContext } from './GanttContext';
 import { getMarkerPosition } from './gantt-utils';
 
 function Markers() {
-    const { markers, startDate, columnWidth, totalHeight, viewMode } = useGanttContext();
+    const { markers, startDate, columnWidth, totalHeight, totalWidth, viewMode } = useGanttContext();
 
     const markerPositions = useMemo(() => {
         if (!markers?.length) return [];
 
-        return markers.map(marker => ({
-            ...marker,
-            left: getMarkerPosition(marker.date, startDate, columnWidth, viewMode),
-        }));
-    }, [markers, startDate, columnWidth, viewMode]);
+        return markers
+            .map(marker => ({
+                ...marker,
+                left: getMarkerPosition(marker.date, startDate, columnWidth, viewMode),
+            }))
+            .filter(marker => marker.left >= 0 && marker.left <= totalWidth);
+    }, [markers, startDate, columnWidth, totalWidth, viewMode]);
 
     if (!markerPositions.length) return null;
 
@@ -27,14 +29,7 @@ function Markers() {
                         height: '100%',
                         borderLeftColor: marker.color,
                     }}
-                >
-                    {marker.label && (
-                        <div className="eui-gantt-marker-label" style={{ backgroundColor: marker.color ? `${marker.color}20` : undefined, color: marker.color }}>
-                            <div className="eui-gantt-marker-arrow" style={{ borderRightColor: marker.color ? `${marker.color}20` : undefined }} />
-                            {marker.label}
-                        </div>
-                    )}
-                </div>
+                />
             ))}
         </div>
     );

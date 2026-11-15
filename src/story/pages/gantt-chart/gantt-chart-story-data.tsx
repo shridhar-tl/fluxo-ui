@@ -1,4 +1,4 @@
-import type { GanttTask, GanttColumn, GanttMarker } from '../../../components/gantt-chart';
+import type { GanttTask, GanttColumn, GanttMarker, GanttBand } from '../../../components/gantt-chart';
 
 const today = new Date();
 export const d = (offset: number) => {
@@ -182,6 +182,12 @@ export const markers: GanttMarker[] = [
     { id: 'm1', date: d(0), label: 'Today', color: '#3b82f6' },
     { id: 'm2', date: d(7), label: 'Sprint End', color: '#f59e0b' },
     { id: 'm3', date: d(21), label: 'Release', color: '#10b981' },
+];
+
+export const bands: GanttBand[] = [
+    { id: 'b1', start: d(-6), end: d(7), label: 'Sprint 12', shortLabel: '12' },
+    { id: 'b2', start: d(8), end: d(21), label: 'Sprint 13', shortLabel: '13' },
+    { id: 'b3', start: d(22), end: d(35), label: 'Sprint 14', shortLabel: '14' },
 ];
 
 export const customColumns: GanttColumn[] = [
