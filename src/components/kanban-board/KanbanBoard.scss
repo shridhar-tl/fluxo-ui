@@ -911,3 +911,34 @@ body.mode-dark .eui-kanban-card-delete:hover {
         height: 80px;
     }
 }
+
+// Fill height: columns take the height of the board and only the cards scroll
+.eui-kanban-fill-height.eui-kanban-layout-horizontal {
+    height: 100%;
+    min-height: 0;
+
+    .eui-kanban-columns {
+        flex: 1;
+        min-height: 0;
+        align-items: stretch;
+    }
+
+    .eui-kanban-columns-sortable {
+        align-items: stretch;
+    }
+
+    .eui-kanban-column-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .eui-kanban-column {
+        flex: 1;
+        min-height: 0;
+    }
+
+    .eui-kanban-column-body {
+        min-height: 0;
+    }
+}

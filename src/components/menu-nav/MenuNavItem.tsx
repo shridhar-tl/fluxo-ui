@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { MenuNavIconPosition, MenuNavItem as MenuNavItemType, MenuNavSelectionStyle, MenuNavSize } from './menu-nav-types';
 
 interface MenuNavItemComponentProps {
@@ -61,6 +61,9 @@ const MenuNavItemComponent: React.FC<MenuNavItemComponentProps> = ({
                 onMobileSubmenu(item.children!, item.label);
             } else if (isVertical) {
                 setExpanded((prev) => !prev);
+            } else {
+                if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+                setHoverOpen((prev) => !prev);
             }
             return;
         }
@@ -79,6 +82,28 @@ const MenuNavItemComponent: React.FC<MenuNavItemComponentProps> = ({
         if (isMobile || isVertical || !hasChildren) return;
         hoverTimerRef.current = setTimeout(() => setHoverOpen(false), 150);
     }, [isMobile, isVertical, hasChildren]);
+
+    const handleChildSelect = useCallback(
+        (id: string, child: MenuNavItemType) => {
+            if (!isVertical) {
+                if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+                setHoverOpen(false);
+            }
+            onSelect(id, child);
+        },
+        [isVertical, onSelect],
+    );
+
+    useEffect(() => {
+        if (isVertical || !hoverOpen) return;
+        const closeOnOutside = (e: PointerEvent) => {
+            if (!itemRef.current?.contains(e.target as Node)) setHoverOpen(false);
+        };
+        document.addEventListener('pointerdown', closeOnOutside);
+        return () => document.removeEventListener('pointerdown', closeOnOutside);
+    }, [isVertical, hoverOpen]);
+
+    useEffect(() => () => clearTimeout(hoverTimerRef.current), []);
 
     const handleKeyDown = useCallback(
         (e: React.KeyboardEvent) => {
@@ -171,10 +196,10 @@ const MenuNavItemComponent: React.FC<MenuNavItemComponentProps> = ({
                             selectedId={selectedId}
                             size={size}
                             orientation={orientation}
-                            selectionStyle={selectionStyle}
+                            selectionStyle={isVertical ? selectionStyle : 'background'}
                             iconPosition={globalIconPos}
                             collapsed={false}
-                            onSelect={onSelect}
+                            onSelect={handleChildSelect}
                             isMobile={isMobile}
                         />
                     ))}

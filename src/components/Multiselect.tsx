@@ -50,6 +50,7 @@ interface MultiselectProps<T = any> extends BaseComponentProps, Omit<React.HTMLA
     searchable?: boolean;
     debounceMs?: number;
     maxSelectedItems?: number;
+    maxVisibleChips?: number;
     loading?: boolean;
     emptyMessage?: string;
     renderItem?: (item: ListItem, index: number, isSelected: boolean, isHighlighted: boolean) => React.ReactNode;
@@ -77,6 +78,7 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
             searchable = true,
             debounceMs = 300,
             maxSelectedItems,
+            maxVisibleChips,
             loading = false,
             emptyMessage = 'No items available',
             renderItem,
@@ -229,6 +231,10 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
             </div>
         );
 
+        const visibleSelectedItems =
+            maxVisibleChips && maxVisibleChips > 0 && selectedItems.length > maxVisibleChips ? selectedItems.slice(0, maxVisibleChips) : selectedItems;
+        const hiddenSelectedCount = selectedItems.length - visibleSelectedItems.length;
+
         const defaultRenderSelectedItem = (item: ListItem, onRemove: () => void) => (
             <span className="eui-multiselect-tag">
                 <span className="eui-multiselect-tag-label">{item.label}</span>
@@ -301,13 +307,23 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                             {selectedItems.length === 0 ? (
                                 <span className="eui-multiselect-placeholder">{placeholder}</span>
                             ) : (
-                                selectedItems.map((item, index) => (
-                                    <span key={index}>
-                                        {renderSelectedItem
-                                            ? renderSelectedItem(item, () => handleRemoveItem(item.value))
-                                            : defaultRenderSelectedItem(item, () => handleRemoveItem(item.value))}
-                                    </span>
-                                ))
+                                <>
+                                    {visibleSelectedItems.map((item, index) => (
+                                        <span key={index}>
+                                            {renderSelectedItem
+                                                ? renderSelectedItem(item, () => handleRemoveItem(item.value))
+                                                : defaultRenderSelectedItem(item, () => handleRemoveItem(item.value))}
+                                        </span>
+                                    ))}
+                                    {hiddenSelectedCount > 0 && (
+                                        <span
+                                            className="eui-multiselect-tag eui-multiselect-tag-more"
+                                            title={selectedItems.slice(visibleSelectedItems.length).map((item) => item.label).join(', ')}
+                                        >
+                                            +{hiddenSelectedCount} more
+                                        </span>
+                                    )}
+                                </>
                             )}
                         </div>
                         <ChevronDownIcon

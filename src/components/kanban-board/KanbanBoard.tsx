@@ -32,6 +32,7 @@ function KanbanBoard(props: KanbanBoardProps) {
         allowAddColumn,
         showSearch,
         stickyColumnHeaders,
+        fillHeight,
         onCardMove,
         onCardReorder,
         onColumnReorder,
@@ -235,6 +236,7 @@ function KanbanBoard(props: KanbanBoardProps) {
                     `eui-kanban-layout-${layout}`,
                     {
                         'eui-kanban-sticky-headers': stickyColumnHeaders,
+                        'eui-kanban-fill-height': fillHeight,
                     },
                     className,
                 )}

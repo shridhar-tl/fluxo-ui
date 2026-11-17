@@ -58,6 +58,10 @@
       "type": "number",
       "description": "Maximum number of selections allowed"
     },
+    "maxVisibleChips": {
+      "type": "number",
+      "description": "Maximum number of selected items shown as chips. The remaining selections are summarised as a '+N more' chip, keeping the control on a single line when many items are selected."
+    },
     "loading": {
       "type": "boolean",
       "default": false,

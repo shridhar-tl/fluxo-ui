@@ -73,7 +73,7 @@ $sizes: (
             display: flex;
             flex: 1;
             min-width: 0;
-            overflow-x: auto;
+            overflow: visible;
         }
 
         .eui-menu-nav-list {
@@ -298,16 +298,21 @@ $sizes: (
     &.eui-menu-nav-item-child-selected {
         color: var(--eui-primary);
         font-weight: 500;
+
+        &.eui-menu-nav-select-border-bottom {
+            border-bottom: 2px solid var(--eui-primary);
+            border-radius: 0;
+        }
     }
 
     // Depth indentation
-    &.eui-menu-nav-item-depth-1 {
+    .eui-menu-nav-vertical &.eui-menu-nav-item-depth-1 {
         padding-left: 2rem;
     }
-    &.eui-menu-nav-item-depth-2 {
+    .eui-menu-nav-vertical &.eui-menu-nav-item-depth-2 {
         padding-left: 3rem;
     }
-    &.eui-menu-nav-item-depth-3 {
+    .eui-menu-nav-vertical &.eui-menu-nav-item-depth-3 {
         padding-left: 4rem;
     }
 

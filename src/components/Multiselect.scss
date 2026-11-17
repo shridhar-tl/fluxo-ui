@@ -132,6 +132,12 @@
         background-color: var(--eui-primary-subtle);
         color: var(--eui-primary);
 
+        &.eui-multiselect-tag-more {
+            background-color: var(--eui-bg-subtle);
+            color: var(--eui-text-muted);
+            white-space: nowrap;
+        }
+
         .eui-multiselect-tag-label {
             overflow: hidden;
             text-overflow: ellipsis;

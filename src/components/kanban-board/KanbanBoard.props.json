@@ -36,6 +36,11 @@
       "type": "number | string",
       "description": "Maximum column body scroll height."
     },
+    "fillHeight": {
+      "type": "boolean",
+      "default": false,
+      "description": "Stretch the columns to the height of the board so that only the cards scroll, keeping column headers and footers visible. The board must have a bounded height."
+    },
     "draggable": {
       "type": "boolean",
       "default": true,

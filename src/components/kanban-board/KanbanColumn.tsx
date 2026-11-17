@@ -1,6 +1,8 @@
 import classNames from 'classnames';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { Sortable } from '../drag-drop';
+import { getActiveDrag } from '../drag-drop/core/registry';
+import { useGlobalDndStore } from '../drag-drop/hooks/useSyncExternal';
 import type { SortableChangeEvent } from '../drag-drop';
 import { useKanban } from './KanbanContext';
 import KanbanCard from './KanbanCard';
@@ -9,6 +11,8 @@ import { KanbanCardData, KanbanColumnProps } from './kanban-types';
 import { getCardsForColumn, isColumnOverLimit } from './kanban-utils';
 
 const kanbanItemType = 'kanban-card';
+
+const isCardDragActive = () => getActiveDrag()?.item.itemType === kanbanItemType;
 
 function KanbanColumn({ column, cards, index, isCollapsed }: KanbanColumnProps) {
     const { props } = useKanban();
@@ -31,6 +35,9 @@ function KanbanColumn({ column, cards, index, isCollapsed }: KanbanColumnProps) 
         () => getCardsForColumn(cards, column.id),
         [cards, column.id],
     );
+
+    const isDragActive = useGlobalDndStore(isCardDragActive);
+    const showDropPlaceholder = isDragActive || columnCards.length === 0;
 
     const overLimit = isColumnOverLimit(column, columnCards.length);
 
@@ -132,9 +139,9 @@ function KanbanColumn({ column, cards, index, isCollapsed }: KanbanColumnProps) 
                         args={{ columnId: column.id }}
                         className="eui-kanban-sortable"
                         onChange={handleSortChange}
-                        showPlaceholder
+                        showPlaceholder={showDropPlaceholder}
                         placeholder={
-                            columnCards.length === 0 && emptyColumnTemplate ? (
+                            !showDropPlaceholder ? undefined : columnCards.length === 0 && emptyColumnTemplate ? (
                                 emptyColumnTemplate(column)
                             ) : (
                                 <div className="eui-kanban-drop-placeholder" role="presentation">

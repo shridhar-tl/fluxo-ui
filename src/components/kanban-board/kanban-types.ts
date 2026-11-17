@@ -123,6 +123,7 @@ export interface KanbanBoardProps {
     columnWidth?: number | string;
     columnMinHeight?: number | string;
     maxColumnHeight?: number | string;
+    fillHeight?: boolean;
 
     draggable?: boolean;
     columnDraggable?: boolean;
