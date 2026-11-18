@@ -8,6 +8,7 @@ import { PropsTable } from '../../PropsTable';
 import type { SectionNavItem } from '../../SectionNav';
 import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
+import CustomValues from './CustomValues';
 import DisabledState from './DisabledState';
 import LimitedSelections from './LimitedSelections';
 import PresetValues from './PresetValues';
@@ -20,6 +21,7 @@ const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Multi-select autocomplete example' },
     { id: 'preset-values', title: 'Preset Values', description: 'Pre-selected values on load' },
     { id: 'limited-selections', title: 'Limited Selections', description: 'Maximum selection count' },
+    { id: 'custom-values', title: 'Custom Values', description: 'Add typed text on Enter' },
     { id: 'disabled', title: 'Disabled State', description: 'Disabled input' },
     { id: 'usage', title: 'Usage', description: 'Code examples' },
     { id: 'import', title: 'Import', description: 'Import statement' },
@@ -99,6 +101,11 @@ const AutocompleteMultiPage: React.FC = () => {
                     Limited Selections
                 </h2>
                 <LimitedSelections />
+            </section>
+
+            <section id="custom-values" className="scroll-mt-8">
+                <h2 className={cn('text-2xl font-semibold mb-4', { 'text-gray-100': isDark, 'text-gray-900': !isDark })}>Custom Values</h2>
+                <CustomValues />
             </section>
 
             <section id="disabled" className="scroll-mt-8">

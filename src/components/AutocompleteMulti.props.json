@@ -17,6 +17,10 @@
       "type": "function",
       "description": "Callback fired when filter input changes: (query: string) => void | Promise<void>"
     },
+    "onCustomValue": {
+      "type": "function",
+      "description": "Callback fired when the user presses Enter with typed text and no suggestion highlighted. The input is cleared afterwards, and the handler decides whether to add the text as a value: (text: string) => void"
+    },
     "placeholder": {
       "type": "string",
       "default": "Type to search and select...",

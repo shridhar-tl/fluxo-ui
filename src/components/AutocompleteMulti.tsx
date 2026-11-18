@@ -14,6 +14,7 @@ interface AutocompleteMultiProps<T = any> extends BaseComponentProps, Omit<React
     value?: T[];
     onChange?: (event: ComponentEvent<T[]>) => void;
     onFilter?: (query: string) => void | Promise<void>;
+    onCustomValue?: (text: string) => void;
     placeholder?: string;
     required?: boolean;
     readonly?: boolean;
@@ -40,6 +41,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             value = [],
             onChange,
             onFilter,
+            onCustomValue,
             placeholder = 'Type to search and select...',
             required = false,
             readonly = false,
@@ -179,6 +181,15 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             if (e.key === 'Backspace' && !inputValue && selectedItems.length > 0) {
                 e.preventDefault();
                 handleRemove(selectedItems[selectedItems.length - 1].value, e);
+                return;
+            }
+
+            const customText = inputValue.trim();
+            if (e.key === 'Enter' && onCustomValue && customText && !isMaxReached && (!isOpen || !activeOptionId)) {
+                e.preventDefault();
+                e.stopPropagation();
+                onCustomValue(customText);
+                setInputValue('');
             }
         };
 
