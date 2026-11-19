@@ -266,13 +266,13 @@ function CustomDatePicker() {
 
                 {showCalendarNav && viewMode === 'calendar' && (
                     <div className="eui-drp-month-nav">
-                        <button type="button" className="eui-drp-month-nav-btn" onClick={handlePrevMonth}>
+                        <button type="button" className="eui-drp-month-nav-btn" onClick={handlePrevMonth} aria-label="Previous month">
                             <ChevronLeftIcon className="eui-drp-nav-icon" />
                         </button>
                         <button type="button" className="eui-drp-month-label" onClick={() => setViewMode('year')}>
                             {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
                         </button>
-                        <button type="button" className="eui-drp-month-nav-btn" onClick={handleNextMonth}>
+                        <button type="button" className="eui-drp-month-nav-btn" onClick={handleNextMonth} aria-label="Next month">
                             <ChevronRightIcon className="eui-drp-nav-icon" />
                         </button>
                     </div>

@@ -122,6 +122,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
 
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setInputValue(e.target.value);
+            setIsFocused(true);
         };
 
         const handleSelect = (item: ListItem, e?: React.SyntheticEvent) => {
@@ -171,6 +172,11 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             setIsOpen(false);
             setIsFocused(false);
             setInputValue('');
+        };
+
+        const handlePopoverClose = (e?: MouseEvent) => {
+            if (e && combinedRef.current?.contains(e.target as Node)) return;
+            handleClose();
         };
 
         const handleContainerClick = () => {
@@ -319,7 +325,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                 {isOpen && (
                     <Popover
                         isOpen={isOpen}
-                        onClose={handleClose}
+                        onClose={handlePopoverClose}
                         triggerElement={combinedRef.current}
                         items={items}
                         onSelect={(item) => handleSelect(item)}
@@ -350,7 +356,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                 </div>
                             );
                         }}
-                        filter={inputValue}
+                        filter={onFilter ? undefined : inputValue}
                         loading={loading}
                         emptyMessage={emptyMessage}
                         mobileTitle={placeholder}

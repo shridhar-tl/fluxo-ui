@@ -161,7 +161,21 @@ export const Popover = ({
             }
         });
 
-        return () => cancelAnimationFrame(rafId);
+        const reposition = () => {
+            if (popoverRef.current && triggerElement) {
+                calculatePosition(triggerElement, popoverRef.current);
+            }
+        };
+        const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(reposition) : null;
+        resizeObserver?.observe(triggerElement);
+        resizeObserver?.observe(popoverRef.current);
+        window.addEventListener('resize', reposition);
+
+        return () => {
+            cancelAnimationFrame(rafId);
+            resizeObserver?.disconnect();
+            window.removeEventListener('resize', reposition);
+        };
     }, [isOpen, popoverRef.current, triggerElement, calculatePosition, isCompact]);
 
     useEffect(() => {

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
 import './eui-base.scss';
@@ -260,6 +260,11 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
         const totalSlots = countSlots(mask);
 
         const [slots, setSlots] = useState<SlotArray>(() => parseValue(value, mask, slotChar));
+        const slotsRef = useRef<SlotArray>(slots);
+        const updateSlots = useCallback((newSlots: SlotArray) => {
+            slotsRef.current = newSlots;
+            setSlots(newSlots);
+        }, []);
         const [rejectMessage, setRejectMessage] = useState<string>('');
         const rejectTimerRef = useRef<number | null>(null);
 
@@ -292,8 +297,8 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
         // Sync external value changes (only when value changes from outside)
         useEffect(() => {
             if (value === lastEmittedRef.current) return;
-            setSlots(parseValue(value, mask, slotChar));
-        }, [value, mask, slotChar]);
+            updateSlots(parseValue(value, mask, slotChar));
+        }, [value, mask, slotChar, updateSlots]);
 
         const maskedValue = applyMask(slots, mask, slotChar);
 
@@ -310,9 +315,21 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
             [mask, slotChar, includeLiterals, onChange, onRawChange, name, args],
         );
 
+        const pendingCaretRef = useRef<number | null>(null);
+        useLayoutEffect(() => {
+            if (pendingCaretRef.current !== null && document.activeElement === inputRef.current) {
+                inputRef.current?.setSelectionRange(pendingCaretRef.current, pendingCaretRef.current);
+            }
+        }, [slots, inputRef]);
+
         const setCursorTo = useCallback(
             (maskPos: number) => {
+                pendingCaretRef.current = maskPos;
+                inputRef.current?.setSelectionRange(maskPos, maskPos);
                 requestAnimationFrame(() => {
+                    if (pendingCaretRef.current === maskPos) {
+                        pendingCaretRef.current = null;
+                    }
                     inputRef.current?.setSelectionRange(maskPos, maskPos);
                 });
             },
@@ -333,16 +350,16 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                     if (hasSelection) {
                         const [fromSi, toSi] = selectionToSlotRange(mask, cursorPos, selEnd);
                         if (fromSi >= toSi) return;
-                        const newSlots = deleteSlotRange(slots, fromSi, toSi);
-                        setSlots(newSlots);
+                        const newSlots = deleteSlotRange(slotsRef.current, fromSi, toSi);
+                        updateSlots(newSlots);
                         emitChange(newSlots, e);
                         setCursorTo(slotIdxToMaskPos(mask, fromSi));
                     } else {
                         const maskPos = prevEditablePos(mask, cursorPos - 1);
                         if (maskPos < 0) return;
                         const si = maskPosToSlotIdx(mask, maskPos);
-                        const newSlots = shiftLeft(slots, si);
-                        setSlots(newSlots);
+                        const newSlots = shiftLeft(slotsRef.current, si);
+                        updateSlots(newSlots);
                         emitChange(newSlots, e);
                         setCursorTo(maskPos);
                     }
@@ -351,16 +368,16 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                     if (hasSelection) {
                         const [fromSi, toSi] = selectionToSlotRange(mask, cursorPos, selEnd);
                         if (fromSi >= toSi) return;
-                        const newSlots = deleteSlotRange(slots, fromSi, toSi);
-                        setSlots(newSlots);
+                        const newSlots = deleteSlotRange(slotsRef.current, fromSi, toSi);
+                        updateSlots(newSlots);
                         emitChange(newSlots, e);
                         setCursorTo(slotIdxToMaskPos(mask, fromSi));
                     } else {
                         const maskPos = nextEditablePos(mask, cursorPos);
                         if (maskPos >= mask.length) return;
                         const si = maskPosToSlotIdx(mask, maskPos);
-                        const newSlots = shiftLeft(slots, si);
-                        setSlots(newSlots);
+                        const newSlots = shiftLeft(slotsRef.current, si);
+                        updateSlots(newSlots);
                         emitChange(newSlots, e);
                         setCursorTo(maskPos);
                     }
@@ -382,7 +399,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                     let si = 0;
                     for (let i = 0; i < mask.length; i++) {
                         if (isMaskChar(mask[i])) {
-                            if (slots[si] !== null) lastFilledMaskPos = i;
+                            if (slotsRef.current[si] !== null) lastFilledMaskPos = i;
                             si++;
                         }
                     }
@@ -390,7 +407,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                     setCursorTo(endPos);
                 }
             },
-            [disabled, readonly, mask, slots, inputRef, emitChange, setCursorTo],
+            [disabled, readonly, mask, inputRef, emitChange, setCursorTo],
         );
 
         const handleKeyDown_char = useCallback(
@@ -409,12 +426,12 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                 const hasSelection = selEnd > cursorPos;
 
                 // If there's a selection, delete it first then type into that position
-                let workingSlots = slots;
+                let workingSlots = slotsRef.current;
                 let insertMaskPos = cursorPos;
                 if (hasSelection) {
                     const [fromSi, toSi] = selectionToSlotRange(mask, cursorPos, selEnd);
                     if (fromSi < toSi) {
-                        workingSlots = deleteSlotRange(slots, fromSi, toSi);
+                        workingSlots = deleteSlotRange(slotsRef.current, fromSi, toSi);
                     }
                     insertMaskPos = slotIdxToMaskPos(mask, fromSi);
                 }
@@ -431,14 +448,14 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                 const si = maskPosToSlotIdx(mask, maskPos);
                 const newSlots = [...workingSlots];
                 newSlots[si] = ch;
-                setSlots(newSlots);
+                updateSlots(newSlots);
                 emitChange(newSlots, e);
 
                 // Move cursor to next editable slot after this one
                 const nextPos = nextEditablePos(mask, maskPos + 1);
                 setCursorTo(nextPos);
             },
-            [disabled, readonly, mask, slots, inputRef, emitChange, setCursorTo, announceReject],
+            [disabled, readonly, mask, inputRef, emitChange, setCursorTo, announceReject],
         );
 
         const handleKeyDownCombined = useCallback(
@@ -457,7 +474,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
             (e: React.FocusEvent<HTMLInputElement>) => {
                 // Move cursor to the first empty slot
                 for (let si = 0; si < totalSlots; si++) {
-                    if (slots[si] === null) {
+                    if (slotsRef.current[si] === null) {
                         const maskPos = slotIdxToMaskPos(mask, si);
                         requestAnimationFrame(() => e.target.setSelectionRange(maskPos, maskPos));
                         return;
@@ -466,7 +483,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                 // All filled — put cursor at end
                 requestAnimationFrame(() => e.target.setSelectionRange(mask.length, mask.length));
             },
-            [mask, slots, totalSlots],
+            [mask, totalSlots],
         );
 
         const handleClick = useCallback(
@@ -498,7 +515,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                 const input = inputRef.current!;
                 const cursorPos = input.selectionStart ?? 0;
 
-                const newSlots = [...slots];
+                const newSlots = [...slotsRef.current];
                 let maskPos = nextEditablePos(mask, cursorPos);
 
                 for (const ch of pasted) {
@@ -510,11 +527,11 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
                     }
                 }
 
-                setSlots(newSlots);
+                updateSlots(newSlots);
                 emitChange(newSlots, e);
                 setCursorTo(maskPos);
             },
-            [disabled, readonly, mask, slots, inputRef, emitChange, setCursorTo],
+            [disabled, readonly, mask, inputRef, emitChange, setCursorTo],
         );
 
         const errorMessage = typeof error === 'string' ? error : undefined;
