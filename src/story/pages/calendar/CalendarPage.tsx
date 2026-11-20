@@ -15,6 +15,7 @@ import ImperativeApi from './ImperativeApi';
 import PluginSystem from './PluginSystem';
 import CompactMode from './CompactMode';
 import NavigationPickerDemo from './NavigationPickerDemo';
+import KeyboardNavigationDemo from './KeyboardNavigationDemo';
 import ExternalDragDrop from './ExternalDragDrop';
 import DateBackgrounds from './DateBackgrounds';
 import CustomToolbarEnd from './CustomToolbarEnd';
@@ -35,6 +36,7 @@ const sectionNavItems = [
   { id: 'external-drag', title: 'External Drag & Drop', description: 'Drop items from outside' },
   { id: 'date-backgrounds', title: 'Date Backgrounds', description: 'Highlight dates with colors' },
   { id: 'navigation-picker', title: 'Navigation Picker', description: 'Jump to any date via picker' },
+  { id: 'keyboard-navigation', title: 'Keyboard & Navigation', description: 'Shortcuts and standalone navigation' },
   { id: 'custom-toolbar', title: 'Custom Toolbar', description: 'Custom toolbar end & icon-only picker' },
   { id: 'compact-mode', title: 'Compact Mode', description: 'Embedded & compact layouts' },
   { id: 'props', title: 'Props', description: 'Component props reference' },
@@ -118,6 +120,10 @@ const CalendarPage: React.FC = () => {
 
       <section id="navigation-picker" className="scroll-mt-8">
         <NavigationPickerDemo />
+      </section>
+
+      <section id="keyboard-navigation" className="scroll-mt-8">
+        <KeyboardNavigationDemo />
       </section>
 
       <section id="custom-toolbar" className="scroll-mt-8">

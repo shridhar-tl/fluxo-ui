@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef,
 import { createPortal } from 'react-dom';
 import { ClockIcon, TimesIcon } from '../../assets/icons';
 import { useViewport } from '../../hooks/useMobile';
+import { pushLayer } from '../../utils/layer-stack';
 import MobileTimePanel from './MobileTimePanel';
 import '../eui-base.scss';
 import './time-picker.scss';
@@ -130,12 +131,8 @@ const TimePicker: React.FC<TimePickerProps> = ({
             if (focusable.length > 0) focusable[0].focus();
             else pop.focus();
         });
+        const releaseLayer = pushLayer({ current: () => closePopover(false) });
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                closePopover(false);
-                return;
-            }
             if (e.key !== 'Tab') return;
             const pop = popRef.current;
             if (!pop) return;
@@ -166,6 +163,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
             return () => {
                 cancelAnimationFrame(focusFrame);
                 document.removeEventListener('keydown', onKey);
+                releaseLayer();
                 document.body.style.overflow = previousOverflow;
             };
         }
@@ -189,6 +187,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
             window.removeEventListener('scroll', onResize, true);
             document.removeEventListener('mousedown', onClickOutside);
             document.removeEventListener('keydown', onKey);
+            releaseLayer();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, computePosition, isCompact]);

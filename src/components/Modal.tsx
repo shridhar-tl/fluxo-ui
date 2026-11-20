@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../assets/icons';
+import { useEscapeLayer } from '../hooks/useEscapeLayer';
 import './eui-base.scss';
 import './Modal.scss';
 
@@ -13,7 +14,7 @@ interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'role' |
     footer?: React.ReactNode;
     size?: 'sm' | 'md' | 'lg' | 'xl' | 'fullScreen';
     closeOnBackdrop?: boolean;
-    initialFocus?: React.RefObject<HTMLElement>;
+    initialFocus?: React.RefObject<HTMLElement | null>;
     ariaLabel?: string;
 }
 
@@ -45,8 +46,7 @@ const Modal: React.FC<ModalProps> = ({
     const previousOverflowRef = useRef<string>('');
     const reactId = useId();
     const titleId = title ? `modal-title-${reactId.replace(/[^a-zA-Z0-9_-]/g, '')}` : undefined;
-    const $this = useRef<{ onClose: () => void }>({ onClose });
-    $this.current.onClose = onClose;
+    useEscapeLayer(isOpen, onClose);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -70,11 +70,6 @@ const Modal: React.FC<ModalProps> = ({
         }
 
         const handleKey = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') {
-                event.stopPropagation();
-                $this.current.onClose?.();
-                return;
-            }
             if (event.key === 'Tab' && modalRef.current) {
                 const focusables = getFocusable(modalRef.current);
                 if (focusables.length === 0) {

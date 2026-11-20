@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import cn from 'classnames';
 import type { CalendarViewMode, CalendarViewDefinition } from '../calendar-types';
+import './ToolbarButton.scss';
 
 interface ToolbarViewSwitcherProps {
   currentView: CalendarViewMode;

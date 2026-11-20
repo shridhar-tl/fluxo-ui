@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useAnchoredPosition } from '../../hooks/useAnchoredPosition';
 import { useClickOutside } from '../../hooks/useClickOutside';
+import { useEscapeLayer } from '../../hooks/useEscapeLayer';
 import { useViewport } from '../../hooks/useMobile';
 import { Button } from '../Button';
 import Icon from '../Icon';
@@ -60,6 +61,8 @@ const ConfirmPopoverPanel = ({ data, onDismiss }: ConfirmPopoverPanelProps) => {
         onDismiss(data.id);
     }, [data, onDismiss]);
 
+    useEscapeLayer(true, dismiss);
+
     useClickOutside(panelRef, dismiss, !isCompact);
 
     useEffect(() => {
@@ -116,11 +119,6 @@ const ConfirmPopoverPanel = ({ data, onDismiss }: ConfirmPopoverPanelProps) => {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                dismiss();
-                return;
-            }
             if (e.key !== 'Tab') return;
             const panel = panelRef.current;
             if (!panel) return;
@@ -152,7 +150,7 @@ const ConfirmPopoverPanel = ({ data, onDismiss }: ConfirmPopoverPanelProps) => {
 
         document.addEventListener('keydown', handleKeyDown, true);
         return () => document.removeEventListener('keydown', handleKeyDown, true);
-    }, [dismiss]);
+    }, []);
 
     const accessibleNameId = data.title ? titleId : undefined;
     const accessibleNameValue = data.title ? undefined : 'Confirmation';

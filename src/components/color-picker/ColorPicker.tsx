@@ -2,6 +2,7 @@ import cn from 'classnames';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useViewport } from '../../hooks/useMobile';
+import { pushLayer } from '../../utils/layer-stack';
 import ColorPanel from './ColorPanel';
 import '../eui-base.scss';
 import './color-picker.scss';
@@ -110,12 +111,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             if (focusable.length > 0) focusable[0].focus();
             else pop.focus();
         });
+        const releaseLayer = pushLayer({ current: closeAll });
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                closeAll();
-                return;
-            }
             if (e.key !== 'Tab') return;
             const pop = popRef.current;
             if (!pop) return;
@@ -147,6 +144,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             return () => {
                 cancelAnimationFrame(focusFrame);
                 document.removeEventListener('keydown', onKey);
+                releaseLayer();
                 document.body.style.overflow = previousOverflow;
             };
         }
@@ -171,6 +169,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             window.removeEventListener('scroll', onResize, true);
             document.removeEventListener('mousedown', onClickOutside);
             document.removeEventListener('keydown', onKey);
+            releaseLayer();
         };
     }, [isOpen, computePosition, onOpenChange, isCompact]);
 

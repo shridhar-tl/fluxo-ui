@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
 import cn from 'classnames';
 import { ViewMode } from '../calendar-types';
-import type { CalendarViewMode, CalendarViewDefinition, CalendarPluginToolbarAction, CalendarApi, ToolbarEndRenderProps } from '../calendar-types';
+import type { CalendarViewMode, CalendarViewDefinition, CalendarPluginToolbarAction, CalendarApi, CalendarNavigationLayout, ToolbarEndRenderProps } from '../calendar-types';
 import type { SelectionMode } from '../../date-range/types';
 import DateRangePicker from '../../date-range/DateRangePicker';
 import ToolbarNavigation from './ToolbarNavigation';
 import ToolbarTitle from './ToolbarTitle';
 import ToolbarViewSwitcher from './ToolbarViewSwitcher';
+import './ToolbarButton.scss';
 
 function getSelectionModeForView(view: CalendarViewMode): SelectionMode {
   if (view === ViewMode.dayGridMonth || view === ViewMode.listMonth) return 'month';
@@ -33,6 +34,7 @@ interface CalendarToolbarProps {
   hideViewSwitcher?: boolean;
   showNavigationPicker?: boolean;
   navigationPickerIconOnly?: boolean;
+  navigationLayout?: CalendarNavigationLayout;
   compact?: boolean;
   startSlot?: React.ReactNode;
   endSlot?: React.ReactNode;
@@ -43,7 +45,7 @@ const CalendarToolbar: React.FC<CalendarToolbarProps> = ({
   title, currentDate, currentView, currentViewLabel, views, pluginActions, api,
   firstDayOfWeek, onPrev, onNext, onToday, onViewChange, onDateSelect,
   hideNavigation, hideTitle, hideViewSwitcher, showNavigationPicker,
-  navigationPickerIconOnly, compact, startSlot, endSlot, renderToolbarEnd,
+  navigationPickerIconOnly, navigationLayout, compact, startSlot, endSlot, renderToolbarEnd,
 }) => {
   const startActions = pluginActions.filter(a => a.position === 'start');
   const endActions = pluginActions.filter(a => a.position !== 'start');
@@ -90,7 +92,7 @@ const CalendarToolbar: React.FC<CalendarToolbarProps> = ({
     <div className={cn('eui-cal-toolbar', { 'eui-cal-toolbar-compact': compact })}>
       <div className="eui-cal-toolbar-start">
         {!hideNavigation && (
-          <ToolbarNavigation onPrev={onPrev} onNext={onNext} onToday={onToday} />
+          <ToolbarNavigation onPrev={onPrev} onNext={onNext} onToday={onToday} layout={navigationLayout} />
         )}
         {showPickerAsHeader && (
           <div className="eui-cal-toolbar-picker eui-cal-toolbar-picker-header">

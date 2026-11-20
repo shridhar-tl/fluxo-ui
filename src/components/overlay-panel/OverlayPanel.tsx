@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../../assets/icons';
 import { useAnchoredPosition, type AnchoredPlacement } from '../../hooks/useAnchoredPosition';
+import { useEscapeLayer } from '../../hooks/useEscapeLayer';
 import { useViewport } from '../../hooks/useMobile';
 import '../eui-base.scss';
 import './overlay-panel.scss';
@@ -101,19 +102,7 @@ export const OverlayPanel = ({
         return () => document.removeEventListener('mousedown', handleMouseDown);
     }, [isOpen, closeOnOutsideClick, target]);
 
-    useEffect(() => {
-        if (!isOpen || !closeOnEscape) return;
-
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') {
-                e.stopPropagation();
-                onCloseRef.current();
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown, true);
-        return () => document.removeEventListener('keydown', handleKeyDown, true);
-    }, [isOpen, closeOnEscape]);
+    useEscapeLayer(isOpen, closeOnEscape ? onClose : undefined);
 
     useEffect(() => {
         if (!isOpen || !autoFocus) return;

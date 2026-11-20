@@ -34,7 +34,7 @@
       "description": "Whether clicking the backdrop (overlay) closes the modal. Drag-out gestures starting inside the modal are ignored."
     },
     "initialFocus": {
-      "type": "RefObject<HTMLElement>",
+      "type": "RefObject<HTMLElement | null>",
       "description": "Element to receive focus when the modal opens. Defaults to the first focusable element."
     },
     "ariaLabel": {

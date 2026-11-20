@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useEscapeLayer } from '../../hooks/useEscapeLayer';
 import { useViewport } from '../../hooks/useMobile';
 import CustomDatePicker from './CustomDatePicker';
 import QuickRangeDropdown from './QuickRangeDropdown';
@@ -101,14 +102,7 @@ function DatePopover({ controlRef, popoverId }: { controlRef: React.RefObject<HT
         };
     }, [isCompact]);
 
-    useEffect(() => {
-        if (!isCompact) return;
-        const handleKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') onClose();
-        };
-        document.addEventListener('keydown', handleKey);
-        return () => document.removeEventListener('keydown', handleKey);
-    }, [isCompact, onClose]);
+    useEscapeLayer(true, onClose);
 
     if (isCompact) {
         return createPortal(

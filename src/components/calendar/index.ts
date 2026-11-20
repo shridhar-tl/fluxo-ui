@@ -2,6 +2,8 @@ export { default as Calendar } from './Calendar';
 export { CalendarContext, useCalendarContext } from './CalendarContext';
 export { PluginRegistry } from './plugin-registry';
 export { defaultConfig } from './calendar-constants';
+export { default as CalendarNavigation } from './toolbar/ToolbarNavigation';
+export type { CalendarNavigationProps } from './toolbar/ToolbarNavigation';
 
 export { ViewMode } from './calendar-types';
 
@@ -34,6 +36,8 @@ export type {
   ExternalDropInfo,
   DateLoadingRange,
   ToolbarEndRenderProps,
+  CalendarNavigationLayout,
+  CalendarKeyboardShortcuts,
   EventClassNamesFn,
   EntryOrderFn,
   SelectAllowFn,

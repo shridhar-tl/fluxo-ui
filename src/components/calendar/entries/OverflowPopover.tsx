@@ -2,6 +2,7 @@ import cn from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useViewport } from '../../../hooks/useMobile';
+import { pushLayer } from '../../../utils/layer-stack';
 import { useCalendarContext } from '../CalendarContext';
 import type { EntryRenderer, ResolvedCalendarEntry } from '../calendar-types';
 import { formatTime } from '../calendar-utils';
@@ -43,24 +44,21 @@ const OverflowPopover: React.FC<OverflowPopoverProps> = ({
         setOpen(false);
       }
     };
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
+    const releaseLayer = pushLayer({ current: () => setOpen(false) });
     if (!isCompact) document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEsc);
 
     if (isCompact) {
       const previousOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
-        document.removeEventListener('keydown', handleEsc);
+        releaseLayer();
         document.body.style.overflow = previousOverflow;
       };
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEsc);
+      releaseLayer();
     };
   }, [open, isCompact]);
 

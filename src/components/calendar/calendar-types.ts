@@ -144,6 +144,10 @@ export interface ToolbarSlotProps {
   dateRange: DateRange;
 }
 
+export type CalendarNavigationLayout = 'today-first' | 'today-between';
+
+export type CalendarKeyboardShortcuts = boolean | 'focus-within';
+
 export interface ToolbarEndRenderProps {
   viewSwitcher: ReactNode;
   pluginActions: ReactNode;
@@ -400,6 +404,8 @@ export interface CalendarProps {
   hideToolbarViewSwitcher?: boolean;
   showNavigationPicker?: boolean;
   navigationPickerIconOnly?: boolean;
+  navigationLayout?: CalendarNavigationLayout;
+  keyboardShortcuts?: CalendarKeyboardShortcuts;
   renderToolbarEnd?: (components: ToolbarEndRenderProps) => ReactNode;
 
   height?: string | number;

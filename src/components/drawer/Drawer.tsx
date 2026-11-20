@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../../assets/icons';
+import { useEscapeLayer } from '../../hooks/useEscapeLayer';
 import { lockBodyScroll, unlockBodyScroll } from '../../utils/body-scroll-lock';
 import '../eui-base.scss';
 import './Drawer.scss';
@@ -104,8 +105,7 @@ const Drawer: React.FC<DrawerProps> = ({
     const drawerRef = useRef<HTMLDivElement>(null);
     const portalRef = useRef<HTMLDivElement>(null);
     const previousFocusRef = useRef<HTMLElement | null>(null);
-    const onCloseRef = useRef(onClose);
-    onCloseRef.current = onClose;
+    useEscapeLayer(open, closeOnEscape ? onClose : undefined);
     const onSnapChangeRef = useRef(onSnapChange);
     onSnapChangeRef.current = onSnapChange;
     const generatedId = useId();
@@ -213,14 +213,7 @@ const Drawer: React.FC<DrawerProps> = ({
             inerted.push(sibling);
         }
 
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && closeOnEscape) {
-                onCloseRef.current();
-                return;
-            }
-            handleFocusTrap(e);
-        };
-        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keydown', handleFocusTrap);
 
         const focusFrame = requestAnimationFrame(() => {
             const focusable = drawerRef.current?.querySelectorAll<HTMLElement>(focusableSelector);
@@ -232,13 +225,13 @@ const Drawer: React.FC<DrawerProps> = ({
         });
 
         return () => {
-            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keydown', handleFocusTrap);
             unlockBodyScroll();
             cancelAnimationFrame(focusFrame);
             for (const el of inerted) el.removeAttribute('inert');
             previousFocusRef.current?.focus();
         };
-    }, [shouldRender, closeOnEscape, handleFocusTrap]);
+    }, [shouldRender, handleFocusTrap]);
 
     useEffect(() => {
         if (!pushContent) return;

@@ -294,6 +294,16 @@
       "default": "false",
       "description": "When true, shows only a calendar icon for the navigation picker (title remains visible). When false (default), the picker replaces the title with header-styled text."
     },
+    "navigationLayout": {
+      "type": "'today-first' | 'today-between'",
+      "default": "'today-first'",
+      "description": "Order of the toolbar navigation buttons: Today before the previous/next arrows, or Today between them."
+    },
+    "keyboardShortcuts": {
+      "type": "boolean | 'focus-within'",
+      "default": "false",
+      "description": "Keyboard navigation: T goes to today, J or Right arrow to the next period, K or Left arrow to the previous period. true listens on the whole page; 'focus-within' only while focus is inside this calendar. Keys are ignored in inputs and editable content, with Ctrl/Alt/Meta held, and while a dialog or popover is open."
+    },
     "renderToolbarEnd": {
       "type": "(components) => ReactNode",
       "description": "Custom render for the toolbar end section. Receives { viewSwitcher, pluginActions } as ReactNodes to compose alongside custom components."

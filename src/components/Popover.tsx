@@ -3,6 +3,7 @@ import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 're
 import { createPortal } from 'react-dom';
 import { TimesIcon } from '../assets/icons';
 import { useClickOutside } from '../hooks/useClickOutside';
+import { useEscapeLayer } from '../hooks/useEscapeLayer';
 import { useKeyboard } from '../hooks/useKeyboard';
 import { useViewport } from '../hooks/useMobile';
 import { usePosition } from '../hooks/usePosition';
@@ -105,9 +106,10 @@ export const Popover = ({
         }
     }, [highlightedIndex, filteredItems.length, onHighlightChange]);
 
+    useEscapeLayer(isOpen, onClose);
+
     useKeyboard(
         {
-            Escape: onClose,
             ArrowDown: () => {
                 if (filteredItems.length === 0) return;
                 setHighlightedIndex((prev) => (prev < filteredItems.length - 1 ? prev + 1 : 0));

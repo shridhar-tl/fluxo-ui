@@ -10,6 +10,7 @@ import { CalendarContext } from './CalendarContext';
 import { PluginRegistry } from './plugin-registry';
 import { useCalendarNavigation } from './hooks/useCalendarNavigation';
 import { useCalendarEntries } from './hooks/useCalendarEntries';
+import { useCalendarShortcuts } from './hooks/useCalendarShortcuts';
 import { CalendarToolbar } from './toolbar';
 import { ViewRenderer } from './views';
 import { getDefaultPlugins } from './plugins/default-plugins';
@@ -125,6 +126,8 @@ const Calendar: React.FC<CalendarProps> = ({
   hideToolbarViewSwitcher,
   showNavigationPicker,
   navigationPickerIconOnly,
+  navigationLayout,
+  keyboardShortcuts,
   renderToolbarEnd,
 
   height = '100%',
@@ -132,6 +135,7 @@ const Calendar: React.FC<CalendarProps> = ({
   apiRef,
   ariaLabel = 'Calendar',
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const calendarBodyRef = useRef<HTMLDivElement>(null);
   const [announcement, setAnnouncement] = useState('');
   const announce = (msg: string) => {
@@ -366,8 +370,10 @@ const Calendar: React.FC<CalendarProps> = ({
     return s as React.CSSProperties;
   }, [height, config.slotHeight]);
 
+  useCalendarShortcuts(keyboardShortcuts, containerRef, { prev: nav.prev, next: nav.next, today: nav.today });
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.target !== e.currentTarget) return;
+    if (keyboardShortcuts || e.target !== e.currentTarget) return;
     switch (e.key) {
       case 'ArrowLeft':
         e.preventDefault();
@@ -397,6 +403,7 @@ const Calendar: React.FC<CalendarProps> = ({
         className={cn('eui-calendar', {
           'eui-calendar-compact': config.compact,
         }, className)}
+        ref={containerRef}
         style={containerStyle}
         role="region"
         aria-label={ariaLabel}
@@ -429,6 +436,7 @@ const Calendar: React.FC<CalendarProps> = ({
               hideViewSwitcher={hideToolbarViewSwitcher}
               showNavigationPicker={showNavigationPicker}
               navigationPickerIconOnly={navigationPickerIconOnly}
+              navigationLayout={navigationLayout}
               compact={config.compact}
               startSlot={toolbarStart}
               endSlot={toolbarEnd}
