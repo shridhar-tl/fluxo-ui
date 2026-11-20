@@ -63,3 +63,27 @@ function MyComponent() {
     />
   );
 }`;
+
+export const favouriteFruits = ['Cherry', 'Grape'].map((v) => ({ label: v, value: v }));
+
+export const groupedSuggestionsCode = `import { Autocomplete } from 'fluxo-ui';
+
+function MyComponent() {
+  const [value, setValue] = useState('');
+
+  const groups = [
+    { label: 'Favourites', items: favourites.filter((item) => item.label.includes(value)) },
+    { label: 'Search results', items: results },
+  ].filter((group) => group.items.length > 0);
+
+  return (
+    <Autocomplete
+      items={groups}
+      value={value}
+      openOnFocus
+      minLength={2}
+      onChange={(e) => setValue(e.value)}
+      onFilter={(query) => search(query)}
+    />
+  );
+}`;

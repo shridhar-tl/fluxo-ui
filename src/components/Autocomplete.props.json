@@ -1,9 +1,9 @@
 {
   "autocompleteProps": {
     "items": {
-      "type": "ListItem[]",
+      "type": "ListItem[] | ListItemGroup[]",
       "required": true,
-      "description": "Array of suggestion items with { label: string, value: any } structure"
+      "description": "Suggestion items with { label: string, value: any } structure, or groups of them ({ label, items }) to show the suggestions under group headings"
     },
     "value": {
       "type": "string",
@@ -50,6 +50,11 @@
       "type": "number",
       "default": "1",
       "description": "Minimum characters before showing suggestions"
+    },
+    "openOnFocus": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show the suggestions as soon as the input gets focus, before minLength characters are typed. Provide the items to show for a short query, for example recent or favourite entries"
     },
     "maxSuggestions": {
       "type": "number",

@@ -10,6 +10,7 @@ import { useStoryTheme } from '../../StoryThemeContext';
 import BasicUsage from './BasicUsage';
 import CustomConfiguration from './CustomConfiguration';
 import DisabledState from './DisabledState';
+import GroupedSuggestions from './GroupedSuggestions';
 import UsageExamples from './UsageExamples';
 
 
@@ -18,6 +19,7 @@ const { autocompleteProps } = _Autocomplete_props_json;
 const sectionNavItems: SectionNavItem[] = [
     { id: 'basic-usage', title: 'Basic Usage', description: 'Simple autocomplete example' },
     { id: 'custom-config', title: 'Custom Configuration', description: 'minLength and maxSuggestions' },
+    { id: 'grouped', title: 'Grouped Suggestions', description: 'Group headings and open on focus' },
     { id: 'disabled', title: 'Disabled State', description: 'Disabled input' },
     { id: 'usage', title: 'Usage', description: 'Code examples' },
     { id: 'import', title: 'Import', description: 'Import statement' },
@@ -92,6 +94,10 @@ const AutocompletePage: React.FC = () => {
                     Custom Configuration
                 </h2>
                 <CustomConfiguration />
+            </section>
+
+            <section id="grouped" className="scroll-mt-8">
+                <GroupedSuggestions />
             </section>
 
             <section id="disabled" className="scroll-mt-8">

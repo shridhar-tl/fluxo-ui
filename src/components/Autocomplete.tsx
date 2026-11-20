@@ -1,14 +1,16 @@
 import classNames from 'classnames';
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounce, useViewport } from '../hooks';
-import { BaseComponentProps, ComponentEvent, ListItem } from '../types';
+import { BaseComponentProps, ComponentEvent, ListItem, ListItemGroup } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './eui-base.scss';
 import './Autocomplete.scss';
 import { Popover } from './Popover';
 
+const isGroupedItems = (items: ListItem[] | ListItemGroup[]): items is ListItemGroup[] => items.length > 0 && 'items' in items[0];
+
 interface AutocompleteProps extends BaseComponentProps, Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size' | 'value' | 'type' | 'onSelect'> {
-    items: ListItem[];
+    items: ListItem[] | ListItemGroup[];
     value?: string;
     selectedValue?: any;
     onChange?: (event: ComponentEvent<string>) => void;
@@ -20,6 +22,7 @@ interface AutocompleteProps extends BaseComponentProps, Omit<React.InputHTMLAttr
     readonly?: boolean;
     debounceMs?: number;
     minLength?: number;
+    openOnFocus?: boolean;
     loading?: boolean;
     emptyMessage?: string;
     renderItem?: (item: ListItem, index: number, isSelected: boolean, isHighlighted: boolean) => React.ReactNode;
@@ -43,6 +46,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             readonly = false,
             debounceMs = 300,
             minLength = 1,
+            openOnFocus = false,
             loading = false,
             emptyMessage = 'No results found',
             renderItem,
@@ -89,9 +93,14 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             return false;
         };
 
+        const { flatItems, groups } = useMemo(
+            () => (isGroupedItems(items) ? { flatItems: items.flatMap((group) => group.items), groups: items } : { flatItems: items, groups: undefined }),
+            [items],
+        );
+
         const debouncedValue = useDebounce(currentValue, debounceMs);
-        const selectedItem = items.find((item) => compare(item.value, selectedValue)) || null;
-        const selectedIndex = selectedItem ? items.findIndex((item) => compare(item.value, selectedValue)) : -1;
+        const selectedItem = flatItems.find((item) => compare(item.value, selectedValue)) || null;
+        const selectedIndex = selectedItem ? flatItems.findIndex((item) => compare(item.value, selectedValue)) : -1;
 
         useEffect(() => {
             if (debouncedValue.length >= minLength && onFilterRef.current) {
@@ -99,7 +108,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
             }
         }, [debouncedValue, minLength]);
 
-        const isOpen = isFocused && !isDismissed && currentValue.length >= minLength && (items.length > 0 || loading);
+        const isOpen = isFocused && !isDismissed && (openOnFocus || currentValue.length >= minLength) && (flatItems.length > 0 || loading);
 
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             const newValue = e.target.value;
@@ -219,7 +228,8 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                         isOpen={isOpen}
                         onClose={handleClose}
                         triggerElement={combinedRef.current}
-                        items={items}
+                        items={flatItems}
+                        groups={groups}
                         onSelect={(item) => handleSelect(item)}
                         selectedIndex={selectedIndex}
                         renderItemContent={renderItem}
