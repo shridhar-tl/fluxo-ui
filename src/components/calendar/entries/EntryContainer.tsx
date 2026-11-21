@@ -3,6 +3,8 @@ import cn from 'classnames';
 import type { ResolvedCalendarEntry, PositionedEntry } from '../calendar-types';
 import { useCalendarContext } from '../CalendarContext';
 
+const entryGap = 'var(--eui-cal-entry-gap, 2px)';
+
 function minutesToPx(minutes: number, slotDuration: number, slotHeightPx: number): number {
   return (minutes / slotDuration) * slotHeightPx;
 }
@@ -62,9 +64,9 @@ const EntryContainer: React.FC<EntryContainerProps> = ({
 
     base.position = 'absolute';
     base.top = `${top}px`;
-    base.height = `${height}px`;
+    base.height = `calc(${height}px - ${entryGap})`;
     base.left = `${position.left}%`;
-    base.width = `${position.width}%`;
+    base.width = `calc(${position.width}% - ${entryGap})`;
 
     if (isDragging && dragState) {
       base.zIndex = 100;

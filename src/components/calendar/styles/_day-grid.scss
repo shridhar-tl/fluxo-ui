@@ -63,5 +63,5 @@
 .eui-cal-daygrid-cell-entries {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--eui-cal-entry-gap, #{$cal-entry-gap});
 }

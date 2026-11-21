@@ -21,9 +21,7 @@ function layoutSpannedEntries(
   allDayEntries: ResolvedCalendarEntry[],
   days: Date[]
 ): SpannedEntry[] {
-  const numDays = days.length;
   const dayStarts = days.map(d => startOfDay(d).getTime());
-  const lastDayStart = dayStarts[numDays - 1];
 
   const sorted = [...allDayEntries].sort((a, b) => {
     const aStart = startOfDay(a.start).getTime();
@@ -41,23 +39,9 @@ function layoutSpannedEntries(
     const entryStart = startOfDay(entry.start).getTime();
     const entryEnd = startOfDay(entry.end).getTime();
 
-    let startCol = -1;
-    for (let i = 0; i < numDays; i++) {
-      if (dayStarts[i] >= entryStart) {
-        startCol = i;
-        break;
-      }
-    }
-    if (startCol === -1) startCol = 0;
-
-    let endCol = numDays - 1;
-    for (let i = numDays - 1; i >= 0; i--) {
-      if (dayStarts[i] <= entryEnd || dayStarts[i] <= lastDayStart && entryEnd >= lastDayStart) {
-        endCol = i;
-        break;
-      }
-    }
-    if (entryEnd > lastDayStart) endCol = numDays - 1;
+    const startCol = dayStarts.findIndex(d => d >= entryStart);
+    const endCol = dayStarts.filter(d => d <= entryEnd).length - 1;
+    if (startCol === -1 || endCol < startCol) continue;
 
     const colSpan = endCol - startCol + 1;
 

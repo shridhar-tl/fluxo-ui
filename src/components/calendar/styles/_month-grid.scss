@@ -193,7 +193,7 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 1px;
+  gap: var(--eui-cal-entry-gap, #{$cal-entry-gap});
   min-width: 0;
   min-height: 0;
   overflow: hidden;

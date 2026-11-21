@@ -34,7 +34,7 @@
 
   &.eui-cal-entry-allday {
     position: relative;
-    margin-bottom: 1px;
+    margin-bottom: var(--eui-cal-entry-gap, #{$cal-entry-gap});
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
