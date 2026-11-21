@@ -74,22 +74,16 @@
             font-weight: 500;
             position: relative;
 
-            &:not(:last-child) {
-                &::after {
-                    content: '';
-                    position: absolute;
-                    top: 25%;
-                    bottom: 25%;
-                    width: 1px;
-                    background-color: var(--eui-border);
-                    opacity: 0.5;
-                    transition: opacity 0.15s ease;
-                }
-            }
-
-            &.eui-select-button-horizontal-tail::after,
-            &:not(:last-child)::after {
+            &:not(.eui-select-button-item-last)::after {
+                content: '';
+                position: absolute;
+                top: 25%;
+                bottom: 25%;
                 right: 0;
+                width: 1px;
+                background-color: var(--eui-border);
+                opacity: 0.5;
+                transition: opacity 0.15s ease;
             }
 
             &.eui-select-button-item-selected,
