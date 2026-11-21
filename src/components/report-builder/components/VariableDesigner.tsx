@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Dropdown } from '../../Dropdown';
 import { TextInput } from '../../TextInput';
 import { TextArea } from '../../TextArea';
@@ -6,6 +6,7 @@ import type { ComponentEvent, ListItem } from '../../../types/index';
 import { useReportBuilderContext, useRBStore } from '../report-builder-context';
 import type { ReportBuilderState } from '../report-builder-types';
 import type { VariableConfig, VariableScope } from '../report-definition-types';
+import { getIdentifierError } from '../identifier-validation';
 
 interface Props {
     variableId: string;
@@ -20,6 +21,11 @@ export const VariableDesigner: React.FC<Props> = ({ variableId }) => {
     const { store } = useReportBuilderContext();
     const variables = useRBStore((s) => s.definition.variables ?? [], true);
     const variable = variables.find((v) => v.id === variableId);
+    const nameError = useMemo(
+        () => variable ? getIdentifierError(variable.name, variables.filter((v) => v.id !== variableId).map((v) => v.name), 'Variables') : null,
+        [variable, variables, variableId],
+    );
+    const nameErrorId = `rb-var-name-err-${variableId}`;
 
     const update = useCallback(
         (patch: Partial<VariableConfig>) => {
@@ -55,8 +61,15 @@ export const VariableDesigner: React.FC<Props> = ({ variableId }) => {
                     onChange={(e) => update({ name: e.value })}
                     placeholder="variableName"
                     aria-label="Variable name"
+                    aria-invalid={!!nameError}
+                    aria-describedby={nameError ? nameErrorId : undefined}
                     size="sm"
                 />
+                {nameError && (
+                    <div id={nameErrorId} role="alert" style={{ fontSize: 11, color: 'var(--eui-btn-danger-tone)', marginTop: 4 }}>
+                        {nameError}
+                    </div>
+                )}
                 <div style={{ fontSize: 10, color: 'var(--eui-text-muted)', marginTop: 4 }}>
                     Read in expressions as <code>Variables.{variable.name || 'name'}</code>
                 </div>
@@ -83,7 +96,7 @@ export const VariableDesigner: React.FC<Props> = ({ variableId }) => {
                 </label>
                 <TextArea
                     value={variable.description ?? ''}
-                    onChange={(e) => update({ description: e.target.value || undefined })}
+                    onChange={(e) => update({ description: e.value || undefined })}
                     rows={2}
                     placeholder="What this variable represents (optional)"
                     aria-label="Variable description"

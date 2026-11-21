@@ -29,7 +29,9 @@ const sectionNavItems: SectionNavItem[] = [
 
 const features: FeatureItem[] = [
     { title: 'Drag & Drop Canvas', description: 'Drag components from the toolbox onto a visual design surface. Reorder, nest, and organize with intuitive DnD.' },
-    { title: 'Datasource Plugins', description: 'Connect to any data source via plugins — Static JSON, HTTP/REST, CSV, or build your own custom plugin.' },
+    { title: 'Datasource Plugins', description: 'Connect to any data source via plugins. Ready-made plugins cover static tables, CSV / JSON files, HTTP APIs and expressions; a plugin can open its own dialog through configure() when it is added.' },
+    { title: 'Derived Datasources', description: 'Preprocess any datasource into a new one: filter, sort, group and aggregate, join, append, pivot / unpivot, running totals and computed columns.' },
+    { title: 'Sub-reports', description: 'Embed one report in another, edit it in place, and give it the parent report parameters and datasources at design time and at runtime.' },
     { title: 'Expression Engine', description: 'Bind any property to dynamic expressions using Datasources, Parameters, and Field references with autocomplete.' },
     { title: 'Parameter System', description: 'Define typed report parameters (text, numeric, date, dropdown, etc.) with validation, defaults, and visibility rules.' },
     { title: 'Multi-tab Editing', description: 'Edit multiple reports in parallel with separate undo/redo stacks per tab.' },

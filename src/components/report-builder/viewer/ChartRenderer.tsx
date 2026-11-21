@@ -38,6 +38,7 @@ import type {
     ReportComponent,
 } from '../report-definition-types';
 import { useViewerContext, buildExpressionDatasources } from './ViewerExpressionContext';
+import { getValue } from '../data/value-utils';
 import { useEvaluatedString, useEvaluatedBoolean } from './useExpressionValue';
 
 ChartJS.register(
@@ -106,7 +107,7 @@ function toSeriesList(rows: Row[], p: ChartComponentProps): ChartSeriesConfig[] 
 
     // Implicit: pivot by seriesField.
     if (p.seriesField && p.yAxisField) {
-        const keys = Array.from(new Set(rows.map((r) => String(r[p.seriesField!] ?? '')))).filter((k) => k !== '');
+        const keys = Array.from(new Set(rows.map((r) => String(getValue(r, p.seriesField!) ?? '')))).filter((k) => k !== '');
         return keys.map((k, i) => ({
             id: `auto-${i}`,
             label: k,
@@ -170,14 +171,14 @@ function buildCategoricalData(
 ): { labels: string[]; seriesData: number[][] } {
     if (kind === 'none') {
         // Pre-aggregated path: each row contributes one data point.
-        const labels = rows.map((r) => String(r[xField] ?? ''));
+        const labels = rows.map((r) => String(getValue(r, xField) ?? ''));
         const seriesField = p.seriesField && !p.series ? p.seriesField : undefined;
         const seriesData = seriesList.map((s) =>
             rows.map((r) => {
                 if (seriesField) {
-                    return String(r[seriesField] ?? '') === s.label ? Number(r[s.valueField] ?? 0) : 0;
+                    return String(getValue(r, seriesField) ?? '') === s.label ? Number(getValue(r, s.valueField) ?? 0) : 0;
                 }
-                return Number(r[s.valueField] ?? 0);
+                return Number(getValue(r, s.valueField) ?? 0);
             }),
         );
         return { labels, seriesData };
@@ -186,7 +187,7 @@ function buildCategoricalData(
     const labels: string[] = [];
     const labelIndex = new Map<string, number>();
     for (const row of rows) {
-        const key = String(row[xField] ?? '');
+        const key = String(getValue(row, xField) ?? '');
         if (!labelIndex.has(key)) {
             labelIndex.set(key, labels.length);
             labels.push(key);
@@ -198,10 +199,10 @@ function buildCategoricalData(
     const seriesData = seriesList.map((s) => {
         const buckets: number[][] = labels.map(() => []);
         for (const row of rows) {
-            if (seriesField && String(row[seriesField] ?? '') !== s.label) continue;
-            const idx = labelIndex.get(String(row[xField] ?? ''));
+            if (seriesField && String(getValue(row, seriesField) ?? '') !== s.label) continue;
+            const idx = labelIndex.get(String(getValue(row, xField) ?? ''));
             if (idx === undefined) continue;
-            const raw = row[s.valueField];
+            const raw = getValue(row, s.valueField);
             if (kind === 'count') {
                 buckets[idx].push(1);
             } else {
@@ -227,8 +228,8 @@ function buildCircularData(
     kind: AggregationKind,
 ): { labels: string[]; values: number[] } {
     if (kind === 'none') {
-        const labels = rows.map((r) => String(r[labelField] ?? ''));
-        const values = rows.map((r) => Number(r[valueField] ?? 0));
+        const labels = rows.map((r) => String(getValue(r, labelField) ?? ''));
+        const values = rows.map((r) => Number(getValue(r, valueField) ?? 0));
         return { labels, values };
     }
 
@@ -236,7 +237,7 @@ function buildCircularData(
     const labelIndex = new Map<string, number>();
     const buckets: number[][] = [];
     for (const row of rows) {
-        const key = String(row[labelField] ?? '');
+        const key = String(getValue(row, labelField) ?? '');
         let idx = labelIndex.get(key);
         if (idx === undefined) {
             idx = labels.length;
@@ -247,7 +248,7 @@ function buildCircularData(
         if (kind === 'count') {
             buckets[idx].push(1);
         } else {
-            const n = Number(row[valueField] ?? 0);
+            const n = Number(getValue(row, valueField) ?? 0);
             if (Number.isFinite(n)) buckets[idx].push(n);
         }
     }
@@ -705,7 +706,7 @@ const ScatterChart: React.FC<CommonChartProps> = ({ rows, props: p, title, subti
         const xField = s.xField ?? p.xAxisField ?? '';
         const yField = s.yField ?? s.valueField ?? p.yAxisField ?? '';
         const pts = rows
-            .map((r) => ({ x: Number(r[xField]), y: Number(r[yField]) }))
+            .map((r) => ({ x: Number(getValue(r, xField)), y: Number(getValue(r, yField)) }))
             .filter((pt) => Number.isFinite(pt.x) && Number.isFinite(pt.y));
         const color = s.color ?? pickColor(p, i, defaultColors[i % defaultColors.length]);
         return {
@@ -756,9 +757,9 @@ const BubbleChart: React.FC<CommonChartProps> = ({ rows, props: p, title, subtit
         const rField = s.radiusField ?? p.radiusField ?? '';
         const pts = rows
             .map((r) => ({
-                x: Number(r[xField]),
-                y: Number(r[yField]),
-                r: Math.max(3, Number(r[rField] ?? 0) * scale),
+                x: Number(getValue(r, xField)),
+                y: Number(getValue(r, yField)),
+                r: Math.max(3, Number(getValue(r, rField) ?? 0) * scale),
             }))
             .filter((pt) => Number.isFinite(pt.x) && Number.isFinite(pt.y) && Number.isFinite(pt.r));
         const color = s.color ?? pickColor(p, i, defaultColors[i % defaultColors.length]);

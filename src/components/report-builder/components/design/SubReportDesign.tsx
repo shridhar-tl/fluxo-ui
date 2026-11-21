@@ -2,38 +2,30 @@ import React from 'react';
 import { ExternalLinkIcon } from '../../../../assets/icons';
 import { useReportBuilderContext } from '../../report-builder-context';
 import type { ReportComponent, SubReportComponentProps } from '../../report-definition-types';
+import { useBuilderSubReportDefinition } from '../subreport/useSubReportDefinition';
 
 interface Props { component: ReportComponent; }
 
 export const SubReportDesign: React.FC<Props> = ({ component }) => {
     const { availableSubReports } = useReportBuilderContext();
     const p = component.props as unknown as SubReportComponentProps;
+    const { definition } = useBuilderSubReportDefinition(p.subReportId || undefined);
 
-    const selected = availableSubReports.find((sr) => sr.id === p.subReportId);
-    const paramCount = Object.keys(p.parameterMap ?? {}).length;
+    const listing = availableSubReports.find((sr) => sr.id === p.subReportId);
+    const title = definition?.metadata.title ?? listing?.label;
+    const paramCount = Object.values(p.parameterMap ?? {}).filter((v) => v !== '').length;
+    const componentCount = definition?.components.length;
 
     return (
-        <div
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                padding: '12px 16px',
-                background: 'var(--eui-bg-subtle)',
-                border: '1px solid var(--eui-border-subtle)',
-                borderRadius: 6,
-                color: 'var(--eui-text)',
-                fontSize: 13,
-            }}
-        >
-            <ExternalLinkIcon aria-hidden="true" style={{ width: 16, height: 16, flexShrink: 0, opacity: 0.6 }} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {selected ? selected.label : 'No sub-report selected'}
-                </div>
-                {paramCount > 0 && (
-                    <div style={{ fontSize: 11, color: 'var(--eui-text-muted)', marginTop: 2 }}>
-                        {paramCount} parameter{paramCount !== 1 ? 's' : ''} mapped
+        <div className="eui-rb-subreport-design">
+            <ExternalLinkIcon aria-hidden="true" className="eui-rb-subreport-design-icon" />
+            <div className="eui-rb-subreport-design-info">
+                <div className="eui-rb-subreport-design-title">{title ?? 'No sub-report selected'}</div>
+                {(paramCount > 0 || componentCount !== undefined) && (
+                    <div className="eui-rb-subreport-design-meta">
+                        {componentCount !== undefined && `${componentCount} component${componentCount !== 1 ? 's' : ''}`}
+                        {componentCount !== undefined && paramCount > 0 && ' · '}
+                        {paramCount > 0 && `${paramCount} parameter${paramCount !== 1 ? 's' : ''} mapped`}
                     </div>
                 )}
             </div>

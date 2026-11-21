@@ -2,7 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import { Checkbox } from '../../../Checkbox';
 import { Dropdown } from '../../../Dropdown';
 import type { ListItem } from '../../../../types';
-import { useReportBuilderContext, useRBStore } from '../../report-builder-context';
+import { useReportBuilderContext } from '../../report-builder-context';
+import { useBuilderDatasources } from '../../builder-hooks';
 import { updateComponentInTree } from '../../report-component-helpers';
 import type { ReportBuilderState } from '../../report-builder-types';
 import type {
@@ -34,7 +35,7 @@ const separatorOptions: ListItem[] = [
 
 export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
     const { store } = useReportBuilderContext();
-    const datasources = useRBStore((s) => s.definition.datasources, true);
+    const datasources = useBuilderDatasources();
     const p = component.props as unknown as RepeaterComponentProps;
 
     const update = useCallback((patch: Partial<RepeaterComponentProps>) => {
@@ -108,6 +109,9 @@ export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
                     multiline={true}
                     hint="Must return an array of rows."
                 />
+            )}
+            {useExpressionDataset && !p.datasetExpression && (
+                <span className="eui-rb-ds-config-error">Choose a datasource or enter a dataset expression to repeat over.</span>
             )}
 
             <ExpressionField

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
-import { LayersIcon } from '../../assets/icons';
+import { LayersIcon, PlusIcon } from '../../assets/icons';
 import { useRBStore } from './report-builder-context';
 import { useReportBuilderContext } from './report-builder-context';
 import { getPageDimensionsPx } from './report-definition-types';
@@ -33,6 +33,18 @@ const DropZone: React.FC<DropZoneProps> = ({ active, onDragOver, onDrop, onDragL
     />
 );
 
+const EndDropZone: React.FC<DropZoneProps> = ({ active, onDragOver, onDrop, onDragLeave }) => (
+    <div
+        className={classNames('eui-rb-end-drop-zone', { active })}
+        onDragOver={onDragOver}
+        onDrop={onDrop}
+        onDragLeave={onDragLeave}
+    >
+        <PlusIcon aria-hidden="true" />
+        <span>Drop a component here to add it at the end of the report</span>
+    </div>
+);
+
 interface EmptyCanvasProps {
     onDragOver: (e: React.DragEvent) => void;
     onDrop: (e: React.DragEvent) => void;
@@ -51,7 +63,7 @@ const EmptyCanvas: React.FC<EmptyCanvasProps> = ({ onDragOver, onDrop }) => (
 );
 
 export const DesignArea: React.FC = () => {
-    const { store } = useReportBuilderContext();
+    const { store, componentPlugins } = useReportBuilderContext();
     const components = useRBStore((s) => s.definition.components);
     const selectedId = useRBStore((s) => s.selectedItemId);
     const pageSetup = useRBStore((s) => s.definition.globalStyles.pageSetup);
@@ -88,7 +100,7 @@ export const DesignArea: React.FC = () => {
 
         const newType = e.dataTransfer.getData('application/rb-component-type');
         if (newType) {
-            const comp = createComponent(newType);
+            const comp = createComponent(newType, componentPlugins);
             store.setState((prev: ReportBuilderState) => {
                 const next = [...prev.definition.components];
                 next.splice(insertIndex, 0, comp);
@@ -126,7 +138,7 @@ export const DesignArea: React.FC = () => {
                 };
             });
         }
-    }, [store]);
+    }, [store, componentPlugins]);
 
     const handleDragLeave = useCallback(() => {
         setDragOverIndex(null);
@@ -155,7 +167,7 @@ export const DesignArea: React.FC = () => {
         const newType = e.dataTransfer.getData('application/rb-component-type');
         if (newType) {
             if (containerType && !isTypeAllowedInContainer(newType, containerType)) return;
-            const comp = createComponent(newType);
+            const comp = createComponent(newType, componentPlugins);
             store.setState((prev: ReportBuilderState) => ({
                 ...prev,
                 definition: {
@@ -184,7 +196,7 @@ export const DesignArea: React.FC = () => {
                 },
             }));
         }
-    }, [store]);
+    }, [store, componentPlugins]);
 
     const handleSelect = useCallback((id: string) => {
         store.setState((prev: ReportBuilderState) => ({
@@ -309,14 +321,22 @@ export const DesignArea: React.FC = () => {
                                     onDeleteNested={handleDelete}
                                     onDuplicateNested={handleDuplicate}
                                 />
-                                <DropZone
-                                    active={dragOverIndex === i + 1}
-                                    onDragOver={(e) => handleDragOver(e, i + 1)}
-                                    onDrop={(e) => handleDrop(e, i + 1)}
-                                    onDragLeave={handleDragLeave}
-                                />
+                                {i < components.length - 1 && (
+                                    <DropZone
+                                        active={dragOverIndex === i + 1}
+                                        onDragOver={(e) => handleDragOver(e, i + 1)}
+                                        onDrop={(e) => handleDrop(e, i + 1)}
+                                        onDragLeave={handleDragLeave}
+                                    />
+                                )}
                             </React.Fragment>
                         ))}
+                        <EndDropZone
+                            active={dragOverIndex === components.length}
+                            onDragOver={(e) => handleDragOver(e, components.length)}
+                            onDrop={(e) => handleDrop(e, components.length)}
+                            onDragLeave={handleDragLeave}
+                        />
                     </>
                 )}
             </div>

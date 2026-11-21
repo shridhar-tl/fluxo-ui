@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
     AlignLeftIcon,
     AreaChartIcon,
@@ -25,6 +25,9 @@ import {
 } from '../../../assets/icons';
 import type { SVGIcon } from '../../../assets/icons';
 import { TextInput } from '../../TextInput';
+import { useReportBuilderContext } from '../report-builder-context';
+import type { ReportBuilderState } from '../report-builder-types';
+import { createComponent } from '../report-component-helpers';
 
 interface ToolboxItem {
     type: string;
@@ -58,13 +61,33 @@ const toolboxItems: ToolboxItem[] = [
 ];
 
 export const ToolboxPanel: React.FC = () => {
+    const { store, componentPlugins } = useReportBuilderContext();
     const [search, setSearch] = useState('');
+
+    const allItems = useMemo<ToolboxItem[]>(
+        () => [...toolboxItems, ...componentPlugins.map((p) => ({ type: p.type, label: p.label, icon: p.icon, category: p.category }))],
+        [componentPlugins],
+    );
+
+    const appendComponent = useCallback((type: string) => {
+        const comp = createComponent(type, componentPlugins);
+        store.setState((prev: ReportBuilderState) => ({
+            ...prev,
+            definition: {
+                ...prev.definition,
+                components: [...prev.definition.components, comp],
+                metadata: { ...prev.definition.metadata, updatedAt: new Date().toISOString() },
+            },
+            selectedItemId: comp.id,
+            selectedItemType: 'component',
+        }));
+    }, [store, componentPlugins]);
 
     const filtered = useMemo(() => {
         const q = search.toLowerCase();
-        if (!q) return toolboxItems;
-        return toolboxItems.filter((item) => item.label.toLowerCase().includes(q) || item.category.toLowerCase().includes(q));
-    }, [search]);
+        if (!q) return allItems;
+        return allItems.filter((item) => item.label.toLowerCase().includes(q) || item.category.toLowerCase().includes(q));
+    }, [search, allItems]);
 
     const groups = useMemo(() => {
         const map = new Map<string, ToolboxItem[]>();
@@ -100,12 +123,18 @@ export const ToolboxPanel: React.FC = () => {
                                     draggable
                                     role="listitem"
                                     tabIndex={0}
+                                    onDoubleClick={() => appendComponent(item.type)}
+                                    onKeyDown={(e) => {
+                                        if (e.key !== 'Enter' && e.key !== ' ') return;
+                                        e.preventDefault();
+                                        appendComponent(item.type);
+                                    }}
                                     onDragStart={(e) => {
                                         e.dataTransfer.setData('application/rb-component-type', item.type);
                                         e.dataTransfer.setData(`application/rb-type-${item.type}`, '1');
                                         e.dataTransfer.effectAllowed = 'copy';
                                     }}
-                                    title={`Drag to add ${item.label}`}
+                                    title={`Drag to add ${item.label}, or double-click to add it at the end`}
                                 >
                                     <Icon aria-hidden="true" />
                                     {item.label}

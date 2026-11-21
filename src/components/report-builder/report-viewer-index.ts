@@ -4,6 +4,10 @@ export type {
     ReportViewerProps,
     ReportViewerHandle,
     DatasourcePlugin,
+    DatasourceFetchContext,
+    DatasourceSchemaContext,
+    DatasourceConfigureRequest,
+    DatasourceConfigureResult,
     CustomParameterPlugin,
     Dataset,
     DatasetField,
@@ -11,15 +15,29 @@ export type {
     ParameterRuntimeUIProps,
     ParameterConfigUIProps,
     SubReportDefinition,
+    SubReportHooks,
     ReportTemplate,
     ReportTab,
     AvailableSubReport,
+    ReportComponentPlugin,
+    ReportComponentDesignProps,
+    ReportComponentPropsPanelProps,
+    ReportComponentRenderProps,
 } from './report-builder-types';
 export type {
     ReportDefinition,
+    ReportParentContext,
+    InheritedDatasource,
     ParameterConfig,
     ParameterType,
     DatasourceConfig,
+    DatasetFieldType,
+    DerivedDatasourceConfig,
+    DerivedTransform,
+    DerivedTransformType,
+    AggregateFunction,
+    SortKey,
+    SortDirection,
     ReportComponent,
     GlobalStyles,
     ReportMetadata,
@@ -39,3 +57,9 @@ export {
 } from './built-in-fields';
 export type { BuiltInFieldDefinition, ReportBuilderInitOptions } from './built-in-fields';
 export { inferFieldsFromRows, parseJsonRows } from './dataset-schema';
+export { evaluateExpression, interpolateTemplate } from './expression/expression-parser';
+export { getRegisteredFunctions } from './expression/function-registry';
+export type { CustomFunction, FunctionParam, ExpressionReturnType } from './expression/expression-types';
+export { resolveDatasources } from './data/datasource-engine';
+export type { ResolveDatasourcesOptions, ResolveDatasourcesResult } from './data/datasource-engine';
+export { derivedDatasourceType, inheritedDatasourceType } from './data/core-plugins';

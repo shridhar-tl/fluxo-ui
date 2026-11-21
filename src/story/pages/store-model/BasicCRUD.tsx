@@ -155,7 +155,7 @@ const BasicCRUD: React.FC = () => {
                     <div className="flex gap-2 mb-4">
                         <TextInput
                             value={newTitle}
-                            onChange={(e) => setNewTitle(e.target.value)}
+                            onChange={(e) => setNewTitle(e.value)}
                             onKeyDown={handleKeyDown}
                             placeholder="Add a new todo..."
                             className="flex-1"

@@ -15,7 +15,7 @@ function MyComponent() {
     <TextInput
       placeholder="Enter some text..."
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={(e) => setValue(e.value)}
     />
   );
 }`;

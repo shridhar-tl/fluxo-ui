@@ -6,16 +6,24 @@ import { DownloadIcon, PrintIcon, RefreshIcon, SettingsIcon } from '../../assets
 import { builtInFieldsToExpressionContext, mergeBuiltInFields } from './built-in-fields';
 import type { Dataset } from './report-builder-types';
 import type { ReportViewerProps } from './report-builder-types';
-import type { DerivedDatasourceConfig, ReportComponent, VariableConfig } from './report-definition-types';
+import type { ParameterConfig, ReportComponent, VariableConfig } from './report-definition-types';
 import { getPageDimensionsPx } from './report-definition-types';
 import { evaluateExpression } from './expression/expression-parser';
 import { ParameterOptionsContext } from './components/ParameterOptionsContext';
 import type { ParameterOptionsContextValue } from './components/ParameterOptionsContext';
 import { ParameterPanel } from './components/ParameterPanel';
 import { ComponentRenderer } from './viewer/ComponentRenderer';
-import { processDerivedDatasource } from './viewer/DerivedDatasourceProcessor';
-import { downloadReportPdf, printReport } from './viewer/pdf-export';
+import { inheritedToConfig } from './data/core-plugins';
+import { resolveDatasources } from './data/datasource-engine';
+import { validateAllParameters } from './parameter-validation';
+import { downloadReportPdf, printReport, waitForStableContent } from './viewer/pdf-export';
 import { ViewerContext } from './viewer/ViewerExpressionContext';
+
+type ExportKind = 'pdf' | 'print';
+
+function waitForCommit(): Promise<void> {
+    return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+}
 
 function collectComponentVariables(
     components: ReportComponent[],
@@ -44,9 +52,24 @@ async function evaluateDefaultValue(
     return raw;
 }
 
+function seedParameterValues(parameters: ParameterConfig[], external: Record<string, unknown> | undefined): Record<string, unknown> {
+    const seeded: Record<string, unknown> = {};
+    for (const p of parameters) {
+        if (p.defaultValue !== undefined) seeded[p.id] = p.defaultValue;
+    }
+    return { ...seeded, ...(external ?? {}) };
+}
+
+function hasInvalidParameters(parameters: ParameterConfig[], values: Record<string, unknown>): boolean {
+    return Object.keys(validateAllParameters(parameters, values)).length > 0;
+}
+
 export const ReportViewer: React.FC<ReportViewerProps> = ({
     definition,
     datasourcePlugins,
+    parameterPlugins,
+    componentPlugins,
+    resolveSubReport,
     parameterValues: externalParamValues,
     onParameterChange,
     parameterPanel,
@@ -65,18 +88,14 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
     const [datasources, setDatasources] = useState<Record<string, Dataset>>({});
     const [loadingDs, setLoadingDs] = useState<Set<string>>(new Set());
     const [errorDs, setErrorDs] = useState<Map<string, string>>(new Map());
-    const [paramValues, setParamValues] = useState<Record<string, unknown>>(() => {
-        const seeded: Record<string, unknown> = {};
-        for (const p of definition.parameters) {
-            if (p.defaultValue !== undefined) seeded[p.id] = p.defaultValue;
-        }
-        return { ...seeded, ...(externalParamValues ?? {}) };
-    });
+    const [paramValues, setParamValues] = useState<Record<string, unknown>>(() => seedParameterValues(definition.parameters, externalParamValues));
     const [globalVariableValues, setGlobalVariableValues] = useState<Record<string, unknown>>({});
     const [componentVariableValues, setComponentVariableValues] = useState<Record<string, Record<string, unknown>>>({});
-    const [showParams, setShowParams] = useState(false);
+    const [showParams, setShowParams] = useState(() => hasInvalidParameters(definition.parameters, seedParameterValues(definition.parameters, externalParamValues)));
     const [renderKey, setRenderKey] = useState(0);
-    const [exporting, setExporting] = useState(false);
+    const [exporting, setExporting] = useState<ExportKind | null>(null);
+    const [exportError, setExportError] = useState<string | null>(null);
+    const exportingRef = useRef(false);
     const prevParamRef = useRef(externalParamValues);
     const contentRef = useRef<HTMLDivElement>(null);
 
@@ -183,63 +202,55 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         }
     }, [syncParamsToHash, paramValues]);
 
+    const fetchAbortRef = useRef<AbortController | null>(null);
+    const needsParameters = useMemo(
+        () => hasInvalidParameters(definition.parameters, paramValues),
+        [definition.parameters, paramValues],
+    );
+    const parentContext = definition.parentContext;
+    const inheritedConfigs = useMemo(
+        () => (parentContext ? parentContext.datasources.map(inheritedToConfig) : []),
+        [parentContext],
+    );
+
     const fetchDatasources = useCallback(async () => {
+        fetchAbortRef.current?.abort();
         const dsConfigs = definition.datasources;
-        if (dsConfigs.length === 0) return;
+        if (dsConfigs.length === 0 || needsParameters) {
+            setDatasources({});
+            setErrorDs(new Map());
+            setLoadingDs(new Set());
+            return;
+        }
+        const controller = new AbortController();
+        fetchAbortRef.current = controller;
 
         const paramsByName: Record<string, unknown> = {};
         for (const p of definition.parameters) {
             paramsByName[p.name] = paramValues[p.id] ?? p.defaultValue;
         }
 
-        const fetchingIds = new Set(dsConfigs.map((d) => d.id));
-        setLoadingDs(fetchingIds);
+        setLoadingDs(new Set(dsConfigs.map((d) => d.id)));
         setErrorDs(new Map());
 
-        const results: Record<string, Dataset> = {};
-        const errors = new Map<string, string>();
+        const { datasets, errors } = await resolveDatasources({
+            configs: dsConfigs,
+            plugins: datasourcePlugins,
+            parameters: paramsByName,
+            builtInFields: mergedBuiltInFields,
+            inherited: inheritedConfigs.length > 0 ? { configs: inheritedConfigs, datasets: {} } : undefined,
+            signal: controller.signal,
+        });
+        if (controller.signal.aborted) return;
 
-        const regularDs = dsConfigs.filter((d) => d.type !== 'derived');
-        const derivedDs = dsConfigs.filter((d) => d.type === 'derived');
-
-        await Promise.allSettled(
-            regularDs.map(async (dsConfig) => {
-                const plugin = datasourcePlugins.find((p) => p.type === dsConfig.type);
-                if (!plugin) {
-                    errors.set(dsConfig.id, `No plugin found for type "${dsConfig.type}"`);
-                    return;
-                }
-                try {
-                    const data = await plugin.fetch(dsConfig.config, paramsByName);
-                    results[dsConfig.name] = data;
-                } catch (err) {
-                    errors.set(dsConfig.id, err instanceof Error ? err.message : String(err));
-                }
-            }),
-        );
-
-        const nameById: Record<string, string> = {};
-        for (const ds of dsConfigs) {
-            nameById[ds.id] = ds.name;
-        }
-
-        for (const dsConfig of derivedDs) {
-            try {
-                const derivedCfg = dsConfig.config as unknown as DerivedDatasourceConfig;
-                const data = await processDerivedDatasource(derivedCfg, results, nameById, paramsByName);
-                results[dsConfig.name] = data;
-            } catch (err) {
-                errors.set(dsConfig.id, err instanceof Error ? err.message : String(err));
-            }
-        }
-
-        setDatasources(results);
+        setDatasources(datasets);
         setErrorDs(errors);
         setLoadingDs(new Set());
-    }, [definition.datasources, definition.parameters, datasourcePlugins, paramValues]);
+    }, [definition.datasources, definition.parameters, datasourcePlugins, paramValues, mergedBuiltInFields, needsParameters, inheritedConfigs]);
 
     useEffect(() => {
         fetchDatasources();
+        return () => fetchAbortRef.current?.abort();
     }, [fetchDatasources]);
 
     const handleParamChange = useCallback((values: Record<string, unknown>) => {
@@ -252,25 +263,35 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         fetchDatasources();
     }, [fetchDatasources]);
 
-    const handleExportPdf = useCallback(async () => {
-        if (!contentRef.current || exporting) return;
-        setExporting(true);
+    const runExport = useCallback(async (kind: ExportKind, task: (element: HTMLElement) => Promise<void>) => {
+        if (exportingRef.current || !contentRef.current) return;
+        exportingRef.current = true;
+        setExportError(null);
+        setExporting(kind);
         try {
-            await downloadReportPdf(contentRef.current, {
-                title: definition.metadata.title,
-                filename: `${definition.metadata.title || 'report'}.pdf`,
-                pageSetup: definition.globalStyles.pageSetup,
-            });
-        } catch {
-            // silently fail - html2canvas may not be available
+            await waitForCommit();
+            const element = contentRef.current;
+            if (!element) return;
+            await waitForStableContent(element);
+            await task(element);
+        } catch (err) {
+            setExportError(err instanceof Error ? err.message : String(err));
+        } finally {
+            exportingRef.current = false;
+            setExporting(null);
         }
-        setExporting(false);
-    }, [definition.metadata.title, exporting]);
+    }, []);
 
-    const handlePrint = useCallback(() => {
-        if (!contentRef.current) return;
-        printReport(contentRef.current, definition.metadata.title, definition.globalStyles.pageSetup);
-    }, [definition.metadata.title, definition.globalStyles.pageSetup]);
+    const reportTitle = definition.metadata.title;
+    const pageSetup = definition.globalStyles.pageSetup;
+
+    const handleExportPdf = useCallback(() => runExport('pdf', (element) => downloadReportPdf(element, {
+        title: reportTitle,
+        filename: `${reportTitle || 'report'}.pdf`,
+        pageSetup,
+    })), [runExport, reportTitle, pageSetup]);
+
+    const handlePrint = useCallback(() => runExport('print', (element) => printReport(element, reportTitle, pageSetup)), [runExport, reportTitle, pageSetup]);
 
     const writeGlobalVariable = useCallback((variableName: string, value: unknown) => {
         setGlobalVariableValues((prev) => ({ ...prev, [variableName]: value }));
@@ -345,7 +366,10 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         errorDatasources: errorDs,
         datasourceConfigs: definition.datasources,
         subReportDefinitions,
+        resolveSubReport,
+        subReportChain: [definition.id],
         datasourcePlugins,
+        componentPlugins,
         onColumnResize,
         onColumnReorder,
         onDrillThrough: handleDrillThrough,
@@ -354,7 +378,8 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         writeGlobalVariable,
         writeComponentVariable,
         onCellEdit,
-    }), [datasources, parametersByName, globalVariableValues, mergedBuiltInFields, globalVariableNames, componentVariableValues, loadingDs, errorDs, definition.datasources, subReportDefinitions, datasourcePlugins, onColumnResize, onColumnReorder, handleDrillThrough, handleSetVariable, notifyVariableChange, writeGlobalVariable, writeComponentVariable, onCellEdit]);
+        exportMode: exporting !== null,
+    }), [exporting, datasources, parametersByName, globalVariableValues, mergedBuiltInFields, globalVariableNames, componentVariableValues, loadingDs, errorDs, definition.datasources, subReportDefinitions, datasourcePlugins, componentPlugins, onColumnResize, onColumnReorder, handleDrillThrough, handleSetVariable, notifyVariableChange, writeGlobalVariable, writeComponentVariable, onCellEdit, resolveSubReport, definition.id]);
 
     const paramOptionsCtx = useMemo<ParameterOptionsContextValue>(() => ({
         datasources,
@@ -400,6 +425,7 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
             <button
                 className="eui-rv-tool-btn"
                 onClick={handlePrint}
+                disabled={exporting !== null}
                 title="Print"
                 aria-label="Print report"
             >
@@ -409,12 +435,12 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
             <button
                 className="eui-rv-tool-btn"
                 onClick={handleExportPdf}
-                disabled={exporting}
+                disabled={exporting !== null}
                 title="Export PDF"
                 aria-label="Export report as PDF"
             >
                 <DownloadIcon aria-hidden="true" />
-                {exporting ? 'Exporting...' : 'PDF'}
+                {exporting === 'pdf' ? 'Exporting...' : 'PDF'}
             </button>
             <button
                 className="eui-rv-tool-btn"
@@ -449,6 +475,28 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
                     })}
                 </div>
             )}
+            {exportError && (
+                <div className="eui-rv-ds-errors" role="alert">
+                    <div className="eui-rv-ds-error">
+                        <strong>Export failed:</strong> {exportError}
+                    </div>
+                </div>
+            )}
+            {needsParameters && hasParams && (
+                <div className="eui-rv-info" role="note">
+                    Enter the required parameters to run this report.
+                    {!showParams && (
+                        <button type="button" className="eui-rv-info-action" onClick={() => setShowParams(true)}>
+                            Enter parameters
+                        </button>
+                    )}
+                </div>
+            )}
+            {definition.parentContext && definition.parentContext.datasources.length > 0 && (
+                <div className="eui-rv-info" role="note">
+                    Some data of this report is supplied by "{definition.parentContext.reportTitle}". Open that report to see the complete data.
+                </div>
+            )}
             {isLoading && (
                 <div className="eui-rv-loading-bar" aria-hidden="true" />
             )}
@@ -481,6 +529,7 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         <ViewerContext.Provider value={viewerCtx}>
             <ParameterOptionsContext.Provider value={paramOptionsCtx}>
                 <ParameterPanel
+                    parameterPlugins={parameterPlugins}
                     parameters={definition.parameters}
                     values={paramValues}
                     onChange={handleParamChange}

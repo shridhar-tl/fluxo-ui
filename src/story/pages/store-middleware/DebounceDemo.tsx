@@ -33,7 +33,7 @@ function SearchInput() {
   return (
     <TextInput
       value={query}
-      onChange={(e) => store.setState({ query: e.target.value })}
+      onChange={(e) => store.setState({ query: e.value })}
       placeholder="Type to search..."
     />
   );
@@ -66,7 +66,7 @@ const DebouncedPanel: React.FC<{ title: string; store: typeof debouncedStore; ho
             </div>
             <TextInput
                 value={state.query}
-                onChange={(e) => s.setState({ query: e.target.value, searchCount: s.getState().searchCount + 1 })}
+                onChange={(e) => s.setState({ query: e.value, searchCount: s.getState().searchCount + 1 })}
                 placeholder="Type rapidly..."
             />
             <div

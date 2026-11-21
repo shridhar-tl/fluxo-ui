@@ -1,6 +1,7 @@
 import { evaluateExpression } from '../expression/expression-parser';
 import type { ExpressionContext, GroupFrame } from '../expression/expression-types';
-import type { TableRowGroup } from '../report-definition-types';
+import { compareValues } from '../data/value-utils';
+import type { SortKey, TableRowGroup } from '../report-definition-types';
 
 type Row = Record<string, unknown>;
 
@@ -22,6 +23,27 @@ export interface RowGroupResolverOptions {
     datasourceName: string | undefined;
     exprCtx: ExpressionContext;
     parentFrames: Record<string, GroupFrame>;
+}
+
+function activeKeys(keys: SortKey[] | undefined): SortKey[] {
+    return (keys ?? []).filter((k) => k.expression.trim().length > 0);
+}
+
+async function sortByKeys<T>(
+    items: T[],
+    keys: SortKey[],
+    evaluate: (item: T, expression: string) => Promise<{ result: unknown }>,
+): Promise<T[]> {
+    const values = await Promise.all(keys.map((k) => Promise.all(items.map(async (item) => (await evaluate(item, k.expression)).result))));
+    const indexes = items.map((_, i) => i);
+    indexes.sort((a, b) => {
+        for (let k = 0; k < keys.length; k++) {
+            const cmp = compareValues(values[k][a], values[k][b], keys[k].direction);
+            if (cmp !== 0) return cmp;
+        }
+        return a - b;
+    });
+    return indexes.map((i) => items[i]);
 }
 
 export async function resolveRowGroups(opts: RowGroupResolverOptions): Promise<ResolvedGroupNode[]> {
@@ -77,27 +99,13 @@ async function resolveGroupLevel(
             data = filtered;
         }
 
-        if (g.sortBy) {
-            const decorated = await Promise.all(
-                data.map(async (row) => {
-                    const { result: sortKey } = await evaluateExpression(g.sortBy!, {
-                        ...exprCtx,
-                        currentRow: row,
-                        rowGroups: parentFrames,
-                    });
-                    return { row, sortKey };
-                }),
-            );
-            decorated.sort((a, b) => {
-                const av = a.sortKey;
-                const bv = b.sortKey;
-                if (av == null && bv == null) return 0;
-                if (av == null) return 1;
-                if (bv == null) return -1;
-                if (typeof av === 'number' && typeof bv === 'number') return av - bv;
-                return String(av).localeCompare(String(bv));
-            });
-            data = decorated.map((d) => d.row);
+        const rowSortKeys = activeKeys(g.sortKeys);
+        if (rowSortKeys.length > 0) {
+            data = await sortByKeys(data, rowSortKeys, (row, expression) => evaluateExpression(expression, {
+                ...exprCtx,
+                currentRow: row,
+                rowGroups: parentFrames,
+            }));
         }
 
         const computeGroupVariables = async (rows: Row[]): Promise<Record<string, unknown>> => {
@@ -139,6 +147,7 @@ async function resolveGroupLevel(
                 buckets.get(bucketKey)!.rows.push(row);
             }
 
+            const groupNodes: ResolvedGroupNode[] = [];
             for (const [, bucket] of buckets) {
                 const bucketVars = await computeGroupVariables(bucket.rows);
                 const frame: GroupFrame = {
@@ -166,7 +175,7 @@ async function resolveGroupLevel(
                     leafRows = bucket.rows;
                 }
 
-                result.push({
+                groupNodes.push({
                     group: g,
                     key: frame.key,
                     keys: frame.keys,
@@ -176,6 +185,17 @@ async function resolveGroupLevel(
                     leafRows,
                 });
             }
+
+            const groupSortKeys = activeKeys(g.groupSortKeys);
+            const ordered = groupSortKeys.length > 0
+                ? await sortByKeys(groupNodes, groupSortKeys, (node, expression) => evaluateExpression(expression, {
+                    ...exprCtx,
+                    currentRow: node.frame.fields,
+                    rowGroups: { ...parentFrames, [g.name]: node.frame },
+                }))
+                : groupNodes;
+            const limited = g.groupLimit && g.groupLimit > 0 ? ordered.slice(0, g.groupLimit) : ordered;
+            result.push(...limited);
         } else {
             const vars = await computeGroupVariables(data);
             const frame: GroupFrame = {

@@ -10,7 +10,7 @@ const code = `<TextArea
   label="Comments"
   placeholder="Start typing and watch it grow..."
   value={value}
-  onChange={(e) => setValue(e.target.value)}
+  onChange={(e) => setValue(e.value)}
   autoResize
   rows={2}
 />`;

@@ -18,7 +18,7 @@ const sectionNavItems: SectionNavItem[] = [
 ];
 
 const features: FeatureItem[] = [
-    { title: 'Datasource Fetching', description: 'Automatically fetches all datasources on mount via plugins. Derived datasources processed sequentially after regular ones.' },
+    { title: 'Datasource Fetching', description: 'Fetches every datasource through its plugin. Datasources that read other datasources (derived, expression, join, append) run after the ones they depend on; independent ones run in parallel.' },
     { title: 'Expression Evaluation', description: 'Evaluates dynamic expressions in text, visibility, formatting, and conditional styles at render time.' },
     { title: 'Parameter Panel', description: 'Docked or popover parameter panel lets end-users filter and configure reports interactively.' },
     { title: 'Table Features', description: 'Sorting, grouping (multi-level), pivot mode, frozen columns, column resizing, reorder, conditional formatting, inline editing.' },

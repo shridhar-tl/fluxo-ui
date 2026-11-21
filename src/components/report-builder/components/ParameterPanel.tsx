@@ -19,11 +19,13 @@ import { TimesIcon } from '../../../assets/icons';
 import type { ComponentEvent, ListItem } from '../../../types';
 import { validateAllParameters } from '../parameter-validation';
 import { isKeyFilterAllowed } from '../parameter-validation';
+import type { CustomParameterPlugin } from '../report-builder-types';
 import type { ParameterConfig, SelectOption } from '../report-definition-types';
 import { useParameterOptionsContext } from './ParameterOptionsContext';
 
 interface ParameterPanelProps {
     parameters: ParameterConfig[];
+    parameterPlugins?: CustomParameterPlugin[];
     values: Record<string, unknown>;
     onChange: (values: Record<string, unknown>) => void;
     onApply: (values: Record<string, unknown>) => void;
@@ -50,12 +52,13 @@ function getOptionsForParam(
 
 interface FieldRenderProps {
     param: ParameterConfig;
+    plugin?: CustomParameterPlugin;
     value: unknown;
     onChange: (value: unknown) => void;
     errors: string[];
 }
 
-function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
+function ParameterField({ param, plugin, value, onChange, errors }: FieldRenderProps) {
     const tc = param.typeConfig ?? {};
     const optCtx = useParameterOptionsContext();
 
@@ -96,7 +99,20 @@ function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
 
     let input: React.ReactNode;
 
-    switch (param.type) {
+    if (plugin) {
+        const RuntimeUI = plugin.RuntimeUI;
+        input = (
+            <RuntimeUI
+                id={`rb-runtime-param-${param.id}`}
+                value={value}
+                onChange={onChange}
+                config={tc}
+                allowMultiple={param.allowMultiple}
+                disabled={disabled}
+                ariaLabel={param.label}
+            />
+        );
+    } else switch (param.type) {
         case 'text': {
             if (param.allowMultiple) {
                 input = (
@@ -113,7 +129,7 @@ function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
                     <TextArea
                         id={`rb-runtime-param-${param.id}`}
                         value={(value as string) ?? ''}
-                        onChange={(e) => onChange(e.target.value)}
+                        onChange={(e) => onChange(e.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={(tc.placeholder as string) ?? ''}
                         disabled={disabled}
@@ -126,7 +142,7 @@ function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
                     <TextInput
                         id={`rb-runtime-param-${param.id}`}
                         value={(value as string) ?? ''}
-                        onChange={(e) => onChange(e.target.value)}
+                        onChange={(e) => onChange(e.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={(tc.placeholder as string) ?? ''}
                         disabled={disabled}
@@ -187,7 +203,7 @@ function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
                     id={`rb-runtime-param-${param.id}`}
                     type="date"
                     value={(value as string) ?? ''}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => onChange(e.value)}
                     min={(tc.minDate as string) ?? undefined}
                     max={(tc.maxDate as string) ?? undefined}
                     disabled={disabled}
@@ -285,7 +301,7 @@ function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
                     id={`rb-runtime-param-${param.id}`}
                     label={param.label}
                     checked={(value as boolean) ?? false}
-                    onChange={(e) => onChange(e.target.checked)}
+                    onChange={(e) => onChange(e.value)}
                     disabled={disabled}
                 />
             );
@@ -320,7 +336,7 @@ function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
                 <TextInput
                     id={`rb-runtime-param-${param.id}`}
                     value={(value as string) ?? ''}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => onChange(e.value)}
                     disabled={disabled}
                     {...commonAria}
                 />
@@ -345,8 +361,27 @@ function ParameterField({ param, value, onChange, errors }: FieldRenderProps) {
     );
 }
 
+function validateWithPlugins(
+    parameters: ParameterConfig[],
+    values: Record<string, unknown>,
+    plugins: CustomParameterPlugin[],
+): Record<string, string[]> {
+    const errors = validateAllParameters(parameters, values);
+    for (const p of parameters) {
+        const plugin = plugins.find((pl) => pl.type === p.type);
+        const pluginErrors = plugin?.validate?.(values[p.id], p.typeConfig ?? {});
+        if (pluginErrors && pluginErrors.length > 0) {
+            errors[p.id] = [...(errors[p.id] ?? []), ...pluginErrors];
+        }
+    }
+    return errors;
+}
+
+const noPlugins: CustomParameterPlugin[] = [];
+
 const ParameterForm: React.FC<ParameterPanelProps> = ({
     parameters,
+    parameterPlugins = noPlugins,
     values,
     onChange,
     onApply,
@@ -364,22 +399,22 @@ const ParameterForm: React.FC<ParameterPanelProps> = ({
             setLocalValues((prev) => {
                 const next = { ...prev, [id]: value };
                 if (showErrors) {
-                    setErrors(validateAllParameters(parameters, next));
+                    setErrors(validateWithPlugins(parameters, next, parameterPlugins));
                 }
                 return next;
             });
         },
-        [parameters, showErrors],
+        [parameters, showErrors, parameterPlugins],
     );
 
     const handleApply = useCallback(() => {
-        const errs = validateAllParameters(parameters, localValues);
+        const errs = validateWithPlugins(parameters, localValues, parameterPlugins);
         setErrors(errs);
         setShowErrors(true);
         if (Object.keys(errs).length > 0) return;
         onChange(localValues);
         onApply(localValues);
-    }, [parameters, localValues, onChange, onApply]);
+    }, [parameters, localValues, onChange, onApply, parameterPlugins]);
 
     const visibleParams = useMemo(
         () => parameters.filter((p) => p.hidden !== true),
@@ -394,6 +429,7 @@ const ParameterForm: React.FC<ParameterPanelProps> = ({
                         <ParameterField
                             key={param.id}
                             param={param}
+                            plugin={parameterPlugins.find((pl) => pl.type === param.type)}
                             value={localValues[param.id]}
                             errors={errors[param.id] ?? []}
                             onChange={(v) => handleChange(param.id, v)}

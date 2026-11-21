@@ -46,7 +46,7 @@
             text-overflow: ellipsis;
 
             .required {
-                color: var(--eui-danger);
+                color: var(--eui-btn-danger-tone);
                 margin-left: 2px;
             }
         }
@@ -153,7 +153,7 @@
         svg { width: 14px; height: 14px; }
 
         &:hover {
-            background: var(--eui-hover);
+            background: var(--eui-bg-hover);
             color: var(--eui-text);
         }
     }
@@ -168,14 +168,14 @@
 }
 
 .eui-rb-param-mandatory-mark {
-    color: var(--eui-danger);
+    color: var(--eui-btn-danger-tone);
     margin-left: 2px;
 }
 
 .eui-rb-param-error {
     margin-top: 4px;
     font-size: 11px;
-    color: var(--eui-danger);
+    color: var(--eui-btn-danger-tone);
 
     div {
         line-height: 1.4;

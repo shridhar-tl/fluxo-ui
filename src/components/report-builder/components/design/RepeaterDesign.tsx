@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useRBStore } from '../../report-builder-context';
+import { useBuilderDatasources } from '../../builder-hooks';
 import { isDragAllowedInContainer } from '../../report-component-helpers';
 import type {
     ReportComponent,
@@ -30,7 +30,7 @@ export const RepeaterDesign: React.FC<RepeaterDesignProps> = ({
     const p = component.props as unknown as RepeaterComponentProps;
     const [dragOver, setDragOver] = useState(false);
     const children = component.children ?? [];
-    const datasources = useRBStore((s) => s.definition.datasources, true);
+    const datasources = useBuilderDatasources();
 
     const dsName = useMemo(() => {
         if (!p.datasourceId) return null;

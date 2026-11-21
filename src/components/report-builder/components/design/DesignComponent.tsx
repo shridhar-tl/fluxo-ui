@@ -18,6 +18,8 @@ import { SubReportDesign } from './SubReportDesign';
 import { CanvasDesign } from './CanvasDesign';
 import { ChartDesign } from './ChartDesign';
 import { RepeaterDesign } from './RepeaterDesign';
+import { PluginDesign } from './PluginDesign';
+import { useReportBuilderContext } from '../../report-builder-context';
 
 interface DesignComponentProps {
     component: ReportComponent;
@@ -54,20 +56,6 @@ const typeLabels: Record<string, string> = {
     canvas: 'Canvas',
     repeater: 'Repeater',
 };
-
-const UnsupportedDesign: React.FC<{ type: string }> = ({ type }) => (
-    <div style={{
-        padding: '12px 16px',
-        background: 'var(--eui-bg-subtle)',
-        border: '1px dashed var(--eui-border-subtle)',
-        borderRadius: 4,
-        color: 'var(--eui-text-muted)',
-        fontSize: 12,
-        fontStyle: 'italic',
-    }}>
-        {typeLabels[type] ?? type} — Phase 6
-    </div>
-);
 
 function renderDesignContent(
     comp: ReportComponent,
@@ -139,7 +127,7 @@ function renderDesignContent(
         case 'chart-line':
             return <ChartDesign component={comp} />;
         default:
-            return <UnsupportedDesign type={comp.type} />;
+            return <PluginDesign component={comp} />;
     }
 }
 
@@ -163,6 +151,8 @@ export const DesignComponent: React.FC<DesignComponentProps> = ({
 }) => {
     const [hovered, setHovered] = useState(false);
     const showControls = selected || hovered;
+    const { componentPlugins } = useReportBuilderContext();
+    const typeLabel = typeLabels[component.type] ?? componentPlugins.find((p) => p.type === component.type)?.label ?? component.type;
 
     return (
         <div
@@ -181,7 +171,7 @@ export const DesignComponent: React.FC<DesignComponentProps> = ({
             }}
             role="treeitem"
             aria-selected={selected}
-            aria-label={`${typeLabels[component.type] ?? component.type} component`}
+            aria-label={`${typeLabel} component`}
             aria-posinset={index + 1}
             aria-setsize={total}
             tabIndex={selected ? 0 : -1}
@@ -195,7 +185,7 @@ export const DesignComponent: React.FC<DesignComponentProps> = ({
         >
             {showControls && (
                 <div className="eui-rb-design-comp-type-label" aria-hidden="true">
-                    {typeLabels[component.type] ?? component.type}
+                    {typeLabel}
                 </div>
             )}
 
@@ -204,7 +194,7 @@ export const DesignComponent: React.FC<DesignComponentProps> = ({
             </div>
 
             {showControls && (
-                <div className="eui-rb-design-comp-toolbar" role="toolbar" aria-label={`${typeLabels[component.type]} actions`}>
+                <div className="eui-rb-design-comp-toolbar" role="toolbar" aria-label={`${typeLabel} actions`}>
                     <button
                         className="eui-rb-design-comp-toolbar-btn"
                         onClick={(e) => { e.stopPropagation(); onMoveUp(); }}

@@ -3,10 +3,12 @@ import { TrashIcon } from '../../../../assets/icons';
 import { Button } from '../../../Button';
 import { Checkbox } from '../../../Checkbox';
 import { Dropdown } from '../../../Dropdown';
+import { NumericInput } from '../../../NumericInput';
 import { TextInput } from '../../../TextInput';
 import type { ListItem } from '../../../../types';
 import type { DatasourceConfig, TableRowGroup, TableRowGroupKind } from '../../report-definition-types';
-import { ExpressionField } from './ExpressionField';
+import { ExpressionField, useBuilderTypeContext } from './ExpressionField';
+import { SortKeysEditor } from './SortKeysEditor';
 
 const groupKindOptions: ListItem[] = [
     { value: 'parent', label: 'Parent (header + nested)' },
@@ -93,6 +95,7 @@ const RowGroupNodeEditor: React.FC<{
         (patch: Partial<TableRowGroup>) => onUpdate({ ...group, ...patch }),
         [group, onUpdate],
     );
+    const typeContext = useBuilderTypeContext(undefined);
 
     const dsOptions: ListItem[] = [
         { value: '', label: '(inherit parent rows)' },
@@ -189,14 +192,40 @@ const RowGroupNodeEditor: React.FC<{
                 multiline={false}
             />
 
-            <ExpressionField
-                label="Sort By"
-                value={group.sortBy ?? ''}
-                onChange={(v) => update({ sortBy: v || undefined })}
-                placeholder="Field.createdAt"
-                expectedReturnType="any"
-                multiline={false}
-            />
+            <div className="eui-rb-prop-field">
+                <span className="eui-rb-prop-field-label">Sort rows</span>
+                <SortKeysEditor
+                    keys={group.sortKeys ?? []}
+                    onChange={(keys) => update({ sortKeys: keys.length > 0 ? keys : undefined })}
+                    typeContext={typeContext}
+                    placeholder="e.g. Field.createdAt"
+                />
+            </div>
+
+            {(group.keys ?? []).length > 0 && (
+                <>
+                    <div className="eui-rb-prop-field">
+                        <span className="eui-rb-prop-field-label">Sort groups</span>
+                        <SortKeysEditor
+                            keys={group.groupSortKeys ?? []}
+                            onChange={(keys) => update({ groupSortKeys: keys.length > 0 ? keys : undefined })}
+                            typeContext={typeContext}
+                            placeholder={`e.g. Sum(RowGroup('${group.name || 'group'}').values, 'amount')`}
+                            addLabel="Add group sort key"
+                        />
+                    </div>
+                    <div className="eui-rb-prop-field">
+                        <label className="eui-rb-prop-field-label" htmlFor={`rb-rg-limit-${group.id}`}>Show only the first N groups (0 = all)</label>
+                        <NumericInput
+                            id={`rb-rg-limit-${group.id}`}
+                            value={group.groupLimit ?? 0}
+                            min={0}
+                            onChange={(e) => update({ groupLimit: e.value || undefined })}
+                            size="sm"
+                        />
+                    </div>
+                </>
+            )}
 
             <ExpressionField
                 label="Visible"
@@ -273,6 +302,11 @@ const RowGroupNodeEditor: React.FC<{
                     checked={group.showFooter === true}
                     onChange={(e) => update({ showFooter: e.value || undefined })}
                     label="Show footer row"
+                />
+                <Checkbox
+                    checked={group.initiallyCollapsed === true}
+                    onChange={(e) => update({ initiallyCollapsed: e.value || undefined })}
+                    label="Start collapsed"
                 />
             </div>
 

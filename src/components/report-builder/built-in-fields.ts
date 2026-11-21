@@ -14,6 +14,9 @@
  * feature flags, environment) without wrapping them in dummy parameters.
  */
 
+import type { CustomFunction } from './expression/expression-types';
+import { registerFunctions } from './expression/function-registry';
+
 export interface BuiltInFieldDefinition {
     /** Identifier used inside expressions — must be a valid JS identifier. */
     name: string;
@@ -32,20 +35,25 @@ export interface BuiltInFieldDefinition {
 
 export interface ReportBuilderInitOptions {
     builtInFields?: BuiltInFieldDefinition[];
+    /** Typed functions callable from every expression and listed in expression autocomplete. */
+    functions?: CustomFunction[];
 }
 
 const registry: Map<string, BuiltInFieldDefinition> = new Map();
 
 /**
  * Library-wide setup hook. Call once at bootstrap — typically from the host app's entry file —
- * before mounting any Report Builder / Viewer. Overwrites previous registrations for fields with
- * the same name so apps can re-configure during HMR without leaking stale entries.
+ * before mounting any Report Builder / Viewer. Overwrites previous registrations for fields and
+ * functions with the same name so apps can re-configure during HMR without leaking stale entries.
  */
 export function initReportBuilder(options: ReportBuilderInitOptions = {}): void {
     if (options.builtInFields) {
         for (const f of options.builtInFields) {
             registry.set(f.name, f);
         }
+    }
+    if (options.functions) {
+        registerFunctions(options.functions);
     }
 }
 

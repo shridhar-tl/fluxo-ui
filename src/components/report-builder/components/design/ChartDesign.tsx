@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRBStore } from '../../report-builder-context';
+import { useBuilderDatasources } from '../../builder-hooks';
 import type { ReportComponent, ChartComponentProps } from '../../report-definition-types';
 
 interface Props { component: ReportComponent; }
@@ -90,7 +90,7 @@ const PiePreview: React.FC<{ cutout?: boolean }> = ({ cutout }) => {
 
 export const ChartDesign: React.FC<Props> = ({ component }) => {
     const p = component.props as unknown as ChartComponentProps;
-    const datasources = useRBStore((s) => s.definition.datasources);
+    const datasources = useBuilderDatasources();
     const ds = datasources.find((d) => d.id === p.datasourceId);
 
     const label = chartLabels[component.type] ?? 'Chart';

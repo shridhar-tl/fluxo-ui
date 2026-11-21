@@ -95,7 +95,7 @@ const definition: ReportDefinition = (() => {
                             name: 'regionGroup',
                             groupKind: 'parent',
                             keys: ['Field.region'],
-                            sortBy: 'Field.region',
+                            sortKeys: [{ expression: 'Field.region', direction: 'asc' }],
                             showFooter: false,
                             variables: [
                                 { key: 'regionTotal', expression: "Sum(RowGroup('regionGroup').values, 'revenue')" },
@@ -106,7 +106,7 @@ const definition: ReportDefinition = (() => {
                                     name: 'categoryGroup',
                                     groupKind: 'parent',
                                     keys: ['Field.category'],
-                                    sortBy: 'Field.category',
+                                    sortKeys: [{ expression: 'Field.category', direction: 'asc' }],
                                     showFooter: true,
                                     variables: [
                                         { key: 'categoryTotal', expression: "Sum(RowGroup('categoryGroup').values, 'revenue')" },

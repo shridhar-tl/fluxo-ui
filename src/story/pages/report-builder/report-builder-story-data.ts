@@ -1,5 +1,11 @@
 import type { ReportDefinition, DatasourcePlugin } from '../../../components/report-builder';
-import { createEmptyDefinition } from '../../../components/report-builder';
+import {
+    createEmptyDefinition,
+    createExpressionDatasourcePlugin,
+    createFileDatasourcePlugin,
+    createHttpDatasourcePlugin,
+    createStaticDatasourcePlugin,
+} from '../../../components/report-builder';
 import { staticJsonPlugin } from './plugins/static-json-plugin';
 import { httpPlugin } from './plugins/http-plugin';
 import { jiraPlugin } from './plugins/jira-plugin';
@@ -46,6 +52,10 @@ export const sampleDatasourcePlugins: DatasourcePlugin[] = [
     httpPlugin,
     jiraPlugin,
     csvPlugin,
+    createStaticDatasourcePlugin(),
+    createFileDatasourcePlugin(),
+    { ...createHttpDatasourcePlugin(), type: 'http-request', name: 'HTTP request' },
+    createExpressionDatasourcePlugin(),
 ];
 
 export const sampleReportDefinition: ReportDefinition = {

@@ -77,7 +77,7 @@ export const ReportSettingsPanel: React.FC = () => {
                     <TextInput
                         id="rb-settings-title"
                         value={metadata.title}
-                        onChange={(e) => update({ title: e.target.value })}
+                        onChange={(e) => update({ title: e.value })}
                         placeholder="Report title"
                     />
                 </div>
@@ -87,7 +87,7 @@ export const ReportSettingsPanel: React.FC = () => {
                     <TextArea
                         id="rb-settings-desc"
                         value={metadata.description ?? ''}
-                        onChange={(e) => update({ description: e.target.value })}
+                        onChange={(e) => update({ description: e.value })}
                         placeholder="Optional description"
                         rows={3}
                     />
@@ -98,7 +98,7 @@ export const ReportSettingsPanel: React.FC = () => {
                     <TextInput
                         id="rb-settings-version"
                         value={metadata.version}
-                        onChange={(e) => update({ version: e.target.value })}
+                        onChange={(e) => update({ version: e.value })}
                         placeholder="1.0.0"
                     />
                 </div>

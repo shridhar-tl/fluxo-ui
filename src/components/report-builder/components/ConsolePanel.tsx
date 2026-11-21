@@ -29,9 +29,9 @@ export const ConsolePanel: React.FC<ConsolePanelProps> = ({ entries = [] }) => {
                         key={i}
                         style={{
                             color: entry.level === 'error'
-                                ? 'var(--eui-danger)'
+                                ? 'var(--eui-btn-danger-tone)'
                                 : entry.level === 'warn'
-                                    ? 'var(--eui-warning)'
+                                    ? 'var(--eui-btn-warning-tone)'
                                     : 'var(--eui-text)',
                             padding: '2px 0',
                             borderBottom: '1px solid var(--eui-border-subtle)',

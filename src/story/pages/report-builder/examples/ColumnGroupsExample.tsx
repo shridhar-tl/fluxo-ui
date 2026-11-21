@@ -136,8 +136,8 @@ const highlights: ExpressionHighlight[] = [
         label: 'Formatted hire date',
         expression: "FormatDate(Field.hireDate, 'MM/DD/YYYY')",
         explanation:
-            'FormatDate supports YYYY, MM, DD tokens. For more advanced formatting, compose with Year/Month/Day helpers: ' +
-            "Concat(Year(Field.hireDate), '-', Month(Field.hireDate)).",
+            'FormatDate supports yyyy/YYYY, yy, MMMM, MMM, MM, M, dddd, ddd, dd/DD, d, HH, hh, mm, ss and a tokens, e.g. ' +
+            "FormatDate(Field.hireDate, 'dd MMM yyyy').",
     },
     {
         label: 'Conditional formatting: low performance in red, high in green',

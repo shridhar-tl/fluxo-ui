@@ -19,32 +19,8 @@ import { SubReportRenderer } from './SubReportRenderer';
 import { ChartRenderer } from './ChartRenderer';
 import { RepeaterRenderer } from './RepeaterRenderer';
 import { useEvaluatedString, sanitizeUrl } from './useExpressionValue';
-
-function toReactCSSProps(styles: ComponentStyleProps): React.CSSProperties {
-    const css: React.CSSProperties = {};
-    if (styles.textColor) css.color = styles.textColor;
-    if (styles.backgroundColor) css.backgroundColor = styles.backgroundColor;
-    if (styles.fontSize) css.fontSize = styles.fontSize;
-    if (styles.fontFamily) css.fontFamily = styles.fontFamily;
-    if (styles.fontWeight) css.fontWeight = styles.fontWeight;
-    if (styles.fontStyle) css.fontStyle = styles.fontStyle;
-    if (styles.textAlign) css.textAlign = styles.textAlign;
-    if (styles.borderColor) css.borderColor = styles.borderColor;
-    if (styles.borderWidth) css.borderWidth = styles.borderWidth;
-    if (styles.borderStyle) css.borderStyle = styles.borderStyle;
-    if (styles.borderRadius) css.borderRadius = styles.borderRadius;
-    if (styles.paddingTop != null) css.paddingTop = styles.paddingTop;
-    if (styles.paddingRight != null) css.paddingRight = styles.paddingRight;
-    if (styles.paddingBottom != null) css.paddingBottom = styles.paddingBottom;
-    if (styles.paddingLeft != null) css.paddingLeft = styles.paddingLeft;
-    if (styles.marginTop != null) css.marginTop = styles.marginTop;
-    if (styles.marginRight != null) css.marginRight = styles.marginRight;
-    if (styles.marginBottom != null) css.marginBottom = styles.marginBottom;
-    if (styles.marginLeft != null) css.marginLeft = styles.marginLeft;
-    if (styles.width) css.width = styles.width;
-    if (styles.height) css.height = styles.height;
-    return css;
-}
+import { toReactCSSProps } from './component-styles';
+import { PluginComponentRenderer } from './PluginComponentRenderer';
 
 async function evalExprString(expr: string, ctx: ExpressionContext): Promise<unknown> {
     if (!expr || !expr.startsWith('=')) return expr;
@@ -190,11 +166,7 @@ const ComponentContent: React.FC<{
         case 'chart-bubble':
             return <ChartRenderer component={component} styleCss={styleCss} />;
         default:
-            return (
-                <div style={{ padding: '8px', color: 'var(--eui-text-muted)', fontSize: 12, fontStyle: 'italic', ...styleCss }}>
-                    {component.type} — not rendered
-                </div>
-            );
+            return <PluginComponentRenderer component={component} />;
     }
 };
 
@@ -419,6 +391,27 @@ const TabRenderer: React.FC<{
     const panels = component.children ?? [];
     const [activeTabId, setActiveTabId] = useState<string>(p.defaultTabId ?? tabs[0]?.id ?? '');
     const activePanel = panels.find((panel) => panel.props.tabId === activeTabId);
+    const { exportMode } = useViewerContext();
+
+    if (exportMode) {
+        return (
+            <div style={styleCss} className="eui-rv-tab eui-rv-tab-export">
+                {tabs.map((tab) => {
+                    const panel = panels.find((x) => x.props.tabId === tab.id);
+                    return (
+                        <section key={tab.id} className="eui-rv-tab-export-section" aria-label={tab.label}>
+                            <div className="eui-rv-tab-export-title">{tab.label}</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                {(panel?.children ?? []).map((child) => (
+                                    <ComponentRenderer key={child.id} component={child} depth={depth + 1} />
+                                ))}
+                            </div>
+                        </section>
+                    );
+                })}
+            </div>
+        );
+    }
 
     return (
         <div style={styleCss} className="eui-rv-tab">

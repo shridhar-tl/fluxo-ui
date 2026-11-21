@@ -368,7 +368,7 @@ const ColorInput: React.FC<{
             type="color"
             value={value ?? '#000000'}
             onChange={(e) => onChange(e.target.value)}
-            style={{ width: 32, height: 28, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-input-bg)' }}
+            style={{ width: 32, height: 28, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-bg)' }}
             aria-label={ariaLabel ?? 'Color picker'}
         />
         <TextInput

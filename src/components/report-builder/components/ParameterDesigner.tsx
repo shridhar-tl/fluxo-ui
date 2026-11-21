@@ -10,8 +10,10 @@ import { TextInput } from '../../TextInput';
 import { TextArea } from '../../TextArea';
 import type { ComponentEvent, ListItem } from '../../../types/index';
 import { useReportBuilderContext, useRBStore } from '../report-builder-context';
-import type { ReportBuilderState } from '../report-builder-types';
+import { useBuilderDatasources } from '../builder-hooks';
+import type { CustomParameterPlugin, ReportBuilderState } from '../report-builder-types';
 import type { ParameterConfig, ParameterType, ParameterValidation, SelectOption } from '../report-definition-types';
+import { getIdentifierError } from '../identifier-validation';
 
 const parameterTypes: Array<{ type: ParameterType; label: string }> = [
     { type: 'text', label: 'Text' },
@@ -84,14 +86,29 @@ const OptionsEditor: React.FC<OptionsEditorProps> = ({ options, onChange }) => {
 
 interface DefaultValueEditorProps {
     param: ParameterConfig;
+    plugin?: CustomParameterPlugin;
     options: SelectOption[];
     onChange: (value: unknown) => void;
 }
 
-const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options, onChange }) => {
+const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, options, onChange }) => {
     const value = param.defaultValue;
     const tc = param.typeConfig ?? {};
     const listItems: ListItem[] = options.map((o) => ({ label: o.label, value: String(o.value) }));
+
+    if (plugin) {
+        const RuntimeUI = plugin.RuntimeUI;
+        return (
+            <RuntimeUI
+                id={`rb-param-default-${param.id}`}
+                value={value}
+                onChange={onChange}
+                config={tc}
+                allowMultiple={param.allowMultiple}
+                ariaLabel={`Default value of ${param.label}`}
+            />
+        );
+    }
 
     switch (param.type) {
         case 'text':
@@ -108,7 +125,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
                 return (
                     <TextArea
                         value={(value as string) ?? ''}
-                        onChange={(e) => onChange(e.target.value || undefined)}
+                        onChange={(e) => onChange(e.value || undefined)}
                         rows={2}
                         placeholder="Default text"
                     />
@@ -117,7 +134,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
             return (
                 <TextInput
                     value={(value as string) ?? ''}
-                    onChange={(e) => onChange(e.target.value || undefined)}
+                    onChange={(e) => onChange(e.value || undefined)}
                     placeholder="Default text"
                 />
             );
@@ -126,7 +143,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
             return (
                 <TextInput
                     value={(value as string) ?? ''}
-                    onChange={(e) => onChange(e.target.value || undefined)}
+                    onChange={(e) => onChange(e.value || undefined)}
                     placeholder="Default value"
                 />
             );
@@ -160,7 +177,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
                 <TextInput
                     type="date"
                     value={(value as string) ?? ''}
-                    onChange={(e) => onChange(e.target.value || undefined)}
+                    onChange={(e) => onChange(e.value || undefined)}
                 />
             );
 
@@ -172,7 +189,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
                         type="date"
                         value={range?.fromDate ?? ''}
                         onChange={(e) => {
-                            const from = e.target.value || undefined;
+                            const from = e.value || undefined;
                             const to = range?.toDate;
                             if (!from && !to) onChange(undefined);
                             else onChange({ fromDate: from, toDate: to });
@@ -183,7 +200,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
                         type="date"
                         value={range?.toDate ?? ''}
                         onChange={(e) => {
-                            const to = e.target.value || undefined;
+                            const to = e.value || undefined;
                             const from = range?.fromDate;
                             if (!from && !to) onChange(undefined);
                             else onChange({ fromDate: from, toDate: to });
@@ -231,7 +248,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
                 <Checkbox
                     label="Checked by default"
                     checked={(value as boolean) ?? false}
-                    onChange={(e) => onChange(e.target.checked ? true : undefined)}
+                    onChange={(e) => onChange(e.value ? true : undefined)}
                 />
             );
 
@@ -246,7 +263,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, options,
             return (
                 <TextInput
                     value={(value as string) ?? ''}
-                    onChange={(e) => onChange(e.target.value || undefined)}
+                    onChange={(e) => onChange(e.value || undefined)}
                     placeholder="Default value"
                 />
             );
@@ -261,14 +278,17 @@ type DesignerTab = 'general' | 'values' | 'validation';
 
 export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterId }) => {
     const { store, parameterPlugins } = useReportBuilderContext();
-    const [nameError, setNameError] = useState('');
     const [tab, setTab] = useState<DesignerTab>('general');
 
     const parameters = useRBStore((s) => s.definition.parameters);
-    const datasources = useRBStore((s) => s.definition.datasources);
+    const datasources = useBuilderDatasources();
     const param = useMemo(
         () => parameters.find((p: ParameterConfig) => p.id === parameterId),
         [parameters, parameterId],
+    );
+    const nameError = useMemo(
+        () => param ? getIdentifierError(param.name, parameters.filter((p) => p.id !== parameterId).map((p) => p.name), 'Parameters') : null,
+        [param, parameters, parameterId],
     );
 
     const updateParam = useCallback(
@@ -320,6 +340,11 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
         [store, parameterId],
     );
 
+    const datasetOptions: ListItem[] = useMemo(
+        () => [{ value: '', label: '— None —' }, ...datasources.map((d) => ({ value: d.id, label: d.name }))],
+        [datasources],
+    );
+
     if (!param) {
         return <div className="eui-rb-props-pallet-empty">Parameter not found.</div>;
     }
@@ -328,24 +353,27 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
     const options: SelectOption[] = (tc.options as SelectOption[]) ?? [];
     const validation = param.validation ?? {};
 
-    const handleNameChange = (value: string) => {
-        const existing = parameters.find((p) => p.id !== parameterId && p.name === value);
-        setNameError(existing ? 'Name already used' : '');
-        updateParam({ name: value });
-    };
+    const handleNameChange = (value: string) => updateParam({ name: value });
 
     const allTypes = [
         ...parameterTypes,
         ...parameterPlugins.map((pl) => ({ type: pl.type as ParameterType, label: pl.name })),
     ];
 
-    const datasetOptions: ListItem[] = useMemo(
-        () => [{ value: '', label: '— None —' }, ...datasources.map((d) => ({ value: d.id, label: d.name }))],
-        [datasources],
-    );
+    const plugin = parameterPlugins.find((pl) => pl.type === param.type);
+    const PluginConfigUI = plugin?.ConfigUI;
+    const canHaveDataset = !plugin && typesWithDataset.includes(param.type);
+    const canHaveAllowMultiple = plugin ? plugin.supportsMultiple === true : typesWithAllowMultiple.includes(param.type);
 
-    const canHaveDataset = typesWithDataset.includes(param.type);
-    const canHaveAllowMultiple = typesWithAllowMultiple.includes(param.type);
+    const changeType = (type: ParameterType) => {
+        const nextPlugin = parameterPlugins.find((pl) => pl.type === type);
+        updateParam({
+            type,
+            typeConfig: nextPlugin ? nextPlugin.initialTypeConfig() : {},
+            defaultValue: undefined,
+            allowMultiple: nextPlugin && !nextPlugin.supportsMultiple ? false : param.allowMultiple,
+        });
+    };
 
     return (
         <div className="eui-rb-param-designer">
@@ -370,7 +398,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                         <TextInput
                             id={`rb-param-label-${parameterId}`}
                             value={param.label}
-                            onChange={(e) => updateParam({ label: e.target.value })}
+                            onChange={(e) => updateParam({ label: e.value })}
                             placeholder="Display label"
                         />
                     </div>
@@ -379,13 +407,13 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                         <TextInput
                             id={`rb-param-name-${parameterId}`}
                             value={param.name}
-                            onChange={(e) => handleNameChange(e.target.value)}
+                            onChange={(e) => handleNameChange(e.value)}
                             placeholder="myParameter"
                             aria-invalid={!!nameError}
                             aria-describedby={nameError ? `rb-name-err-${parameterId}` : undefined}
                         />
                         {nameError && (
-                            <span id={`rb-name-err-${parameterId}`} style={{ fontSize: 11, color: 'var(--eui-danger)' }}>
+                            <span id={`rb-name-err-${parameterId}`} style={{ fontSize: 11, color: 'var(--eui-btn-danger-tone)' }}>
                                 {nameError}
                             </span>
                         )}
@@ -395,7 +423,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                         <TextInput
                             id={`rb-param-desc-${parameterId}`}
                             value={param.description ?? ''}
-                            onChange={(e) => updateParam({ description: e.target.value })}
+                            onChange={(e) => updateParam({ description: e.value })}
                             placeholder="Optional description"
                         />
                     </div>
@@ -406,7 +434,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <button
                                     key={type}
                                     className={classNames('eui-rb-param-designer-type-btn', { active: param.type === type })}
-                                    onClick={() => updateParam({ type, typeConfig: {} })}
+                                    onClick={() => changeType(type)}
                                     aria-pressed={param.type === type}
                                 >
                                     {label}
@@ -430,23 +458,23 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                         <Checkbox
                             label="Mandatory"
                             checked={param.mandatory}
-                            onChange={(e) => updateParam({ mandatory: e.target.checked })}
+                            onChange={(e) => updateParam({ mandatory: e.value })}
                         />
                         <Checkbox
                             label="Read Only"
                             checked={param.readOnly === true}
-                            onChange={(e) => updateParam({ readOnly: e.target.checked })}
+                            onChange={(e) => updateParam({ readOnly: e.value })}
                         />
                         <Checkbox
                             label="Hidden"
                             checked={param.hidden === true}
-                            onChange={(e) => updateParam({ hidden: e.target.checked })}
+                            onChange={(e) => updateParam({ hidden: e.value })}
                         />
                         {canHaveAllowMultiple && (
                             <Checkbox
                                 label="Allow Multiple"
                                 checked={param.allowMultiple === true}
-                                onChange={(e) => updateParam({ allowMultiple: e.target.checked })}
+                                onChange={(e) => updateParam({ allowMultiple: e.value })}
                             />
                         )}
                     </div>
@@ -454,6 +482,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                         <label>Default Value</label>
                         <DefaultValueEditor
                             param={param}
+                            plugin={plugin}
                             options={options}
                             onChange={(v) => updateParam({ defaultValue: v })}
                         />
@@ -463,6 +492,16 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
 
             {tab === 'values' && (
                 <>
+                    {plugin && (
+                        <div className="eui-rb-param-designer-section">
+                            <div className="eui-rb-param-designer-section-title">{plugin.name} Options</div>
+                            {PluginConfigUI ? (
+                                <PluginConfigUI config={tc} onChange={(config) => updateParam({ typeConfig: config })} />
+                            ) : (
+                                <div className="eui-rb-param-designer-hint">This parameter type has no additional options.</div>
+                            )}
+                        </div>
+                    )}
                     {param.type === 'text' && (
                         <div className="eui-rb-param-designer-section">
                             <div className="eui-rb-param-designer-section-title">Text Options</div>
@@ -470,14 +509,14 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <label>Placeholder</label>
                                 <TextInput
                                     value={(tc.placeholder as string) ?? ''}
-                                    onChange={(e) => updateTypeConfig({ placeholder: e.target.value })}
+                                    onChange={(e) => updateTypeConfig({ placeholder: e.value })}
                                     placeholder="Hint text..."
                                 />
                             </div>
                             <Checkbox
                                 label="Multiline"
                                 checked={(tc.multiline as boolean) ?? false}
-                                onChange={(e) => updateTypeConfig({ multiline: e.target.checked })}
+                                onChange={(e) => updateTypeConfig({ multiline: e.value })}
                             />
                         </div>
                     )}
@@ -489,7 +528,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <label>Mask Pattern</label>
                                 <TextInput
                                     value={(tc.mask as string) ?? ''}
-                                    onChange={(e) => updateTypeConfig({ mask: e.target.value })}
+                                    onChange={(e) => updateTypeConfig({ mask: e.value })}
                                     placeholder="e.g. 999-999-9999"
                                 />
                             </div>
@@ -531,7 +570,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <TextInput
                                         type="date"
                                         value={(tc.minDate as string) ?? ''}
-                                        onChange={(e) => updateTypeConfig({ minDate: e.target.value })}
+                                        onChange={(e) => updateTypeConfig({ minDate: e.value })}
                                     />
                                 </div>
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
@@ -539,7 +578,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <TextInput
                                         type="date"
                                         value={(tc.maxDate as string) ?? ''}
-                                        onChange={(e) => updateTypeConfig({ maxDate: e.target.value })}
+                                        onChange={(e) => updateTypeConfig({ maxDate: e.value })}
                                     />
                                 </div>
                             </div>
@@ -547,7 +586,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <label>Format</label>
                                 <TextInput
                                     value={(tc.format as string) ?? ''}
-                                    onChange={(e) => updateTypeConfig({ format: e.target.value })}
+                                    onChange={(e) => updateTypeConfig({ format: e.value })}
                                     placeholder="e.g. MM/dd/yyyy"
                                 />
                             </div>
@@ -572,7 +611,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                         <label>Display field</label>
                                         <TextInput
                                             value={param.displayField ?? ''}
-                                            onChange={(e) => updateParam({ displayField: e.target.value })}
+                                            onChange={(e) => updateParam({ displayField: e.value })}
                                             placeholder="fieldName"
                                         />
                                     </div>
@@ -580,7 +619,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                         <label>Value field</label>
                                         <TextInput
                                             value={param.valueField ?? ''}
-                                            onChange={(e) => updateParam({ valueField: e.target.value })}
+                                            onChange={(e) => updateParam({ valueField: e.value })}
                                             placeholder="fieldName (defaults to display field)"
                                         />
                                     </div>
@@ -608,7 +647,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                         <Checkbox
                             label="Searchable"
                             checked={(tc.searchable as boolean) ?? false}
-                            onChange={(e) => updateTypeConfig({ searchable: e.target.checked })}
+                            onChange={(e) => updateTypeConfig({ searchable: e.value })}
                         />
                     )}
 

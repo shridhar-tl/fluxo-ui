@@ -40,12 +40,12 @@
     svg { width: 14px; height: 14px; }
 
     &:hover {
-        background: var(--eui-hover);
+        background: var(--eui-bg-hover);
         color: var(--eui-text);
     }
 
     &[aria-pressed='true'] {
-        background: var(--eui-primary-soft);
+        background: var(--eui-primary-subtle);
         color: var(--eui-primary);
         border-color: var(--eui-primary-border);
     }
@@ -133,7 +133,7 @@
 }
 
 .eui-rb-viewer-shimmer {
-    background: linear-gradient(90deg, var(--eui-bg-subtle) 25%, var(--eui-hover) 50%, var(--eui-bg-subtle) 75%);
+    background: linear-gradient(90deg, var(--eui-bg-subtle) 25%, var(--eui-bg-hover) 50%, var(--eui-bg-subtle) 75%);
     background-size: 400% 100%;
     border-radius: 4px;
     animation: rb-shimmer 1.4s ease-in-out infinite;
@@ -211,6 +211,28 @@
         padding: 16px;
         background: var(--eui-bg);
     }
+
+    &-export {
+        border: none;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    &-export-section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    &-export-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--eui-text);
+        padding-bottom: 4px;
+        border-bottom: 2px solid var(--eui-primary);
+    }
 }
 
 // ── Print Stylesheet ──────────────────────────────────────────────────────────
@@ -272,5 +294,74 @@
 
     [role='img'] {
         break-inside: avoid;
+    }
+}
+
+.eui-rv-subreport {
+    position: relative;
+    overflow: hidden;
+
+    &.eui-rv-subreport-bordered {
+        border: 1px solid var(--eui-border-subtle);
+        border-radius: 6px;
+    }
+}
+
+.eui-rv-subreport-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.eui-rv-subreport-errors {
+    padding: 6px 12px;
+    background: rgba(239, 68, 68, 0.06);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+    font-size: 11px;
+    color: #ef4444;
+}
+
+.eui-rv-subreport-empty {
+    color: var(--eui-text-muted);
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    padding: 16px;
+}
+
+.eui-rv-subreport-notice {
+    position: relative;
+    padding: 16px;
+    background: var(--eui-bg-subtle);
+    border: 1px solid var(--eui-border-subtle);
+    border-radius: 6px;
+    color: var(--eui-text-muted);
+    font-size: 13px;
+    font-style: italic;
+}
+
+.eui-rv-info {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--eui-text-muted);
+    background: var(--eui-bg-subtle);
+    border-bottom: 1px solid var(--eui-border-subtle);
+    flex-shrink: 0;
+}
+
+.eui-rv-info-action {
+    margin-left: 8px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--eui-primary);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 2px;
     }
 }

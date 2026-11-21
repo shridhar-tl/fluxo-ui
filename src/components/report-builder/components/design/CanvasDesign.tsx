@@ -114,7 +114,7 @@ export const CanvasDesign: React.FC<CanvasDesignProps> = ({
     selectedIds: externalSelectedIds,
     onMultiSelect,
 }) => {
-    const { store } = useReportBuilderContext();
+    const { store, componentPlugins } = useReportBuilderContext();
     const p = component.props as unknown as CanvasComponentProps;
     const children = component.children ?? [];
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -287,7 +287,7 @@ export const CanvasDesign: React.FC<CanvasDesignProps> = ({
         const x = Math.max(0, e.clientX - rect.left - 20);
         const y = Math.max(0, e.clientY - rect.top - 20);
 
-        const comp = createCanvasChild(newType);
+        const comp = createCanvasChild(newType, componentPlugins);
         comp.props = { ...comp.props, canvasLayout: { x, y, width: 200, height: 100 } };
 
         store.setState((prev: ReportBuilderState) => ({
@@ -300,7 +300,7 @@ export const CanvasDesign: React.FC<CanvasDesignProps> = ({
             selectedItemId: comp.id,
             selectedItemType: 'component' as const,
         }));
-    }, [store, component.id, children.length]);
+    }, [store, component.id, children.length, componentPlugins]);
 
     const handleDragOver = useCallback((e: React.DragEvent) => {
         const hasNew = e.dataTransfer.types.includes('application/rb-component-type');

@@ -23,10 +23,11 @@ import { DockedLayout } from '../docked-layout';
 import type { DockedLayoutState, PanelConfig, ContentTab } from '../docked-layout';
 import DragDropProvider from '../drag-drop/DragDropProvider';
 import { mergeBuiltInFields } from './built-in-fields';
+import { withCorePlugins } from './data/core-plugins';
 import { ReportBuilderContext, useRBStore } from './report-builder-context';
 import { ReportViewer } from './ReportViewer';
 import { createReportBuilderStore } from './report-builder-store';
-import type { ReportBuilderProps, ReportBuilderState, ReportViewerHandle } from './report-builder-types';
+import type { ReportBuilderProps, ReportBuilderState, ReportComponentPlugin, ReportViewerHandle } from './report-builder-types';
 import { createEmptyDefinition } from './report-definition-types';
 import { BuiltInFieldsPanel } from './components/BuiltInFieldsPanel';
 import { ConsolePanel } from './components/ConsolePanel';
@@ -40,12 +41,28 @@ import { DesignArea } from './DesignArea';
 import '../eui-base.scss';
 import './report-builder.scss';
 
+function isShortcutForBuilder(target: EventTarget | null, root: HTMLElement | null): boolean {
+    if (!root) return false;
+    const targetBuilder = target instanceof Element ? target.closest('.eui-report-builder') : null;
+    if (targetBuilder) return targetBuilder === root;
+    const nestedEditors = document.querySelectorAll('.eui-rb-subreport-editor');
+    const topEditor = nestedEditors.length > 0 ? nestedEditors[nestedEditors.length - 1] : null;
+    return topEditor ? topEditor.contains(root) && topEditor.querySelector('.eui-report-builder') === root : true;
+}
+
+const noComponentPlugins: ReportComponentPlugin[] = [];
+
 export const ReportBuilder: React.FC<ReportBuilderProps> = ({
     definition: externalDefinition,
     onChange,
     datasourcePlugins = [],
     parameterPlugins = [],
+    componentPlugins = noComponentPlugins,
     availableSubReports = [],
+    parentContext,
+    resolveSubReport,
+    onSaveSubReport,
+    onCreateSubReport,
     builtInFields: builtInFieldOverrides,
     builderRef,
     breakpoints: propBreakpoints,
@@ -130,6 +147,7 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
 
     const store = activeTabStore ?? singleStore;
 
+    const rootRef = useRef<HTMLDivElement>(null);
     const [layoutState, setLayoutState] = useState<DockedLayoutState | undefined>(externalLayoutState);
     const [previewing, setPreviewing] = useState(false);
     const viewerHandleRef = useRef<ReportViewerHandle>(null);
@@ -160,6 +178,7 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
             if (isInput) return;
             const isMeta = e.ctrlKey || e.metaKey;
             if (!isMeta) return;
+            if (!isShortcutForBuilder(e.target, rootRef.current)) return;
             if (e.key === 'z' && !e.shiftKey) {
                 e.preventDefault();
                 if (store.canUndo) store.undo();
@@ -184,6 +203,22 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
         () => mergeBuiltInFields(builtInFieldOverrides),
         [builtInFieldOverrides],
     );
+
+    const effectivePlugins = useMemo(() => withCorePlugins(datasourcePlugins), [datasourcePlugins]);
+
+    const subReportHooks = useMemo(
+        () => ({ resolveSubReport, onSaveSubReport, onCreateSubReport }),
+        [resolveSubReport, onSaveSubReport, onCreateSubReport],
+    );
+
+    useEffect(() => {
+        if (!parentContext) return;
+        store.setState((prev: ReportBuilderState) => (
+            prev.definition.parentContext === parentContext
+                ? prev
+                : { ...prev, definition: { ...prev.definition, parentContext } }
+        ));
+    }, [parentContext, store]);
 
     const toolboxPc = panelConfig?.toolbox;
     const datasourcePc = panelConfig?.datasource;
@@ -326,8 +361,22 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
     ], [toolboxPc, datasourcePc, parametersPc, variablesPc, builtInFieldsPc, propertiesPc, stylesPc, consolePc, propBreakpoints]);
 
     const contextValue = useMemo(
-        () => ({ store, datasourcePlugins, parameterPlugins, availableSubReports, builtInFields: mergedBuiltInFields, templates, onSaveTemplate, onDeleteTemplate, onLoadTemplate }),
-        [store, datasourcePlugins, parameterPlugins, availableSubReports, mergedBuiltInFields, templates, onSaveTemplate, onDeleteTemplate, onLoadTemplate],
+        () => ({
+            store,
+            datasourcePlugins: effectivePlugins,
+            hostDatasourcePlugins: datasourcePlugins,
+            BuilderComponent: ReportBuilder,
+            parameterPlugins,
+            componentPlugins,
+            availableSubReports,
+            subReportHooks,
+            builtInFields: mergedBuiltInFields,
+            templates,
+            onSaveTemplate,
+            onDeleteTemplate,
+            onLoadTemplate,
+        }),
+        [store, effectivePlugins, datasourcePlugins, parameterPlugins, componentPlugins, availableSubReports, subReportHooks, mergedBuiltInFields, templates, onSaveTemplate, onDeleteTemplate, onLoadTemplate],
     );
 
     useImperativeHandle(builderRef, () => ({
@@ -342,7 +391,7 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
     return (
         <ReportBuilderContext.Provider value={contextValue}>
             <DragDropProvider>
-            <div className={classNames('eui-report-builder', className)} style={style}>
+            <div ref={rootRef} className={classNames('eui-report-builder', className)} style={style}>
                 <ReportBuilderToolbar previewing={previewing} onTogglePreview={() => setPreviewing((v) => !v)} viewerHandleRef={viewerHandleRef} />
 
                 <div className="eui-report-builder-layout">
@@ -351,6 +400,9 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
                             <ReportViewer
                                 definition={previewDefinition}
                                 datasourcePlugins={datasourcePlugins}
+                                parameterPlugins={parameterPlugins}
+                                componentPlugins={componentPlugins}
+                                resolveSubReport={resolveSubReport}
                                 builtInFields={builtInFieldOverrides}
                                 hideToolbar
                                 viewerRef={viewerHandleRef}
@@ -626,7 +678,7 @@ const ReportBuilderToolbar: React.FC<{ previewing: boolean; onTogglePreview: () 
                                                     padding: '0 8px',
                                                     border: '1px solid var(--eui-border-subtle)',
                                                     borderRadius: 4,
-                                                    background: 'var(--eui-input-bg)',
+                                                    background: 'var(--eui-bg)',
                                                     color: 'var(--eui-text)',
                                                     fontSize: 12,
                                                     outline: 'none',
@@ -680,7 +732,7 @@ const ReportBuilderToolbar: React.FC<{ previewing: boolean; onTogglePreview: () 
                                                                             fontSize: 9,
                                                                             padding: '1px 5px',
                                                                             borderRadius: 3,
-                                                                            background: 'var(--eui-primary-soft)',
+                                                                            background: 'var(--eui-primary-subtle)',
                                                                             color: 'var(--eui-primary)',
                                                                             fontWeight: 500,
                                                                         }}>

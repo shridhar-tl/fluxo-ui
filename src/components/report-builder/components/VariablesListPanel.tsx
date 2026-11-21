@@ -99,7 +99,7 @@ export const VariablesListPanel: React.FC = () => {
                                     gap: 8,
                                     padding: '6px 12px',
                                     cursor: 'pointer',
-                                    background: isSelected ? 'var(--eui-primary-soft)' : 'transparent',
+                                    background: isSelected ? 'var(--eui-primary-subtle)' : 'transparent',
                                     borderLeft: isSelected ? '3px solid var(--eui-primary)' : '3px solid transparent',
                                     transition: 'background 0.1s',
                                 }}

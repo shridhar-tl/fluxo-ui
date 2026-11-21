@@ -34,18 +34,64 @@ export interface ReportMetadata {
     updatedAt: string;
 }
 
+export type DatasetFieldType = 'string' | 'number' | 'boolean' | 'date' | 'object' | 'array';
+
+export interface DatasetField {
+    name: string;
+    type: DatasetFieldType;
+    label?: string;
+    children?: DatasetField[];
+}
+
 export interface DatasourceConfig {
     id: string;
     name: string;
     type: string;
     config: Record<string, unknown>;
+    description?: string;
+    cachedSchema?: DatasetField[];
 }
 
-export type DerivedTransformType = 'flatten' | 'pick' | 'filter' | 'computed';
+export type SortDirection = 'asc' | 'desc';
+
+export interface SortKey {
+    expression: string;
+    direction: SortDirection;
+}
+
+export type AggregateFunction =
+    | 'sum'
+    | 'count'
+    | 'countDistinct'
+    | 'avg'
+    | 'median'
+    | 'min'
+    | 'max'
+    | 'first'
+    | 'last'
+    | 'concat'
+    | 'list';
+
+export type DerivedTransformType =
+    | 'flatten'
+    | 'pick'
+    | 'filter'
+    | 'computed'
+    | 'sort'
+    | 'group'
+    | 'join'
+    | 'union'
+    | 'distinct'
+    | 'limit'
+    | 'pivot'
+    | 'unpivot'
+    | 'window';
 
 export interface DerivedTransformFlatten {
     type: 'flatten';
     childField: string;
+    childPrefix?: string;
+    keepEmpty?: boolean;
 }
 
 export interface DerivedTransformPick {
@@ -63,11 +109,117 @@ export interface DerivedTransformComputed {
     columns: Array<{ name: string; expression: string }>;
 }
 
+export interface DerivedTransformSort {
+    type: 'sort';
+    keys: SortKey[];
+}
+
+export interface DerivedGroupKey {
+    name: string;
+    expression: string;
+}
+
+export interface DerivedAggregate {
+    name: string;
+    fn: AggregateFunction;
+    expression?: string;
+}
+
+export interface DerivedTransformGroup {
+    type: 'group';
+    keys: DerivedGroupKey[];
+    aggregates: DerivedAggregate[];
+    rowsField?: string;
+}
+
+export type JoinType = 'inner' | 'left' | 'right' | 'full';
+
+export interface DerivedJoinCondition {
+    left: string;
+    right: string;
+}
+
+export interface DerivedTransformJoin {
+    type: 'join';
+    datasourceId: string;
+    joinType: JoinType;
+    on: DerivedJoinCondition[];
+    mode: 'merge' | 'nest';
+    prefix?: string;
+    nestAs?: string;
+}
+
+export interface DerivedTransformUnion {
+    type: 'union';
+    datasourceIds: string[];
+    sourceField?: string;
+}
+
+export interface DerivedTransformDistinct {
+    type: 'distinct';
+    fields: string[];
+}
+
+export interface DerivedTransformLimit {
+    type: 'limit';
+    offset?: number;
+    count?: number;
+}
+
+export interface DerivedTransformPivot {
+    type: 'pivot';
+    rowFields: string[];
+    columnField: string;
+    valueField?: string;
+    aggregation: AggregateFunction;
+    columnPrefix?: string;
+}
+
+export interface DerivedTransformUnpivot {
+    type: 'unpivot';
+    fields: string[];
+    nameField: string;
+    valueField: string;
+}
+
+export type WindowFunction =
+    | 'rowNumber'
+    | 'rank'
+    | 'denseRank'
+    | 'runningSum'
+    | 'runningCount'
+    | 'runningAvg'
+    | 'percentOfTotal'
+    | 'previous'
+    | 'next';
+
+export interface DerivedWindowColumn {
+    name: string;
+    fn: WindowFunction;
+    field?: string;
+}
+
+export interface DerivedTransformWindow {
+    type: 'window';
+    partitionBy: string[];
+    orderBy: SortKey[];
+    columns: DerivedWindowColumn[];
+}
+
 export type DerivedTransform =
     | DerivedTransformFlatten
     | DerivedTransformPick
     | DerivedTransformFilter
-    | DerivedTransformComputed;
+    | DerivedTransformComputed
+    | DerivedTransformSort
+    | DerivedTransformGroup
+    | DerivedTransformJoin
+    | DerivedTransformUnion
+    | DerivedTransformDistinct
+    | DerivedTransformLimit
+    | DerivedTransformPivot
+    | DerivedTransformUnpivot
+    | DerivedTransformWindow;
 
 export interface DerivedDatasourceConfig {
     sourceDatasourceId: string;
@@ -311,7 +463,10 @@ export interface TableRowGroup {
     datasetExpression?: string;
     keys?: string[];
     filter?: string;
-    sortBy?: string;
+    sortKeys?: SortKey[];
+    groupSortKeys?: SortKey[];
+    groupLimit?: number;
+    initiallyCollapsed?: boolean;
     visible?: string;
     variables?: Array<{ key: string; expression: string }>;
     showFooter?: boolean;
@@ -357,6 +512,8 @@ export interface TableComponentProps {
 export interface SubReportComponentProps {
     subReportId: string;
     parameterMap: Record<string, string>;
+    datasourceMap?: Record<string, string>;
+    showBorder?: boolean;
 }
 
 export type RepeaterLayout = 'stack' | 'grid' | 'inline';
@@ -628,9 +785,23 @@ export interface ReportBreakpoint {
     label: string;
 }
 
+export interface InheritedDatasource {
+    id: string;
+    name: string;
+    fields: DatasetField[];
+}
+
+export interface ReportParentContext {
+    reportId: string;
+    reportTitle: string;
+    parameters: ParameterConfig[];
+    datasources: InheritedDatasource[];
+}
+
 export interface ReportDefinition {
     id: string;
     metadata: ReportMetadata;
+    parentContext?: ReportParentContext;
     datasources: DatasourceConfig[];
     parameters: ParameterConfig[];
     variables: VariableConfig[];

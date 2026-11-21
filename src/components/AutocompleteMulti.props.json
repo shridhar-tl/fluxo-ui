@@ -9,6 +9,10 @@
       "type": "T[]",
       "description": "Array of selected values"
     },
+    "selectedItems": {
+      "type": "ListItem[]",
+      "description": "Items used to display the selected values which are not available in items, such as the selections made from an earlier server-side search"
+    },
     "onChange": {
       "type": "function",
       "description": "Callback fired when values change: (event: ComponentEvent<T[]>) => void"

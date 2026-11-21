@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, TrashIcon } from '../../../assets/icons';
 import { Button } from '../../Button';
+import { useInheritedParameters } from '../builder-hooks';
 import { useReportBuilderContext, useRBStore } from '../report-builder-context';
 import type { ReportBuilderState } from '../report-builder-types';
 import type { ParameterConfig, ParameterType } from '../report-definition-types';
@@ -39,6 +40,7 @@ const builtInTypes: Array<{ type: ParameterType; label: string }> = [
 export const ParametersListPanel: React.FC = () => {
     const { store, parameterPlugins } = useReportBuilderContext();
     const parameters = useRBStore((s) => s.definition.parameters);
+    const inheritedParameters = useInheritedParameters();
     const selectedItemId = useRBStore((s) => s.selectedItemId);
     const addBtnRef = useRef<HTMLDivElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -97,7 +99,7 @@ export const ParametersListPanel: React.FC = () => {
             type,
             label: `${typeLabel} ${parameters.length + 1}`,
             mandatory: false,
-            typeConfig: {},
+            typeConfig: parameterPlugins.find((pl) => pl.type === type)?.initialTypeConfig() ?? {},
             width: 1,
         };
         store.setState((prev: ReportBuilderState) => ({
@@ -222,6 +224,21 @@ export const ParametersListPanel: React.FC = () => {
                 document.body,
             )}
 
+            {inheritedParameters.length > 0 && (
+                <div>
+                    <div className="eui-rb-ds-explorer-group-title">From parent report</div>
+                    {inheritedParameters.map((param) => (
+                        <div key={param.id} className="eui-rb-inherited-param" title="Supplied by the parent report">
+                            <div className="eui-rb-inherited-param-label">{param.label}</div>
+                            <div className="eui-rb-inherited-param-meta">
+                                Parameters.{param.name} · {paramTypeLabels[param.type] ?? param.type}
+                            </div>
+                        </div>
+                    ))}
+                    <div className="eui-rb-ds-explorer-group-title">This report</div>
+                </div>
+            )}
+
             {parameters.length === 0 ? (
                 <div className="eui-rb-ds-explorer-empty">
                     <p>No parameters yet.<br />Click "Add" to create one.</p>
@@ -243,7 +260,7 @@ export const ParametersListPanel: React.FC = () => {
                                     gap: 8,
                                     padding: '6px 12px',
                                     cursor: 'pointer',
-                                    background: isSelected ? 'var(--eui-primary-soft)' : 'transparent',
+                                    background: isSelected ? 'var(--eui-primary-subtle)' : 'transparent',
                                     borderLeft: isSelected ? '3px solid var(--eui-primary)' : '3px solid transparent',
                                     transition: 'background 0.1s',
                                 }}

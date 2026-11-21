@@ -3,7 +3,8 @@ import { Checkbox } from '../../../Checkbox';
 import { Dropdown } from '../../../Dropdown';
 import { TextInput } from '../../../TextInput';
 import type { ListItem } from '../../../../types';
-import { useReportBuilderContext, useRBStore } from '../../report-builder-context';
+import { useReportBuilderContext } from '../../report-builder-context';
+import { useBuilderDatasources, useDatasourceFieldPaths } from '../../builder-hooks';
 import { updateComponentInTree } from '../../report-component-helpers';
 import type { ReportBuilderState } from '../../report-builder-types';
 import type {
@@ -21,6 +22,9 @@ import {
 } from '../../table-helpers';
 import { ComponentVariablesEditor } from './ComponentVariablesEditor';
 import { ExpressionField } from './ExpressionField';
+import { FieldPathList } from './FieldPathList';
+import { PropsTabs } from './PropsTabs';
+import type { PropsTabItem } from './PropsTabs';
 import { TableColumnTreeEditor } from './TableColumnTreeEditor';
 import { TableExtraRowsEditor } from './TableExtraRowsEditor';
 import { TableRowGroupsEditor } from './TableRowGroupsEditor';
@@ -39,10 +43,12 @@ const pivotAggOptions: ListItem[] = [
 
 export const TablePropsPanel: React.FC<Props> = ({ component }) => {
     const { store } = useReportBuilderContext();
-    const datasources = useRBStore((s) => s.definition.datasources);
+    const datasources = useBuilderDatasources();
     const p = component.props as unknown as TableComponentProps;
     const columnTree = useMemo(() => getEffectiveColumnTree(p), [p]);
     const leafColumns = useMemo(() => flattenColumns(columnTree), [columnTree]);
+    const fieldPaths = useDatasourceFieldPaths(p.datasourceId || undefined);
+    const groupByFields = useMemo(() => (p.groupBy === undefined ? [] : Array.isArray(p.groupBy) ? p.groupBy : [p.groupBy]), [p.groupBy]);
 
     const update = useCallback(
         (patch: Partial<TableComponentProps>) => {
@@ -119,195 +125,207 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
         [datasources],
     );
 
-    return (
-        <div className="eui-rb-props-section">
-            <div className="eui-rb-props-section-title">Table</div>
-
-            <div className="eui-rb-prop-field">
-                <label className="eui-rb-prop-field-label">Datasource</label>
-                <Dropdown
-                    options={dsOptions}
-                    value={p.datasourceId ?? ''}
-                    onChange={(e) => update({ datasourceId: e.value })}
-                    aria-label="Select datasource"
-                    size="sm"
-                />
-            </div>
-
-            <ExpressionField
-                label="Row Visible"
-                value={p.rowVisibleExpr ?? ''}
-                onChange={(v) => update({ rowVisibleExpr: v || undefined })}
-                placeholder="=Field.status !== 'deleted'"
-                expectedReturnType="boolean"
-                multiline={false}
-            />
-
-            <div className="eui-rb-prop-field">
-                <Checkbox
-                    checked={p.enableSorting ?? false}
-                    onChange={(e) => update({ enableSorting: e.value })}
-                    label="Enable column sorting (user clicks header)"
-                />
-            </div>
-            <div className="eui-rb-prop-field">
-                <Checkbox
-                    checked={p.enableCellEdit ?? false}
-                    onChange={(e) => update({ enableCellEdit: e.value })}
-                    label="Enable cell editing (double-click)"
-                />
-            </div>
-            <div className="eui-rb-prop-field">
-                <Checkbox
-                    checked={p.enableCopyData ?? false}
-                    onChange={(e) => update({ enableCopyData: e.value })}
-                    label="Show Copy Data button"
-                />
-            </div>
-
-            <div className="eui-rb-prop-field">
-                <label className="eui-rb-prop-field-label">
-                    Quick Group By (single-level, simple field)
-                </label>
-                <TextInput
-                    value={Array.isArray(p.groupBy) ? p.groupBy.join(', ') : (p.groupBy ?? '')}
-                    onChange={(e) => {
-                        const val = e.value.trim();
-                        if (!val) update({ groupBy: undefined });
-                        else if (val.includes(',')) update({ groupBy: val.split(',').map((s) => s.trim()).filter(Boolean) });
-                        else update({ groupBy: val });
-                    }}
-                    placeholder="Field name (comma-separated)"
-                    size="sm"
-                />
-                <div style={{ fontSize: 10, color: 'var(--eui-text-muted)', marginTop: 2 }}>
-                    (Use Row Groups below for dataset/filter/sort/keys/variables grouping)
-                </div>
-            </div>
-
-            {p.groupBy && (
-                <>
+    const tabs: PropsTabItem[] = [
+        {
+            id: 'data',
+            label: 'Data',
+            render: () => (
+                <div className="eui-rb-props-section">
                     <div className="eui-rb-prop-field">
-                        <Checkbox
-                            checked={p.showGroupFooter ?? false}
-                            onChange={(e) => update({ showGroupFooter: e.value })}
-                            label="Show group footer"
+                        <label className="eui-rb-prop-field-label">Datasource</label>
+                        <Dropdown
+                            options={dsOptions}
+                            value={p.datasourceId ?? ''}
+                            onChange={(e) => update({ datasourceId: e.value })}
+                            aria-label="Select datasource"
+                            size="sm"
                         />
                     </div>
+
                     <ExpressionField
-                        label="Group Visible"
-                        value={p.groupVisibleExpr ?? ''}
-                        onChange={(v) => update({ groupVisibleExpr: v || undefined })}
-                        placeholder="=Field._groupKey !== 'hidden'"
+                        label="Row Visible"
+                        value={p.rowVisibleExpr ?? ''}
+                        onChange={(v) => update({ rowVisibleExpr: v || undefined })}
+                        placeholder="=Field.status !== 'deleted'"
                         expectedReturnType="boolean"
                         multiline={false}
                     />
-                </>
-            )}
 
-            <div className="eui-rb-prop-field">
-                <Checkbox
-                    checked={p.pivotMode ?? false}
-                    onChange={(e) => update({ pivotMode: e.value })}
-                    label="Pivot mode"
-                />
-            </div>
+                    <div className="eui-rb-prop-field">
+                        <span className="eui-rb-prop-field-label">Quick group by</span>
+                        <FieldPathList
+                            values={groupByFields}
+                            onChange={(values) => update({ groupBy: values.length > 0 ? values : undefined })}
+                            fieldPaths={fieldPaths}
+                            addLabel="Add group field"
+                            itemLabel="Group field"
+                            emptyText="Not grouped. Use the Rows tab for grouping with filters, sorting, keys and variables."
+                        />
+                    </div>
 
-            {p.pivotMode && (
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 8,
-                        padding: '8px 0',
-                        borderTop: '1px solid var(--eui-border-subtle)',
-                    }}
-                >
-                    <div className="eui-rb-props-section-title">Pivot Configuration</div>
+                    {groupByFields.length > 0 && (
+                        <>
+                            <div className="eui-rb-prop-field">
+                                <Checkbox
+                                    checked={p.showGroupFooter ?? false}
+                                    onChange={(e) => update({ showGroupFooter: e.value })}
+                                    label="Show group footer"
+                                />
+                            </div>
+                            <ExpressionField
+                                label="Group Visible"
+                                value={p.groupVisibleExpr ?? ''}
+                                onChange={(v) => update({ groupVisibleExpr: v || undefined })}
+                                placeholder="=Field._groupKey !== 'hidden'"
+                                expectedReturnType="boolean"
+                                multiline={false}
+                            />
+                        </>
+                    )}
+
                     <div className="eui-rb-prop-field">
-                        <label className="eui-rb-prop-field-label">Row Field</label>
-                        <TextInput
-                            value={p.pivotRowField ?? ''}
-                            onChange={(e) => update({ pivotRowField: e.value || undefined })}
-                            placeholder="Field for row headers"
-                            size="sm"
+                        <Checkbox
+                            checked={p.pivotMode ?? false}
+                            onChange={(e) => update({ pivotMode: e.value })}
+                            label="Pivot mode"
                         />
                     </div>
-                    <div className="eui-rb-prop-field">
-                        <label className="eui-rb-prop-field-label">Column Field</label>
-                        <TextInput
-                            value={p.pivotColumnField ?? ''}
-                            onChange={(e) => update({ pivotColumnField: e.value || undefined })}
-                            placeholder="Field for column headers"
-                            size="sm"
-                        />
-                    </div>
-                    <div className="eui-rb-prop-field">
-                        <label className="eui-rb-prop-field-label">Value Field</label>
-                        <TextInput
-                            value={p.pivotValueField ?? ''}
-                            onChange={(e) => update({ pivotValueField: e.value || undefined })}
-                            placeholder="Field to aggregate"
-                            size="sm"
-                        />
-                    </div>
-                    <div className="eui-rb-prop-field">
-                        <label className="eui-rb-prop-field-label">Aggregation</label>
-                        <Dropdown
-                            options={pivotAggOptions}
-                            value={p.pivotAggregation ?? 'sum'}
-                            onChange={(e) =>
-                                update({ pivotAggregation: e.value as TableComponentProps['pivotAggregation'] })
-                            }
-                            size="sm"
-                        />
-                    </div>
+
+                    {p.pivotMode && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 8,
+                                padding: '8px 0',
+                                borderTop: '1px solid var(--eui-border-subtle)',
+                            }}
+                        >
+                            <div className="eui-rb-props-section-title">Pivot Configuration</div>
+                            <div className="eui-rb-prop-field">
+                                <label className="eui-rb-prop-field-label">Row Field</label>
+                                <TextInput
+                                    value={p.pivotRowField ?? ''}
+                                    onChange={(e) => update({ pivotRowField: e.value || undefined })}
+                                    placeholder="Field for row headers"
+                                    size="sm"
+                                />
+                            </div>
+                            <div className="eui-rb-prop-field">
+                                <label className="eui-rb-prop-field-label">Column Field</label>
+                                <TextInput
+                                    value={p.pivotColumnField ?? ''}
+                                    onChange={(e) => update({ pivotColumnField: e.value || undefined })}
+                                    placeholder="Field for column headers"
+                                    size="sm"
+                                />
+                            </div>
+                            <div className="eui-rb-prop-field">
+                                <label className="eui-rb-prop-field-label">Value Field</label>
+                                <TextInput
+                                    value={p.pivotValueField ?? ''}
+                                    onChange={(e) => update({ pivotValueField: e.value || undefined })}
+                                    placeholder="Field to aggregate"
+                                    size="sm"
+                                />
+                            </div>
+                            <div className="eui-rb-prop-field">
+                                <label className="eui-rb-prop-field-label">Aggregation</label>
+                                <Dropdown
+                                    options={pivotAggOptions}
+                                    value={p.pivotAggregation ?? 'sum'}
+                                    onChange={(e) =>
+                                        update({ pivotAggregation: e.value as TableComponentProps['pivotAggregation'] })
+                                    }
+                                    size="sm"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
+            ),
+        },
+        {
+            id: 'columns',
+            label: `Columns (${leafColumns.length})`,
+            render: () => (
+                <div className="eui-rb-props-section">
+                    <TableColumnTreeEditor tree={columnTree} onChange={handleColumnTreeChange} fieldPaths={fieldPaths} />
+                </div>
+            ),
+        },
+        {
+            id: 'rows',
+            label: 'Rows',
+            render: () => (
+                <div className="eui-rb-props-section">
+                    <TableRowGroupsEditor
+                        rowGroups={p.rowGroups ?? []}
+                        datasources={datasources}
+                        onChange={handleRowGroupsChange}
+                    />
 
-            <div className="eui-rb-props-section-title" style={{ marginTop: 16 }}>
-                Columns & Column Groups
-            </div>
-            <TableColumnTreeEditor tree={columnTree} onChange={handleColumnTreeChange} />
+                    <TableExtraRowsEditor
+                        title="Head Rows (above data)"
+                        rows={p.headRows ?? []}
+                        totalLeafColumns={leafColumns.length}
+                        onChange={handleHeadRowsChange}
+                    />
 
-            <TableRowGroupsEditor
-                rowGroups={p.rowGroups ?? []}
-                datasources={datasources}
-                onChange={handleRowGroupsChange}
-            />
+                    <TableExtraRowsEditor
+                        title="Footer Rows (below data)"
+                        rows={p.footerRows ?? []}
+                        totalLeafColumns={leafColumns.length}
+                        onChange={handleFooterRowsChange}
+                    />
+                </div>
+            ),
+        },
+        {
+            id: 'behavior',
+            label: 'Behavior',
+            render: () => (
+                <div className="eui-rb-props-section">
+                    <div className="eui-rb-prop-field">
+                        <Checkbox
+                            checked={p.enableSorting ?? false}
+                            onChange={(e) => update({ enableSorting: e.value })}
+                            label="Enable column sorting (user clicks header)"
+                        />
+                    </div>
+                    <div className="eui-rb-prop-field">
+                        <Checkbox
+                            checked={p.enableCellEdit ?? false}
+                            onChange={(e) => update({ enableCellEdit: e.value })}
+                            label="Enable cell editing (double-click)"
+                        />
+                    </div>
+                    <div className="eui-rb-prop-field">
+                        <Checkbox
+                            checked={p.enableCopyData ?? false}
+                            onChange={(e) => update({ enableCopyData: e.value })}
+                            label="Show Copy Data button"
+                        />
+                    </div>
+                    <ExpressionField
+                        label="Drill-through Variable"
+                        value={p.onDrillThrough ?? ''}
+                        onChange={(v) => update({ onDrillThrough: v || undefined })}
+                        placeholder="variableName"
+                        expectedReturnType="string"
+                        hint="When set, clicking a row writes the row object into this report variable. The host onDrillThrough callback also fires as a notification."
+                    />
 
-            <TableExtraRowsEditor
-                title="Head Rows (above data)"
-                rows={p.headRows ?? []}
-                totalLeafColumns={leafColumns.length}
-                onChange={handleHeadRowsChange}
-            />
+                    <ComponentVariablesEditor
+                        title="Component Variables"
+                        description="Variables declared on this table are scoped to it. Cell-item drill / set-variable actions can target any global variable or any of these table-scoped variables."
+                        variables={component.variables}
+                        onChange={handleVariablesChange}
+                    />
+                </div>
+            ),
+        },
+    ];
 
-            <TableExtraRowsEditor
-                title="Footer Rows (below data)"
-                rows={p.footerRows ?? []}
-                totalLeafColumns={leafColumns.length}
-                onChange={handleFooterRowsChange}
-            />
-
-            <div className="eui-rb-props-section-title" style={{ marginTop: 16 }}>
-                Interaction
-            </div>
-            <ExpressionField
-                label="Drill-through Variable"
-                value={p.onDrillThrough ?? ''}
-                onChange={(v) => update({ onDrillThrough: v || undefined })}
-                placeholder="variableName"
-                expectedReturnType="string"
-                hint="When set, clicking a row writes the row object into this report variable. The host onDrillThrough callback also fires as a notification."
-            />
-
-            <ComponentVariablesEditor
-                title="Component Variables"
-                description="Variables declared on this table are scoped to it. Cell-item drill / set-variable actions can target any global variable or any of these table-scoped variables."
-                variables={component.variables}
-                onChange={handleVariablesChange}
-            />
-        </div>
-    );
+    return <PropsTabs tabs={tabs} storageKey="rb-table-props-tab" />;
 };

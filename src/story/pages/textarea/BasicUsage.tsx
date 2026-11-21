@@ -16,7 +16,7 @@ function MyComponent() {
       label="Description"
       placeholder="Enter your description..."
       value={value}
-      onChange={(e) => setValue(e.target.value)}
+      onChange={(e) => setValue(e.value)}
     />
   );
 }`;

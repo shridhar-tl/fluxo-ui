@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Dataset, DatasourcePlugin, SubReportDefinition } from '../report-builder-types';
-import type { DatasourceConfig } from '../report-definition-types';
+import type { Dataset, DatasourcePlugin, ReportComponentPlugin, SubReportDefinition } from '../report-builder-types';
+import type { DatasourceConfig, ReportDefinition } from '../report-definition-types';
 
 export interface VariableScopeFrame {
     componentId: string;
@@ -26,7 +26,12 @@ export interface ViewerContext {
     errorDatasources: Map<string, string>;
     datasourceConfigs: DatasourceConfig[];
     subReportDefinitions?: SubReportDefinition[];
+    resolveSubReport?: (subReportId: string) => Promise<ReportDefinition | null>;
+    /** Ids of the reports rendered above this point, outermost first. Guards against sub-report cycles. */
+    subReportChain?: string[];
     datasourcePlugins?: DatasourcePlugin[];
+    /** Host-supplied report components. */
+    componentPlugins?: ReportComponentPlugin[];
     onColumnResize?: (componentId: string, columnId: string, width: number) => void;
     onColumnReorder?: (componentId: string, columnIds: string[]) => void;
     /** Drill-through. Performs the variable write AND fires the host notification. */
@@ -39,6 +44,8 @@ export interface ViewerContext {
     writeGlobalVariable?: (variableName: string, value: unknown) => void;
     writeComponentVariable?: (componentId: string, variableName: string, value: unknown) => void;
     onCellEdit?: (componentId: string, rowIndex: number, field: string, value: unknown) => void;
+    /** True while the report is rendered for PDF export or printing: every row and tab is rendered and nothing scrolls. */
+    exportMode?: boolean;
 }
 
 export const ViewerContext = React.createContext<ViewerContext>({

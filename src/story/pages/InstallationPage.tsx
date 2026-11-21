@@ -125,13 +125,13 @@ function MyForm() {
       <TextInput
         label="Full Name"
         value={name}
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => setName(e.value)}
         placeholder="Enter your name"
       />
 
       <Checkbox
         checked={agreed}
-        onChange={(e) => setAgreed(e.target.checked)}
+        onChange={(e) => setAgreed(e.value)}
         label="I agree to the terms and conditions"
       />
 

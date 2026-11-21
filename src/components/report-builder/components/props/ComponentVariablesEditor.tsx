@@ -3,6 +3,7 @@ import { TrashIcon } from '../../../../assets/icons';
 import { Button } from '../../../Button';
 import { TextInput } from '../../../TextInput';
 import type { VariableConfig } from '../../report-definition-types';
+import { getIdentifierError } from '../../identifier-validation';
 
 interface Props {
     variables: VariableConfig[] | undefined;
@@ -61,7 +62,10 @@ export const ComponentVariablesEditor: React.FC<Props> = ({ variables, onChange,
                     None defined.
                 </div>
             )}
-            {list.map((v) => (
+            {list.map((v) => {
+                const nameError = getIdentifierError(v.name, list.filter((o) => o.id !== v.id).map((o) => o.name), 'Variables');
+                const nameErrorId = `rb-cvar-name-err-${v.id}`;
+                return (
                 <div
                     key={v.id}
                     style={{
@@ -79,6 +83,8 @@ export const ComponentVariablesEditor: React.FC<Props> = ({ variables, onChange,
                             placeholder="variableName"
                             size="sm"
                             aria-label="Variable name"
+                            aria-invalid={!!nameError}
+                            aria-describedby={nameError ? nameErrorId : undefined}
                         />
                         <Button
                             layout="plain"
@@ -89,6 +95,11 @@ export const ComponentVariablesEditor: React.FC<Props> = ({ variables, onChange,
                             leftIcon={<TrashIcon aria-hidden="true" />}
                         />
                     </div>
+                    {nameError && (
+                        <div id={nameErrorId} role="alert" style={{ fontSize: 10, color: 'var(--eui-btn-danger-tone)', marginBottom: 4 }}>
+                            {nameError}
+                        </div>
+                    )}
                     <TextInput
                         value={v.defaultValueExpression ?? ''}
                         onChange={(e) => update(v.id, { defaultValueExpression: e.value || undefined })}
@@ -97,7 +108,8 @@ export const ComponentVariablesEditor: React.FC<Props> = ({ variables, onChange,
                         aria-label="Variable default value"
                     />
                 </div>
-            ))}
+                );
+            })}
         </div>
     );
 };

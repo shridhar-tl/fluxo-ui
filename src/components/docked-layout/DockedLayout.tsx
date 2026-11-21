@@ -442,7 +442,7 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
             };
             setResizeState(rs);
 
-            const handleMove = (ev: MouseEvent) => {
+            const handleMove = (ev: PointerEvent) => {
                 const current = stateRef.current;
                 const r = current.panels[panelId];
                 if (!r) return;
@@ -462,12 +462,14 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
             const handleUp = () => {
                 setResizeState(null);
                 setResizingPanelId(null);
-                document.removeEventListener('mousemove', handleMove);
-                document.removeEventListener('mouseup', handleUp);
+                document.removeEventListener('pointermove', handleMove);
+                document.removeEventListener('pointerup', handleUp);
+                document.removeEventListener('pointercancel', handleUp);
             };
 
-            document.addEventListener('mousemove', handleMove);
-            document.addEventListener('mouseup', handleUp);
+            document.addEventListener('pointermove', handleMove);
+            document.addEventListener('pointerup', handleUp);
+            document.addEventListener('pointercancel', handleUp);
         },
         [state.panels, panelConfigs, updateState],
     );
@@ -710,7 +712,7 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                         className={classNames('eui-dl-resize-handle', 'eui-dl-rh-right', {
                             dragging: resizingPanelId === panelId,
                         })}
-                        onMouseDown={(e) => startResize(e, panelId, 'horizontal')}
+                        onPointerDown={(e) => startResize(e, panelId, 'horizontal')}
                         onKeyDown={(e) => handleResizeKey(e, panelId, 'horizontal')}
                         role="separator"
                         aria-orientation="vertical"
@@ -727,7 +729,7 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                         className={classNames('eui-dl-resize-handle', 'eui-dl-rh-left', {
                             dragging: resizingPanelId === panelId,
                         })}
-                        onMouseDown={(e) => startResize(e, panelId, 'horizontal')}
+                        onPointerDown={(e) => startResize(e, panelId, 'horizontal')}
                         onKeyDown={(e) => handleResizeKey(e, panelId, 'horizontal')}
                         role="separator"
                         aria-orientation="vertical"
@@ -926,7 +928,7 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                         className={classNames('eui-dl-resize-handle', 'eui-dl-rh-top', {
                             dragging: resizingPanelId === activeBottomId,
                         })}
-                        onMouseDown={(e) => startResize(e, activeBottomId, 'vertical')}
+                        onPointerDown={(e) => startResize(e, activeBottomId, 'vertical')}
                         onKeyDown={(e) => handleResizeKey(e, activeBottomId, 'vertical')}
                         role="separator"
                         aria-orientation="horizontal"

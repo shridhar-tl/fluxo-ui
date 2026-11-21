@@ -9,6 +9,7 @@ import { ImageDesign } from './ImageDesign';
 import { HorizontalLineDesign } from './HorizontalLineDesign';
 import { TableDesign } from './TableDesign';
 import { SubReportDesign } from './SubReportDesign';
+import { PluginDesign } from './PluginDesign';
 
 interface NestedDesignComponentProps {
     component: ReportComponent;
@@ -50,10 +51,12 @@ function renderNestedContent(comp: ReportComponent): React.ReactNode {
         case 'chart-line':
             return <ChartDesign component={comp} />;
         default:
-            return (
+            return typeLabels[comp.type] ? (
                 <div style={{ padding: '8px', color: 'var(--eui-text-muted)', fontSize: 11, fontStyle: 'italic' }}>
-                    {typeLabels[comp.type] ?? comp.type}
+                    {typeLabels[comp.type]}
                 </div>
+            ) : (
+                <PluginDesign component={comp} />
             );
     }
 }

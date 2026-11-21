@@ -1,3 +1,4 @@
+import type { ReportComponentPlugin } from './report-builder-types';
 import type {
     ReportComponent,
     ColumnsComponentProps,
@@ -39,10 +40,16 @@ const repeaterAllowed = new Set<string>([
     'sub-report', 'repeater', ...allChartTypes,
 ]);
 
+const builtInComponentTypes = new Set<string>([
+    'header', 'text', 'image', 'horizontal-line', 'columns', 'column', 'tab', 'tab-panel', 'canvas', 'table',
+    'sub-report', 'repeater', ...allChartTypes,
+]);
+
 export function isTypeAllowedInContainer(
     componentType: string,
     containerType: 'column' | 'tab-panel' | 'canvas' | 'repeater',
 ): boolean {
+    if (!builtInComponentTypes.has(componentType)) return true;
     if (containerType === 'column') return columnCellAllowed.has(componentType);
     if (containerType === 'tab-panel') return tabPanelAllowed.has(componentType);
     if (containerType === 'canvas') return canvasAllowed.has(componentType);
@@ -151,8 +158,8 @@ export function duplicateComponent(components: ReportComponent[], id: string): R
     return result;
 }
 
-export function createCanvasChild(type: string): ReportComponent {
-    const comp = createComponent(type);
+export function createCanvasChild(type: string, plugins: ReportComponentPlugin[] = []): ReportComponent {
+    const comp = createComponent(type, plugins);
     const defaultLayout: CanvasItemLayout = { x: 20, y: 20, width: 200, height: 100 };
     comp.props = { ...comp.props, canvasLayout: defaultLayout };
     return comp;
@@ -168,7 +175,9 @@ function deepCloneWithNewIds(comp: ReportComponent): ReportComponent {
     };
 }
 
-export function createComponent(type: string): ReportComponent {
+export function createComponent(type: string, plugins: ReportComponentPlugin[] = []): ReportComponent {
+    const plugin = builtInComponentTypes.has(type) ? undefined : plugins.find((p) => p.type === type);
+    if (plugin) return { id: crypto.randomUUID(), type, props: plugin.createProps(), styles: {} };
     switch (type) {
         case 'header':
             return {

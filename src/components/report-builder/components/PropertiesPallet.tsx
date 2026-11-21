@@ -20,6 +20,7 @@ import { TablePropsPanel } from './props/TablePropsPanel';
 import { SubReportPropsPanel } from './props/SubReportPropsPanel';
 import { ChartPropsPanel } from './props/ChartPropsPanel';
 import { RepeaterPropsPanel } from './props/RepeaterPropsPanel';
+import { PluginPropsPanel } from './props/PluginPropsPanel';
 
 type PanelTab = 'properties' | 'styles';
 
@@ -141,10 +142,6 @@ const ComponentPropsPanel: React.FC<{ type: string; component: ReportComponent }
         case 'chart-bubble':
             return <ChartPropsPanel component={component} />;
         default:
-            return (
-                <div className="eui-rb-props-pallet-empty">
-                    <span>{type} — Phase 6</span>
-                </div>
-            );
+            return <PluginPropsPanel component={component} />;
     }
 };

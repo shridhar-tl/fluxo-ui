@@ -1,13 +1,19 @@
 import React from 'react';
 import type { BuiltInFieldDefinition } from './built-in-fields';
-import type { DatasourcePlugin, CustomParameterPlugin, ReportBuilderState, ReportTemplate, AvailableSubReport } from './report-builder-types';
+import type { DatasourcePlugin, CustomParameterPlugin, ReportBuilderProps, ReportBuilderState, ReportComponentPlugin, ReportTemplate, AvailableSubReport, SubReportHooks } from './report-builder-types';
 import type { ReportBuilderStore } from './report-builder-store';
 
 export interface ReportBuilderContextValue {
     store: ReportBuilderStore;
     datasourcePlugins: DatasourcePlugin[];
     parameterPlugins: CustomParameterPlugin[];
+    componentPlugins: ReportComponentPlugin[];
     availableSubReports: AvailableSubReport[];
+    subReportHooks: SubReportHooks;
+    /** Host-supplied plugins as passed to the builder, forwarded to nested sub-report builders. */
+    hostDatasourcePlugins: DatasourcePlugin[];
+    /** Renders a nested builder for editing sub-reports inside the parent builder. */
+    BuilderComponent: React.ComponentType<ReportBuilderProps>;
     /** Fully merged list of built-in fields (library registry + per-instance overrides). */
     builtInFields: BuiltInFieldDefinition[];
     templates: ReportTemplate[];

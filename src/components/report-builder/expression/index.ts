@@ -1,5 +1,6 @@
 export { ExpressionEditor } from './ExpressionEditor';
-export { builtinFunctions, evaluateExpression, getAutocompleteSuggestions, highlightExpression, parseExpression, validateExpression } from './expression-parser';
+export { builtinFunctions, evaluateExpression, getAutocompleteSuggestions, highlightExpression, interpolateTemplate, parseExpression, safeGetByPath, validateExpression } from './expression-parser';
+export { registerFunctions, getRegisteredFunctions, clearRegisteredFunctions } from './function-registry';
 export type {
     AutocompleteSuggestion,
     BuiltinFunction,
@@ -9,5 +10,6 @@ export type {
     ExpressionNode,
     ExpressionReturnType,
     ExpressionTypeContext,
+    FunctionParam,
     SuggestionKind,
 } from './expression-types';

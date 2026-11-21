@@ -15,7 +15,7 @@ function collectComponentVariableNames(components: ReportComponent[], out: strin
     return out;
 }
 
-function useBuilderTypeContext(
+export function useBuilderTypeContext(
     override: ExpressionTypeContext | undefined,
 ): ExpressionTypeContext | undefined {
     const ctx = useContext(ReportBuilderContext);
@@ -36,13 +36,15 @@ function useBuilderTypeContext(
 
     return useMemo<ExpressionTypeContext | undefined>(() => {
         if (!definition) return override;
-        const availableParameters = definition.parameters.map((p) => p.name);
+        const inheritedParams = definition.parentContext?.parameters ?? [];
+        const availableParameters = [...inheritedParams.map((p) => p.name), ...definition.parameters.map((p) => p.name)];
         const availableVariables = [
             ...definition.variables.map((v) => v.name),
             ...collectComponentVariableNames(definition.components),
         ];
         const availableDatasources: Record<string, string[]> = {};
-        for (const d of definition.datasources) availableDatasources[d.name] = [];
+        for (const d of definition.parentContext?.datasources ?? []) availableDatasources[d.name] = d.fields.map((f) => f.name);
+        for (const d of definition.datasources) availableDatasources[d.name] = (d.cachedSchema ?? []).map((f) => f.name);
         return {
             ...override,
             availableParameters: override?.availableParameters ?? availableParameters,
@@ -138,7 +140,7 @@ export const ExpressionField: React.FC<ExpressionFieldProps> = ({
                         type="color"
                         value={value || '#000000'}
                         onChange={(e) => onChange(e.target.value)}
-                        style={{ width: 32, height: 28, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-input-bg)' }}
+                        style={{ width: 32, height: 28, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-bg)' }}
                         aria-label={label}
                     />
                     <input

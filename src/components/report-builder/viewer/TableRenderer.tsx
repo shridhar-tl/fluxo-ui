@@ -13,6 +13,7 @@ import { useViewerContext, buildExpressionDatasources } from './ViewerExpression
 import { CellItemsRenderer } from './CellItemRenderer';
 import { NestedTableHeader } from './TableHeaderRenderer';
 import { resolveRowGroups } from './row-group-engine';
+import { getValue } from '../data/value-utils';
 import type { ResolvedGroupNode } from './row-group-engine';
 
 interface Props {
@@ -31,9 +32,9 @@ interface GroupedData {
     depth: number;
 }
 
-function groupRows(rows: Row[], groupBy: string | string[]): GroupedData[] {
-    const fields = Array.isArray(groupBy) ? groupBy : [groupBy];
-    return groupRowsMultiLevel(rows, fields, 0);
+function quickGroupFields(groupBy: string | string[] | undefined): string[] {
+    if (!groupBy) return [];
+    return (Array.isArray(groupBy) ? groupBy : [groupBy]).filter((f) => f.trim() !== '');
 }
 
 function groupRowsMultiLevel(rows: Row[], fields: string[], depth: number): GroupedData[] {
@@ -42,7 +43,7 @@ function groupRowsMultiLevel(rows: Row[], fields: string[], depth: number): Grou
     const remaining = fields.slice(1);
     const map = new Map<string, Row[]>();
     for (const row of rows) {
-        const key = String(row[field] ?? '(empty)');
+        const key = String(getValue(row, field) ?? '(empty)');
         const arr = map.get(key);
         if (arr) arr.push(row);
         else map.set(key, [row]);
@@ -130,9 +131,9 @@ function buildPivotData(
     const grouped = new Map<string, Map<string, number[]>>();
 
     for (const row of rows) {
-        const rk = String(row[rowField] ?? '');
-        const ck = String(row[colField] ?? '');
-        const val = Number(row[valField]) || 0;
+        const rk = String(getValue(row, rowField) ?? '');
+        const ck = String(getValue(row, colField) ?? '');
+        const val = Number(getValue(row, valField)) || 0;
         colKeys.add(ck);
         if (!grouped.has(rk)) grouped.set(rk, new Map());
         const colMap = grouped.get(rk)!;
@@ -257,8 +258,8 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
         if (!sortField || !sortDir) return filteredRows;
         const sorted = [...filteredRows];
         sorted.sort((a, b) => {
-            const av = a[sortField];
-            const bv = b[sortField];
+            const av = getValue(a, sortField);
+            const bv = getValue(b, sortField);
             if (av == null && bv == null) return 0;
             if (av == null) return 1;
             if (bv == null) return -1;
@@ -291,8 +292,9 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
     }, [viewerCtx.onCellEdit, componentId]);
 
     const groups = useMemo(() => {
-        if (p.groupBy && !p.pivotMode && (!p.rowGroups || p.rowGroups.length === 0)) {
-            return groupRows(rows, p.groupBy);
+        const fields = quickGroupFields(p.groupBy);
+        if (fields.length > 0 && !p.pivotMode && (!p.rowGroups || p.rowGroups.length === 0)) {
+            return groupRowsMultiLevel(rows, fields, 0);
         }
         return null;
     }, [rows, p.groupBy, p.pivotMode, p.rowGroups]);
@@ -436,6 +438,8 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
         return pruned;
     }, [columnTree, columns]);
 
+    const useVirtual = !viewerCtx.exportMode && !groups && !resolvedRowGroups && rows.length > virtualThreshold;
+
     const tableElement = (
         <table
             style={{
@@ -512,7 +516,7 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
                                 onCellEdit={handleCellEdit}
                             />
                         ))
-                        : rows.length <= virtualThreshold
+                        : !useVirtual
                             ? rows.map((row, idx) => (
                                 <DataRow
                                     key={idx}
@@ -560,11 +564,10 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyl
         </table>
     );
 
-    const useVirtual = !groups && !resolvedRowGroups && rows.length > virtualThreshold;
 
     const handleCopyData = useCallback(() => {
         const header = columns.map((c) => c.label || c.field).join('\t');
-        const body = rows.map((row) => columns.map((c) => formatRaw(row[c.field])).join('\t')).join('\n');
+        const body = rows.map((row) => columns.map((c) => formatRaw(getValue(row, c.field))).join('\t')).join('\n');
         const tsv = `${header}\n${body}`;
         navigator.clipboard.writeText(tsv).catch(() => {});
     }, [columns, rows]);
@@ -715,7 +718,7 @@ const RowGroupSection: React.FC<{
     onCellEdit?: (rowIndex: number, field: string, value: unknown) => void;
     depth: number;
 }> = ({ node, parentFrames, columns, altRowColor, cellBorder, exprCtx, tableStyle, frozenOffsets, hasFrozen, runtimeWidths, drillThroughVariable, onDrillThrough, enableCellEdit, onCellEdit, depth }) => {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(node.group.initiallyCollapsed === true);
     const frames = useMemo(
         () => ({ ...parentFrames, [node.group.name]: node.frame }),
         [parentFrames, node.frame, node.group.name],
@@ -966,7 +969,7 @@ const GroupFooterCell: React.FC<{
         }
         const aggregateRow: Row = {};
         for (const field of Object.keys(rows[0] ?? {})) {
-            const vals = rows.map((r) => r[field]).filter((v) => typeof v === 'number') as number[];
+            const vals = rows.map((r) => getValue(r, field)).filter((v) => typeof v === 'number') as number[];
             if (vals.length > 0) {
                 aggregateRow[field] = vals.reduce((a, b) => a + b, 0);
             }
@@ -1042,7 +1045,7 @@ const CellRenderer: React.FC<{
     editable?: boolean;
     onCellEdit?: (rowIndex: number, field: string, value: unknown) => void;
 }> = ({ col, row, rowIndex, cellBorder, exprCtx, frozenOffset, rowBg, resolvedWidth, editable, onCellEdit }) => {
-    const rawValue = row[col.field];
+    const rawValue = getValue(row, col.field);
     const [display, setDisplay] = useState<string>(() => formatRaw(rawValue));
     const [condStyle, setCondStyle] = useState<React.CSSProperties>({});
     const [editing, setEditing] = useState(false);
@@ -1408,7 +1411,7 @@ const ResizableHeader: React.FC<{
                 padding: '8px 10px',
                 textAlign: align ?? 'left',
                 fontWeight: 600,
-                background: isDragOver ? 'var(--eui-primary-soft)' : headerBg,
+                background: isDragOver ? 'var(--eui-primary-subtle)' : headerBg,
                 color: headerColor,
                 borderBottom: cellBorder,
                 whiteSpace: 'nowrap',

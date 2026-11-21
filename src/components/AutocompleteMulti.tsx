@@ -12,6 +12,7 @@ import { Popover } from './Popover';
 interface AutocompleteMultiProps<T = any> extends BaseComponentProps, Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
     items: ListItem[];
     value?: T[];
+    selectedItems?: ListItem[];
     onChange?: (event: ComponentEvent<T[]>) => void;
     onFilter?: (query: string) => void | Promise<void>;
     onCustomValue?: (text: string) => void;
@@ -39,6 +40,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         {
             items,
             value = [],
+            selectedItems: providedSelectedItems,
             onChange,
             onFilter,
             onCustomValue,
@@ -96,12 +98,14 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         };
 
         const debouncedValue = useDebounce(inputValue, debounceMs);
-        // Selected items are resolved from the current items first and then from previously seen selections,
-        // so that selections remain visible when items are replaced (e.g. by a new server-side search).
+        // Selected items are resolved from the current items first, then from the items provided for the selections
+        // and then from previously seen selections, so that selections remain visible when items are replaced
+        // (e.g. by a new server-side search) or when the selections are not part of the current items at all.
         const selectedItems = value
             .map(
                 (v) =>
                     items.find((item) => compare(v, item.value)) ??
+                    providedSelectedItems?.find((item) => compare(v, item.value)) ??
                     knownSelectedItemsRef.current.find((item) => compare(v, item.value)),
             )
             .filter((item): item is ListItem => !!item);

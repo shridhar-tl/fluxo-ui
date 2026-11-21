@@ -269,6 +269,7 @@
 
 // Panel area
 .eui-dl-panel-area {
+    position: relative;
     display: flex;
     flex-direction: column;
     background: var(--eui-bg);
@@ -400,24 +401,27 @@
     z-index: 20;
     transition: background 0.15s;
 
-    &.eui-dl-rh-right {
-        width: 4px;
+    &.eui-dl-rh-right,
+    &.eui-dl-rh-left {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 6px;
         cursor: col-resize;
-        align-self: stretch;
+        touch-action: none;
 
-        &:hover, &.dragging {
+        &:hover, &.dragging, &:focus-visible {
             background: var(--eui-primary);
+            outline: none;
         }
     }
 
-    &.eui-dl-rh-left {
-        width: 4px;
-        cursor: col-resize;
-        align-self: stretch;
+    &.eui-dl-rh-right {
+        right: 0;
+    }
 
-        &:hover, &.dragging {
-            background: var(--eui-primary);
-        }
+    &.eui-dl-rh-left {
+        left: 0;
     }
 
     &.eui-dl-rh-top {

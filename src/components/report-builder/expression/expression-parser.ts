@@ -4,6 +4,7 @@ import type {
     BuiltInFieldRefNode,
     BuiltinFunction,
     ColGroupRefNode,
+    CustomFunction,
     DatasourceRefNode,
     ExpressionContext,
     ExpressionError,
@@ -21,10 +22,11 @@ import type {
     UnaryOpNode,
     VariableRefNode,
 } from './expression-types';
+import { getRegisteredFunctions } from './function-registry';
 
 const FORBIDDEN_PATH_SEGMENTS = new Set(['__proto__', 'constructor', 'prototype']);
 
-function safeGetByPath(obj: unknown, path: string): unknown {
+export function safeGetByPath(obj: unknown, path: string): unknown {
     if (obj === null || obj === undefined) return null;
     if (!path) return obj;
     const parts = path.split('.');
@@ -400,7 +402,7 @@ class Parser {
             }
 
             const sig = builtinFunctions.find((f) => f.name.toLowerCase() === firstName.toLowerCase()) ??
-                this.typeCtx.customFunctions?.find((f) => f.name.toLowerCase() === firstName.toLowerCase());
+                findCustomFunction(firstName, this.typeCtx.customFunctions);
 
             const node: FunctionCallNode = {
                 type: 'FunctionCall',
@@ -482,6 +484,18 @@ class Parser {
     }
 }
 
+function getAvailableCustomFunctions(local: CustomFunction[] | undefined): CustomFunction[] {
+    const registered = getRegisteredFunctions();
+    if (!local || local.length === 0) return registered;
+    const names = new Set(local.map((f) => f.name.toLowerCase()));
+    return [...local, ...registered.filter((f) => !names.has(f.name.toLowerCase()))];
+}
+
+function findCustomFunction(name: string, local: CustomFunction[] | undefined): CustomFunction | undefined {
+    const lower = name.toLowerCase();
+    return local?.find((f) => f.name.toLowerCase() === lower) ?? getRegisteredFunctions().find((f) => f.name.toLowerCase() === lower);
+}
+
 // ── Built-in Functions ────────────────────────────────────────────────────────
 
 export const builtinFunctions: BuiltinFunction[] = [
@@ -510,7 +524,7 @@ export const builtinFunctions: BuiltinFunction[] = [
     { name: 'Today', description: 'Current date', params: [], returnType: 'string' },
     { name: 'DateAdd', description: 'DateAdd(unit, amount, date)', params: [{ name: 'unit', type: 'string' }, { name: 'amount', type: 'number' }, { name: 'date', type: 'string' }], returnType: 'string' },
     { name: 'DateDiff', description: 'DateDiff(unit, date1, date2)', params: [{ name: 'unit', type: 'string' }, { name: 'date1', type: 'string' }, { name: 'date2', type: 'string' }], returnType: 'number' },
-    { name: 'FormatDate', description: 'FormatDate(date, format)', params: [{ name: 'date', type: 'string' }, { name: 'format', type: 'string' }], returnType: 'string' },
+    { name: 'FormatDate', description: 'FormatDate(date, format) — tokens: yyyy, yy, MMMM, MMM, MM, M, dddd, ddd, dd, d, HH, hh, mm, ss, a', params: [{ name: 'date', type: 'string' }, { name: 'format', type: 'string' }], returnType: 'string' },
     { name: 'ToString', description: 'Convert to string', params: [{ name: 'value', type: 'any' }], returnType: 'string' },
     { name: 'ToNumber', description: 'Convert to number', params: [{ name: 'value', type: 'any' }], returnType: 'number' },
     { name: 'IsNull', description: 'IsNull(value)', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
@@ -533,6 +547,17 @@ export const builtinFunctions: BuiltinFunction[] = [
     { name: 'Day', description: 'Day-of-month (1-31)', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
     { name: 'WeekDay', description: 'WeekDay(date) — 0=Sun..6=Sat', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
     { name: 'Not', description: 'Logical NOT', params: [{ name: 'value', type: 'boolean' }], returnType: 'boolean' },
+    { name: 'Median', description: 'Median(values) or Median(rows, "field") — middle value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
+    { name: 'CountDistinct', description: 'CountDistinct(values) or CountDistinct(rows, "field") — number of unique values', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
+    { name: 'Pluck', description: 'Pluck(rows, "field") — array of the field values of every row (nested paths allowed)', params: [{ name: 'rows', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'any' },
+    { name: 'Distinct', description: 'Distinct(values) or Distinct(rows, "field") — unique values in first-seen order', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'any' },
+    { name: 'First', description: 'First(values) or First(rows, "field") — first item / field value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'any' },
+    { name: 'Last', description: 'Last(values) or Last(rows, "field") — last item / field value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'any' },
+    { name: 'Join', description: 'Join(values, separator=", ") — joins array items into a string', params: [{ name: 'values', type: 'any' }, { name: 'separator', type: 'string' }], returnType: 'string' },
+    { name: 'Split', description: 'Split(text, separator) — splits a string into an array', params: [{ name: 'value', type: 'string' }, { name: 'separator', type: 'string' }], returnType: 'any' },
+    { name: 'Percent', description: 'Percent(part, total, decimals=0) — (part / total) * 100, 0 when total is 0', params: [{ name: 'part', type: 'number' }, { name: 'total', type: 'number' }, { name: 'decimals', type: 'number' }], returnType: 'number' },
+    { name: 'StartOf', description: 'StartOf(unit, date) — start of the week / month / quarter / year as yyyy-MM-dd', params: [{ name: 'unit', type: 'string' }, { name: 'date', type: 'string' }], returnType: 'string' },
+    { name: 'EndOf', description: 'EndOf(unit, date) — end of the week / month / quarter / year as yyyy-MM-dd', params: [{ name: 'unit', type: 'string' }, { name: 'date', type: 'string' }], returnType: 'string' },
 ];
 
 // ── Evaluator ─────────────────────────────────────────────────────────────────
@@ -576,11 +601,11 @@ const builtinImpls: Record<string, (...args: unknown[]) => unknown> = {
     },
     Min: (values: unknown, field?: unknown) => {
         const nums = extractNumericArray(values, field);
-        return nums.length === 0 ? 0 : Math.min(...nums);
+        return nums.length === 0 ? 0 : nums.reduce((a, b) => (b < a ? b : a));
     },
     Max: (values: unknown, field?: unknown) => {
         const nums = extractNumericArray(values, field);
-        return nums.length === 0 ? 0 : Math.max(...nums);
+        return nums.length === 0 ? 0 : nums.reduce((a, b) => (b > a ? b : a));
     },
     IIf: (cond: unknown, trueVal: unknown, falseVal: unknown) => (cond ? trueVal : falseVal),
     Switch: (...args: unknown[]) => {
@@ -605,33 +630,42 @@ const builtinImpls: Record<string, (...args: unknown[]) => unknown> = {
     Floor: (v: unknown) => Math.floor(Number(v)),
     Ceil: (v: unknown) => Math.ceil(Number(v)),
     Now: () => new Date().toISOString(),
-    Today: () => new Date().toISOString().slice(0, 10),
+    Today: () => toLocalDateKey(new Date()),
     DateAdd: (unit: unknown, amount: unknown, date: unknown) => {
-        const d = new Date(String(date));
-        const n = Number(amount);
-        switch (String(unit).toLowerCase()) {
+        const d = parseDateValue(date);
+        if (!d) return null;
+        const n = Number(amount) || 0;
+        const u = String(unit).toLowerCase();
+        switch (u) {
             case 'day': case 'd': d.setDate(d.getDate() + n); break;
+            case 'week': case 'w': d.setDate(d.getDate() + n * 7); break;
             case 'month': case 'm': d.setMonth(d.getMonth() + n); break;
             case 'year': case 'y': d.setFullYear(d.getFullYear() + n); break;
             case 'hour': case 'h': d.setHours(d.getHours() + n); break;
             default: break;
         }
-        return d.toISOString();
+        const keepDateOnly = typeof date === 'string' && dateOnlyPattern.test(date) && u !== 'hour' && u !== 'h';
+        return keepDateOnly ? toLocalDateKey(d) : d.toISOString();
     },
     DateDiff: (unit: unknown, d1: unknown, d2: unknown) => {
-        const ms = new Date(String(d2)).getTime() - new Date(String(d1)).getTime();
+        const from = parseDateValue(d1);
+        const to = parseDateValue(d2);
+        if (!from || !to) return null;
+        const ms = to.getTime() - from.getTime();
+        const calendarDays = Math.round((Date.UTC(to.getFullYear(), to.getMonth(), to.getDate()) - Date.UTC(from.getFullYear(), from.getMonth(), from.getDate())) / 86400000);
         switch (String(unit).toLowerCase()) {
-            case 'day': case 'd': return Math.floor(ms / 86400000);
-            case 'hour': case 'h': return Math.floor(ms / 3600000);
+            case 'day': case 'd': return calendarDays;
+            case 'week': case 'w': return Math.trunc(calendarDays / 7);
+            case 'month': case 'm': return (to.getFullYear() - from.getFullYear()) * 12 + to.getMonth() - from.getMonth();
+            case 'year': case 'y': return to.getFullYear() - from.getFullYear();
+            case 'hour': case 'h': return Math.trunc(ms / 3600000);
+            case 'minute': case 'mi': return Math.trunc(ms / 60000);
             default: return ms;
         }
     },
     FormatDate: (date: unknown, fmt: unknown) => {
-        const d = new Date(String(date));
-        return String(fmt)
-            .replace('YYYY', d.getFullYear().toString())
-            .replace('MM', String(d.getMonth() + 1).padStart(2, '0'))
-            .replace('DD', String(d.getDate()).padStart(2, '0'));
+        const d = parseDateValue(date);
+        return d ? formatDatePattern(d, fmt === undefined || fmt === null ? 'yyyy-MM-dd' : String(fmt)) : '';
     },
     ToString: (v: unknown) => String(v ?? ''),
     ToNumber: (v: unknown) => Number(v),
@@ -702,23 +736,143 @@ const builtinImpls: Record<string, (...args: unknown[]) => unknown> = {
         return str + c.repeat(n - str.length);
     },
     Year: (v: unknown) => {
-        const d = new Date(String(v));
-        return Number.isNaN(d.getTime()) ? 0 : d.getFullYear();
+        const d = parseDateValue(v);
+        return !d ? 0 : d.getFullYear();
     },
     Month: (v: unknown) => {
-        const d = new Date(String(v));
-        return Number.isNaN(d.getTime()) ? 0 : d.getMonth() + 1;
+        const d = parseDateValue(v);
+        return !d ? 0 : d.getMonth() + 1;
     },
     Day: (v: unknown) => {
-        const d = new Date(String(v));
-        return Number.isNaN(d.getTime()) ? 0 : d.getDate();
+        const d = parseDateValue(v);
+        return !d ? 0 : d.getDate();
     },
     WeekDay: (v: unknown) => {
-        const d = new Date(String(v));
-        return Number.isNaN(d.getTime()) ? 0 : d.getDay();
+        const d = parseDateValue(v);
+        return !d ? 0 : d.getDay();
     },
     Not: (v: unknown) => !v,
+    Median: (values: unknown, field?: unknown) => {
+        const nums = extractNumericArray(values, field).sort((a, b) => a - b);
+        if (nums.length === 0) return 0;
+        const mid = Math.floor(nums.length / 2);
+        return nums.length % 2 === 0 ? (nums[mid - 1] + nums[mid]) / 2 : nums[mid];
+    },
+    CountDistinct: (values: unknown, field?: unknown) => uniqueValues(pluckValues(values, field)).length,
+    Pluck: (values: unknown, field?: unknown) => pluckValues(values, field),
+    Distinct: (values: unknown, field?: unknown) => uniqueValues(pluckValues(values, field)),
+    First: (values: unknown, field?: unknown) => {
+        const list = pluckValues(values, field);
+        return list.length > 0 ? list[0] : null;
+    },
+    Last: (values: unknown, field?: unknown) => {
+        const list = pluckValues(values, field);
+        return list.length > 0 ? list[list.length - 1] : null;
+    },
+    Join: (values: unknown, sep?: unknown) => (Array.isArray(values)
+        ? values.filter((v) => v !== null && v !== undefined).map(String).join(typeof sep === 'string' ? sep : ', ')
+        : String(values ?? '')),
+    Split: (v: unknown, sep: unknown) => (v === null || v === undefined || v === '' ? [] : String(v).split(String(sep ?? ','))),
+    Percent: (part: unknown, total: unknown, decimals: unknown) => {
+        const t = Number(total);
+        const pt = Number(part);
+        if (!Number.isFinite(t) || !Number.isFinite(pt) || t === 0) return 0;
+        const d = typeof decimals === 'number' ? Math.max(0, Math.min(10, decimals)) : 0;
+        return Number(((pt / t) * 100).toFixed(d));
+    },
+    StartOf: (unit: unknown, date: unknown) => boundaryOf(String(unit), date, false),
+    EndOf: (unit: unknown, date: unknown) => boundaryOf(String(unit), date, true),
 };
+
+function toLocalDateKey(d: Date): string {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+const dateOnlyPattern = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+const datePatternTokens = /yyyy|YYYY|yy|YY|MMMM|MMM|MM|M|dddd|ddd|dd|DD|d|D|HH|H|hh|h|mm|ss|a|A/g;
+
+/** Formats a date with yyyy/YYYY, yy, MMMM, MMM, MM, M, dddd (weekday), ddd, dd/DD, d/D, HH, H, hh, h, mm, ss and a/A tokens. */
+function formatDatePattern(d: Date, pattern: string): string {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const hours12 = d.getHours() % 12 || 12;
+    return pattern.replace(datePatternTokens, (token) => {
+        switch (token) {
+            case 'yyyy': case 'YYYY': return String(d.getFullYear());
+            case 'yy': case 'YY': return String(d.getFullYear()).slice(-2);
+            case 'MMMM': return d.toLocaleDateString(undefined, { month: 'long' });
+            case 'MMM': return d.toLocaleDateString(undefined, { month: 'short' });
+            case 'MM': return pad(d.getMonth() + 1);
+            case 'M': return String(d.getMonth() + 1);
+            case 'dddd': return d.toLocaleDateString(undefined, { weekday: 'long' });
+            case 'ddd': return d.toLocaleDateString(undefined, { weekday: 'short' });
+            case 'dd': case 'DD': return pad(d.getDate());
+            case 'd': case 'D': return String(d.getDate());
+            case 'HH': return pad(d.getHours());
+            case 'H': return String(d.getHours());
+            case 'hh': return pad(hours12);
+            case 'h': return String(hours12);
+            case 'mm': return pad(d.getMinutes());
+            case 'ss': return pad(d.getSeconds());
+            default: return d.getHours() < 12 ? (token === 'a' ? 'am' : 'AM') : (token === 'a' ? 'pm' : 'PM');
+        }
+    });
+}
+
+function parseDateValue(value: unknown): Date | null {
+    if (value instanceof Date) return new Date(value.getTime());
+    if (value === null || value === undefined || value === '') return null;
+    const str = String(value);
+    const dateOnly = dateOnlyPattern.exec(str);
+    const d = dateOnly ? new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3])) : new Date(str);
+    return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function boundaryOf(unit: string, value: unknown, end: boolean): string {
+    const d = parseDateValue(value);
+    if (!d) return '';
+    switch (unit.toLowerCase()) {
+        case 'week': case 'w':
+            d.setDate(d.getDate() + (end ? 6 - d.getDay() : -d.getDay()));
+            break;
+        case 'month': case 'm':
+            if (end) d.setMonth(d.getMonth() + 1, 0);
+            else d.setDate(1);
+            break;
+        case 'quarter': case 'q': {
+            const startMonth = Math.floor(d.getMonth() / 3) * 3;
+            if (end) d.setMonth(startMonth + 3, 0);
+            else d.setMonth(startMonth, 1);
+            break;
+        }
+        case 'year': case 'y':
+            if (end) d.setMonth(12, 0);
+            else d.setMonth(0, 1);
+            break;
+        default:
+            break;
+    }
+    return toLocalDateKey(d);
+}
+
+function pluckValues(values: unknown, field?: unknown): unknown[] {
+    if (!Array.isArray(values)) return [];
+    if (typeof field !== 'string' || field.length === 0) return values;
+    return values.map((row) => safeGetByPath(row, field));
+}
+
+function uniqueValues(values: unknown[]): unknown[] {
+    const seen = new Set<string>();
+    const out: unknown[] = [];
+    for (const v of values) {
+        if (v === null || v === undefined) continue;
+        const key = typeof v === 'object' ? JSON.stringify(v) : `${typeof v}:${String(v)}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        out.push(v);
+    }
+    return out;
+}
 
 function fieldFunctionImpl(path: unknown, ctx: ExpressionContext): unknown {
     if (typeof path !== 'string') return null;
@@ -829,7 +983,7 @@ async function evalNode(node: ExpressionNode, ctx: ExpressionContext): Promise<u
             if (node.name === 'Field' || node.name.toLowerCase() === 'field') {
                 return fieldFunctionImpl(args[0], ctx);
             }
-            const custom = ctx.customFunctions?.find((f) => f.name.toLowerCase() === node.name.toLowerCase());
+            const custom = findCustomFunction(node.name, ctx.customFunctions);
             if (custom) return await Promise.resolve(custom.fn(...args));
             const builtin = builtinImpls[node.name] ?? builtinImpls[
                 Object.keys(builtinImpls).find((k) => k.toLowerCase() === node.name.toLowerCase()) ?? ''
@@ -974,7 +1128,7 @@ export function getAutocompleteSuggestions(
                 suggestions.push({ label: fn, kind: 'function', detail: `${fn}('name') — group context`, insertText: `${fn}('')` });
             }
         }
-        const allFns = [...builtinFunctions, ...(typeCtx.customFunctions ?? [])];
+        const allFns = [...builtinFunctions, ...getAvailableCustomFunctions(typeCtx.customFunctions)];
         for (const fn of allFns) {
             if (fn.name.toLowerCase().startsWith(partial)) {
                 const paramStr = fn.params.map((p) => p.name).join(', ');
@@ -1026,4 +1180,30 @@ export function highlightExpression(input: string): Array<{ text: string; classN
     }
 
     return parts;
+}
+
+const templatePattern = /\{\{([\s\S]+?)\}\}/g;
+
+function formatTemplateValue(value: unknown): string {
+    if (value === null || value === undefined) return '';
+    if (value instanceof Date) return value.toISOString();
+    if (Array.isArray(value)) return value.map(formatTemplateValue).join(',');
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
+}
+
+export async function interpolateTemplate(
+    template: string,
+    ctx: ExpressionContext,
+    format: (value: unknown) => string = formatTemplateValue,
+): Promise<string> {
+    if (!template || !template.includes('{{')) return template;
+    const matches = Array.from(template.matchAll(templatePattern));
+    const values = await Promise.all(matches.map(async (m) => {
+        const { result, error } = await evaluateExpression(m[1].trim(), ctx);
+        if (error) throw new Error(`Invalid expression "{{${m[1].trim()}}}": ${error}`);
+        return format(result);
+    }));
+    let index = 0;
+    return template.replace(templatePattern, () => values[index++]);
 }

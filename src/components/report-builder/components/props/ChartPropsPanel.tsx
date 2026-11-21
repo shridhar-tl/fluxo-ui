@@ -1,11 +1,12 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useId, useMemo } from 'react';
 import { TimesIcon, TrashIcon } from '../../../../assets/icons';
 import { Button } from '../../../Button';
 import { Checkbox } from '../../../Checkbox';
 import { Dropdown } from '../../../Dropdown';
 import { TextInput } from '../../../TextInput';
 import type { ListItem } from '../../../../types';
-import { useReportBuilderContext, useRBStore } from '../../report-builder-context';
+import { useReportBuilderContext } from '../../report-builder-context';
+import { useBuilderDatasources, useDatasourceFieldPaths } from '../../builder-hooks';
 import { updateComponentInTree } from '../../report-component-helpers';
 import type { ReportBuilderState } from '../../report-builder-types';
 import type {
@@ -21,6 +22,7 @@ import type {
 } from '../../report-definition-types';
 import { ComponentVariablesEditor } from './ComponentVariablesEditor';
 import { ExpressionField } from './ExpressionField';
+import { FieldPathInput } from './FieldPathInput';
 import { PropsTabs } from './PropsTabs';
 
 interface Props { component: ReportComponent; }
@@ -120,7 +122,7 @@ function needsRadialAxis(t: string): boolean {
 
 export const ChartPropsPanel: React.FC<Props> = ({ component }) => {
     const { store } = useReportBuilderContext();
-    const datasources = useRBStore((s) => s.definition.datasources);
+    const datasources = useBuilderDatasources();
     const p = component.props as unknown as ChartComponentProps;
     const chartType = component.type;
 
@@ -226,6 +228,22 @@ function chartLabel(type: string): string {
     return map[type] ?? 'Chart';
 }
 
+const ChartFieldInput: React.FC<{
+    id: string;
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    fieldPaths: string[];
+    hint?: string;
+    error?: string | null;
+}> = ({ id, label, value, onChange, fieldPaths, hint, error }) => (
+    <div className="eui-rb-prop-field">
+        <label className="eui-rb-prop-field-label" htmlFor={id}>{label}</label>
+        <FieldPathInput id={id} value={value} onChange={onChange} fieldPaths={fieldPaths} ariaLabel={label} placeholder="fieldName" />
+        {error ? <span className="eui-rb-ds-config-error">{error}</span> : hint && <span className="eui-rb-ds-config-hint">{hint}</span>}
+    </div>
+);
+
 // ── Tab: Data ──────────────────────────────────────────────────────────────
 const DataTab: React.FC<{
     chartType: string;
@@ -233,6 +251,9 @@ const DataTab: React.FC<{
     update: (patch: Partial<ChartComponentProps>) => void;
     dsOptions: ListItem[];
 }> = ({ chartType, p, update, dsOptions }) => {
+    const fieldPaths = useDatasourceFieldPaths(p.datasourceId || undefined);
+    const idPrefix = useId();
+    const hasSeries = (p.series ?? []).some((s) => s.valueField?.trim());
     const useXY = isBarType(chartType) || isLineLikeType(chartType) || isScatterType(chartType) || isBubbleType(chartType) || isRadarType(chartType);
     const useLV = isPolarLikeType(chartType);
 
@@ -247,42 +268,46 @@ const DataTab: React.FC<{
                     size="sm"
                     aria-label="Select datasource"
                 />
+                {!p.datasourceId && <span className="eui-rb-ds-config-error">Choose the datasource the chart plots.</span>}
             </div>
 
             {useXY && (
                 <>
-                    <ExpressionField
-                        label={isScatterType(chartType) || isBubbleType(chartType) ? 'X Field' : 'Category / X Field'}
+                    <ChartFieldInput
+                        id={`${idPrefix}-x`}
+                        label={isScatterType(chartType) || isBubbleType(chartType) ? 'X field' : 'Category / X field'}
                         value={p.xAxisField ?? ''}
-                        onChange={(v) => update({ xAxisField: v })}
-                        placeholder="fieldName"
-                        expectedReturnType="string"
+                        onChange={(v) => update({ xAxisField: v || undefined })}
+                        fieldPaths={fieldPaths}
+                        error={!p.xAxisField?.trim() ? 'Choose the field for the X axis.' : null}
                     />
-                    <ExpressionField
-                        label={isRadarType(chartType) ? 'Value Field (default series)' : 'Value / Y Field'}
+                    <ChartFieldInput
+                        id={`${idPrefix}-y`}
+                        label={isRadarType(chartType) ? 'Value field (default series)' : 'Value / Y field'}
                         value={p.yAxisField ?? ''}
-                        onChange={(v) => update({ yAxisField: v })}
-                        placeholder="fieldName"
-                        expectedReturnType="string"
+                        onChange={(v) => update({ yAxisField: v || undefined })}
+                        fieldPaths={fieldPaths}
+                        error={!p.yAxisField?.trim() && !hasSeries ? 'Choose the value field, or add series on the Series tab.' : null}
                     />
                     {isBubbleType(chartType) && (
-                        <ExpressionField
-                            label="Radius Field"
+                        <ChartFieldInput
+                            id={`${idPrefix}-r`}
+                            label="Radius field"
                             value={p.radiusField ?? ''}
-                            onChange={(v) => update({ radiusField: v })}
-                            placeholder="fieldName"
-                            expectedReturnType="string"
-                            hint="Each row becomes a bubble; radius = Number(row[radiusField]) × radius scale."
+                            onChange={(v) => update({ radiusField: v || undefined })}
+                            fieldPaths={fieldPaths}
+                            hint="Each row becomes a bubble; radius = value × radius scale."
+                            error={!p.radiusField?.trim() ? 'Choose the field holding the bubble size.' : null}
                         />
                     )}
                     {!isScatterType(chartType) && !isBubbleType(chartType) && (
-                        <ExpressionField
-                            label="Series Field (optional)"
+                        <ChartFieldInput
+                            id={`${idPrefix}-series`}
+                            label="Series field (optional)"
                             value={p.seriesField ?? ''}
-                            onChange={(v) => update({ seriesField: v })}
-                            placeholder="e.g. category"
-                            expectedReturnType="string"
-                            hint="When set, one series is generated per distinct value. Uses Value / Y Field for each series."
+                            onChange={(v) => update({ seriesField: v || undefined })}
+                            fieldPaths={fieldPaths}
+                            hint="One series is generated per distinct value, using the value field."
                         />
                     )}
                 </>
@@ -290,19 +315,21 @@ const DataTab: React.FC<{
 
             {useLV && (
                 <>
-                    <ExpressionField
-                        label="Label Field"
+                    <ChartFieldInput
+                        id={`${idPrefix}-label`}
+                        label="Label field"
                         value={p.labelField ?? ''}
-                        onChange={(v) => update({ labelField: v })}
-                        placeholder="fieldName"
-                        expectedReturnType="string"
+                        onChange={(v) => update({ labelField: v || undefined })}
+                        fieldPaths={fieldPaths}
+                        error={!p.labelField?.trim() ? 'Choose the field naming each slice.' : null}
                     />
-                    <ExpressionField
-                        label="Value Field"
+                    <ChartFieldInput
+                        id={`${idPrefix}-value`}
+                        label="Value field"
                         value={p.valueField ?? ''}
-                        onChange={(v) => update({ valueField: v })}
-                        placeholder="fieldName"
-                        expectedReturnType="string"
+                        onChange={(v) => update({ valueField: v || undefined })}
+                        fieldPaths={fieldPaths}
+                        error={!p.valueField?.trim() ? 'Choose the field holding the slice size.' : null}
                     />
                 </>
             )}
@@ -499,7 +526,7 @@ const SeriesTab: React.FC<{
                                 type="color"
                                 value={color}
                                 onChange={(e) => updateColor(idx, e.target.value)}
-                                style={{ width: 28, height: 24, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-input-bg)' }}
+                                style={{ width: 28, height: 24, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-bg)' }}
                                 aria-label={`Color ${idx + 1}`}
                             />
                             <TextInput value={color} onChange={(e) => updateColor(idx, e.value)} size="sm" style={{ flex: 1 }} />
