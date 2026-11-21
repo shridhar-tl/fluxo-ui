@@ -167,7 +167,15 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
             }
         };
 
-        const handleClose = () => {
+        const handleInnerClick = (e: React.MouseEvent<HTMLDivElement>) => {
+            e.preventDefault();
+            handleToggle();
+        };
+
+        const handleClose = (e?: MouseEvent) => {
+            if (e?.target && combinedRef.current?.contains(e.target as Node)) {
+                return;
+            }
             setIsOpen(false);
             setFilterValue('');
         };
@@ -302,7 +310,7 @@ export const Multiselect = forwardRef<HTMLDivElement, MultiselectProps>(
                         aria-label={ariaLabel || placeholder}
                         aria-labelledby={ariaLabelledBy}
                     />
-                    <div className="eui-multiselect-inner" onClick={handleToggle}>
+                    <div className="eui-multiselect-inner" onClick={handleInnerClick}>
                         <div className="eui-multiselect-tags">
                             {selectedItems.length === 0 ? (
                                 <span className="eui-multiselect-placeholder">{placeholder}</span>

@@ -370,7 +370,8 @@ export const ContextMenuManager: React.FC = () => {
         if (!state.visible) return;
 
         const handleClickOutside = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+            const target = e.target as Element | null;
+            if (menuRef.current && !menuRef.current.contains(target) && !target?.closest?.('.eui-context-submenu-panel')) {
                 closeMenu();
             }
         };

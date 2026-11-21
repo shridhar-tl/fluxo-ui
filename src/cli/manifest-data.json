@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-11-17T15:42:14.453Z",
+  "generatedAt": "2026-11-20T06:12:33.157Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -335,6 +335,7 @@
         "hooks/index.ts",
         "hooks/useCalendarEntries.ts",
         "hooks/useCalendarNavigation.ts",
+        "hooks/useCalendarShortcuts.ts",
         "hooks/useNowIndicator.ts",
         "hooks/useViewTitle.ts",
         "index.ts",
@@ -370,6 +371,7 @@
         "styles/_variables.scss",
         "styles/_year-grid.scss",
         "toolbar/CalendarToolbar.tsx",
+        "toolbar/ToolbarButton.scss",
         "toolbar/ToolbarNavigation.tsx",
         "toolbar/ToolbarTitle.tsx",
         "toolbar/ToolbarViewSwitcher.tsx",
@@ -417,7 +419,9 @@
         "hooks": [
           "useMobile"
         ],
-        "utils": [],
+        "utils": [
+          "layer-stack"
+        ],
         "shared": [
           "styles"
         ],
@@ -718,7 +722,9 @@
         "hooks": [
           "useMobile"
         ],
-        "utils": [],
+        "utils": [
+          "layer-stack"
+        ],
         "shared": [],
         "external": [
           "classnames",
@@ -787,6 +793,7 @@
         "hooks": [
           "useAnchoredPosition",
           "useClickOutside",
+          "useEscapeLayer",
           "useMobile"
         ],
         "utils": [],
@@ -953,6 +960,7 @@
       "dependencies": {
         "components": [],
         "hooks": [
+          "useEscapeLayer",
           "useMobile"
         ],
         "utils": [],
@@ -1149,7 +1157,9 @@
       "private": false,
       "dependencies": {
         "components": [],
-        "hooks": [],
+        "hooks": [
+          "useEscapeLayer"
+        ],
         "utils": [
           "body-scroll-lock"
         ],
@@ -1962,7 +1972,9 @@
       "private": false,
       "dependencies": {
         "components": [],
-        "hooks": [],
+        "hooks": [
+          "useEscapeLayer"
+        ],
         "utils": [],
         "shared": [
           "styles"
@@ -2177,6 +2189,7 @@
         "components": [],
         "hooks": [
           "useAnchoredPosition",
+          "useEscapeLayer",
           "useMobile"
         ],
         "utils": [],
@@ -2432,6 +2445,7 @@
         ],
         "hooks": [
           "useClickOutside",
+          "useEscapeLayer",
           "useKeyboard",
           "useMobile",
           "usePosition"
@@ -3405,7 +3419,9 @@
         "hooks": [
           "useMobile"
         ],
-        "utils": [],
+        "utils": [
+          "layer-stack"
+        ],
         "shared": [],
         "external": [
           "classnames",
@@ -3719,6 +3735,26 @@
       }
     },
     {
+      "id": "useEscapeLayer",
+      "name": "useEscapeLayer",
+      "sourcePath": "hooks/useEscapeLayer.ts",
+      "files": [
+        "useEscapeLayer.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [
+          "layer-stack"
+        ],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "useKeyboard",
       "name": "useKeyboard",
       "sourcePath": "hooks/useKeyboard.ts",
@@ -3830,6 +3866,22 @@
       "sourcePath": "utils/field-label.tsx",
       "files": [
         "field-label.tsx"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "layer-stack",
+      "name": "layer-stack",
+      "sourcePath": "utils/layer-stack.ts",
+      "files": [
+        "layer-stack.ts"
       ],
       "dependencies": {
         "components": [],

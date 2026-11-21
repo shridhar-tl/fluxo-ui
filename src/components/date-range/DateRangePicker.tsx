@@ -43,7 +43,12 @@ function DateRangePicker(props: DateRangePickerProps) {
         onClose?.();
     }, [onClose]);
 
+    const hasValue = Array.isArray(value) || (typeof value === 'string' && !!value);
+
     const displayLabel = () => {
+        if (!hasValue && props.placeholder) {
+            return props.placeholder;
+        }
         const isRange = props.range !== false;
         if (activeView === 'quick' && ranges) {
             const found = ranges.find((r) => r.value === selectedRange);
