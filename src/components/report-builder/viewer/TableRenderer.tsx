@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { getValue, toDisplayText } from '../data/value-utils';
 import { evaluateExpression } from '../expression/expression-parser';
 import type { ExpressionContext, GroupFrame } from '../expression/expression-types';
 import type {
@@ -9,12 +11,11 @@ import type {
     ConditionalFormat,
 } from '../report-definition-types';
 import { flattenColumns, getEffectiveColumnTree } from '../table-helpers';
-import { useViewerContext, buildExpressionDatasources } from './ViewerExpressionContext';
 import { CellItemsRenderer } from './CellItemRenderer';
-import { NestedTableHeader } from './TableHeaderRenderer';
 import { resolveRowGroups } from './row-group-engine';
-import { getValue, toDisplayText } from '../data/value-utils';
 import type { ResolvedGroupNode } from './row-group-engine';
+import { NestedTableHeader } from './TableHeaderRenderer';
+import { useViewerContext, buildExpressionDatasources } from './ViewerExpressionContext';
 
 interface Props {
     component: ReportComponent;
@@ -54,6 +55,19 @@ function groupRowsMultiLevel(rows: Row[], fields: string[], depth: number): Grou
         children: remaining.length > 0 ? groupRowsMultiLevel(groupedRows, remaining, depth + 1) : undefined,
         depth,
     }));
+}
+
+function groupFooterTotals(columns: TableColumnDef[], rows: Row[]): Map<string, number> {
+    const totals = new Map<string, number>();
+    for (const col of columns) {
+        let total: number | undefined;
+        for (const row of rows) {
+            const value = getValue(row, col.field);
+            if (typeof value === 'number' && Number.isFinite(value)) total = (total ?? 0) + value;
+        }
+        if (total !== undefined) totals.set(col.id, total);
+    }
+    return totals;
 }
 
 async function evalFormatExpr(
@@ -291,9 +305,10 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
         }
     }, [sortField, sortDir]);
 
+    const viewerCellEdit = viewerCtx.onCellEdit;
     const handleCellEdit = useCallback((rowIndex: number, field: string, value: unknown) => {
-        viewerCtx.onCellEdit?.(componentId, rowIndex, field, value);
-    }, [viewerCtx.onCellEdit, componentId]);
+        viewerCellEdit?.(componentId, rowIndex, field, value);
+    }, [viewerCellEdit, componentId]);
 
     const groups = useMemo(() => {
         const fields = quickGroupFields(p.groupBy);
@@ -365,6 +380,34 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
     );
     const hasFrozen = frozenOffsets.size > 0;
 
+    const effectiveColumnTreeForHeader = useMemo(() => {
+        const visSet = new Set(columns.map((c) => c.id));
+        const prune = (nodes: typeof columnTree): typeof columnTree => {
+            const out: typeof columnTree = [];
+            for (const n of nodes) {
+                if ('kind' in n && n.kind === 'group') {
+                    const kids = prune(n.children);
+                    if (kids.length > 0) out.push({ ...n, children: kids });
+                } else if (visSet.has(n.id)) {
+                    out.push(n);
+                }
+            }
+            return out;
+        };
+        const pruned = prune(columnTree);
+        if (pruned.length === 0) return columns.map((c) => ({ ...c, kind: 'column' as const }));
+        return pruned;
+    }, [columnTree, columns]);
+
+    const handleCopyData = useCallback(() => {
+        const header = columns.map((c) => c.label || c.field).join('\t');
+        const body = rows.map((row) => columns.map((c) => formatRaw(getValue(row, c.field))).join('\t')).join('\n');
+        const tsv = `${header}\n${body}`;
+        navigator.clipboard.writeText(tsv).catch(() => {});
+    }, [columns, rows]);
+
+    const [copyFeedback, setCopyFeedback] = useState(false);
+
     if (p.pivotMode && p.pivotRowField && p.pivotColumnField && p.pivotValueField) {
         return (
             <PivotTable
@@ -390,7 +433,7 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
     const altRowColor = tableStyle.alternateRowColor;
     const cellBorder = tableStyle.cellBorder ?? '1px solid var(--eui-border-subtle)';
 
-    const renderLeafHeader = (leafId: string, label: string, _align?: 'left' | 'center' | 'right') => {
+    const renderLeafHeader = (leafId: string, label: string) => {
         const col = columns.find((c) => c.id === leafId);
         if (!col) return null;
         const frozen = col.frozen && hasFrozen;
@@ -422,25 +465,6 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
             />
         );
     };
-
-    const effectiveColumnTreeForHeader = useMemo(() => {
-        const visSet = new Set(columns.map((c) => c.id));
-        const prune = (nodes: typeof columnTree): typeof columnTree => {
-            const out: typeof columnTree = [];
-            for (const n of nodes) {
-                if ('kind' in n && n.kind === 'group') {
-                    const kids = prune(n.children);
-                    if (kids.length > 0) out.push({ ...n, children: kids });
-                } else if (visSet.has(n.id)) {
-                    out.push(n);
-                }
-            }
-            return out;
-        };
-        const pruned = prune(columnTree);
-        if (pruned.length === 0) return columns.map((c) => ({ ...c, kind: 'column' as const }));
-        return pruned;
-    }, [columnTree, columns]);
 
     const useVirtual = !viewerCtx.exportMode && !groups && !resolvedRowGroups && rows.length > virtualThreshold;
 
@@ -569,14 +593,6 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
     );
 
 
-    const handleCopyData = useCallback(() => {
-        const header = columns.map((c) => c.label || c.field).join('\t');
-        const body = rows.map((row) => columns.map((c) => formatRaw(getValue(row, c.field))).join('\t')).join('\n');
-        const tsv = `${header}\n${body}`;
-        navigator.clipboard.writeText(tsv).catch(() => {});
-    }, [columns, rows]);
-
-    const [copyFeedback, setCopyFeedback] = useState(false);
 
     return (
         <div style={{ overflowX: 'auto', border: `${cellBorder}`, borderRadius: 6 }}>
@@ -731,6 +747,10 @@ const RowGroupSection: React.FC<{
         () => ({ ...exprCtx, rowGroups: frames, variables: node.frame.variables }),
         [exprCtx, frames, node.frame.variables],
     );
+    const footerTotals = useMemo(
+        () => (node.group.showFooter ? groupFooterTotals(columns, node.leafRows ?? []) : new Map<string, number>()),
+        [node.group.showFooter, columns, node.leafRows],
+    );
 
     const indent = depth * 16;
     const keyDisplay = node.keys && node.keys.length > 0
@@ -766,7 +786,6 @@ const RowGroupSection: React.FC<{
                         <span style={{ marginRight: 6, display: 'inline-block', transform: collapsed ? 'rotate(-90deg)' : 'rotate(0)', transition: 'transform 0.15s' }}>
                             ▾
                         </span>
-                        <span style={{ color: 'var(--eui-text-muted)', fontSize: 10 }}>{node.group.name}:</span>{' '}
                         {keyDisplay}
                     </td>
                 </tr>
@@ -809,7 +828,7 @@ const RowGroupSection: React.FC<{
                     onCellEdit={onCellEdit}
                 />
             ))}
-            {!collapsed && !hasChildren && node.group.showFooter && leafRows.length > 0 && (
+            {!collapsed && !hasChildren && footerTotals.size > 0 && (
                 <tr style={{
                     background: tableStyle?.footerBackground ?? 'var(--eui-bg-subtle)',
                     color: tableStyle?.footerColor ?? 'var(--eui-text-muted)',
@@ -826,7 +845,7 @@ const RowGroupSection: React.FC<{
                                 textAlign: col.align ?? 'left',
                             }}
                         >
-                            <GroupFooterCell col={col} rows={leafRows} exprCtx={rowExprCtx} />
+                            <GroupFooterCell col={col} total={footerTotals.get(col.id)} rows={leafRows} exprCtx={rowExprCtx} />
                         </td>
                     ))}
                 </tr>
@@ -864,6 +883,11 @@ const GroupSection: React.FC<{
         evalVisibilityExpr(groupVisibleExpr, exprCtx, groupRow).then(setGroupVisible);
     }, [groupVisibleExpr, exprCtx, group.key, group.rows.length]);
 
+    const footerTotals = useMemo(
+        () => (showFooter ? groupFooterTotals(columns, group.rows) : new Map<string, number>()),
+        [showFooter, columns, group.rows],
+    );
+
     if (!groupVisible) return null;
 
     const indent = group.depth * 16;
@@ -891,7 +915,6 @@ const GroupSection: React.FC<{
                     <span style={{ marginRight: 6, display: 'inline-block', transform: collapsed ? 'rotate(-90deg)' : 'rotate(0)', transition: 'transform 0.15s' }}>
                         ▾
                     </span>
-                    <span style={{ color: 'var(--eui-text-muted)', fontSize: 10, marginRight: 4 }}>{group.field}:</span>
                     {group.key} ({group.rows.length})
                 </td>
             </tr>
@@ -933,7 +956,7 @@ const GroupSection: React.FC<{
                     onCellEdit={onCellEdit}
                 />
             ))}
-            {!collapsed && !hasChildren && showFooter && (
+            {!collapsed && !hasChildren && footerTotals.size > 0 && (
                 <tr style={{
                     background: tableStyle?.footerBackground ?? 'var(--eui-bg-subtle)',
                     color: tableStyle?.footerColor ?? 'var(--eui-text-muted)',
@@ -950,7 +973,7 @@ const GroupSection: React.FC<{
                                 textAlign: col.align ?? 'left',
                             }}
                         >
-                            <GroupFooterCell col={col} rows={group.rows} exprCtx={exprCtx} />
+                            <GroupFooterCell col={col} total={footerTotals.get(col.id)} rows={group.rows} exprCtx={exprCtx} />
                         </td>
                     ))}
                 </tr>
@@ -961,14 +984,19 @@ const GroupSection: React.FC<{
 
 const GroupFooterCell: React.FC<{
     col: TableColumnDef;
+    total: number | undefined;
     rows: Row[];
     exprCtx: ExpressionContext;
-}> = ({ col, rows, exprCtx }) => {
+}> = ({ col, total, rows, exprCtx }) => {
     const [value, setValue] = useState('');
 
     useEffect(() => {
-        if (!col.formatExpr) {
+        if (total === undefined) {
             setValue('');
+            return;
+        }
+        if (!col.formatExpr) {
+            setValue(toDisplayText(total));
             return;
         }
         const aggregateRow: Row = {};
@@ -981,7 +1009,7 @@ const GroupFooterCell: React.FC<{
         evalFormatExpr(col.formatExpr, aggregateRow, exprCtx)
             .then(setValue)
             .catch(() => setValue(''));
-    }, [col.formatExpr, rows, exprCtx]);
+    }, [col.formatExpr, total, rows, exprCtx]);
 
     return <>{value}</>;
 };
@@ -1222,13 +1250,18 @@ const ExtraRow: React.FC<{
     const Cell: 'th' | 'td' = isHeader ? 'th' : 'td';
     const totalLeaves = columns.length;
 
-    let covered = 0;
+    const cellFits = row.cells.reduce<{ used: number; fits: boolean[] }>(
+        (acc, c) => {
+            const used = acc.used + Math.max(1, c.colSpan ?? 1);
+            return { used, fits: [...acc.fits, used <= totalLeaves] };
+        },
+        { used: 0, fits: [] },
+    ).fits;
     return (
         <tr>
             {row.cells.map((c, i) => {
+                if (!cellFits[i]) return null;
                 const span = Math.max(1, c.colSpan ?? 1);
-                covered += span;
-                if (covered > totalLeaves) return null;
                 const css: React.CSSProperties = {
                     padding: '6px 10px',
                     textAlign: c.align ?? 'left',

@@ -1,5 +1,5 @@
+import { normalizeEdgeInsets } from '../core/geometry';
 import type { PdfDocument } from '../core/pdf-document';
-import { type StyleLayers, baseCellStyle } from './grid-presets';
 import {
     borderWidthFor,
     extractRowCells,
@@ -9,6 +9,7 @@ import {
     resolvePadding,
     splitCellText,
 } from './grid-model';
+import { type StyleLayers, baseCellStyle } from './grid-presets';
 import type {
     CellStyle,
     ColumnDefinition,
@@ -29,6 +30,7 @@ export interface LayoutInput {
     layers: StyleLayers;
     availableWidth: number;
     minRowHeight: number;
+    overflowColumns?: 'shrink' | 'paginate';
 }
 
 export interface LayoutResult {
@@ -40,13 +42,37 @@ export interface LayoutResult {
     overflow: number;
 }
 
+const minimumShrinkScale = 0.5;
+const shrinkAttempts = 4;
+
+function scaleStyle(style: CellStyle, scale: number): CellStyle {
+    if (scale === 1) return style;
+    const padding = normalizeEdgeInsets(style.padding, 0);
+    return {
+        ...style,
+        fontSize: style.fontSize * scale,
+        minHeight: style.minHeight * scale,
+        padding: { top: padding.top * scale, right: padding.right * scale, bottom: padding.bottom * scale, left: padding.left * scale },
+    };
+}
+
+function scaleColumn(definition: ColumnDefinition, scale: number): ColumnDefinition {
+    if (scale === 1) return definition;
+    return {
+        ...definition,
+        ...(typeof definition.width === 'number' && { width: definition.width * scale }),
+        ...(definition.minWidth !== undefined && { minWidth: definition.minWidth * scale }),
+        ...(definition.maxWidth !== undefined && { maxWidth: definition.maxWidth * scale }),
+    };
+}
+
 const measureText = (doc: PdfDocument, text: string, style: CellStyle): number =>
     doc.measureText(text, { font: style.font, fontSize: style.fontSize, bold: style.bold, italic: style.italic });
 
 const longestWord = (doc: PdfDocument, lines: string[], style: CellStyle): number => {
     let widest = 0;
     for (const line of lines) {
-        for (const word of line.split(/[^\S ]+/)) {
+        for (const word of line.split(/[^\S\u00A0]+/)) {
             if (word.length === 0) continue;
             widest = Math.max(widest, measureText(doc, word, style));
         }
@@ -74,7 +100,7 @@ function resolveCellStyle(
     ) as CellStyle;
 }
 
-function buildRows(input: LayoutInput, rows: RowDefinition[], section: GridSection): ResolvedRow[] {
+function buildRows(input: LayoutInput, rows: RowDefinition[], section: GridSection, scale: number): ResolvedRow[] {
     const { doc, layers } = input;
     const occupied = new Map<string, boolean>();
 
@@ -98,7 +124,7 @@ function buildRows(input: LayoutInput, rows: RowDefinition[], section: GridSecti
             const normalized = normalizeCell(definition ?? null);
             const column = input.columns[columnCursor] ?? null;
             const isStripe = section === 'body' && rowIndex % 2 === 1;
-            const style = resolveCellStyle(layers, column, section, isStripe, normalized.style);
+            const style = scaleStyle(resolveCellStyle(layers, column, section, isStripe, normalized.style), scale);
 
             const rawText = formatCellValue(normalized.value, column, rowIndex, section);
             const lines = splitCellText(rawText);
@@ -241,7 +267,8 @@ function assignCellGeometry(rows: ResolvedRow[], columns: ResolvedColumn[], doc:
     }
 }
 
-export function layoutGrid(input: LayoutInput): LayoutResult {
+function layoutAtScale(source: LayoutInput, scale: number): LayoutResult {
+    const input: LayoutInput = scale === 1 ? source : { ...source, columns: source.columns.map((column) => scaleColumn(column, scale)) };
     const columns: ResolvedColumn[] = input.columns.map((definition, index) => ({
         key: definition.key,
         index,
@@ -252,9 +279,9 @@ export function layoutGrid(input: LayoutInput): LayoutResult {
         readableWidth: 0,
     }));
 
-    const headRows = buildRows(input, input.head, 'header');
-    const bodyRows = buildRows(input, input.body, 'body');
-    const footRows = buildRows(input, input.foot, 'footer');
+    const headRows = buildRows(input, input.head, 'header', scale);
+    const bodyRows = buildRows(input, input.body, 'body', scale);
+    const footRows = buildRows(input, input.foot, 'footer', scale);
     const allRows = [...headRows, ...bodyRows, ...footRows];
 
     accumulateColumnMetrics(allRows, columns);
@@ -284,6 +311,24 @@ export function layoutGrid(input: LayoutInput): LayoutResult {
         totalWidth: columns.reduce((sum, column) => sum + column.width, 0),
         overflow: solved.overflow,
     };
+}
+
+function fitColumnsToWidth(layout: LayoutResult, input: LayoutInput): LayoutResult {
+    const ratio = input.availableWidth / layout.totalWidth;
+    for (const column of layout.columns) column.width *= ratio;
+    assignCellGeometry([...layout.headRows, ...layout.bodyRows, ...layout.footRows], layout.columns, input.doc, input.minRowHeight);
+    return { ...layout, totalWidth: input.availableWidth, overflow: 0 };
+}
+
+export function layoutGrid(input: LayoutInput): LayoutResult {
+    let layout = layoutAtScale(input, 1);
+    if (layout.overflow <= 0.01 || input.overflowColumns === 'paginate') return layout;
+    let scale = 1;
+    for (let attempt = 0; attempt < shrinkAttempts && layout.overflow > 0.01 && scale > minimumShrinkScale; attempt += 1) {
+        scale = Math.max(minimumShrinkScale, scale * (input.availableWidth / layout.totalWidth));
+        layout = layoutAtScale(input, scale);
+    }
+    return layout.overflow > 0.01 ? fitColumnsToWidth(layout, input) : layout;
 }
 
 export function cellBorderWidth(cell: ResolvedCell, side: 'top' | 'right' | 'bottom' | 'left'): number {

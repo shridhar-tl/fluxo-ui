@@ -1,7 +1,7 @@
 import { PdfDocument } from '../../../pdf/core/pdf-document';
+import { extractTable } from '../../../pdf/html/table-extractor';
 import { stampPageNumbers } from '../../../pdf/layout/page-furniture';
 import { toBlob } from '../../../pdf/output/document-output';
-import { extractTable } from '../../../pdf/html/table-extractor';
 import { drawGrid } from '../../../pdf/table/draw-grid';
 import type { PageSetup } from '../report-definition-types';
 
@@ -28,6 +28,12 @@ type Leaf =
     | { kind: 'image'; box: Box; dataUrl: string }
     | { kind: 'text'; box: Box; element: HTMLElement; text: string }
     | { kind: 'rule'; box: Box; color: string };
+
+interface Frame {
+    left: number;
+    top: number;
+    width: number;
+}
 
 interface Placement {
     x: number;
@@ -136,7 +142,7 @@ function isVisible(el: Element): boolean {
     return rect.width > 0 && rect.height > 0;
 }
 
-function boxOf(el: Element, origin: DOMRect): Box {
+function boxOf(el: Element, origin: Frame): Box {
     const rect = el.getBoundingClientRect();
     return { left: rect.left - origin.left, top: rect.top - origin.top, width: rect.width, height: rect.height };
 }
@@ -275,9 +281,20 @@ async function graphicToPng(el: Element, box: Box): Promise<string | null> {
     return null;
 }
 
+/** The area the report components take inside the viewer, without its padding or the space beside a centered column. */
+function contentFrame(root: HTMLElement): Frame {
+    const rootRect = root.getBoundingClientRect();
+    const rects = Array.from(root.children)
+        .filter((child) => !child.matches(excludedSelector) && isVisible(child))
+        .map((child) => child.getBoundingClientRect());
+    if (rects.length === 0) return { left: rootRect.left, top: rootRect.top, width: rootRect.width };
+    const left = Math.min(...rects.map((r) => r.left));
+    const right = Math.max(...rects.map((r) => r.right));
+    return { left, top: rootRect.top, width: Math.max(1, right - left) };
+}
+
 /** Collects the printable blocks of the report in document order: tables, graphics, text and separators. */
-async function collectLeaves(root: HTMLElement): Promise<Leaf[]> {
-    const origin = root.getBoundingClientRect();
+async function collectLeaves(root: HTMLElement, origin: Frame): Promise<Leaf[]> {
     const leaves: Leaf[] = [];
 
     const visit = async (el: Element): Promise<void> => {
@@ -499,8 +516,9 @@ export async function exportReportToPdf(element: HTMLElement, options: PdfExport
         await nextFrame();
         await nextFrame();
         const doc = createDocument(options);
-        const leaves = await collectLeaves(element);
-        new ReportPdfLayout(doc, element.getBoundingClientRect().width).render(groupRows(leaves));
+        const frame = contentFrame(element);
+        const leaves = await collectLeaves(element, frame);
+        new ReportPdfLayout(doc, frame.width).render(groupRows(leaves));
         if (options.pageNumbers !== false) stampPageNumbers(doc);
         return toBlob(doc.build());
     } finally {

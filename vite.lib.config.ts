@@ -289,8 +289,7 @@ export default defineConfig({
             copyDtsFiles: false,
             include: ['src/**/*'],
             exclude: ['src/App.tsx', 'src/main.tsx', 'src/IconShowcase.tsx', 'src/cli/**'],
-            rollupTypes: false,
-            outDir: 'dist',
+            outDirs: 'dist',
             entryRoot: 'src',
             staticImport: true,
             compilerOptions: {

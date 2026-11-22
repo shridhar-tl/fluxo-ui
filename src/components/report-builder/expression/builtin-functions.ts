@@ -1,0 +1,621 @@
+import type { BuiltinFunction, FunctionParam } from './expression-types';
+import { getRegisteredFunctions } from './function-registry';
+
+const rowsOrValues: FunctionParam = {
+    name: 'values',
+    type: 'array',
+    description: 'A list of values, or a list of rows such as a datasource or the rows of a group.',
+};
+
+const fieldOfRows: FunctionParam = {
+    name: 'field',
+    type: 'string',
+    optional: true,
+    description: 'When values is a list of rows, the field to read from each row. Nested paths such as "fields.status.name" are allowed.',
+};
+
+const dateUnit: FunctionParam = {
+    name: 'unit',
+    type: 'string',
+    description: 'One of "day" (d), "week" (w), "month" (m), "year" (y) or "hour" (h).',
+};
+
+const boundaryUnit: FunctionParam = {
+    name: 'unit',
+    type: 'string',
+    description: 'One of "week" (w), "month" (m), "quarter" (q) or "year" (y). Weeks start on Sunday.',
+};
+
+const anyDate: FunctionParam = {
+    name: 'date',
+    type: 'date',
+    description: 'A date, a yyyy-MM-dd text or a date and time text.',
+};
+
+const decimalsParam = (defaultValue: string): FunctionParam => ({
+    name: 'decimals',
+    type: 'number',
+    optional: true,
+    defaultValue,
+    description: 'Number of digits after the decimal point, from 0 to 10.',
+});
+
+export const builtinFunctions: BuiltinFunction[] = [
+    {
+        name: 'Sum',
+        category: 'Aggregate',
+        description: 'Adds up the numbers in a list. Values that are not numbers are skipped.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'number',
+        examples: [{ expression: 'Sum(Datasources.Worklogs, "hours")' }, { expression: 'Sum(RowGroup("project").values, "hours")' }, { expression: 'Sum(Split("1,2,3", ","))', result: '6' }],
+    },
+    {
+        name: 'Count',
+        category: 'Aggregate',
+        description: 'Number of items in a list. With a field, only the rows where that field has a value are counted.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'number',
+        examples: [{ expression: 'Count(RowGroup("status").values)' }, { expression: 'Count(Datasources.Issues, "assignee")' }, { expression: 'Count(Split("a,b", ","))', result: '2' }],
+    },
+    {
+        name: 'CountDistinct',
+        category: 'Aggregate',
+        description: 'Number of different values in a list. Empty values are not counted.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'number',
+        examples: [{ expression: 'CountDistinct(Datasources.Issues, "assignee.displayName")' }, { expression: 'CountDistinct(Split("a,b,a", ","))', result: '2' }],
+    },
+    {
+        name: 'Avg',
+        category: 'Aggregate',
+        description: 'Average of the numbers in a list. Gives 0 when there are no numbers.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'number',
+        examples: [{ expression: 'Avg(Datasources.Issues, "storyPoints")' }, { expression: 'Avg(Split("2,4,9", ","))', result: '5' }],
+    },
+    {
+        name: 'Median',
+        category: 'Aggregate',
+        description: 'Middle value of the numbers in a list. Gives 0 when there are no numbers.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'number',
+        examples: [{ expression: 'Median(Pluck(Datasources.Issues, "storyPoints"))' }, { expression: 'Median(Split("1,5,9", ","))', result: '5' }],
+    },
+    {
+        name: 'Min',
+        category: 'Aggregate',
+        description: 'Smallest number in a list. Gives 0 when there are no numbers.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'number',
+        examples: [{ expression: 'Min(Datasources.Worklogs, "hours")' }, { expression: 'Min(Split("4,2,8", ","))', result: '2' }],
+    },
+    {
+        name: 'Max',
+        category: 'Aggregate',
+        description: 'Largest number in a list. Gives 0 when there are no numbers.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'number',
+        examples: [{ expression: 'Max(Datasources.Worklogs, "hours")' }, { expression: 'Max(Split("4,2,8", ","))', result: '8' }],
+    },
+    {
+        name: 'Percent',
+        category: 'Aggregate',
+        description: 'Part as a percentage of the total, rounded. Gives 0 when the total is 0.',
+        params: [
+            { name: 'part', type: 'number', description: 'The share to measure.' },
+            { name: 'total', type: 'number', description: 'The whole the part belongs to.' },
+            decimalsParam('0'),
+        ],
+        returnType: 'number',
+        examples: [{ expression: 'Percent(3, 8, 1)', result: '37.5' }],
+    },
+    {
+        name: 'IIf',
+        category: 'Logic',
+        description: 'Gives one value when the condition is true and another when it is false.',
+        params: [
+            { name: 'condition', type: 'boolean', description: 'The test to check.' },
+            { name: 'trueValue', type: 'any', description: 'Given when the condition is true.' },
+            { name: 'falseValue', type: 'any', description: 'Given when the condition is false.' },
+        ],
+        returnType: 'any',
+        examples: [{ expression: 'IIf(Field.hours > 8, "Overtime", "Normal")' }, { expression: 'IIf(3 > 2, "yes", "no")', result: 'yes' }],
+    },
+    {
+        name: 'Switch',
+        category: 'Logic',
+        description: 'Compares a value with each case in turn and gives the result paired with the first case that matches. A last unpaired argument is the result when nothing matches; without it the result is null.',
+        params: [
+            { name: 'value', type: 'any', description: 'The value to compare.' },
+            { name: 'caseAndResult', type: 'any', variadic: true, description: 'Pairs of a case and its result, then an optional fallback.' },
+        ],
+        returnType: 'any',
+        examples: [{ expression: 'Switch(Field.priority.name, "Highest", 1, "High", 2, 3)' }, { expression: 'Switch("High", "Highest", 1, "High", 2, 3)', result: '2' }],
+    },
+    {
+        name: 'Coalesce',
+        category: 'Logic',
+        description: 'First argument that is not null. Gives null when all of them are null.',
+        params: [{ name: 'values', type: 'any', variadic: true, description: 'Values to try in order.' }],
+        returnType: 'any',
+        examples: [{ expression: 'Coalesce(Field.assignee.displayName, Field.reporter.displayName, "Nobody")' }, { expression: 'Coalesce(null, "second")', result: 'second' }],
+    },
+    {
+        name: 'IfNull',
+        category: 'Logic',
+        description: 'Gives the fallback when the value is null, otherwise the value itself.',
+        params: [
+            { name: 'value', type: 'any', description: 'The value to check.' },
+            { name: 'fallback', type: 'any', description: 'Given when the value is null.' },
+        ],
+        returnType: 'any',
+        examples: [{ expression: 'IfNull(Field.storyPoints, 0)' }, { expression: 'IfNull(null, 0)', result: '0' }],
+    },
+    {
+        name: 'IsNull',
+        category: 'Logic',
+        description: 'True when the value is null or missing.',
+        params: [{ name: 'value', type: 'any', description: 'The value to check.' }],
+        returnType: 'boolean',
+        examples: [{ expression: 'IsNull(Variables.selectedStatus)' }, { expression: 'IsNull(null)', result: 'true' }],
+    },
+    {
+        name: 'IsEmpty',
+        category: 'Logic',
+        description: 'True when the value is null, an empty text or an empty list.',
+        params: [{ name: 'value', type: 'any', description: 'The value to check.' }],
+        returnType: 'boolean',
+        examples: [{ expression: 'IsEmpty(Parameters.projects)' }, { expression: 'IsEmpty("")', result: 'true' }],
+    },
+    {
+        name: 'InList',
+        category: 'Logic',
+        description: 'True when the value is one of the items in the list. Items are also compared as text, so 5 matches "5".',
+        params: [
+            { name: 'value', type: 'any', description: 'The value to look for.' },
+            { name: 'list', type: 'array', description: 'The list to look in.' },
+        ],
+        returnType: 'boolean',
+        examples: [{ expression: 'InList(Field.status.name, Split("Done,Closed", ","))' }, { expression: 'InList("b", Split("a,b", ","))', result: 'true' }],
+    },
+    {
+        name: 'Between',
+        category: 'Logic',
+        description: 'True when the value lies between min and max, both included. Numbers are compared as numbers and everything else as text, which also works for yyyy-MM-dd dates.',
+        params: [
+            { name: 'value', type: 'any', description: 'The value to check.' },
+            { name: 'min', type: 'any', description: 'Lowest allowed value.' },
+            { name: 'max', type: 'any', description: 'Highest allowed value.' },
+        ],
+        returnType: 'boolean',
+        examples: [{ expression: 'Between(Field.date, StartOf("month", Today()), EndOf("month", Today()))' }, { expression: 'Between(5, 1, 10)', result: 'true' }],
+    },
+    {
+        name: 'Not',
+        category: 'Logic',
+        description: 'Turns true into false and false into true. The same as writing ! before a value.',
+        params: [{ name: 'value', type: 'boolean', description: 'The value to negate.' }],
+        returnType: 'boolean',
+        examples: [{ expression: 'Not(IsEmpty(Field.labels))' }, { expression: 'Not(1 > 2)', result: 'true' }],
+    },
+    {
+        name: 'Any',
+        category: 'Logic',
+        description: 'True when the list has at least one item.',
+        params: [{ name: 'values', type: 'array', description: 'The list to check.' }],
+        returnType: 'boolean',
+        examples: [{ expression: 'Any(Field.labels)' }, { expression: 'Any(Split("a", ","))', result: 'true' }],
+    },
+    {
+        name: 'All',
+        category: 'Logic',
+        description: 'True when the list has items and every item is truthy.',
+        params: [{ name: 'values', type: 'array', description: 'The list to check.' }],
+        returnType: 'boolean',
+        examples: [{ expression: 'All(Pluck(Datasources.Checks, "passed"))' }, { expression: 'All(Split("a,b", ","))', result: 'true' }],
+    },
+    {
+        name: 'Concat',
+        category: 'Text',
+        description: 'Joins all the arguments into one text.',
+        params: [{ name: 'values', type: 'any', variadic: true, description: 'Values to join, in order.' }],
+        returnType: 'string',
+        examples: [{ expression: 'Concat(Field.key, " - ", Field.summary)' }, { expression: 'Concat("JSP", "-", 12)', result: 'JSP-12' }],
+    },
+    {
+        name: 'Upper',
+        category: 'Text',
+        description: 'The text in capital letters.',
+        params: [{ name: 'value', type: 'string', description: 'The text to change.' }],
+        returnType: 'string',
+        examples: [{ expression: 'Upper("done")', result: 'DONE' }],
+    },
+    {
+        name: 'Lower',
+        category: 'Text',
+        description: 'The text in small letters.',
+        params: [{ name: 'value', type: 'string', description: 'The text to change.' }],
+        returnType: 'string',
+        examples: [{ expression: 'Lower("DONE")', result: 'done' }],
+    },
+    {
+        name: 'Trim',
+        category: 'Text',
+        description: 'The text without spaces at the start and end.',
+        params: [{ name: 'value', type: 'string', description: 'The text to trim.' }],
+        returnType: 'string',
+        examples: [{ expression: 'Trim("  done ")', result: 'done' }],
+    },
+    {
+        name: 'Len',
+        category: 'Text',
+        description: 'Number of characters in the text.',
+        params: [{ name: 'value', type: 'string', description: 'The text to measure.' }],
+        returnType: 'number',
+        examples: [{ expression: 'Len("Sprint")', result: '6' }],
+    },
+    {
+        name: 'Length',
+        category: 'Text',
+        description: 'Number of items in a list, or number of characters in a text. Gives 0 for null.',
+        params: [{ name: 'value', type: 'any', description: 'A list or a text.' }],
+        returnType: 'number',
+        examples: [{ expression: 'Length(Field.labels)' }, { expression: 'Length(Split("a,b,c", ","))', result: '3' }],
+    },
+    {
+        name: 'Mid',
+        category: 'Text',
+        description: 'Part of the text, starting at a position counted from 1.',
+        params: [
+            { name: 'value', type: 'string', description: 'The text to take from.' },
+            { name: 'start', type: 'number', description: 'Position of the first character to take. The first character is 1.' },
+            { name: 'length', type: 'number', description: 'Number of characters to take.' },
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'Mid("JSP-123", 5, 3)', result: '123' }],
+    },
+    {
+        name: 'Replace',
+        category: 'Text',
+        description: 'The text with every occurrence of find replaced.',
+        params: [
+            { name: 'value', type: 'string', description: 'The text to change.' },
+            { name: 'find', type: 'string', description: 'The text to look for.' },
+            { name: 'replaceWith', type: 'string', description: 'The text to put in its place.' },
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'Replace("In Progress", " ", "-")', result: 'In-Progress' }],
+    },
+    {
+        name: 'StartsWith',
+        category: 'Text',
+        description: 'True when the text starts with the prefix. Letter case matters.',
+        params: [
+            { name: 'value', type: 'string', description: 'The text to check.' },
+            { name: 'prefix', type: 'string', description: 'The start to look for.' },
+        ],
+        returnType: 'boolean',
+        examples: [{ expression: 'StartsWith(Field.key, "JSP-")' }, { expression: 'StartsWith("JSP-12", "JSP")', result: 'true' }],
+    },
+    {
+        name: 'EndsWith',
+        category: 'Text',
+        description: 'True when the text ends with the suffix. Letter case matters.',
+        params: [
+            { name: 'value', type: 'string', description: 'The text to check.' },
+            { name: 'suffix', type: 'string', description: 'The end to look for.' },
+        ],
+        returnType: 'boolean',
+        examples: [{ expression: 'EndsWith(Field.summary, "?")' }, { expression: 'EndsWith("Ready?", "?")', result: 'true' }],
+    },
+    {
+        name: 'Contains',
+        category: 'Text',
+        description: 'True when the text contains the other text. Letter case matters.',
+        params: [
+            { name: 'value', type: 'string', description: 'The text to search.' },
+            { name: 'search', type: 'string', description: 'The text to look for.' },
+        ],
+        returnType: 'boolean',
+        examples: [{ expression: 'Contains(Lower(Field.summary), "login")' }, { expression: 'Contains("login page", "login")', result: 'true' }],
+    },
+    {
+        name: 'PadLeft',
+        category: 'Text',
+        description: 'The value as text, filled on the left up to the given length.',
+        params: [
+            { name: 'value', type: 'any', description: 'The value to pad.' },
+            { name: 'length', type: 'number', description: 'Length of the result.' },
+            { name: 'char', type: 'string', optional: true, defaultValue: '" "', description: 'Character to fill with.' },
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'PadLeft(7, 3, "0")', result: '007' }],
+    },
+    {
+        name: 'PadRight',
+        category: 'Text',
+        description: 'The value as text, filled on the right up to the given length.',
+        params: [
+            { name: 'value', type: 'any', description: 'The value to pad.' },
+            { name: 'length', type: 'number', description: 'Length of the result.' },
+            { name: 'char', type: 'string', optional: true, defaultValue: '" "', description: 'Character to fill with.' },
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'PadRight("A", 3, ".")', result: 'A..' }],
+    },
+    {
+        name: 'Split',
+        category: 'Text',
+        description: 'Splits a text into a list. Gives an empty list for an empty text.',
+        params: [
+            { name: 'value', type: 'string', description: 'The text to split.' },
+            { name: 'separator', type: 'string', optional: true, defaultValue: '","', description: 'The text between the parts.' },
+        ],
+        returnType: 'any',
+        returns: { type: 'array', description: 'The parts of the text.' },
+        examples: [{ expression: 'Split("a,b,c", ",")', result: '["a", "b", "c"]' }],
+    },
+    {
+        name: 'Join',
+        category: 'Text',
+        description: 'Joins the items of a list into one text. Null items are skipped.',
+        params: [
+            { name: 'values', type: 'array', description: 'The list to join.' },
+            { name: 'separator', type: 'string', optional: true, defaultValue: '", "', description: 'Text put between the items.' },
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'Join(Field.labels, " | ")' }, { expression: 'Join(Split("a,b", ","), " | ")', result: 'a | b' }],
+    },
+    {
+        name: 'Round',
+        category: 'Number',
+        description: 'The number rounded to the given number of decimals.',
+        params: [
+            { name: 'value', type: 'number', description: 'The number to round.' },
+            { name: 'decimals', type: 'number', optional: true, defaultValue: '0', description: 'Number of digits to keep after the decimal point.' },
+        ],
+        returnType: 'number',
+        examples: [{ expression: 'Round(2.456, 2)', result: '2.46' }],
+    },
+    {
+        name: 'Floor',
+        category: 'Number',
+        description: 'The number rounded down to a whole number.',
+        params: [{ name: 'value', type: 'number', description: 'The number to round.' }],
+        returnType: 'number',
+        examples: [{ expression: 'Floor(2.9)', result: '2' }],
+    },
+    {
+        name: 'Ceil',
+        category: 'Number',
+        description: 'The number rounded up to a whole number.',
+        params: [{ name: 'value', type: 'number', description: 'The number to round.' }],
+        returnType: 'number',
+        examples: [{ expression: 'Ceil(2.1)', result: '3' }],
+    },
+    {
+        name: 'Abs',
+        category: 'Number',
+        description: 'The number without its minus sign.',
+        params: [{ name: 'value', type: 'number', description: 'The number.' }],
+        returnType: 'number',
+        examples: [{ expression: 'Abs(-4)', result: '4' }],
+    },
+    {
+        name: 'FormatNumber',
+        category: 'Formatting',
+        description: 'The number as text with a fixed number of decimals and a thousands separator. Gives an empty text when the value is not a number.',
+        params: [
+            { name: 'value', type: 'number', description: 'The number to format.' },
+            decimalsParam('2'),
+            { name: 'thousandsSeparator', type: 'string', optional: true, defaultValue: '","', description: 'Text put between groups of thousands.' },
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'FormatNumber(1234.5)', result: '1,234.50' }, { expression: 'FormatNumber(Field.hours, 1)' }],
+    },
+    {
+        name: 'FormatCurrency',
+        category: 'Formatting',
+        description: 'The number as an amount of money.',
+        params: [
+            { name: 'value', type: 'number', description: 'The amount.' },
+            { name: 'symbol', type: 'string', optional: true, defaultValue: '"$"', description: 'Currency symbol put in front.' },
+            decimalsParam('2'),
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'FormatCurrency(1500, "€")', result: '€1,500.00' }],
+    },
+    {
+        name: 'FormatPercent',
+        category: 'Formatting',
+        description: 'A fraction as a percentage, so 0.25 becomes 25%.',
+        params: [
+            { name: 'value', type: 'number', description: 'The fraction, where 1 is 100%.' },
+            decimalsParam('0'),
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'FormatPercent(0.256, 1)', result: '25.6%' }],
+    },
+    {
+        name: 'FormatDate',
+        category: 'Formatting',
+        description: 'The date as text in the given pattern. Patterns use yyyy, yy, MMMM, MMM, MM, M, dddd, ddd, dd, d, HH, H, hh, h, mm, ss and a.',
+        params: [
+            anyDate,
+            { name: 'format', type: 'string', optional: true, defaultValue: '"yyyy-MM-dd"', description: 'The pattern to write the date in.' },
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'FormatDate("2026-11-22", "dd MMM yyyy")', result: '22 Nov 2026' }],
+    },
+    {
+        name: 'Today',
+        category: 'Date',
+        description: 'Today\'s date in your time zone.',
+        params: [],
+        returnType: 'string',
+        returns: { type: 'string', description: 'The date as yyyy-MM-dd.' },
+        examples: [{ expression: 'Today()' }],
+    },
+    {
+        name: 'Now',
+        category: 'Date',
+        description: 'The current date and time.',
+        params: [],
+        returnType: 'string',
+        returns: { type: 'string', description: 'The date and time as an ISO text in UTC.' },
+        examples: [{ expression: 'FormatDate(Now(), "HH:mm")' }],
+    },
+    {
+        name: 'DateAdd',
+        category: 'Date',
+        description: 'The date moved forward by an amount of time. Use a negative amount to move back. A yyyy-MM-dd date stays yyyy-MM-dd unless hours are added.',
+        params: [
+            dateUnit,
+            { name: 'amount', type: 'number', description: 'How many units to add.' },
+            anyDate,
+        ],
+        returnType: 'string',
+        examples: [{ expression: 'DateAdd("day", 7, Today())' }, { expression: 'DateAdd("month", 1, "2026-01-15")', result: '2026-02-15' }],
+    },
+    {
+        name: 'DateDiff',
+        category: 'Date',
+        description: 'Time from the first date to the second, in whole units. Days count calendar days. Gives null when a date is not valid.',
+        params: [
+            { name: 'unit', type: 'string', description: 'One of "day" (d), "week" (w), "month" (m), "year" (y), "hour" (h) or "minute" (mi). Any other unit gives milliseconds.' },
+            { name: 'from', type: 'date', description: 'The start date.' },
+            { name: 'to', type: 'date', description: 'The end date.' },
+        ],
+        returnType: 'number',
+        examples: [{ expression: 'DateDiff("day", Field.created, Today())' }, { expression: 'DateDiff("day", "2026-11-01", "2026-11-22")', result: '21' }],
+    },
+    {
+        name: 'StartOf',
+        category: 'Date',
+        description: 'First day of the week, month, quarter or year the date is in.',
+        params: [boundaryUnit, anyDate],
+        returnType: 'string',
+        returns: { type: 'string', description: 'The date as yyyy-MM-dd.' },
+        examples: [{ expression: 'StartOf("month", "2026-11-22")', result: '2026-11-01' }],
+    },
+    {
+        name: 'EndOf',
+        category: 'Date',
+        description: 'Last day of the week, month, quarter or year the date is in.',
+        params: [boundaryUnit, anyDate],
+        returnType: 'string',
+        returns: { type: 'string', description: 'The date as yyyy-MM-dd.' },
+        examples: [{ expression: 'EndOf("quarter", "2026-11-22")', result: '2026-12-31' }],
+    },
+    {
+        name: 'Year',
+        category: 'Date',
+        description: 'The year of the date. Gives 0 when the date is not valid.',
+        params: [anyDate],
+        returnType: 'number',
+        examples: [{ expression: 'Year("2026-11-22")', result: '2026' }],
+    },
+    {
+        name: 'Month',
+        category: 'Date',
+        description: 'The month of the date, from 1 for January to 12. Gives 0 when the date is not valid.',
+        params: [anyDate],
+        returnType: 'number',
+        examples: [{ expression: 'Month("2026-11-22")', result: '11' }],
+    },
+    {
+        name: 'Day',
+        category: 'Date',
+        description: 'The day of the month, from 1 to 31. Gives 0 when the date is not valid.',
+        params: [anyDate],
+        returnType: 'number',
+        examples: [{ expression: 'Day("2026-11-22")', result: '22' }],
+    },
+    {
+        name: 'WeekDay',
+        category: 'Date',
+        description: 'The day of the week, from 0 for Sunday to 6 for Saturday.',
+        params: [anyDate],
+        returnType: 'number',
+        examples: [{ expression: 'WeekDay("2026-11-22")', result: '0' }],
+    },
+    {
+        name: 'Pluck',
+        category: 'List',
+        description: 'The value of one field from every row.',
+        params: [
+            { name: 'rows', type: 'rows', description: 'The rows to read.' },
+            { name: 'field', type: 'string', description: 'The field to read from each row. Nested paths are allowed.' },
+        ],
+        returnType: 'any',
+        returns: { type: 'array', description: 'One value for each row.' },
+        examples: [{ expression: 'Pluck(Datasources.Issues, "key")' }],
+    },
+    {
+        name: 'Distinct',
+        category: 'List',
+        description: 'The different values of a list in the order they first appear. Null values are left out.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'any',
+        returns: { type: 'array', description: 'Each value once.' },
+        examples: [{ expression: 'Join(Distinct(Datasources.Issues, "status.name"))' }, { expression: 'Join(Distinct(Split("a,b,a", ",")))', result: 'a, b' }],
+    },
+    {
+        name: 'First',
+        category: 'List',
+        description: 'The first item of a list. Gives null for an empty list.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'any',
+        examples: [{ expression: 'First(RowGroup("project").values, "project.name")' }, { expression: 'First(Split("a,b", ","))', result: 'a' }],
+    },
+    {
+        name: 'Last',
+        category: 'List',
+        description: 'The last item of a list. Gives null for an empty list.',
+        params: [rowsOrValues, fieldOfRows],
+        returnType: 'any',
+        examples: [{ expression: 'Last(Datasources.Sprints, "name")' }, { expression: 'Last(Split("a,b", ","))', result: 'b' }],
+    },
+    {
+        name: 'Field',
+        category: 'Row',
+        description: 'Reads a field of the current row by its path. Useful when the path contains characters Field.name cannot hold. Gives null outside a row.',
+        params: [{ name: 'path', type: 'string', description: 'The path of the field, with nested parts separated by dots.' }],
+        returnType: 'any',
+        examples: [{ expression: 'Field("fields.customfield_10016")' }],
+    },
+    {
+        name: 'ToString',
+        category: 'Conversion',
+        description: 'The value as text. Null becomes an empty text.',
+        params: [{ name: 'value', type: 'any', description: 'The value to convert.' }],
+        returnType: 'string',
+        examples: [{ expression: 'Concat("Sprint ", ToString(Field.id))' }, { expression: 'ToString(12)', result: '12' }],
+    },
+    {
+        name: 'ToNumber',
+        category: 'Conversion',
+        description: 'The value as a number.',
+        params: [{ name: 'value', type: 'any', description: 'The value to convert.' }],
+        returnType: 'number',
+        examples: [{ expression: 'ToNumber("12.5")', result: '12.5' }],
+    },
+];
+
+export function functionArity(fn: Pick<BuiltinFunction, 'params'>): { min: number; max: number } {
+    const variadic = fn.params.some((p) => p.variadic);
+    const min = fn.params.filter((p) => !p.optional && !p.variadic).length;
+    return { min, max: variadic ? Number.POSITIVE_INFINITY : fn.params.length };
+}
+
+export function functionSignature(fn: Pick<BuiltinFunction, 'name' | 'params'>): string {
+    const params = fn.params.map((p) => (p.variadic ? `...${p.name}` : p.optional ? `${p.name}?` : p.name));
+    return `${fn.name}(${params.join(', ')})`;
+}
+
+export function expressionFunctions(local: BuiltinFunction[] = []): BuiltinFunction[] {
+    const localNames = new Set(local.map((f) => f.name.toLowerCase()));
+    const custom = [...local, ...getRegisteredFunctions().filter((f) => !localNames.has(f.name.toLowerCase()))];
+    const customNames = new Set(custom.map((f) => f.name.toLowerCase()));
+    return [...builtinFunctions.filter((f) => !customNames.has(f.name.toLowerCase())), ...custom];
+}

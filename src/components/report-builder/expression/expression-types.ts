@@ -120,10 +120,20 @@ export interface Token {
 
 // ── Function Definitions ──────────────────────────────────────────────────────
 
+export type FunctionValueType = ExpressionReturnType | 'date' | 'array' | 'rows';
+
 export interface FunctionParam {
     name: string;
-    type: ExpressionReturnType | 'any';
+    type: FunctionValueType;
+    description?: string;
+    optional?: boolean;
+    defaultValue?: string;
     variadic?: boolean;
+}
+
+export interface FunctionExample {
+    expression: string;
+    result?: string;
 }
 
 export interface BuiltinFunction {
@@ -131,6 +141,9 @@ export interface BuiltinFunction {
     description: string;
     params: FunctionParam[];
     returnType: ExpressionReturnType;
+    returns?: { type: FunctionValueType; description?: string };
+    category?: string;
+    examples?: FunctionExample[];
     isAsync?: boolean;
 }
 

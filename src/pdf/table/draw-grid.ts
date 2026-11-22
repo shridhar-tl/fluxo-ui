@@ -48,6 +48,7 @@ export function drawGrid(doc: PdfDocument, options: GridOptions = {}): GridResul
         layers,
         availableWidth: requestedWidth ?? maxWidth,
         minRowHeight: options.minRowHeight ?? 0,
+        overflowColumns: options.overflowColumns,
     });
 
     const tableWidth = layout.totalWidth;

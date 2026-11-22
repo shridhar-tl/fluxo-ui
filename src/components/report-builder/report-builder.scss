@@ -1934,3 +1934,16 @@ select.eui-rb-prop-input {
 .eui-rb-sort-direction {
     min-width: 110px;
 }
+
+.eui-rb-functions-panel-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+
+    > .eui-fn-ref {
+        flex: 1;
+        height: auto;
+        min-height: 0;
+    }
+}

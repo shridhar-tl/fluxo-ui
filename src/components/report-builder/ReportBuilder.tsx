@@ -1,10 +1,13 @@
-import classNames from 'classnames';
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+
+import classNames from 'classnames';
+
 import {
     CodeIcon,
     DatabaseIcon,
     DownloadIcon,
     FilterIcon,
+    FunctionIcon,
     WebsiteIcon,
     PaletteIcon,
     PlayIcon,
@@ -23,21 +26,22 @@ import { DockedLayout } from '../docked-layout';
 import type { DockedLayoutState, PanelConfig, ContentTab } from '../docked-layout';
 import DragDropProvider from '../drag-drop/DragDropProvider';
 import { mergeBuiltInFields } from './built-in-fields';
-import { withCorePlugins } from './data/core-plugins';
-import { ReportBuilderContext, useRBStore } from './report-builder-context';
-import { ReportViewer } from './ReportViewer';
-import { createReportBuilderStore } from './report-builder-store';
-import type { ReportBuilderProps, ReportBuilderState, ReportComponentPlugin, ReportViewerHandle } from './report-builder-types';
-import { createEmptyDefinition } from './report-definition-types';
 import { BuiltInFieldsPanel } from './components/BuiltInFieldsPanel';
 import { ConsolePanel } from './components/ConsolePanel';
 import { DatasourceExplorer } from './components/DatasourceExplorer';
+import { FunctionsPanel } from './components/FunctionsPanel';
 import { ParametersListPanel } from './components/ParametersListPanel';
 import { PropertiesPallet } from './components/PropertiesPallet';
 import { StylesPallet } from './components/StylesPallet';
 import { ToolboxPanel } from './components/ToolboxPanel';
 import { VariablesListPanel } from './components/VariablesListPanel';
+import { withCorePlugins } from './data/core-plugins';
 import { DesignArea } from './DesignArea';
+import { ReportBuilderContext, useRBStore } from './report-builder-context';
+import { createReportBuilderStore } from './report-builder-store';
+import type { ReportBuilderProps, ReportBuilderState, ReportComponentPlugin, ReportViewerHandle } from './report-builder-types';
+import { createEmptyDefinition } from './report-definition-types';
+import { ReportViewer } from './ReportViewer';
 import '../eui-base.scss';
 import './report-builder.scss';
 
@@ -221,6 +225,7 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
     const parametersPc = panelConfig?.parameters;
     const variablesPc = panelConfig?.variables;
     const builtInFieldsPc = panelConfig?.builtInFields;
+    const functionsPc = panelConfig?.functions;
     const propertiesPc = panelConfig?.properties;
     const stylesPc = panelConfig?.styles;
     const consolePc = panelConfig?.console;
@@ -312,6 +317,23 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
             ] : undefined,
         },
         {
+            id: 'rb-functions',
+            title: 'Functions',
+            icon: FunctionIcon,
+            defaultPosition: 'left',
+            defaultState: 'auto-hide',
+            defaultSize: 300,
+            minSize: 220,
+            userCanMove: functionsPc?.userCanMove,
+            userCanClose: functionsPc?.userCanClose,
+            userCanTogglePin: true,
+            children: <FunctionsPanel />,
+            breakpoints: propBreakpoints ? [
+                { breakpointKey: 'xs', state: 'auto-hide' },
+                { breakpointKey: 'sm', state: 'auto-hide' },
+            ] : undefined,
+        },
+        {
             id: 'rb-properties',
             title: 'Properties',
             icon: SettingsIcon,
@@ -354,7 +376,7 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
             userCanTogglePin: true,
             children: <ConsolePanel />,
         },
-    ], [toolboxPc, datasourcePc, parametersPc, variablesPc, builtInFieldsPc, propertiesPc, stylesPc, consolePc, propBreakpoints]);
+    ], [toolboxPc, datasourcePc, parametersPc, variablesPc, builtInFieldsPc, functionsPc, propertiesPc, stylesPc, consolePc, propBreakpoints]);
 
     const contextValue = useMemo(
         () => ({

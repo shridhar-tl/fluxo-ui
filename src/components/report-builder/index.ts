@@ -60,6 +60,8 @@ export type {
     ChartComponentProps,
     ChartSeriesConfig,
     ChartAxisConfig,
+    SubReportComponentProps,
+    RepeaterComponentProps,
 } from './report-definition-types';
 export { createEmptyDefinition } from './report-definition-types';
 export { exportReportToPdf, downloadReportPdf, printReport } from './viewer/pdf-export';
@@ -75,7 +77,8 @@ export type { BuiltInFieldDefinition, ReportBuilderInitOptions } from './built-i
 export { inferFieldsFromRows, parseJsonRows } from './dataset-schema';
 export { evaluateExpression, interpolateTemplate } from './expression/expression-parser';
 export { getRegisteredFunctions } from './expression/function-registry';
-export type { CustomFunction, FunctionParam, ExpressionReturnType } from './expression/expression-types';
+export type { BuiltinFunction, CustomFunction, FunctionExample, FunctionParam, FunctionValueType, ExpressionReturnType } from './expression/expression-types';
+export { builtinFunctions, expressionFunctions, functionSignature } from './expression/builtin-functions';
 export { resolveDatasources } from './data/datasource-engine';
 export type { ResolveDatasourcesOptions, ResolveDatasourcesResult } from './data/datasource-engine';
 export { derivedDatasourceType, inheritedDatasourceType } from './data/core-plugins';

@@ -46,7 +46,7 @@
         },
         "panelConfig": {
             "type": "Record<string, { userCanMove?, userCanClose? }>",
-            "description": "Per-panel move/close overrides (toolbox, datasource, properties, styles, console, parameters)."
+            "description": "Per-panel move/close overrides (toolbox, datasource, parameters, variables, builtInFields, functions, properties, styles, console)."
         },
         "breakpoints": {
             "type": "ReportBreakpoint[]",

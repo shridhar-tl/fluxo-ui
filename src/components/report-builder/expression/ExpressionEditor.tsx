@@ -1,13 +1,20 @@
+import React, { useCallback, useId, useMemo, useRef, useState } from 'react';
+
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+
 import '../../eui-base.scss';
 import './expression-editor.scss';
+import { BookOpenIcon } from '../../../assets/icons';
+import { OverlayPanel } from '../../overlay-panel/OverlayPanel';
+import { expressionFunctions } from './builtin-functions';
 import {
     getAutocompleteSuggestions,
     highlightExpression,
     validateExpression,
 } from './expression-parser';
-import type { AutocompleteSuggestion, ExpressionReturnType, ExpressionTypeContext } from './expression-types';
+import type { AutocompleteSuggestion, BuiltinFunction, ExpressionReturnType, ExpressionTypeContext } from './expression-types';
+import { FunctionReference } from './FunctionReference';
+import { FunctionSignature } from './FunctionSignature';
 
 const kindLabels: Record<string, string> = {
     function: 'fn',
@@ -17,6 +24,33 @@ const kindLabels: Record<string, string> = {
     keyword: 'kw',
     builtin: 'bi',
 };
+
+interface ActiveCall {
+    name: string;
+    argIndex: number;
+}
+
+function findActiveCall(text: string): ActiveCall | null {
+    const stack: ActiveCall[] = [];
+    let quote: string | null = null;
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (quote) {
+            if (ch === quote) quote = null;
+            continue;
+        }
+        if (ch === '"' || ch === '\'') quote = ch;
+        else if (ch === '(') stack.push({ name: /([A-Za-z_]\w*)\s*$/.exec(text.slice(0, i))?.[1] ?? '', argIndex: 0 });
+        else if (ch === ',' && stack.length > 0) stack[stack.length - 1].argIndex += 1;
+        else if (ch === ')') stack.pop();
+    }
+    return stack.length > 0 ? stack[stack.length - 1] : null;
+}
+
+function activeParamOf(fn: BuiltinFunction, argIndex: number): BuiltinFunction['params'][number] | undefined {
+    const variadicIndex = fn.params.findIndex((p) => p.variadic);
+    return fn.params[variadicIndex >= 0 && argIndex >= variadicIndex ? variadicIndex : argIndex];
+}
 
 interface ExpressionEditorProps {
     value: string;
@@ -54,6 +88,9 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
     const [cursorPos, setCursorPos] = useState(0);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [selectedIdx, setSelectedIdx] = useState(0);
+    const [focused, setFocused] = useState(false);
+    const [referenceOpen, setReferenceOpen] = useState(false);
+    const [referenceButton, setReferenceButton] = useState<HTMLButtonElement | null>(null);
 
     const effectiveTypeCtx = useMemo((): ExpressionTypeContext => ({
         ...typeContext,
@@ -67,15 +104,23 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
 
     const highlighted = useMemo(() => highlightExpression(value), [value]);
 
+    const functions = useMemo(() => expressionFunctions(effectiveTypeCtx.customFunctions), [effectiveTypeCtx.customFunctions]);
+
+    const signatureHelp = useMemo(() => {
+        if (!focused || readOnly) return null;
+        const call = findActiveCall(value.slice(0, cursorPos));
+        const name = call?.name.toLowerCase();
+        const fn = name ? functions.find((f) => f.name.toLowerCase() === name) : undefined;
+        if (!call || !fn) return null;
+        return { fn, argIndex: call.argIndex, param: activeParamOf(fn, call.argIndex) };
+    }, [focused, readOnly, value, cursorPos, functions]);
+
     const suggestions = useMemo(() => {
         if (!showSuggestions) return [];
         return getAutocompleteSuggestions(value, cursorPos, effectiveTypeCtx);
     }, [showSuggestions, value, cursorPos, effectiveTypeCtx]);
 
-    useEffect(() => {
-        if (suggestions.length === 0) setSelectedIdx(0);
-        else setSelectedIdx(0);
-    }, [suggestions.length]);
+    const activeIdx = selectedIdx < suggestions.length ? selectedIdx : 0;
 
     const applySuggestion = useCallback(
         (suggestion: AutocompleteSuggestion) => {
@@ -127,7 +172,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
                 }
                 if (e.key === 'Enter' || e.key === 'Tab') {
                     e.preventDefault();
-                    applySuggestion(suggestions[selectedIdx]);
+                    applySuggestion(suggestions[activeIdx]);
                     return;
                 }
                 if (e.key === 'Escape') {
@@ -139,7 +184,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
                 setShowSuggestions(false);
             }
         },
-        [showSuggestions, suggestions, selectedIdx, applySuggestion],
+        [showSuggestions, suggestions, activeIdx, applySuggestion],
     );
 
     const handleChange = useCallback(
@@ -148,6 +193,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
             const pos = e.target.selectionStart ?? newValue.length;
             onChange(newValue);
             setCursorPos(pos);
+            setSelectedIdx(0);
             setShowSuggestions(newValue.trim().length > 0);
         },
         [onChange],
@@ -158,13 +204,35 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
     }, []);
 
     const handleFocus = useCallback(() => {
+        setFocused(true);
         if (value.trim().length > 0) setShowSuggestions(true);
     }, [value]);
 
     const handleBlur = useCallback((e: React.FocusEvent) => {
+        setFocused(false);
         if (dropdownRef.current?.contains(e.relatedTarget as Node)) return;
         setTimeout(() => setShowSuggestions(false), 150);
     }, []);
+
+    const closeReference = useCallback(() => setReferenceOpen(false), []);
+
+    const insertFunction = useCallback(
+        (fn: BuiltinFunction) => {
+            const call = fn.params.length === 0 ? `${fn.name}()` : `${fn.name}(`;
+            const newValue = value.slice(0, cursorPos) + call + value.slice(cursorPos);
+            const newCursor = cursorPos + call.length;
+            onChange(newValue);
+            setCursorPos(newCursor);
+            setReferenceOpen(false);
+            requestAnimationFrame(() => {
+                if (!inputRef.current) return;
+                inputRef.current.focus();
+                inputRef.current.selectionStart = newCursor;
+                inputRef.current.selectionEnd = newCursor;
+            });
+        },
+        [value, cursorPos, onChange],
+    );
 
     const errorId = `${inputId}-error`;
     const hasError = errors.length > 0;
@@ -174,6 +242,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
             <div
                 className={classNames('eui-expr-editor-container', {
                     'has-error': hasError,
+                    'has-reference': !readOnly,
                     multiline,
                 })}
             >
@@ -218,7 +287,47 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
                         minHeight: multiline ? 80 : 34,
                     }}
                 />
+                {!readOnly && (
+                    <button
+                        ref={setReferenceButton}
+                        type="button"
+                        className={classNames('eui-expr-editor-reference-btn', { active: referenceOpen })}
+                        onClick={() => setReferenceOpen((v) => !v)}
+                        aria-label="Function reference"
+                        aria-haspopup="dialog"
+                        aria-expanded={referenceOpen}
+                        title="Function reference: every function you can use, with its parameters"
+                    >
+                        <BookOpenIcon aria-hidden="true" />
+                    </button>
+                )}
             </div>
+
+            {signatureHelp && (
+                <div className="eui-expr-editor-signature" role="status">
+                    <FunctionSignature fn={signatureHelp.fn} activeParam={signatureHelp.argIndex} />
+                    {signatureHelp.param?.description && (
+                        <div className="eui-expr-editor-signature-param">
+                            <strong>{signatureHelp.param.name}</strong>: {signatureHelp.param.description}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {referenceOpen && (
+                <OverlayPanel
+                    isOpen={referenceOpen}
+                    target={referenceButton}
+                    onClose={closeReference}
+                    title="Functions"
+                    placement="auto"
+                    width="26rem"
+                    maxHeight="34rem"
+                    className="eui-expr-fn-panel"
+                >
+                    <FunctionReference functions={functions} onInsert={insertFunction} autoFocusSearch />
+                </OverlayPanel>
+            )}
 
             {hasError && (
                 <div className="eui-expr-editor-error" id={errorId} role="alert">
@@ -237,9 +346,9 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
                     {suggestions.map((s, i) => (
                         <div
                             key={`${s.kind}-${s.label}`}
-                            className={classNames('eui-expr-editor-suggestion', { selected: i === selectedIdx })}
+                            className={classNames('eui-expr-editor-suggestion', { selected: i === activeIdx })}
                             role="option"
-                            aria-selected={i === selectedIdx}
+                            aria-selected={i === activeIdx}
                             onMouseDown={(e) => { e.preventDefault(); applySuggestion(s); }}
                             onMouseEnter={() => setSelectedIdx(i)}
                         >

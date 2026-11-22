@@ -213,6 +213,7 @@ export interface ReportBuilderProps extends SubReportHooks {
         parameters?: ReportBuilderPanelConfig;
         variables?: ReportBuilderPanelConfig;
         builtInFields?: ReportBuilderPanelConfig;
+        functions?: ReportBuilderPanelConfig;
         properties?: ReportBuilderPanelConfig;
         styles?: ReportBuilderPanelConfig;
         console?: ReportBuilderPanelConfig;

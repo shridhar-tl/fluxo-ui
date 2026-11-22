@@ -103,6 +103,8 @@ export { default as HeadingIcon } from './icons/heading.svg?react';
 export { default as QuoteIcon } from './icons/quote.svg?react';
 export { default as CodeIcon } from './icons/code.svg?react';
 export { default as CodeBlockIcon } from './icons/code-block.svg?react';
+export { default as FunctionIcon } from './icons/function.svg?react';
+export { default as BookOpenIcon } from './icons/book-open.svg?react';
 export { default as LinkIcon } from './icons/link-2.svg?react';
 export { default as ImageIcon } from './icons/image.svg?react';
 export { default as ListUlIcon } from './icons/list-ul.svg?react';

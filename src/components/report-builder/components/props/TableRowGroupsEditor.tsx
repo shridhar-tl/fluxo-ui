@@ -1,14 +1,17 @@
 import React, { useCallback } from 'react';
+
 import { TrashIcon } from '../../../../assets/icons';
+import type { ListItem } from '../../../../types';
 import { Button } from '../../../Button';
 import { Checkbox } from '../../../Checkbox';
 import { Dropdown } from '../../../Dropdown';
 import { NumericInput } from '../../../NumericInput';
 import { TextInput } from '../../../TextInput';
-import type { ListItem } from '../../../../types';
 import type { DatasourceConfig, TableRowGroup, TableRowGroupKind } from '../../report-definition-types';
 import { ExpressionField, useBuilderTypeContext } from './ExpressionField';
 import { SortKeysEditor } from './SortKeysEditor';
+
+const rowGroupsIntro = 'A parent group shows a header for each of its keys and repeats its nested groups inside it. A details group lists the rows. Read a group in expressions with RowGroup(\'name\'), for example Sum(RowGroup(\'name\').values, \'hours\').';
 
 const groupKindOptions: ListItem[] = [
     { value: 'parent', label: 'Parent (header + nested)' },
@@ -43,8 +46,7 @@ export const TableRowGroupsEditor: React.FC<Props> = ({ rowGroups, datasources, 
                 <Button layout="outlined" size="xs" onClick={addTopLevelGroup} ariaLabel="Add row group" label="+ Group" />
             </div>
             <div className="eui-rb-prop-hint" style={{ marginBottom: 8 }}>
-                A parent group shows a header for each of its keys and repeats its nested groups inside it. A details group lists the rows. Read a group in
-                expressions with RowGroup('name'), for example Sum(RowGroup('name').values, 'hours').
+                {rowGroupsIntro}
             </div>
             {rowGroups.length === 0 && (
                 <div
@@ -133,7 +135,7 @@ const RowGroupNodeEditor: React.FC<{
         <div
             style={{
                 border: '1px solid var(--eui-border-subtle)',
-                borderLeft: `3px solid var(--eui-primary)`,
+                borderLeft: '3px solid var(--eui-primary)',
                 borderRadius: 4,
                 padding: 8,
                 marginTop: 6,
@@ -320,6 +322,7 @@ const RowGroupNodeEditor: React.FC<{
                     onChange={(e) => update({ initiallyCollapsed: e.value || undefined })}
                     label="Start collapsed"
                 />
+                {group.showFooter && <div className="eui-rb-prop-hint">Adds a row after each group with the total of every number column, shown with the column format. It is left out when the table has no number columns.</div>}
             </div>
 
             <div style={{ marginTop: 10 }}>

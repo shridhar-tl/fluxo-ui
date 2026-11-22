@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo } from 'react';
+
+import type { ListItem } from '../../../../types';
 import { Checkbox } from '../../../Checkbox';
 import { Dropdown } from '../../../Dropdown';
 import { TextInput } from '../../../TextInput';
-import type { ListItem } from '../../../../types';
-import { useReportBuilderContext } from '../../report-builder-context';
 import { useBuilderDatasources, useDatasourceFieldPaths, useSuggestedColumns } from '../../builder-hooks';
-import { updateComponentInTree } from '../../report-component-helpers';
+import { useReportBuilderContext } from '../../report-builder-context';
 import type { ReportBuilderState } from '../../report-builder-types';
+import { updateComponentInTree } from '../../report-component-helpers';
 import type {
     ReportComponent,
     TableColumnNode,
@@ -173,6 +174,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                                     onChange={(e) => update({ showGroupFooter: e.value })}
                                     label="Show group footer"
                                 />
+                                <div className="eui-rb-prop-hint">Adds a row after each group with the total of every number column, shown with the column format. It is left out when the table has no number columns.</div>
                             </div>
                             <ExpressionField
                                 label="Group Visible"

@@ -1,8 +1,8 @@
+import { builtinFunctions, functionArity, functionSignature } from './builtin-functions';
 import type {
     AutocompleteSuggestion,
     BinaryOpNode,
     BuiltInFieldRefNode,
-    BuiltinFunction,
     ColGroupRefNode,
     CustomFunction,
     DatasourceRefNode,
@@ -35,7 +35,7 @@ export function safeGetByPath(obj: unknown, path: string): unknown {
         if (cur === null || cur === undefined) return null;
         if (FORBIDDEN_PATH_SEGMENTS.has(raw)) return null;
         let seg = raw;
-        const arrayMatch = seg.match(/^([^\[]+)\[(\d+)\]$/);
+        const arrayMatch = seg.match(/^([^[]+)\[(\d+)\]$/);
         let arrayIdx: number | null = null;
         if (arrayMatch) {
             seg = arrayMatch[1];
@@ -81,7 +81,7 @@ function tokenize(input: string): Token[] {
             continue;
         }
 
-        if (ch === '"' || ch === "'") {
+        if (ch === '"' || ch === '\'') {
             const start = i;
             const quote = ch;
             let str = '';
@@ -298,7 +298,10 @@ class Parser {
             return expr;
         }
 
-        this.errors.push({ message: `Unexpected token: "${t.value}"`, position: t.start });
+        this.errors.push({
+            message: t.type === 'EOF' ? 'The expression is not finished: a value or a closing bracket is missing' : `Unexpected token: "${t.value}"`,
+            position: t.start,
+        });
         this.consume();
         return { type: 'Literal', value: null, returnType: 'null' };
     }
@@ -420,8 +423,21 @@ class Parser {
                 return this.buildGroupRefNode(firstName, args, nameToken.start);
             }
 
-            const sig = builtinFunctions.find((f) => f.name.toLowerCase() === firstName.toLowerCase()) ??
-                findCustomFunction(firstName, this.typeCtx.customFunctions);
+            const builtin = builtinFunctions.find((f) => f.name.toLowerCase() === firstName.toLowerCase());
+            const sig = builtin ?? findCustomFunction(firstName, this.typeCtx.customFunctions);
+            if (!sig) {
+                this.errors.push({ message: `Unknown function: "${firstName}"`, position: nameToken.start, length: firstName.length });
+            } else {
+                const { min, max } = functionArity(sig);
+                if (args.length > max || (builtin && args.length < min)) {
+                    const expected = min === max ? `${min}` : max === Number.POSITIVE_INFINITY ? `at least ${min}` : `${min} to ${max}`;
+                    this.errors.push({
+                        message: `${sig.name} takes ${expected} argument${expected === '1' ? '' : 's'} but got ${args.length}: ${functionSignature(sig)}`,
+                        position: nameToken.start,
+                        length: firstName.length,
+                    });
+                }
+            }
 
             const node: FunctionCallNode = {
                 type: 'FunctionCall',
@@ -515,87 +531,12 @@ function findCustomFunction(name: string, local: CustomFunction[] | undefined): 
     return local?.find((f) => f.name.toLowerCase() === lower) ?? getRegisteredFunctions().find((f) => f.name.toLowerCase() === lower);
 }
 
-// ── Built-in Functions ────────────────────────────────────────────────────────
-
-export const builtinFunctions: BuiltinFunction[] = [
-    { name: 'Sum', description: 'Sum(values) or Sum(rows, "field") — sums a numeric array or a field across rows', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
-    { name: 'Count', description: 'Count(values) or Count(rows, "field") — counts non-null occurrences', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
-    { name: 'Avg', description: 'Avg(values) or Avg(rows, "field") — average of numeric values', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
-    { name: 'Min', description: 'Min(values) or Min(rows, "field") — minimum value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
-    { name: 'Max', description: 'Max(values) or Max(rows, "field") — maximum value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
-    { name: 'IIf', description: 'Conditional: IIf(condition, trueValue, falseValue)', params: [{ name: 'condition', type: 'boolean' }, { name: 'trueValue', type: 'any' }, { name: 'falseValue', type: 'any' }], returnType: 'any' },
-    { name: 'Switch', description: 'Switch(value, case1, result1, ...)', params: [{ name: 'args', type: 'any', variadic: true }], returnType: 'any' },
-    { name: 'Concat', description: 'Concatenate strings', params: [{ name: 'args', type: 'any', variadic: true }], returnType: 'string' },
-    { name: 'Upper', description: 'Convert to uppercase', params: [{ name: 'value', type: 'string' }], returnType: 'string' },
-    { name: 'Lower', description: 'Convert to lowercase', params: [{ name: 'value', type: 'string' }], returnType: 'string' },
-    { name: 'Trim', description: 'Trim whitespace', params: [{ name: 'value', type: 'string' }], returnType: 'string' },
-    { name: 'Len', description: 'String length', params: [{ name: 'value', type: 'string' }], returnType: 'number' },
-    { name: 'Mid', description: 'Mid(str, start, length)', params: [{ name: 'value', type: 'string' }, { name: 'start', type: 'number' }, { name: 'length', type: 'number' }], returnType: 'string' },
-    { name: 'Replace', description: 'Replace(str, find, replace)', params: [{ name: 'value', type: 'string' }, { name: 'find', type: 'string' }, { name: 'replace', type: 'string' }], returnType: 'string' },
-    { name: 'StartsWith', description: 'StartsWith(str, prefix)', params: [{ name: 'value', type: 'string' }, { name: 'prefix', type: 'string' }], returnType: 'boolean' },
-    { name: 'EndsWith', description: 'EndsWith(str, suffix)', params: [{ name: 'value', type: 'string' }, { name: 'suffix', type: 'string' }], returnType: 'boolean' },
-    { name: 'Contains', description: 'Contains(str, substr)', params: [{ name: 'value', type: 'string' }, { name: 'substr', type: 'string' }], returnType: 'boolean' },
-    { name: 'Round', description: 'Round(number, decimals)', params: [{ name: 'value', type: 'number' }, { name: 'decimals', type: 'number' }], returnType: 'number' },
-    { name: 'Abs', description: 'Absolute value', params: [{ name: 'value', type: 'number' }], returnType: 'number' },
-    { name: 'Floor', description: 'Floor of a number', params: [{ name: 'value', type: 'number' }], returnType: 'number' },
-    { name: 'Ceil', description: 'Ceiling of a number', params: [{ name: 'value', type: 'number' }], returnType: 'number' },
-    { name: 'Now', description: 'Current date/time', params: [], returnType: 'string' },
-    { name: 'Today', description: 'Current date', params: [], returnType: 'string' },
-    { name: 'DateAdd', description: 'DateAdd(unit, amount, date)', params: [{ name: 'unit', type: 'string' }, { name: 'amount', type: 'number' }, { name: 'date', type: 'string' }], returnType: 'string' },
-    { name: 'DateDiff', description: 'DateDiff(unit, date1, date2)', params: [{ name: 'unit', type: 'string' }, { name: 'date1', type: 'string' }, { name: 'date2', type: 'string' }], returnType: 'number' },
-    { name: 'FormatDate', description: 'FormatDate(date, format) — tokens: yyyy, yy, MMMM, MMM, MM, M, dddd, ddd, dd, d, HH, hh, mm, ss, a', params: [{ name: 'date', type: 'string' }, { name: 'format', type: 'string' }], returnType: 'string' },
-    { name: 'ToString', description: 'Convert to string', params: [{ name: 'value', type: 'any' }], returnType: 'string' },
-    { name: 'ToNumber', description: 'Convert to number', params: [{ name: 'value', type: 'any' }], returnType: 'number' },
-    { name: 'IsNull', description: 'IsNull(value)', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
-    { name: 'IsEmpty', description: 'IsEmpty(value)', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
-    { name: 'Coalesce', description: 'Return first non-null value', params: [{ name: 'args', type: 'any', variadic: true }], returnType: 'any' },
-    { name: 'Field', description: "Field('a.b.c') — safely read a nested field path from current row", params: [{ name: 'path', type: 'string' }], returnType: 'any' },
-    { name: 'IfNull', description: 'IfNull(value, fallback) — returns fallback when value is null/undefined', params: [{ name: 'value', type: 'any' }, { name: 'fallback', type: 'any' }], returnType: 'any' },
-    { name: 'InList', description: 'InList(value, array) — true if value is in the array', params: [{ name: 'value', type: 'any' }, { name: 'list', type: 'any' }], returnType: 'boolean' },
-    { name: 'Between', description: 'Between(value, min, max) — true when min <= value <= max', params: [{ name: 'value', type: 'any' }, { name: 'min', type: 'any' }, { name: 'max', type: 'any' }], returnType: 'boolean' },
-    { name: 'Length', description: 'Length of a string or array', params: [{ name: 'value', type: 'any' }], returnType: 'number' },
-    { name: 'Any', description: 'Any(array) — true if array has at least one item', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
-    { name: 'All', description: 'All(array, truthy?) — true if every item is truthy', params: [{ name: 'value', type: 'any' }], returnType: 'boolean' },
-    { name: 'FormatNumber', description: 'FormatNumber(value, decimals?, thousandsSep?) — 1234.5 → "1,234.50"', params: [{ name: 'value', type: 'any' }, { name: 'decimals', type: 'number' }, { name: 'thousandsSep', type: 'string' }], returnType: 'string' },
-    { name: 'FormatCurrency', description: "FormatCurrency(value, symbol='$', decimals=2)", params: [{ name: 'value', type: 'any' }, { name: 'symbol', type: 'string' }, { name: 'decimals', type: 'number' }], returnType: 'string' },
-    { name: 'FormatPercent', description: 'FormatPercent(value, decimals=0) — 0.25 → "25%"', params: [{ name: 'value', type: 'any' }, { name: 'decimals', type: 'number' }], returnType: 'string' },
-    { name: 'PadLeft', description: 'PadLeft(value, length, char=" ")', params: [{ name: 'value', type: 'any' }, { name: 'length', type: 'number' }, { name: 'char', type: 'string' }], returnType: 'string' },
-    { name: 'PadRight', description: 'PadRight(value, length, char=" ")', params: [{ name: 'value', type: 'any' }, { name: 'length', type: 'number' }, { name: 'char', type: 'string' }], returnType: 'string' },
-    { name: 'Year', description: 'Year of a date string', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
-    { name: 'Month', description: 'Month (1-12) of a date string', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
-    { name: 'Day', description: 'Day-of-month (1-31)', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
-    { name: 'WeekDay', description: 'WeekDay(date) — 0=Sun..6=Sat', params: [{ name: 'date', type: 'string' }], returnType: 'number' },
-    { name: 'Not', description: 'Logical NOT', params: [{ name: 'value', type: 'boolean' }], returnType: 'boolean' },
-    { name: 'Median', description: 'Median(values) or Median(rows, "field") — middle value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
-    { name: 'CountDistinct', description: 'CountDistinct(values) or CountDistinct(rows, "field") — number of unique values', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'number' },
-    { name: 'Pluck', description: 'Pluck(rows, "field") — array of the field values of every row (nested paths allowed)', params: [{ name: 'rows', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'any' },
-    { name: 'Distinct', description: 'Distinct(values) or Distinct(rows, "field") — unique values in first-seen order', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'any' },
-    { name: 'First', description: 'First(values) or First(rows, "field") — first item / field value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'any' },
-    { name: 'Last', description: 'Last(values) or Last(rows, "field") — last item / field value', params: [{ name: 'values', type: 'any' }, { name: 'field', type: 'string' }], returnType: 'any' },
-    { name: 'Join', description: 'Join(values, separator=", ") — joins array items into a string', params: [{ name: 'values', type: 'any' }, { name: 'separator', type: 'string' }], returnType: 'string' },
-    { name: 'Split', description: 'Split(text, separator) — splits a string into an array', params: [{ name: 'value', type: 'string' }, { name: 'separator', type: 'string' }], returnType: 'any' },
-    { name: 'Percent', description: 'Percent(part, total, decimals=0) — (part / total) * 100, 0 when total is 0', params: [{ name: 'part', type: 'number' }, { name: 'total', type: 'number' }, { name: 'decimals', type: 'number' }], returnType: 'number' },
-    { name: 'StartOf', description: 'StartOf(unit, date) — start of the week / month / quarter / year as yyyy-MM-dd', params: [{ name: 'unit', type: 'string' }, { name: 'date', type: 'string' }], returnType: 'string' },
-    { name: 'EndOf', description: 'EndOf(unit, date) — end of the week / month / quarter / year as yyyy-MM-dd', params: [{ name: 'unit', type: 'string' }, { name: 'date', type: 'string' }], returnType: 'string' },
-];
-
 // ── Evaluator ─────────────────────────────────────────────────────────────────
 
 function extractNumericArray(values: unknown, field?: unknown): number[] {
-    if (!Array.isArray(values)) return [];
-    if (typeof field === 'string' && field.length > 0) {
-        const out: number[] = [];
-        for (const row of values) {
-            if (row && typeof row === 'object' && field in (row as Record<string, unknown>)) {
-                const v = (row as Record<string, unknown>)[field];
-                const n = Number(v);
-                if (Number.isFinite(n)) out.push(n);
-            }
-        }
-        return out;
-    }
     const out: number[] = [];
-    for (const v of values) {
+    for (const v of pluckValues(values, field)) {
+        if (v === null || v === undefined || v === '') continue;
         const n = Number(v);
         if (Number.isFinite(n)) out.push(n);
     }
@@ -610,7 +551,7 @@ const builtinImpls: Record<string, (...args: unknown[]) => unknown> = {
     Count: (values: unknown, field?: unknown) => {
         if (!Array.isArray(values)) return 0;
         if (typeof field === 'string' && field.length > 0) {
-            return values.filter((r) => r && typeof r === 'object' && (r as Record<string, unknown>)[field] !== null && (r as Record<string, unknown>)[field] !== undefined).length;
+            return pluckValues(values, field).filter((v) => v !== null && v !== undefined).length;
         }
         return values.length;
     },
@@ -1046,7 +987,8 @@ export function validateExpression(
     const { errors, ast } = parseExpression(input.trim(), typeCtx);
     if (ast && typeCtx.expectedReturnType && typeCtx.expectedReturnType !== 'any') {
         const actualType = ast.returnType;
-        if (actualType !== 'any' && actualType !== typeCtx.expectedReturnType) {
+        const shownAsText = typeCtx.expectedReturnType === 'string' && (actualType === 'number' || actualType === 'boolean');
+        if (actualType !== 'any' && actualType !== typeCtx.expectedReturnType && !shownAsText) {
             errors.push({
                 message: `Expected ${typeCtx.expectedReturnType} but expression returns ${actualType}`,
             });
@@ -1150,12 +1092,11 @@ export function getAutocompleteSuggestions(
         const allFns = [...builtinFunctions, ...getAvailableCustomFunctions(typeCtx.customFunctions)];
         for (const fn of allFns) {
             if (fn.name.toLowerCase().startsWith(partial)) {
-                const paramStr = fn.params.map((p) => p.name).join(', ');
                 suggestions.push({
                     label: fn.name,
                     kind: 'function',
-                    detail: fn.description,
-                    insertText: `${fn.name}(${paramStr})`,
+                    detail: functionSignature(fn),
+                    insertText: fn.params.length === 0 ? `${fn.name}()` : `${fn.name}(`,
                 });
             }
         }
@@ -1186,7 +1127,7 @@ export function highlightExpression(input: string): Array<{ text: string; classN
         else if (token.type === 'Identifier') {
             if (['true', 'false', 'null'].includes(token.value)) className = 'eui-expr-keyword';
             else if (['Datasources', 'Parameters', 'Field', 'Variables', 'BuiltInFields', 'RowGroup', 'ColGroup'].includes(token.value)) className = 'eui-expr-namespace';
-            else if (builtinFunctions.some((f) => f.name === token.value)) className = 'eui-expr-function';
+            else if (builtinFunctions.some((f) => f.name === token.value) || getRegisteredFunctions().some((f) => f.name === token.value)) className = 'eui-expr-function';
             else className = 'eui-expr-identifier';
         }
         const text = token.type === 'String' ? `"${token.value}"` : token.value;

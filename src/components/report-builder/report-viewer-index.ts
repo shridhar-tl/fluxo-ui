@@ -59,7 +59,7 @@ export type { BuiltInFieldDefinition, ReportBuilderInitOptions } from './built-i
 export { inferFieldsFromRows, parseJsonRows } from './dataset-schema';
 export { evaluateExpression, interpolateTemplate } from './expression/expression-parser';
 export { getRegisteredFunctions } from './expression/function-registry';
-export type { CustomFunction, FunctionParam, ExpressionReturnType } from './expression/expression-types';
+export type { CustomFunction, FunctionExample, FunctionParam, FunctionValueType, ExpressionReturnType } from './expression/expression-types';
 export { resolveDatasources } from './data/datasource-engine';
 export type { ResolveDatasourcesOptions, ResolveDatasourcesResult } from './data/datasource-engine';
 export { derivedDatasourceType, inheritedDatasourceType } from './data/core-plugins';
