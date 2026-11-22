@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { evaluateExpression } from '../expression/expression-parser';
+import { toDisplayText } from '../data/value-utils';
 import type { ExpressionContext } from '../expression/expression-types';
 
 const SAFE_URL_SCHEMES = /^(https?:|mailto:|tel:|\/|\.\/|\.\.\/|#)/i;
@@ -10,9 +11,7 @@ function isExpression(raw: unknown): raw is string {
 }
 
 function formatValue(value: unknown): string {
-    if (value === null || value === undefined) return '';
-    if (typeof value === 'object') return JSON.stringify(value);
-    return String(value);
+    return toDisplayText(value);
 }
 
 export function useEvaluatedString(

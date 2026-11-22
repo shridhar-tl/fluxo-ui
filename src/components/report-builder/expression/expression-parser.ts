@@ -142,8 +142,20 @@ class Parser {
         this.typeCtx = typeCtx;
     }
 
-    private peek(): Token { return this.tokens[this.pos]; }
-    private consume(): Token { return this.tokens[this.pos++]; }
+    private peek(): Token { return this.tokens[Math.min(this.pos, this.tokens.length - 1)]; }
+    private consume(): Token {
+        const token = this.peek();
+        if (token.type !== 'EOF') this.pos++;
+        return token;
+    }
+    private expectName(after: string): Token {
+        const token = this.consume();
+        if (token.type !== 'Identifier') {
+            this.errors.push({ message: `Expected a name after "${after}."`, position: token.start });
+        }
+        return token;
+    }
+
     private match(type: TokenType, value?: string): boolean {
         const t = this.peek();
         return t.type === type && (value === undefined || t.value === value);
@@ -298,10 +310,10 @@ class Parser {
         if (this.match('Dot')) {
             this.consume();
             if (firstName === 'Datasources') {
-                const dsToken = this.consume();
+                const dsToken = this.expectName(firstName);
                 if (this.match('Dot')) {
                     this.consume();
-                    const fieldToken = this.consume();
+                    const fieldToken = this.expectName(firstName);
                     const node: DatasourceRefNode = {
                         type: 'DatasourceRef',
                         datasource: dsToken.value,
@@ -314,11 +326,11 @@ class Parser {
             }
 
             if (firstName === 'Parameters') {
-                const paramToken = this.consume();
+                const paramToken = this.expectName(firstName);
                 const path: string[] = [];
                 while (this.match('Dot')) {
                     this.consume();
-                    const next = this.consume();
+                    const next = this.expectName(firstName);
                     if (next.type === 'Identifier') path.push(next.value);
                     else break;
                 }
@@ -332,21 +344,28 @@ class Parser {
             }
 
             if (firstName === 'Field') {
-                const fieldToken = this.consume();
+                const fieldToken = this.expectName(firstName);
+                const path = [fieldToken.value];
+                while (fieldToken.type === 'Identifier' && this.match('Dot')) {
+                    this.consume();
+                    const next = this.expectName(firstName);
+                    if (next.type !== 'Identifier') break;
+                    path.push(next.value);
+                }
                 const node: FieldRefNode = {
                     type: 'FieldRef',
-                    field: fieldToken.value,
+                    field: path.join('.'),
                     returnType: 'any',
                 };
                 return node;
             }
 
             if (firstName === 'Variables') {
-                const varToken = this.consume();
+                const varToken = this.expectName(firstName);
                 const path: string[] = [];
                 while (this.match('Dot')) {
                     this.consume();
-                    const next = this.consume();
+                    const next = this.expectName(firstName);
                     if (next.type === 'Identifier') path.push(next.value);
                     else break;
                 }
@@ -360,11 +379,11 @@ class Parser {
             }
 
             if (firstName === 'BuiltInFields') {
-                const fieldToken = this.consume();
+                const fieldToken = this.expectName(firstName);
                 const path: string[] = [];
                 while (this.match('Dot')) {
                     this.consume();
-                    const next = this.consume();
+                    const next = this.expectName(firstName);
                     if (next.type === 'Identifier') path.push(next.value);
                     else break;
                 }
@@ -435,7 +454,7 @@ class Parser {
 
         if (this.match('Dot')) {
             this.consume();
-            const propToken = this.consume();
+            const propToken = this.expectName(kind);
             const propName = propToken.value;
             if (propName === 'key') property = { kind: 'key' };
             else if (propName === 'keys') property = { kind: 'keys' };
@@ -443,7 +462,7 @@ class Parser {
             else if (propName === 'Fields') {
                 if (this.match('Dot')) {
                     this.consume();
-                    const fieldToken = this.consume();
+                    const fieldToken = this.expectName(`${kind}.Fields`);
                     property = { kind: 'field', field: fieldToken.value };
                 } else {
                     property = { kind: 'field', field: '' };
@@ -451,7 +470,7 @@ class Parser {
             } else if (propName === 'Variables') {
                 if (this.match('Dot')) {
                     this.consume();
-                    const varToken = this.consume();
+                    const varToken = this.expectName(`${kind}.Variables`);
                     property = { kind: 'variable', name: varToken.value };
                 } else {
                     property = { kind: 'variable', name: '' };

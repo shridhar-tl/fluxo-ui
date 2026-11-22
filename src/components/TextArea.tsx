@@ -52,11 +52,12 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const isControlled = value !== undefined;
         const [internalValue, setInternalValue] = useState(value ?? '');
         const displayValue = isControlled ? value : internalValue;
-        const [currentLength, setCurrentLength] = useState((displayValue).length);
+        const currentLength = displayValue.length;
         const textareaRef = useRef<HTMLTextAreaElement>(null);
         const combinedRef = (ref as React.RefObject<HTMLTextAreaElement>) || textareaRef;
 
@@ -67,8 +68,6 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
                 newValue = newValue.slice(0, maxLength);
                 e.target.value = newValue;
             }
-
-            setCurrentLength(newValue.length);
 
             if (!isControlled) {
                 setInternalValue(newValue);
@@ -99,10 +98,6 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
         useEffect(() => {
             adjustHeight();
         }, [displayValue, autoResize]);
-
-        useEffect(() => {
-            setCurrentLength(displayValue.length);
-        }, [displayValue]);
 
         const errorMessage = typeof error === 'string' ? error : undefined;
         const hasError = invalid === true || error === true || (typeof error === 'string' && error.length > 0);

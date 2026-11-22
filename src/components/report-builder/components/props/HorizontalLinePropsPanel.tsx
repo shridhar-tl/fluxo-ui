@@ -73,6 +73,7 @@ export const HorizontalLinePropsPanel: React.FC<Props> = ({ component }) => {
                     options={styleOptions}
                     value={p.style ?? 'solid'}
                     onChange={(e) => update({ style: e.value as HorizontalLineComponentProps['style'] })}
+                    ariaLabel="Line style"
                     size="sm"
                 />
             </div>

@@ -266,7 +266,7 @@ const DataTab: React.FC<{
                     value={p.datasourceId ?? ''}
                     onChange={(e) => update({ datasourceId: e.value })}
                     size="sm"
-                    aria-label="Select datasource"
+                    ariaLabel="Select datasource"
                 />
                 {!p.datasourceId && <span className="eui-rb-ds-config-error">Choose the datasource the chart plots.</span>}
             </div>
@@ -342,7 +342,7 @@ const DataTab: React.FC<{
                         value={p.aggregation ?? 'sum'}
                         onChange={(e) => update({ aggregation: e.value as ChartComponentProps['aggregation'] })}
                         size="sm"
-                        aria-label="Select aggregation"
+                        ariaLabel="Select aggregation"
                     />
                     <div style={{ fontSize: 11, color: 'var(--eui-text-muted)', marginTop: 4 }}>
                         How to combine multiple rows that share the same category / label value. Sum is the default — use None if your data is already pre-aggregated (one row per data point).

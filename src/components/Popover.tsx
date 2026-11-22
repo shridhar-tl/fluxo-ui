@@ -99,12 +99,16 @@ export const Popover = ({
 
     useClickOutside(popoverRef, onClose, isOpen && !isCompact);
 
+    const onHighlightChangeRef = useRef(onHighlightChange);
+    onHighlightChangeRef.current = onHighlightChange;
+
     useEffect(() => {
-        if (onHighlightChange) {
+        const notify = onHighlightChangeRef.current;
+        if (notify) {
             const id = highlightedIndex >= 0 && highlightedIndex < filteredItems.length ? optionId(highlightedIndex) : null;
-            onHighlightChange(highlightedIndex, id);
+            notify(highlightedIndex, id);
         }
-    }, [highlightedIndex, filteredItems.length, onHighlightChange]);
+    }, [highlightedIndex, filteredItems.length]);
 
     useEscapeLayer(isOpen, onClose);
 

@@ -160,6 +160,43 @@ export function findField(fields: DatasetField[], path: string): DatasetField | 
     return found;
 }
 
+const displayChildNames = ['displayName', 'name', 'value', 'title', 'key', 'label'];
+
+/** Text shown for a value in a report: objects through their readable child (such as displayName) and arrays as a comma separated list. */
+export function toDisplayText(value: unknown): string {
+    if (value === null || value === undefined) return '';
+    if (Array.isArray(value)) return value.map(toDisplayText).filter(Boolean).join(', ');
+    if (typeof value === 'object' && !(value instanceof Date)) {
+        const record = value as Record<string, unknown>;
+        const readable = displayChildNames.map((name) => record[name]).find((v) => v !== null && v !== undefined && typeof v !== 'object');
+        return readable !== undefined ? String(readable) : JSON.stringify(value);
+    }
+    return String(value);
+}
+
+export interface SuggestedColumn {
+    path: string;
+    label: string;
+    formatExpr?: string;
+}
+
+
+export function labelFromFieldName(name: string): string {
+    const spaced = name.replace(/[_-]+/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2').trim();
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+/** One column per top level field: objects are shown through their most readable child, such as assignee.displayName. */
+export function suggestDisplayColumns(fields: DatasetField[]): SuggestedColumn[] {
+    return fields.flatMap((f): SuggestedColumn[] => {
+        const label = f.label || labelFromFieldName(f.name);
+        if (f.type === 'date') return [{ path: f.name, label, formatExpr: `=FormatDate(Field.${f.name}, 'dd MMM yyyy')` }];
+        if (f.type !== 'object') return [{ path: f.name, label }];
+        const child = displayChildNames.map((name) => f.children?.find((c) => c.name === name && c.type !== 'object')).find(Boolean);
+        return child ? [{ path: `${f.name}.${child.name}`, label }] : [];
+    });
+}
+
 export function flattenFieldPaths(fields: DatasetField[], prefix = '', depth = 0): Array<{ path: string; field: DatasetField }> {
     const out: Array<{ path: string; field: DatasetField }> = [];
     for (const f of fields) {

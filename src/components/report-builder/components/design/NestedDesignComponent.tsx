@@ -10,6 +10,7 @@ import { HorizontalLineDesign } from './HorizontalLineDesign';
 import { TableDesign } from './TableDesign';
 import { SubReportDesign } from './SubReportDesign';
 import { PluginDesign } from './PluginDesign';
+import { getComponentTypeLabel } from './component-type-labels';
 
 interface NestedDesignComponentProps {
     component: ReportComponent;
@@ -20,22 +21,6 @@ interface NestedDesignComponentProps {
     onDelete: (id: string) => void;
     onDuplicate: (id: string) => void;
 }
-
-const typeLabels: Record<string, string> = {
-    header: 'Header',
-    text: 'Text',
-    image: 'Image',
-    'horizontal-line': 'H. Line',
-    table: 'Table',
-    'sub-report': 'Sub-report',
-    'chart-bar': 'Bar Chart',
-    'chart-pie': 'Pie Chart',
-    'chart-donut': 'Donut Chart',
-    'chart-line': 'Line Chart',
-    repeater: 'Repeater',
-    columns: 'Columns',
-    tab: 'Tabs',
-};
 
 function renderNestedContent(comp: ReportComponent): React.ReactNode {
     switch (comp.type) {
@@ -51,9 +36,9 @@ function renderNestedContent(comp: ReportComponent): React.ReactNode {
         case 'chart-line':
             return <ChartDesign component={comp} />;
         default:
-            return typeLabels[comp.type] ? (
+            return getComponentTypeLabel(comp.type) ? (
                 <div style={{ padding: '8px', color: 'var(--eui-text-muted)', fontSize: 11, fontStyle: 'italic' }}>
-                    {typeLabels[comp.type]}
+                    {getComponentTypeLabel(comp.type)}
                 </div>
             ) : (
                 <PluginDesign component={comp} />
@@ -90,7 +75,7 @@ export const NestedDesignComponent: React.FC<NestedDesignComponentProps> = ({
             }}
             role="treeitem"
             aria-selected={selected}
-            aria-label={`${typeLabels[component.type] ?? component.type} component`}
+            aria-label={`${getComponentTypeLabel(component.type) ?? component.type} component`}
             tabIndex={selected ? 0 : -1}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(component.id); }
@@ -100,14 +85,14 @@ export const NestedDesignComponent: React.FC<NestedDesignComponentProps> = ({
         >
             {showControls && (
                 <div className="eui-rb-design-comp-type-label" aria-hidden="true">
-                    {typeLabels[component.type] ?? component.type}
+                    {getComponentTypeLabel(component.type) ?? component.type}
                 </div>
             )}
             <div className="eui-rb-design-comp-content">
                 {renderNestedContent(component)}
             </div>
             {showControls && (
-                <div className="eui-rb-design-comp-toolbar" role="toolbar" aria-label={`${typeLabels[component.type] ?? component.type} actions`}>
+                <div className="eui-rb-design-comp-toolbar" role="toolbar" aria-label={`${getComponentTypeLabel(component.type) ?? component.type} actions`}>
                     <button
                         className="eui-rb-design-comp-toolbar-btn"
                         onClick={(e) => { e.stopPropagation(); onDuplicate(component.id); }}

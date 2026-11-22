@@ -58,7 +58,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const isControlled = value !== undefined;
         const [internalValue, setInternalValue] = useState(value ?? '');
 

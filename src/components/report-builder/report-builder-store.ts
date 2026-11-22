@@ -4,7 +4,7 @@ import type { ReportBuilderState } from './report-builder-types';
 
 export function createReportBuilderStore(initial: ReportBuilderState) {
     const base = create<ReportBuilderState>(() => initial);
-    return undoRedoMiddleware<ReportBuilderState>({ maxHistorySize: 50 })(base);
+    return undoRedoMiddleware<ReportBuilderState>({ maxHistorySize: 50, paths: ['definition'] })(base);
 }
 
 export type ReportBuilderStore = ReturnType<typeof createReportBuilderStore>;

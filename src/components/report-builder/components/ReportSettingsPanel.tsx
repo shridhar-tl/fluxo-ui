@@ -5,6 +5,7 @@ import { TextInput } from '../../TextInput';
 import { TextArea } from '../../TextArea';
 import type { ListItem } from '../../../types';
 import { useReportBuilderContext, useRBStore } from '../report-builder-context';
+import { GlobalStylesSettings } from './GlobalStylesSettings';
 import type { ReportBuilderState } from '../report-builder-types';
 import type { ReportMetadata, PageSetup, PageSize, PageOrientation } from '../report-definition-types';
 
@@ -106,6 +107,7 @@ export const ReportSettingsPanel: React.FC = () => {
 
             <div className="eui-rb-report-settings-section">
                 <div className="eui-rb-report-settings-section-title">Page Setup</div>
+                <div className="eui-rb-prop-hint">The page size, orientation and margins set the width of the report and are used to print it and export it as PDF.</div>
 
                 <div className="eui-rb-report-settings-field">
                     <label>Page Size</label>
@@ -113,7 +115,7 @@ export const ReportSettingsPanel: React.FC = () => {
                         options={pageSizeOptions}
                         value={pageSetup?.size ?? 'A4'}
                         onChange={(e) => updatePageSetup({ size: e.value as PageSize })}
-                        aria-label="Page size"
+                        ariaLabel="Page size"
                         size="sm"
                     />
                 </div>
@@ -124,7 +126,7 @@ export const ReportSettingsPanel: React.FC = () => {
                         options={orientationOptions}
                         value={pageSetup?.orientation ?? 'portrait'}
                         onChange={(e) => updatePageSetup({ orientation: e.value as PageOrientation })}
-                        aria-label="Page orientation"
+                        ariaLabel="Page orientation"
                         size="sm"
                     />
                 </div>
@@ -203,6 +205,8 @@ export const ReportSettingsPanel: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            <GlobalStylesSettings />
 
             <div className="eui-rb-report-settings-section">
                 <div className="eui-rb-report-settings-section-title">Info</div>

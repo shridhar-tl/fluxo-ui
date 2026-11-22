@@ -1,54 +1,42 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useReportBuilderContext, useRBStore } from '../report-builder-context';
+import type { ReportBuilderState } from '../report-builder-types';
+import { collectReportProblems, type ReportProblem } from '../report-problems';
 
-export interface ConsoleEntry {
-    level: 'info' | 'warn' | 'error';
-    message: string;
-    timestamp: Date;
-    componentId?: string;
-    property?: string;
-}
+export const ConsolePanel: React.FC = () => {
+    const { store } = useReportBuilderContext();
+    const definition = useRBStore((s) => s.definition);
+    const problems = useMemo(() => collectReportProblems(definition), [definition]);
 
-interface ConsolePanelProps {
-    entries?: ConsoleEntry[];
-}
+    const select = (problem: ReportProblem) => {
+        store.setState((prev: ReportBuilderState) => ({ ...prev, selectedItemId: problem.itemId, selectedItemType: problem.itemType }));
+    };
 
-export const ConsolePanel: React.FC<ConsolePanelProps> = ({ entries = [] }) => {
-    if (entries.length === 0) {
+    if (problems.length === 0) {
         return (
             <div className="eui-rb-console">
-                <div className="eui-rb-console-empty">No messages</div>
+                <div className="eui-rb-console-empty">No problems found in the report.</div>
             </div>
         );
     }
 
+    const errors = problems.filter((p) => p.level === 'error').length;
+    const warnings = problems.length - errors;
     return (
         <div className="eui-rb-console">
-            <div className="eui-rb-console-output" role="log" aria-live="polite" aria-label="Console output">
-                {entries.map((entry, i) => (
-                    <div
-                        key={i}
-                        style={{
-                            color: entry.level === 'error'
-                                ? 'var(--eui-btn-danger-tone)'
-                                : entry.level === 'warn'
-                                    ? 'var(--eui-btn-warning-tone)'
-                                    : 'var(--eui-text)',
-                            padding: '2px 0',
-                            borderBottom: '1px solid var(--eui-border-subtle)',
-                        }}
-                    >
-                        <span style={{ opacity: 0.5, fontSize: 10, marginRight: 8 }}>
-                            {entry.timestamp.toLocaleTimeString()}
-                        </span>
-                        {entry.componentId && (
-                            <span style={{ opacity: 0.7, marginRight: 6, fontSize: 11 }}>
-                                [{entry.componentId}]
-                            </span>
-                        )}
-                        {entry.message}
-                    </div>
-                ))}
+            <div className="eui-rb-console-summary">
+                {errors} error{errors === 1 ? '' : 's'}, {warnings} warning{warnings === 1 ? '' : 's'}. Select a problem to open the item.
             </div>
+            <ul className="eui-rb-console-output" aria-label="Report problems">
+                {problems.map((problem, i) => (
+                    <li key={`${problem.itemId}-${i}`}>
+                        <button type="button" className={`eui-rb-console-entry eui-rb-console-${problem.level}`} onClick={() => select(problem)}>
+                            <span className="eui-rb-console-level">{problem.level === 'error' ? 'Error' : 'Warning'}</span>
+                            {problem.message}
+                        </button>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };

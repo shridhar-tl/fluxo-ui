@@ -86,7 +86,8 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const listboxId = `${inputId}-listbox`;
         const [isOpen, setIsOpen] = useState(false);
         const [filterValue, setFilterValue] = useState('');

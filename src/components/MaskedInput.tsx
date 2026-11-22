@@ -252,7 +252,8 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
         }
         const resolvedFormatHint = formatHint || (preset ? PRESET_DESCRIPTIONS[preset] : undefined);
 
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const internalRef = useRef<HTMLInputElement>(null);
         const inputRef = (ref as React.RefObject<HTMLInputElement>) ?? internalRef;
         const liveRegionRef = useRef<HTMLSpanElement>(null);

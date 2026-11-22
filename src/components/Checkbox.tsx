@@ -35,7 +35,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
         const { visibleProps, hiddenInputProps } = splitVisibleAndHiddenProps(nativeProps);
-        const [inputId] = useState(id || name || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || name || generatedId;
         const innerRef = useRef<HTMLInputElement | null>(null);
 
         useImperativeHandle(ref, () => innerRef.current as HTMLInputElement, []);

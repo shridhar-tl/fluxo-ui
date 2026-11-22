@@ -1,5 +1,6 @@
 import type { DatasourcePlugin, DatasourceSchemaContext } from '../report-builder-types';
 import type { DatasetField, DatasourceConfig } from '../report-definition-types';
+import { mergeFields } from '../dataset-schema';
 import { withCorePlugins } from './core-plugins';
 
 export interface SchemaResolver {
@@ -49,7 +50,7 @@ export function createSchemaResolver(configs: DatasourceConfig[], hostPlugins: D
             };
             try {
                 const fields = await plugin.inferSchema(cfg.config, context);
-                if (fields.length > 0) return fields;
+                if (fields.length > 0) return mergeFields(fields, cfg.cachedSchema);
             } catch {
                 return cfg.cachedSchema ?? noFields;
             }

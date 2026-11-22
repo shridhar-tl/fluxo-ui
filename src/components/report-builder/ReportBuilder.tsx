@@ -114,7 +114,7 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
         for (const tab of tabs) {
             const s = getOrCreateTabStore(tab.id, tab.definition);
             if (!tabUnsubsRef.current.has(tab.id)) {
-                const unsub = s.on('change', (newState: ReportBuilderState) => {
+                const unsub = s.on('change', 'definition', (newState: ReportBuilderState) => {
                     onChange?.(newState.definition);
                 });
                 tabUnsubsRef.current.set(tab.id, unsub);
@@ -151,22 +151,18 @@ export const ReportBuilder: React.FC<ReportBuilderProps> = ({
     const [layoutState, setLayoutState] = useState<DockedLayoutState | undefined>(externalLayoutState);
     const [previewing, setPreviewing] = useState(false);
     const viewerHandleRef = useRef<ReportViewerHandle>(null);
-    const internalChangeRef = useRef(false);
+    const syncedDefinitionRef = useRef(externalDefinition);
 
     useEffect(() => {
-        if (!enableMultiTab && externalDefinition && !internalChangeRef.current) {
-            singleStore.setState((prev: ReportBuilderState) => {
-                if (prev.definition === externalDefinition) return prev;
-                return { ...prev, definition: externalDefinition };
-            });
-        }
-        internalChangeRef.current = false;
+        if (enableMultiTab || !externalDefinition || externalDefinition === syncedDefinitionRef.current) return;
+        syncedDefinitionRef.current = externalDefinition;
+        singleStore.setState((prev: ReportBuilderState) => ({ ...prev, definition: externalDefinition }));
     }, [externalDefinition, singleStore, enableMultiTab]);
 
     useEffect(() => {
         if (enableMultiTab) return;
-        const unsub = singleStore.on('change', (newState: ReportBuilderState) => {
-            internalChangeRef.current = true;
+        const unsub = singleStore.on('change', 'definition', (newState: ReportBuilderState) => {
+            syncedDefinitionRef.current = newState.definition;
             onChange?.(newState.definition);
         });
         return unsub;

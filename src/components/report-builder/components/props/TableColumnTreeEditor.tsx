@@ -12,6 +12,7 @@ import type {
     TableColumnGroupNode,
     TableColumnNode,
 } from '../../report-definition-types';
+import type { SuggestedColumn } from '../../data/value-utils';
 import { flattenColumns, isGroupColumn, isLeafColumn } from '../../table-helpers';
 import { CollapsibleCard, CollapsibleSection } from './CollapsibleCard';
 import { ExpressionField } from './ExpressionField';
@@ -36,6 +37,8 @@ interface Props {
     onChange: (tree: TableColumnNode[]) => void;
     /** Field paths of the bound datasource, offered as suggestions and for adding columns in bulk. */
     fieldPaths?: string[];
+    /** One readable column per datasource field, added by the "+ N fields" button. */
+    suggestedColumns?: SuggestedColumn[];
 }
 
 interface ExpansionState {
@@ -47,12 +50,6 @@ interface NodeCallbacks {
     expansion: ExpansionState;
     fieldPaths: string[];
     onCreated: (id: string) => void;
-}
-
-function labelFromPath(path: string): string {
-    const last = path.split('.').pop() ?? path;
-    const spaced = last.replace(/[_-]+/g, ' ').replace(/([a-z0-9])([A-Z])/g, '$1 $2').trim();
-    return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
 
 function collectIds(nodes: TableColumnNode[], out: string[] = []): string[] {
@@ -71,7 +68,7 @@ function newGroup(label: string): TableColumnGroupNode {
     return { kind: 'group', id: crypto.randomUUID(), label, children: [] };
 }
 
-export const TableColumnTreeEditor: React.FC<Props> = ({ tree, onChange, fieldPaths = [] }) => {
+export const TableColumnTreeEditor: React.FC<Props> = ({ tree, onChange, fieldPaths = [], suggestedColumns = [] }) => {
     const [openIds, setOpenIds] = useState<Set<string>>(() => new Set());
 
     const expansion = useMemo<ExpansionState>(() => ({
@@ -88,7 +85,7 @@ export const TableColumnTreeEditor: React.FC<Props> = ({ tree, onChange, fieldPa
     const callbacks = useMemo<NodeCallbacks>(() => ({ expansion, fieldPaths, onCreated }), [expansion, fieldPaths, onCreated]);
 
     const usedFields = useMemo(() => new Set(flattenColumns(tree).map((c) => c.field).filter(Boolean)), [tree]);
-    const unusedFields = useMemo(() => fieldPaths.filter((p) => !usedFields.has(p)), [fieldPaths, usedFields]);
+    const unusedFields = useMemo(() => suggestedColumns.filter((c) => !usedFields.has(c.path)), [suggestedColumns, usedFields]);
     const allIds = useMemo(() => collectIds(tree), [tree]);
     const allOpen = allIds.length > 0 && allIds.every((id) => openIds.has(id));
 
@@ -104,7 +101,7 @@ export const TableColumnTreeEditor: React.FC<Props> = ({ tree, onChange, fieldPa
         onChange([...tree, grp]);
     };
 
-    const addAllFields = () => onChange([...tree, ...unusedFields.map((path) => newLeaf(labelFromPath(path), path))]);
+    const addAllFields = () => onChange([...tree, ...unusedFields.map((c) => ({ ...newLeaf(c.label, c.path), formatExpr: c.formatExpr }))]);
 
     return (
         <div className="eui-rb-col-editor">
@@ -302,6 +299,7 @@ const LeafNode: React.FC<NodeProps<TableColumnDef>> = ({ node, actions, callback
                 placeholder="=expression or plain text"
                 expectedReturnType="string"
                 multiline={false}
+                hint="Text shown in place of the raw value. Start with = to compute it, for example =FormatNumber(Field.hours, 2)."
             />
             <ExpressionField
                 label="Visible"
@@ -310,6 +308,7 @@ const LeafNode: React.FC<NodeProps<TableColumnDef>> = ({ node, actions, callback
                 placeholder="=Parameters.showColumn"
                 expectedReturnType="boolean"
                 multiline={false}
+                hint="The column is hidden when this is false. Leave it empty to always show the column."
             />
             <CollapsibleSection title="Conditional formatting" count={formatCount}>
                 <ConditionalFormatsEditor

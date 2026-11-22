@@ -94,7 +94,7 @@ export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
                     options={datasourceOptions}
                     value={p.datasourceId ?? ''}
                     onChange={(e) => update({ datasourceId: e.value || undefined })}
-                    aria-label="Datasource to iterate over"
+                    ariaLabel="Datasource to iterate over"
                     size="sm"
                 />
             </div>
@@ -139,7 +139,7 @@ export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
                         options={sortDirectionOptions}
                         value={p.sortDirection ?? 'asc'}
                         onChange={(e) => update({ sortDirection: e.value as 'asc' | 'desc' })}
-                        aria-label="Sort direction"
+                        ariaLabel="Sort direction"
                         size="sm"
                     />
                 </div>
@@ -186,7 +186,7 @@ export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
                     options={layoutOptions}
                     value={layout}
                     onChange={(e) => update({ layout: e.value as RepeaterComponentProps['layout'] })}
-                    aria-label="Layout direction"
+                    ariaLabel="Layout direction"
                     size="sm"
                 />
             </div>
@@ -195,6 +195,7 @@ export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
                 <div className="eui-rb-prop-field">
                     <label className="eui-rb-prop-field-label">Grid columns</label>
                     <input
+                        aria-label="Grid columns"
                         type="number"
                         min={1}
                         max={12}
@@ -211,6 +212,7 @@ export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
             <div className="eui-rb-prop-field">
                 <label className="eui-rb-prop-field-label">Gap (px)</label>
                 <input
+                    aria-label="Gap between iterations"
                     type="number"
                     min={0}
                     value={p.gap ?? 8}
@@ -236,7 +238,7 @@ export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
                     options={separatorOptions}
                     value={p.separator ?? 'none'}
                     onChange={(e) => update({ separator: e.value as RepeaterComponentProps['separator'] })}
-                    aria-label="Separator between iterations"
+                    ariaLabel="Separator between iterations"
                     size="sm"
                 />
             </div>

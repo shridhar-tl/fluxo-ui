@@ -4,7 +4,7 @@ import { Dropdown } from '../../../Dropdown';
 import { TextInput } from '../../../TextInput';
 import type { ListItem } from '../../../../types';
 import { useReportBuilderContext } from '../../report-builder-context';
-import { useBuilderDatasources, useDatasourceFieldPaths } from '../../builder-hooks';
+import { useBuilderDatasources, useDatasourceFieldPaths, useSuggestedColumns } from '../../builder-hooks';
 import { updateComponentInTree } from '../../report-component-helpers';
 import type { ReportBuilderState } from '../../report-builder-types';
 import type {
@@ -48,6 +48,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
     const columnTree = useMemo(() => getEffectiveColumnTree(p), [p]);
     const leafColumns = useMemo(() => flattenColumns(columnTree), [columnTree]);
     const fieldPaths = useDatasourceFieldPaths(p.datasourceId || undefined);
+    const suggestedColumns = useSuggestedColumns(p.datasourceId || undefined);
     const groupByFields = useMemo(() => (p.groupBy === undefined ? [] : Array.isArray(p.groupBy) ? p.groupBy : [p.groupBy]), [p.groupBy]);
 
     const update = useCallback(
@@ -137,7 +138,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                             options={dsOptions}
                             value={p.datasourceId ?? ''}
                             onChange={(e) => update({ datasourceId: e.value })}
-                            aria-label="Select datasource"
+                            ariaLabel="Select datasource"
                             size="sm"
                         />
                     </div>
@@ -146,9 +147,10 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                         label="Row Visible"
                         value={p.rowVisibleExpr ?? ''}
                         onChange={(v) => update({ rowVisibleExpr: v || undefined })}
-                        placeholder="=Field.status !== 'deleted'"
+                        placeholder="=Field.status != 'Done'"
                         expectedReturnType="boolean"
                         multiline={false}
+                        hint="Rows for which this is false are hidden. Field is the row, and Variables can change it while the report is viewed."
                     />
 
                     <div className="eui-rb-prop-field">
@@ -176,7 +178,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                                 label="Group Visible"
                                 value={p.groupVisibleExpr ?? ''}
                                 onChange={(v) => update({ groupVisibleExpr: v || undefined })}
-                                placeholder="=Field._groupKey !== 'hidden'"
+                                placeholder="=Field._groupKey != 'hidden'"
                                 expectedReturnType="boolean"
                                 multiline={false}
                             />
@@ -189,6 +191,9 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                             onChange={(e) => update({ pivotMode: e.value })}
                             label="Pivot mode"
                         />
+                        <div className="eui-rb-prop-hint">
+                            Turns the rows into a cross table: a row for each value of the row field, a column for each value of the column field, and the value field aggregated where they meet.
+                        </div>
                     </div>
 
                     {p.pivotMode && (
@@ -205,6 +210,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                             <div className="eui-rb-prop-field">
                                 <label className="eui-rb-prop-field-label">Row Field</label>
                                 <TextInput
+                                    aria-label="Pivot row field"
                                     value={p.pivotRowField ?? ''}
                                     onChange={(e) => update({ pivotRowField: e.value || undefined })}
                                     placeholder="Field for row headers"
@@ -214,6 +220,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                             <div className="eui-rb-prop-field">
                                 <label className="eui-rb-prop-field-label">Column Field</label>
                                 <TextInput
+                                    aria-label="Pivot column field"
                                     value={p.pivotColumnField ?? ''}
                                     onChange={(e) => update({ pivotColumnField: e.value || undefined })}
                                     placeholder="Field for column headers"
@@ -223,6 +230,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                             <div className="eui-rb-prop-field">
                                 <label className="eui-rb-prop-field-label">Value Field</label>
                                 <TextInput
+                                    aria-label="Pivot value field"
                                     value={p.pivotValueField ?? ''}
                                     onChange={(e) => update({ pivotValueField: e.value || undefined })}
                                     placeholder="Field to aggregate"
@@ -237,6 +245,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                                     onChange={(e) =>
                                         update({ pivotAggregation: e.value as TableComponentProps['pivotAggregation'] })
                                     }
+                                    ariaLabel="Pivot aggregation"
                                     size="sm"
                                 />
                             </div>
@@ -250,7 +259,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
             label: `Columns (${leafColumns.length})`,
             render: () => (
                 <div className="eui-rb-props-section">
-                    <TableColumnTreeEditor tree={columnTree} onChange={handleColumnTreeChange} fieldPaths={fieldPaths} />
+                    <TableColumnTreeEditor tree={columnTree} onChange={handleColumnTreeChange} fieldPaths={fieldPaths} suggestedColumns={suggestedColumns} />
                 </div>
             ),
         },
@@ -299,6 +308,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                             onChange={(e) => update({ enableCellEdit: e.value })}
                             label="Enable cell editing (double-click)"
                         />
+                        <div className="eui-rb-prop-hint">Changes only what the report shows, for example before printing it. The data itself is not changed.</div>
                     </div>
                     <div className="eui-rb-prop-field">
                         <Checkbox
@@ -306,6 +316,7 @@ export const TablePropsPanel: React.FC<Props> = ({ component }) => {
                             onChange={(e) => update({ enableCopyData: e.value })}
                             label="Show Copy Data button"
                         />
+                        <div className="eui-rb-prop-hint">Copies the rows shown as tab-separated text, ready to paste into a spreadsheet.</div>
                     </div>
                     <ExpressionField
                         label="Drill-through Variable"

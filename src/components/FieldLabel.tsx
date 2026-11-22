@@ -66,7 +66,8 @@ export const FieldLabel: React.FC<FieldLabelProps> = ({
     className,
     disabled = false,
 }) => {
-    const [fieldId] = useState(id || generateId());
+    const [generatedId] = useState(() => generateId());
+    const fieldId = id || generatedId;
     const labelHtmlFor = htmlFor || fieldId;
     const errorId = error ? `${fieldId}-error` : undefined;
     const hintId = hint && !error ? `${fieldId}-hint` : undefined;

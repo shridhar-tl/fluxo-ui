@@ -14,7 +14,8 @@ import type { ParameterOptionsContextValue } from './components/ParameterOptions
 import { ParameterPanel } from './components/ParameterPanel';
 import { ComponentRenderer } from './viewer/ComponentRenderer';
 import { inheritedToConfig } from './data/core-plugins';
-import { resolveDatasources } from './data/datasource-engine';
+import { resolveDatasources, withDatasourceDependencies } from './data/datasource-engine';
+import { getValue, toDisplayText } from './data/value-utils';
 import { validateAllParameters } from './parameter-validation';
 import { downloadReportPdf, printReport, waitForStableContent } from './viewer/pdf-export';
 import { ViewerContext } from './viewer/ViewerExpressionContext';
@@ -215,8 +216,14 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
 
     const fetchDatasources = useCallback(async () => {
         fetchAbortRef.current?.abort();
-        const dsConfigs = definition.datasources;
-        if (dsConfigs.length === 0 || needsParameters) {
+        const dsConfigs = needsParameters
+            ? withDatasourceDependencies(
+                definition.datasources,
+                definition.parameters.map((p) => p.datasetId).filter((id): id is string => !!id),
+                datasourcePlugins,
+            )
+            : definition.datasources;
+        if (dsConfigs.length === 0) {
             setDatasources({});
             setErrorDs(new Map());
             setLoadingDs(new Set());
@@ -379,7 +386,24 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
         writeComponentVariable,
         onCellEdit,
         exportMode: exporting !== null,
-    }), [exporting, datasources, parametersByName, globalVariableValues, mergedBuiltInFields, globalVariableNames, componentVariableValues, loadingDs, errorDs, definition.datasources, subReportDefinitions, datasourcePlugins, componentPlugins, onColumnResize, onColumnReorder, handleDrillThrough, handleSetVariable, notifyVariableChange, writeGlobalVariable, writeComponentVariable, onCellEdit, resolveSubReport, definition.id]);
+        globalStyles: definition.globalStyles,
+    }), [definition.globalStyles, exporting, datasources, parametersByName, globalVariableValues, mergedBuiltInFields, globalVariableNames, componentVariableValues, loadingDs, errorDs, definition.datasources, subReportDefinitions, datasourcePlugins, componentPlugins, onColumnResize, onColumnReorder, handleDrillThrough, handleSetVariable, notifyVariableChange, writeGlobalVariable, writeComponentVariable, onCellEdit, resolveSubReport, definition.id]);
+
+    const contentStyle = useMemo<React.CSSProperties>(() => {
+        const { pageSetup, fontFamily, fontSize, textColor } = definition.globalStyles;
+        const mmToPx = 96 / 25.4;
+        const toPx = (mm: number | undefined) => `${Math.round((mm ?? 10) * mmToPx)}px`;
+        return {
+            ...(pageSetup && {
+                maxWidth: getPageDimensionsPx(pageSetup).width,
+                margin: '0 auto',
+                padding: `${toPx(pageSetup.marginTop)} ${toPx(pageSetup.marginRight)} ${toPx(pageSetup.marginBottom)} ${toPx(pageSetup.marginLeft)}`,
+            }),
+            ...(fontFamily && { fontFamily }),
+            ...(fontSize && { fontSize }),
+            ...(textColor && { color: textColor }),
+        };
+    }, [definition.globalStyles]);
 
     const paramOptionsCtx = useMemo<ParameterOptionsContextValue>(() => ({
         datasources,
@@ -389,11 +413,11 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
             const ds = cfg ? datasources[cfg.name] : undefined;
             if (!ds) return staticOptions ?? [];
             const df = displayField;
-            const vf = valueField ?? displayField;
+            const vf = valueField || displayField;
             if (!df) return staticOptions ?? [];
             return ds.rows.map((row) => ({
-                label: String(row[df] ?? ''),
-                value: vf ? row[vf] : row[df],
+                label: toDisplayText(getValue(row, df)),
+                value: getValue(row, vf ?? df),
             }));
         },
     }), [datasources, definition.datasources]);
@@ -503,15 +527,7 @@ export const ReportViewer: React.FC<ReportViewerProps> = ({
             <div
                 className="eui-rv-content"
                 ref={contentRef}
-                style={definition.globalStyles.pageSetup ? {
-                    maxWidth: getPageDimensionsPx(definition.globalStyles.pageSetup).width,
-                    margin: '0 auto',
-                    padding: (() => {
-                        const ps = definition.globalStyles.pageSetup;
-                        const mmToPx = 96 / 25.4;
-                        return `${Math.round((ps.marginTop ?? 10) * mmToPx)}px ${Math.round((ps.marginRight ?? 10) * mmToPx)}px ${Math.round((ps.marginBottom ?? 10) * mmToPx)}px ${Math.round((ps.marginLeft ?? 10) * mmToPx)}px`;
-                    })(),
-                } : undefined}
+                style={contentStyle}
             >
                 <ViewerContext.Provider value={viewerCtx}>
                     {definition.components.map((comp) => (

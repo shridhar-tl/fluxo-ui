@@ -108,3 +108,10 @@ export function parseJsonRows(raw: string | undefined): Record<string, unknown>[
         return [];
     }
 }
+
+/** The declared fields followed by the fields only known from somewhere else, such as the columns a pivot step produces from the data. */
+export function mergeFields(declared: DatasetField[], extra: DatasetField[] | undefined): DatasetField[] {
+    if (!extra?.length) return declared;
+    const names = new Set(declared.map((f) => f.name));
+    return [...declared, ...extra.filter((f) => !names.has(f.name))];
+}

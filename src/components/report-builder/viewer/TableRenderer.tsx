@@ -13,13 +13,12 @@ import { useViewerContext, buildExpressionDatasources } from './ViewerExpression
 import { CellItemsRenderer } from './CellItemRenderer';
 import { NestedTableHeader } from './TableHeaderRenderer';
 import { resolveRowGroups } from './row-group-engine';
-import { getValue } from '../data/value-utils';
+import { getValue, toDisplayText } from '../data/value-utils';
 import type { ResolvedGroupNode } from './row-group-engine';
 
 interface Props {
     component: ReportComponent;
     styleCss: React.CSSProperties;
-    globalStyles?: GlobalStyles;
 }
 
 type Row = Record<string, unknown>;
@@ -43,7 +42,7 @@ function groupRowsMultiLevel(rows: Row[], fields: string[], depth: number): Grou
     const remaining = fields.slice(1);
     const map = new Map<string, Row[]>();
     for (const row of rows) {
-        const key = String(getValue(row, field) ?? '(empty)');
+        const key = toDisplayText(getValue(row, field)) || '(empty)';
         const arr = map.get(key);
         if (arr) arr.push(row);
         else map.set(key, [row]);
@@ -106,7 +105,8 @@ async function evalVisibilityExpr(
     if (expr === undefined || expr === true) return true;
     if (expr === false) return false;
     if (typeof expr !== 'string') return true;
-    const input = expr.startsWith('=') ? expr.slice(1) : expr;
+    const input = (expr.startsWith('=') ? expr.slice(1) : expr).trim();
+    if (!input) return true;
     const evalCtx: ExpressionContext = row
         ? { ...ctx, currentRow: row, datasources: { ...ctx.datasources, Field: [row] } }
         : ctx;
@@ -131,8 +131,8 @@ function buildPivotData(
     const grouped = new Map<string, Map<string, number[]>>();
 
     for (const row of rows) {
-        const rk = String(getValue(row, rowField) ?? '');
-        const ck = String(getValue(row, colField) ?? '');
+        const rk = toDisplayText(getValue(row, rowField));
+        const ck = toDisplayText(getValue(row, colField));
         const val = Number(getValue(row, valField)) || 0;
         colKeys.add(ck);
         if (!grouped.has(rk)) grouped.set(rk, new Map());
@@ -167,13 +167,17 @@ function aggregate(nums: number[], type: string): number {
     }
 }
 
-export const TableRenderer: React.FC<Props> = ({ component, styleCss, globalStyles }) => {
+export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
     const viewerCtx = useViewerContext();
     const p = component.props as unknown as TableComponentProps;
     const drillThroughVariable = p.onDrillThrough;
     const columnTree = useMemo(() => getEffectiveColumnTree(p), [p]);
     const allColumns = useMemo(() => flattenColumns(columnTree), [columnTree]);
-    const tableStyle = globalStyles?.table ?? {};
+    const globalStyles = viewerCtx.globalStyles;
+    const tableStyle = useMemo<GlobalStyles['table']>(
+        () => ({ ...globalStyles?.table, bodyColor: globalStyles?.table?.bodyColor ?? globalStyles?.textColor }),
+        [globalStyles],
+    );
 
     const datasources = viewerCtx.datasources;
     const datasourceConfigs = viewerCtx.datasourceConfigs;
@@ -730,7 +734,7 @@ const RowGroupSection: React.FC<{
 
     const indent = depth * 16;
     const keyDisplay = node.keys && node.keys.length > 0
-        ? node.keys.map((k) => String(k ?? '')).join(' / ')
+        ? node.keys.map((k) => toDisplayText(k)).join(' / ')
         : node.values.length > 0
             ? `${node.values.length} rows`
             : '';
@@ -762,7 +766,7 @@ const RowGroupSection: React.FC<{
                         <span style={{ marginRight: 6, display: 'inline-block', transform: collapsed ? 'rotate(-90deg)' : 'rotate(0)', transition: 'transform 0.15s' }}>
                             ▾
                         </span>
-                        <span style={{ color: 'var(--eui-text-muted)', fontSize: 10, marginRight: 4 }}>{node.group.name}:</span>
+                        <span style={{ color: 'var(--eui-text-muted)', fontSize: 10 }}>{node.group.name}:</span>{' '}
                         {keyDisplay}
                     </td>
                 </tr>
@@ -1045,7 +1049,8 @@ const CellRenderer: React.FC<{
     editable?: boolean;
     onCellEdit?: (rowIndex: number, field: string, value: unknown) => void;
 }> = ({ col, row, rowIndex, cellBorder, exprCtx, frozenOffset, rowBg, resolvedWidth, editable, onCellEdit }) => {
-    const rawValue = getValue(row, col.field);
+    const [editedValue, setEditedValue] = useState<{ row: Row; value: unknown } | null>(null);
+    const rawValue = editedValue && editedValue.row === row ? editedValue.value : getValue(row, col.field);
     const [display, setDisplay] = useState<string>(() => formatRaw(rawValue));
     const [condStyle, setCondStyle] = useState<React.CSSProperties>({});
     const [editing, setEditing] = useState(false);
@@ -1090,9 +1095,10 @@ const CellRenderer: React.FC<{
         setEditing(false);
         const newValue = typeof rawValue === 'number' ? (Number(editValue) || 0) : editValue;
         if (String(newValue) !== formatRaw(rawValue)) {
+            setEditedValue({ row, value: newValue });
             onCellEdit?.(rowIndex, col.field, newValue);
         }
-    }, [editValue, rawValue, onCellEdit, rowIndex, col.field]);
+    }, [editValue, rawValue, onCellEdit, rowIndex, col.field, row]);
 
     const cancelEdit = useCallback(() => {
         setEditing(false);
@@ -1160,6 +1166,7 @@ async function evalConditionalFormats(
     if (!formats || formats.length === 0) return {};
     const fieldCtx: ExpressionContext = {
         ...ctx,
+        currentRow: row,
         datasources: { ...ctx.datasources, Field: [row] },
     };
     const merged: React.CSSProperties = {};
@@ -1177,9 +1184,7 @@ async function evalConditionalFormats(
 }
 
 function formatRaw(value: unknown): string {
-    if (value === null || value === undefined) return '';
-    if (typeof value === 'object') return JSON.stringify(value);
-    return String(value);
+    return toDisplayText(value);
 }
 
 const virtualRowHeight = 33;
@@ -1199,10 +1204,14 @@ const ExtraRow: React.FC<{
         let cancelled = false;
         Promise.all(
             row.cells.map(async (cell) => {
-                if (!cell.textExpression) return '';
-                const { result, error } = await evaluateExpression(cell.textExpression, exprCtx);
-                if (error) return `[${error}]`;
-                return formatRaw(result);
+                const text = cell.textExpression?.trim();
+                if (!text) return '';
+                if (text.startsWith('=')) {
+                    const { result, error } = await evaluateExpression(text.slice(1), exprCtx);
+                    return error ? `[${error}]` : formatRaw(result);
+                }
+                const { result, error } = await evaluateExpression(text, exprCtx);
+                return error ? text : formatRaw(result);
             }),
         ).then((vals) => {
             if (!cancelled) setCellTexts(vals);

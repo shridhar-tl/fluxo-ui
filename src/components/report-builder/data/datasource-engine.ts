@@ -34,6 +34,22 @@ function errorMessage(err: unknown): string {
     return err instanceof Error ? err.message : String(err);
 }
 
+/** The datasources with the given ids together with every datasource they are derived from, in their original order. */
+export function withDatasourceDependencies(configs: DatasourceConfig[], ids: string[], plugins: DatasourcePlugin[]): DatasourceConfig[] {
+    const allPlugins = withCorePlugins(plugins);
+    const byId = new Map(configs.map((c) => [c.id, c]));
+    const wanted = new Set<string>();
+    const visit = (id: string) => {
+        const cfg = byId.get(id);
+        if (!cfg || wanted.has(id)) return;
+        wanted.add(id);
+        const plugin = allPlugins.find((p) => p.type === cfg.type);
+        for (const dep of plugin?.getDependencies?.(cfg.config) ?? []) visit(dep);
+    };
+    ids.forEach(visit);
+    return configs.filter((c) => wanted.has(c.id));
+}
+
 export async function resolveDatasources(options: ResolveDatasourcesOptions): Promise<ResolveDatasourcesResult> {
     const { configs, parameters, builtInFields, inherited, signal } = options;
     const plugins = withCorePlugins(options.plugins);

@@ -276,7 +276,6 @@ export interface NumericTypeConfig {
 export interface DatePickerTypeConfig {
     minDate?: string;
     maxDate?: string;
-    format?: string;
 }
 
 export interface DateRangePickerTypeConfig {

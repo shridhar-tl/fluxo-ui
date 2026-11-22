@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { inheritedToConfig } from './data/core-plugins';
 import { createSchemaResolver } from './data/schema-resolver';
 import type { SchemaResolver } from './data/schema-resolver';
-import { flattenFieldPaths } from './data/value-utils';
+import { flattenFieldPaths, suggestDisplayColumns, type SuggestedColumn } from './data/value-utils';
 import { useReportBuilderContext, useRBStore } from './report-builder-context';
 import type { DatasetField, DatasourceConfig, ParameterConfig } from './report-definition-types';
 
@@ -68,4 +68,9 @@ export function useDatasourceFields(datasourceId: string | undefined): Datasourc
 export function useDatasourceFieldPaths(datasourceId: string | undefined): string[] {
     const { fields } = useDatasourceFields(datasourceId);
     return useMemo(() => flattenFieldPaths(fields).map((f) => f.path), [fields]);
+}
+
+export function useSuggestedColumns(datasourceId: string | undefined): SuggestedColumn[] {
+    const { fields } = useDatasourceFields(datasourceId);
+    return useMemo(() => suggestDisplayColumns(fields), [fields]);
 }

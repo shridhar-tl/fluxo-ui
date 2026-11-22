@@ -546,6 +546,17 @@
         }
     }
 
+    &-subtitle {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--eui-text);
+        margin: 12px 0 8px;
+    }
+
+    .eui-rb-prop-hint {
+        margin: -4px 0 10px;
+    }
+
     &-field {
         display: flex;
         flex-direction: column;
@@ -843,10 +854,50 @@
     &-output {
         flex: 1;
         overflow-y: auto;
-        padding: 8px 12px;
-        font-family: monospace;
+        margin: 0;
+        padding: 4px 12px 8px;
+        list-style: none;
         font-size: 12px;
         color: var(--eui-text);
+    }
+
+    &-summary {
+        padding: 6px 12px 0;
+        font-size: 11px;
+        color: var(--eui-text-muted);
+    }
+
+    &-entry {
+        display: flex;
+        gap: 8px;
+        width: 100%;
+        padding: 4px 0;
+        border: none;
+        border-bottom: 1px solid var(--eui-border-subtle);
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            background: var(--eui-bg-subtle);
+        }
+    }
+
+    &-level {
+        flex-shrink: 0;
+        min-width: 56px;
+        font-weight: 600;
+    }
+
+    &-error &-level {
+        color: var(--eui-btn-danger-tone);
+    }
+
+    &-warn &-level {
+        color: var(--eui-btn-warning-tone);
     }
 
     &-empty {
@@ -1453,6 +1504,7 @@ select.eui-rb-prop-input {
 
     &-row {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: 4px;
         min-width: 0;
@@ -1856,4 +1908,29 @@ select.eui-rb-prop-input {
 
 .eui-rb-card.invalid {
     border-color: var(--eui-btn-danger-tone);
+}
+
+.eui-rb-panel-intro {
+    padding: 8px 12px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: var(--eui-text-muted);
+    border-bottom: 1px solid var(--eui-border-subtle);
+    flex-shrink: 0;
+
+    code {
+        font-family: Menlo, Consolas, monospace;
+        font-size: 10px;
+    }
+}
+
+.eui-rb-prop-hint {
+    font-size: 10px;
+    line-height: 1.4;
+    color: var(--eui-text-muted);
+    margin-top: 2px;
+}
+
+.eui-rb-sort-direction {
+    min-width: 110px;
 }

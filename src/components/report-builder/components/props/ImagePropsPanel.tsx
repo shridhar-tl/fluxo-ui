@@ -71,7 +71,7 @@ export const ImagePropsPanel: React.FC<Props> = ({ component }) => {
                     options={objectFitOptions}
                     value={p.objectFit ?? 'contain'}
                     onChange={(e) => update({ objectFit: e.value as ImageComponentProps['objectFit'] })}
-                    aria-label="Object fit"
+                    ariaLabel="Object fit"
                     size="sm"
                 />
             </div>

@@ -64,6 +64,12 @@ const itemTypeOptions: ListItem[] = [
     { value: 'menu', label: 'Menu icon' },
 ];
 
+const clickActionHints: Record<Exclude<TableCellItem['clickAction'], 'none' | undefined>, string> = {
+    link: "Opens the URL in a new tab. Start with = to build it from the row, for example =Concat('https://example.com/', Field.id).",
+    drill: 'Stores the value in the variable and tells the host application, which can open details for it. Leave the value empty to store the whole row.',
+    'set-variable': 'Stores the value in the variable, so expressions reading Variables.name show the change. Leave the value empty to clear the variable.',
+};
+
 const clickActionOptions: ListItem[] = [
     { value: 'none', label: 'None' },
     { value: 'link', label: 'Open URL' },
@@ -119,7 +125,7 @@ export const TableCellItemsEditor: React.FC<Props> = ({ items, onChange }) => {
             </div>
             {items.length === 0 && (
                 <div style={{ fontSize: 10, color: 'var(--eui-text-muted)', fontStyle: 'italic' }}>
-                    (Falls back to column format expression / raw value when empty)
+                    Add items to show more than one thing in a cell, such as a link, an image, or a value that sets a variable when clicked. Without items the cell shows the format or the raw value.
                 </div>
             )}
             {items.map((item) => (
@@ -150,7 +156,7 @@ const CellItemRow: React.FC<{
                     value={item.type}
                     onChange={(e) => onUpdate({ type: e.value as TableCellItemType })}
                     size="sm"
-                    aria-label="Cell item type"
+                    ariaLabel="Cell item type"
                 />
                 <Button
                     layout="plain"
@@ -168,6 +174,7 @@ const CellItemRow: React.FC<{
                     onChange={(e) => onUpdate({ text: e.value })}
                     placeholder="Static text"
                     size="sm"
+                    aria-label="Cell item text"
                 />
             )}
 
@@ -188,6 +195,7 @@ const CellItemRow: React.FC<{
                     onChange={(e) => onUpdate({ fieldPath: e.value })}
                     placeholder="fieldName or nested.path"
                     size="sm"
+                    aria-label="Cell item field"
                 />
             )}
 
@@ -197,6 +205,7 @@ const CellItemRow: React.FC<{
                     onChange={(e) => onUpdate({ parameterName: e.value })}
                     placeholder="parameterName"
                     size="sm"
+                    aria-label="Cell item parameter"
                 />
             )}
 
@@ -207,12 +216,14 @@ const CellItemRow: React.FC<{
                         onChange={(e) => onUpdate({ src: e.value })}
                         placeholder="Image URL (https:// or data:image/...)"
                         size="sm"
+                        aria-label="Cell item image URL"
                     />
                     <TextInput
                         value={item.alt ?? ''}
                         onChange={(e) => onUpdate({ alt: e.value })}
                         placeholder="Alt text"
                         size="sm"
+                        aria-label="Cell item image alt text"
                     />
                 </>
             )}
@@ -223,6 +234,7 @@ const CellItemRow: React.FC<{
                     onChange={(e) => onUpdate({ menuId: e.value })}
                     placeholder="Menu identifier"
                     size="sm"
+                    aria-label="Cell item menu identifier"
                 />
             )}
 
@@ -233,7 +245,11 @@ const CellItemRow: React.FC<{
                     value={item.clickAction ?? 'none'}
                     onChange={(e) => onUpdate({ clickAction: e.value as TableCellItem['clickAction'] })}
                     size="sm"
+                    ariaLabel="Cell item click action"
                 />
+                {item.clickAction && item.clickAction !== 'none' && (
+                    <div className="eui-rb-prop-hint">{clickActionHints[item.clickAction]}</div>
+                )}
             </div>
 
             {item.clickAction === 'link' && (
@@ -242,6 +258,7 @@ const CellItemRow: React.FC<{
                     onChange={(e) => onUpdate({ href: e.value })}
                     placeholder="https://... or =expression"
                     size="sm"
+                    aria-label="Cell item link URL"
                 />
             )}
 

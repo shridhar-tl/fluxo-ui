@@ -51,6 +51,7 @@ export const ColumnsPropsPanel: React.FC<Props> = ({ component }) => {
                             className={`eui-rb-prop-level-btn${(p.columnCount ?? 2) === n ? ' active' : ''}`}
                             onClick={() => setColumnCount(n)}
                             aria-pressed={(p.columnCount ?? 2) === n}
+                            aria-label={`${n} column${n === 1 ? '' : 's'}`}
                         >
                             {n}
                         </button>

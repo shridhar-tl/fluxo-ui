@@ -20,6 +20,7 @@ import { ChartDesign } from './ChartDesign';
 import { RepeaterDesign } from './RepeaterDesign';
 import { PluginDesign } from './PluginDesign';
 import { useReportBuilderContext } from '../../report-builder-context';
+import { getComponentTypeLabel } from './component-type-labels';
 
 interface DesignComponentProps {
     component: ReportComponent;
@@ -39,23 +40,6 @@ interface DesignComponentProps {
     onDeleteNested: (id: string) => void;
     onDuplicateNested: (id: string) => void;
 }
-
-const typeLabels: Record<string, string> = {
-    header: 'Header',
-    text: 'Text',
-    image: 'Image',
-    'horizontal-line': 'H. Line',
-    columns: 'Columns',
-    tab: 'Tabs',
-    table: 'Table',
-    'sub-report': 'Sub-report',
-    'chart-bar': 'Bar Chart',
-    'chart-pie': 'Pie Chart',
-    'chart-donut': 'Donut Chart',
-    'chart-line': 'Line Chart',
-    canvas: 'Canvas',
-    repeater: 'Repeater',
-};
 
 function renderDesignContent(
     comp: ReportComponent,
@@ -152,7 +136,7 @@ export const DesignComponent: React.FC<DesignComponentProps> = ({
     const [hovered, setHovered] = useState(false);
     const showControls = selected || hovered;
     const { componentPlugins } = useReportBuilderContext();
-    const typeLabel = typeLabels[component.type] ?? componentPlugins.find((p) => p.type === component.type)?.label ?? component.type;
+    const typeLabel = getComponentTypeLabel(component.type) ?? componentPlugins.find((p) => p.type === component.type)?.label ?? component.type;
 
     return (
         <div

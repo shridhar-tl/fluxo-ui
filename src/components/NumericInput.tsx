@@ -54,7 +54,8 @@ export const NumericInput = forwardRef<HTMLInputElement, NumericInputProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const [displayValue, setDisplayValue] = useState(value?.toString() || '');
         const inputRef = useRef<HTMLInputElement | null>(null);
 

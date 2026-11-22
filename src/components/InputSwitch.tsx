@@ -36,7 +36,8 @@ export const InputSwitch = forwardRef<HTMLInputElement, InputSwitchProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const innerRef = useRef<HTMLInputElement | null>(null);
         useImperativeHandle(ref, () => innerRef.current as HTMLInputElement, []);
 

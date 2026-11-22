@@ -43,7 +43,8 @@ export const Chips = forwardRef<HTMLDivElement, ChipsProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const [inputValue, setInputValue] = useState('');
         const [focusedChipIndex, setFocusedChipIndex] = useState(-1);
         const [internalValue, setInternalValue] = useState<string[]>([]);

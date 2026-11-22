@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { evaluateExpression } from '../expression/expression-parser';
+import { toDisplayText } from '../data/value-utils';
 import type { ExpressionContext } from '../expression/expression-types';
 import type { ComponentStyleProps, TableCellItem } from '../report-definition-types';
 import { useViewerContext } from './ViewerExpressionContext';
@@ -205,9 +206,7 @@ const CellItemOne: React.FC<{
 };
 
 function stringify(v: unknown): string {
-    if (v === null || v === undefined) return '';
-    if (typeof v === 'object') return JSON.stringify(v);
-    return String(v);
+    return toDisplayText(v);
 }
 
 function getByPath(obj: Record<string, unknown>, path: string): unknown {

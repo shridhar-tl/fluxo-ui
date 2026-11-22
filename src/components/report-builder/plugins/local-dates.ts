@@ -21,3 +21,20 @@ export function parseLocalDateText(value: unknown): Date | null {
     if (date.getMonth() !== Number(m) - 1 || date.getDate() !== Number(d)) return null;
     return date;
 }
+
+/**
+ * A date range parameter value as two dates. Accepts the dates the picker gives, the `yyyy-MM-dd` texts a saved
+ * report holds, and the older `{ fromDate, toDate }` shape; returns null unless both ends are valid dates.
+ */
+export function toDateRangeValue(value: unknown): [Date, Date] | null {
+    let ends: unknown[] | null = null;
+    if (Array.isArray(value)) ends = value;
+    else if (value && typeof value === 'object' && ('fromDate' in value || 'toDate' in value)) {
+        const range = value as { fromDate?: unknown; toDate?: unknown };
+        ends = [range.fromDate, range.toDate];
+    }
+    if (!ends || ends.length !== 2) return null;
+    const from = parseLocalDateText(ends[0]);
+    const to = parseLocalDateText(ends[1]);
+    return from && to ? [from, to] : null;
+}

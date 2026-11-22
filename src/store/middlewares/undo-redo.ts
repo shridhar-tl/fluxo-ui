@@ -130,6 +130,7 @@ export function undoRedoMiddleware<T>(options: UndoRedoOptions = {}) {
         const saveToHistory = (state: T) => {
             if (isUndoRedo) return;
             const snapshot = projectState(state, paths);
+            if (currentIndex >= 0 && JSON.stringify(history[currentIndex]) === JSON.stringify(snapshot)) return;
             const now = Date.now();
 
             if (groupDepth > 0 && currentIndex >= 0) {

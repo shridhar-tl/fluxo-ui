@@ -64,7 +64,8 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const listboxId = `${inputId}-listbox`;
         const [isFocused, setIsFocused] = useState(false);
         const [isDismissed, setIsDismissed] = useState(false);

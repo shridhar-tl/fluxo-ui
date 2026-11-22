@@ -35,7 +35,8 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const labelId = label ? `${inputId}-label` : undefined;
 
         const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {

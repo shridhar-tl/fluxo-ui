@@ -65,6 +65,10 @@ export const VariablesListPanel: React.FC = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <p className="eui-rb-panel-intro">
+                Variables hold values that change while the report is viewed, such as the row a reader clicked. Read them in expressions as{' '}
+                <code>Variables.name</code>, and change them from a table cell whose click action is <em>Set variable value</em> or <em>Drill-through</em>.
+            </p>
             <div className="eui-rb-ds-explorer-add-row">
                 <span>{variables.length} variable{variables.length !== 1 ? 's' : ''}</span>
                 <Button

@@ -29,7 +29,8 @@ const isDevEnvironment = (): boolean => {
 export const MultiStateCheckbox = forwardRef<HTMLButtonElement, MultiStateCheckboxProps>(
     ({ items, value, onChange, required = false, id, disabled = false, className, name, args, ariaLabel, ...rest }, ref) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
 
         const currentIndex = items.findIndex((item) => item.value === value);
         const hasMatch = currentIndex >= 0;

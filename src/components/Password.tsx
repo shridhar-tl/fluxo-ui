@@ -88,7 +88,8 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(
         ref,
     ) => {
         const { styleProps: baseProps, nativeProps } = splitBaseAndNativeProps(rest);
-        const [inputId] = useState(id || generateId());
+        const [generatedId] = useState(() => generateId());
+        const inputId = id || generatedId;
         const [internalShowPassword, setInternalShowPassword] = useState(false);
         const isControlled = value !== undefined;
         const [internalValue, setInternalValue] = useState(value ?? '');

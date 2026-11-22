@@ -184,9 +184,11 @@ const HeaderRenderer: React.FC<{
     const tooltip = useEvaluatedString(p.tooltip, exprCtx, '');
     const anchorId = useEvaluatedString(p.anchorId, exprCtx, '');
 
+    const { globalStyles } = useViewerContext();
     const level = p.level ?? 'h2';
     const fontSizes: Record<string, number> = { h1: 28, h2: 22, h3: 18, h4: 16, h5: 14, h6: 12 };
     const Tag = headerTags[level] ?? 'h2';
+    const heading = globalStyles?.headings?.[level] ?? {};
 
     return (
         <Tag
@@ -194,10 +196,11 @@ const HeaderRenderer: React.FC<{
             title={tooltip || undefined}
             style={{
                 margin: 0,
-                fontSize: fontSizes[level] ?? 18,
-                fontWeight: 700,
-                lineHeight: 1.3,
-                color: 'var(--eui-text)',
+                fontSize: heading.fontSize ?? fontSizes[level] ?? 18,
+                fontWeight: heading.fontWeight ?? 700,
+                lineHeight: heading.lineHeight ?? 1.3,
+                color: heading.color ?? globalStyles?.textColor ?? 'var(--eui-text)',
+                ...(heading.fontFamily && { fontFamily: heading.fontFamily }),
                 ...styleCss,
             }}
         >
@@ -212,6 +215,7 @@ const TextRenderer: React.FC<{
     styleCss: React.CSSProperties;
 }> = ({ component, exprCtx, styleCss }) => {
     const p = component.props as unknown as TextComponentProps;
+    const { globalStyles } = useViewerContext();
     const content = useEvaluatedString(p.content, exprCtx, '');
     const tooltip = useEvaluatedString(p.tooltip, exprCtx, '');
 
@@ -219,8 +223,8 @@ const TextRenderer: React.FC<{
         <p
             title={tooltip || undefined}
             style={{
-                margin: 0, fontSize: 13, lineHeight: 1.6,
-                color: 'var(--eui-text)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                margin: 0, fontSize: globalStyles?.fontSize ?? 13, lineHeight: 1.6,
+                color: globalStyles?.textColor ?? 'var(--eui-text)', whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                 ...styleCss,
             }}
         >

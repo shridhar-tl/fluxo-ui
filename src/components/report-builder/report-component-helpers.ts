@@ -79,6 +79,18 @@ export function findComponent(components: ReportComponent[], id: string): Report
     return null;
 }
 
+/** The component that directly contains the component with the id, or null when it is at the top of the report. */
+export function findParentComponent(components: ReportComponent[], id: string, parent: ReportComponent | null = null): ReportComponent | null {
+    for (const c of components) {
+        if (c.id === id) return parent;
+        if (c.children) {
+            const found = findParentComponent(c.children, id, c);
+            if (found) return found;
+        }
+    }
+    return null;
+}
+
 export function updateComponentInTree(
     components: ReportComponent[],
     id: string,

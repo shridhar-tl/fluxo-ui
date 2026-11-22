@@ -17,6 +17,7 @@ import { HorizontalLineDesign } from './HorizontalLineDesign';
 import { ChartDesign } from './ChartDesign';
 import { TableDesign } from './TableDesign';
 import { SubReportDesign } from './SubReportDesign';
+import { getComponentTypeLabel } from './component-type-labels';
 
 interface CanvasDesignProps {
     component: ReportComponent;
@@ -674,6 +675,7 @@ const CanvasItem: React.FC<{
             onMouseLeave={() => setHovered(false)}
             onMouseDown={handleMoveStart}
             role="treeitem"
+            aria-label={`${getComponentTypeLabel(child.type) ?? child.type} component`}
             aria-selected={selected}
             tabIndex={0}
         >

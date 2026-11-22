@@ -152,7 +152,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             rawFiles.splice(1);
         }
 
-        const currentCount = files.length;
+        const currentCount = files.filter(f => f.status !== 'error').length;
         let filesToProcess = rawFiles;
 
         if (maxFiles) {
@@ -174,7 +174,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
             };
         });
 
-        setFiles(prev => [...prev, ...newUploadFiles]);
+        setFiles(prev => [...(multiple ? prev : prev.filter(f => f.status !== 'error')), ...newUploadFiles]);
 
         const validFiles = newUploadFiles.filter(f => f.status !== 'error');
         if (validFiles.length > 0) {
@@ -186,7 +186,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 startUpload(uploadFile);
             });
         }
-    }, [files.length, multiple, maxFiles, validateFile, onFilesSelect, onUpload, startUpload]);
+    }, [files, multiple, maxFiles, validateFile, onFilesSelect, onUpload, startUpload]);
 
     const handleRemove = useCallback((uploadFile: UploadFile) => {
         if (uploadFile.previewUrl) {

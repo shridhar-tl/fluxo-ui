@@ -37,7 +37,7 @@ export const SortKeysEditor: React.FC<SortKeysEditorProps> = ({ keys, onChange, 
                 <div key={i} className="eui-rb-list-editor-card">
                     <div className="eui-rb-list-editor-row">
                         <span className="eui-rb-list-editor-index">{i === 0 ? 'Sort by' : 'Then by'}</span>
-                        <div className="eui-rb-list-editor-grow">
+                        <div className="eui-rb-list-editor-grow eui-rb-sort-direction">
                             <Dropdown
                                 options={directionOptions}
                                 value={key.direction}

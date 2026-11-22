@@ -83,7 +83,7 @@ export const VariableDesigner: React.FC<Props> = ({ variableId }) => {
                     options={scopeOptions}
                     value={variable.scope}
                     onChange={(e: ComponentEvent<string>) => update({ scope: (e.value as VariableScope) || 'global' })}
-                    aria-label="Variable scope"
+                    ariaLabel="Variable scope"
                 />
                 <div style={{ fontSize: 10, color: 'var(--eui-text-muted)', marginTop: 4 }}>
                     Global variables live on the report. Component-scoped variables are still defined here for now and live alongside global variables; in a future iteration they will be authored on each component.

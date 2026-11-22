@@ -6,6 +6,7 @@ import { Dropdown } from '../../Dropdown';
 import { NumericInput } from '../../NumericInput';
 import { TextInput } from '../../TextInput';
 import type { ListItem } from '../../../types';
+import { ColorInput } from './props/ColorInput';
 import { ExpressionEditor } from '../expression/ExpressionEditor';
 import { useReportBuilderContext, useRBStore } from '../report-builder-context';
 import { findComponent, updateComponentInTree } from '../report-component-helpers';
@@ -144,6 +145,7 @@ interface SectionProps {
 
 const TypographySection: React.FC<SectionProps> = ({ styles, onChange }) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="eui-rb-prop-hint">Fields left empty use the report's global styles from Report Settings.</div>
         <PropRow label="Font Family">
             <TextInput
                 value={styles.fontFamily ?? ''}
@@ -169,7 +171,7 @@ const TypographySection: React.FC<SectionProps> = ({ styles, onChange }) => (
                 options={fontWeightOptions}
                 value={styles.fontWeight ?? ''}
                 onChange={(e) => onChange({ fontWeight: (e.value || undefined) as ComponentStyleProps['fontWeight'] })}
-                aria-label="Font weight"
+                ariaLabel="Font weight"
                 size="sm"
             />
         </PropRow>
@@ -178,7 +180,7 @@ const TypographySection: React.FC<SectionProps> = ({ styles, onChange }) => (
                 options={fontStyleOptions}
                 value={styles.fontStyle ?? ''}
                 onChange={(e) => onChange({ fontStyle: (e.value || undefined) as ComponentStyleProps['fontStyle'] })}
-                aria-label="Font style"
+                ariaLabel="Font style"
                 size="sm"
             />
         </PropRow>
@@ -192,6 +194,8 @@ const TypographySection: React.FC<SectionProps> = ({ styles, onChange }) => (
                         variant={styles.textAlign === align ? 'primary' : 'default'}
                         onClick={() => onChange({ textAlign: styles.textAlign === align ? undefined : align })}
                         aria-pressed={styles.textAlign === align}
+                        ariaLabel={`Align ${align}`}
+                        title={`Align ${align}`}
                         style={{ flex: 1 }}
                         label={align.charAt(0).toUpperCase()}
                     />
@@ -227,7 +231,7 @@ const BorderSection: React.FC<SectionProps> = ({ styles, onChange }) => (
                 options={borderStyleOptions}
                 value={styles.borderStyle ?? ''}
                 onChange={(e) => onChange({ borderStyle: (e.value || undefined) as ComponentStyleProps['borderStyle'] })}
-                aria-label="Border style"
+                ariaLabel="Border style"
                 size="sm"
             />
         </PropRow>
@@ -313,6 +317,7 @@ const SizingSection: React.FC<SectionProps> = ({ styles, onChange }) => (
                 size="sm"
             />
         </PropRow>
+        <div className="eui-rb-prop-hint">Any CSS size, such as 300px, 50% or 20rem. Leave empty to size the component to its content.</div>
     </div>
 );
 
@@ -327,6 +332,8 @@ const VisibilitySection: React.FC<SectionProps> = ({ styles, onChange }) => {
                 <button
                     className={classNames('eui-rb-expr-toggle', { active: useExpr })}
                     onClick={() => { setUseExpr(!useExpr); onChange({ visible: !useExpr ? '=true' : true }); }}
+                    title={useExpr ? 'Switch to static value' : 'Switch to expression'}
+                    aria-label={useExpr ? 'Use static value' : 'Use expression'}
                     type="button"
                 >
                     fx
@@ -347,6 +354,9 @@ const VisibilitySection: React.FC<SectionProps> = ({ styles, onChange }) => {
                     label={visibleBool ? 'Visible' : 'Hidden'}
                 />
             )}
+            <div className="eui-rb-prop-hint">
+                A hidden component is left out of the report, its preview, print and PDF. Use fx to decide while the report runs, for example Parameters.showDetails.
+            </div>
         </div>
     );
 };
@@ -355,29 +365,5 @@ const PropRow: React.FC<{ label: string; children: React.ReactNode }> = ({ label
     <div className="eui-rb-prop-field">
         <label className="eui-rb-prop-field-label">{label}</label>
         {children}
-    </div>
-);
-
-const ColorInput: React.FC<{
-    value: string | undefined;
-    onChange: (v: string | undefined) => void;
-    'aria-label'?: string;
-}> = ({ value, onChange, 'aria-label': ariaLabel }) => (
-    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-        <input
-            type="color"
-            value={value ?? '#000000'}
-            onChange={(e) => onChange(e.target.value)}
-            style={{ width: 32, height: 28, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-bg)' }}
-            aria-label={ariaLabel ?? 'Color picker'}
-        />
-        <TextInput
-            value={value ?? ''}
-            onChange={(e) => onChange(e.value || undefined)}
-            placeholder="inherit"
-            size="sm"
-            style={{ flex: 1 }}
-            aria-label={`${ariaLabel ?? 'Color'} hex`}
-        />
     </div>
 );

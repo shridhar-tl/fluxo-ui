@@ -66,6 +66,8 @@ interface ExpressionFieldProps {
     inputType?: 'text' | 'number' | 'color';
     /** Hint text shown under the field. */
     hint?: string;
+    /** Accessible name of the input when the field is shown without a visible label. */
+    ariaLabel?: string;
     /** Numeric-only: value bounds. */
     min?: number;
     max?: number;
@@ -84,6 +86,7 @@ export const ExpressionField: React.FC<ExpressionFieldProps> = ({
     multiline = false,
     inputType = 'text',
     hint,
+    ariaLabel,
     min,
     max,
     step,
@@ -126,12 +129,12 @@ export const ExpressionField: React.FC<ExpressionFieldProps> = ({
                 <ExpressionEditor
                     id={fieldId}
                     value={value.startsWith('=') ? value.slice(1) : value}
-                    onChange={(v) => onChange(`=${v}`)}
+                    onChange={(v) => onChange(v ? `=${v}` : '')}
                     expectedReturnType={expectedReturnType}
                     typeContext={mergedTypeContext}
                     placeholder={placeholder}
                     multiline={multiline}
-                    aria-label={label}
+                    aria-label={label || ariaLabel}
                 />
             ) : inputType === 'color' ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -171,6 +174,7 @@ export const ExpressionField: React.FC<ExpressionFieldProps> = ({
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder={placeholder}
+                    aria-label={label ? undefined : ariaLabel}
                     className="eui-rb-prop-input"
                     rows={3}
                     style={{ resize: 'vertical' }}
@@ -183,6 +187,7 @@ export const ExpressionField: React.FC<ExpressionFieldProps> = ({
                         value={value}
                         onChange={(e) => onChange(e.target.value)}
                         placeholder={placeholder}
+                        aria-label={label ? undefined : ariaLabel}
                         className="eui-rb-prop-input"
                         list={listId}
                     />

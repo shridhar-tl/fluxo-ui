@@ -20,6 +20,7 @@ import type { ComponentEvent, ListItem } from '../../../types';
 import { validateAllParameters } from '../parameter-validation';
 import { isKeyFilterAllowed } from '../parameter-validation';
 import type { CustomParameterPlugin } from '../report-builder-types';
+import { parseLocalDateText, toDateRangeValue } from '../plugins/local-dates';
 import type { ParameterConfig, SelectOption } from '../report-definition-types';
 import { useParameterOptionsContext } from './ParameterOptionsContext';
 
@@ -215,8 +216,14 @@ function ParameterField({ param, plugin, value, onChange, errors }: FieldRenderP
         case 'date-range-picker':
             input = (
                 <DateRangePicker
-                    value={(value as any) ?? null}
-                    onChange={(v) => onChange(v)}
+                    id={`rb-runtime-param-${param.id}`}
+                    value={toDateRangeValue(value) ?? undefined}
+                    onChange={(selection) => onChange(selection.value)}
+                    minDate={parseLocalDateText(tc.minDate) ?? undefined}
+                    maxDate={parseLocalDateText(tc.maxDate) ?? undefined}
+                    dateFormat={(tc.format as string | undefined) || undefined}
+                    placeholder="Choose the dates"
+                    ariaLabel={param.label}
                     disabled={disabled}
                 />
             );
@@ -260,6 +267,7 @@ function ParameterField({ param, plugin, value, onChange, errors }: FieldRenderP
             input = (
                 <RadioButtonGroup
                     name={`rb-runtime-param-${param.id}`}
+                    ariaLabel={param.label}
                     items={listItems.map((o) => ({ label: o.label, value: o.value, disabled }))}
                     value={(value as string) ?? ''}
                     onChange={(e: ComponentEvent<string>) => onChange(e.value)}

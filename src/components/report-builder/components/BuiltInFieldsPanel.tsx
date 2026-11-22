@@ -28,6 +28,10 @@ export const BuiltInFieldsPanel: React.FC = () => {
 
     return (
         <div className="eui-rb-panel">
+            <p className="eui-rb-panel-intro">
+                Values provided by the application, such as the signed-in user and their preferences. They are read only. Use them in any expression as{' '}
+                <code>BuiltInFields.name</code>.
+            </p>
             <div style={{ overflowY: 'auto', flex: 1 }}>
                 {groupKeys.map((groupName) => (
                     <div key={groupName} style={{ marginBottom: 6 }}>

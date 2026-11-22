@@ -37,8 +37,9 @@ import type {
     LegendPosition,
     ReportComponent,
 } from '../report-definition-types';
+import { ChartFrame } from './ChartFrame';
 import { useViewerContext, buildExpressionDatasources } from './ViewerExpressionContext';
-import { getValue } from '../data/value-utils';
+import { getValue, toDisplayText } from '../data/value-utils';
 import { useEvaluatedString, useEvaluatedBoolean } from './useExpressionValue';
 
 ChartJS.register(
@@ -103,11 +104,12 @@ function formatValue(n: unknown, fmt: ChartComponentProps['tooltipValueFormat'],
 }
 
 function toSeriesList(rows: Row[], p: ChartComponentProps): ChartSeriesConfig[] {
-    if (p.series && p.series.length > 0) return p.series;
+    const explicit = (p.series ?? []).filter((s) => (s.valueField || s.yField || '').trim());
+    if (explicit.length > 0) return explicit;
 
     // Implicit: pivot by seriesField.
     if (p.seriesField && p.yAxisField) {
-        const keys = Array.from(new Set(rows.map((r) => String(getValue(r, p.seriesField!) ?? '')))).filter((k) => k !== '');
+        const keys = Array.from(new Set(rows.map((r) => toDisplayText(getValue(r, p.seriesField!))))).filter((k) => k !== '');
         return keys.map((k, i) => ({
             id: `auto-${i}`,
             label: k,
@@ -171,12 +173,12 @@ function buildCategoricalData(
 ): { labels: string[]; seriesData: number[][] } {
     if (kind === 'none') {
         // Pre-aggregated path: each row contributes one data point.
-        const labels = rows.map((r) => String(getValue(r, xField) ?? ''));
+        const labels = rows.map((r) => toDisplayText(getValue(r, xField)));
         const seriesField = p.seriesField && !p.series ? p.seriesField : undefined;
         const seriesData = seriesList.map((s) =>
             rows.map((r) => {
                 if (seriesField) {
-                    return String(getValue(r, seriesField) ?? '') === s.label ? Number(getValue(r, s.valueField) ?? 0) : 0;
+                    return toDisplayText(getValue(r, seriesField)) === s.label ? Number(getValue(r, s.valueField) ?? 0) : 0;
                 }
                 return Number(getValue(r, s.valueField) ?? 0);
             }),
@@ -187,7 +189,7 @@ function buildCategoricalData(
     const labels: string[] = [];
     const labelIndex = new Map<string, number>();
     for (const row of rows) {
-        const key = String(getValue(row, xField) ?? '');
+        const key = toDisplayText(getValue(row, xField));
         if (!labelIndex.has(key)) {
             labelIndex.set(key, labels.length);
             labels.push(key);
@@ -199,8 +201,8 @@ function buildCategoricalData(
     const seriesData = seriesList.map((s) => {
         const buckets: number[][] = labels.map(() => []);
         for (const row of rows) {
-            if (seriesField && String(getValue(row, seriesField) ?? '') !== s.label) continue;
-            const idx = labelIndex.get(String(getValue(row, xField) ?? ''));
+            if (seriesField && toDisplayText(getValue(row, seriesField)) !== s.label) continue;
+            const idx = labelIndex.get(toDisplayText(getValue(row, xField)));
             if (idx === undefined) continue;
             const raw = getValue(row, s.valueField);
             if (kind === 'count') {
@@ -228,7 +230,7 @@ function buildCircularData(
     kind: AggregationKind,
 ): { labels: string[]; values: number[] } {
     if (kind === 'none') {
-        const labels = rows.map((r) => String(getValue(r, labelField) ?? ''));
+        const labels = rows.map((r) => toDisplayText(getValue(r, labelField)));
         const values = rows.map((r) => Number(getValue(r, valueField) ?? 0));
         return { labels, values };
     }
@@ -237,7 +239,7 @@ function buildCircularData(
     const labelIndex = new Map<string, number>();
     const buckets: number[][] = [];
     for (const row of rows) {
-        const key = String(getValue(row, labelField) ?? '');
+        const key = toDisplayText(getValue(row, labelField));
         let idx = labelIndex.get(key);
         if (idx === undefined) {
             idx = labels.length;
@@ -503,9 +505,9 @@ const CartesianBar: React.FC<CommonChartProps & { horizontal: boolean; stacked: 
     };
 
     return (
-        <div style={containerStyle(p, styleCss, onClick)} role="img" aria-label={title || 'Bar chart'}>
+        <ChartFrame style={containerStyle(p, styleCss, onClick)} label={title || 'Bar chart'} data={data}>
             <Bar data={data} options={options} />
-        </div>
+        </ChartFrame>
     );
 };
 
@@ -556,9 +558,9 @@ const CartesianLine: React.FC<CommonChartProps & { areaFill: boolean }> = ({
     };
 
     return (
-        <div style={containerStyle(p, styleCss, onClick)} role="img" aria-label={title || 'Line chart'}>
+        <ChartFrame style={containerStyle(p, styleCss, onClick)} label={title || 'Line chart'} data={data}>
             <Line data={data} options={options} />
-        </div>
+        </ChartFrame>
     );
 };
 
@@ -603,10 +605,10 @@ const CircularChart: React.FC<CommonChartProps & { kind: 'pie' | 'donut' }> = ({
     const Component = kind === 'donut' ? Doughnut : Pie;
 
     return (
-        <div style={containerStyle(p, styleCss, onClick)} role="img" aria-label={title || `${kind} chart`}>
+        <ChartFrame style={containerStyle(p, styleCss, onClick)} label={title || `${kind} chart`} data={data}>
             {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <Component data={data as any} options={options as any} />
-        </div>
+        </ChartFrame>
     );
 };
 
@@ -646,9 +648,9 @@ const PolarAreaChart: React.FC<CommonChartProps> = ({ rows, props: p, title, sub
     };
 
     return (
-        <div style={containerStyle(p, styleCss, onClick)} role="img" aria-label={title || 'Polar area chart'}>
+        <ChartFrame style={containerStyle(p, styleCss, onClick)} label={title || 'Polar area chart'} data={data}>
             <PolarArea data={data} options={options} />
-        </div>
+        </ChartFrame>
     );
 };
 
@@ -656,7 +658,7 @@ const PolarAreaChart: React.FC<CommonChartProps> = ({ rows, props: p, title, sub
 const RadarChart: React.FC<CommonChartProps> = ({ rows, props: p, title, subtitle, styleCss, onClick }) => {
     const seriesList = toSeriesList(rows, p);
     const aggKind = resolveAggregation(p, 'sum');
-    const { labels, seriesData } = buildCategoricalData(rows, p, seriesList, p.labelField ?? p.xAxisField ?? '', aggKind);
+    const { labels, seriesData } = buildCategoricalData(rows, p, seriesList, p.labelField || p.xAxisField || '', aggKind);
 
     const datasets = seriesList.map((s, i) => {
         const data = seriesData[i];
@@ -693,9 +695,9 @@ const RadarChart: React.FC<CommonChartProps> = ({ rows, props: p, title, subtitl
     };
 
     return (
-        <div style={containerStyle(p, styleCss, onClick)} role="img" aria-label={title || 'Radar chart'}>
+        <ChartFrame style={containerStyle(p, styleCss, onClick)} label={title || 'Radar chart'} data={data}>
             <Radar data={data} options={options} />
-        </div>
+        </ChartFrame>
     );
 };
 
@@ -740,9 +742,9 @@ const ScatterChart: React.FC<CommonChartProps> = ({ rows, props: p, title, subti
     };
 
     return (
-        <div style={containerStyle(p, styleCss, onClick)} role="img" aria-label={title || 'Scatter chart'}>
+        <ChartFrame style={containerStyle(p, styleCss, onClick)} label={title || 'Scatter chart'} data={data}>
             <Scatter data={data} options={options} />
-        </div>
+        </ChartFrame>
     );
 };
 
@@ -760,6 +762,7 @@ const BubbleChart: React.FC<CommonChartProps> = ({ rows, props: p, title, subtit
                 x: Number(getValue(r, xField)),
                 y: Number(getValue(r, yField)),
                 r: Math.max(3, Number(getValue(r, rField) ?? 0) * scale),
+                size: Number(getValue(r, rField) ?? 0),
             }))
             .filter((pt) => Number.isFinite(pt.x) && Number.isFinite(pt.y) && Number.isFinite(pt.r));
         const color = s.color ?? pickColor(p, i, defaultColors[i % defaultColors.length]);
@@ -792,8 +795,8 @@ const BubbleChart: React.FC<CommonChartProps> = ({ rows, props: p, title, subtit
     };
 
     return (
-        <div style={containerStyle(p, styleCss, onClick)} role="img" aria-label={title || 'Bubble chart'}>
+        <ChartFrame style={containerStyle(p, styleCss, onClick)} label={title || 'Bubble chart'} data={data}>
             <Bubble data={data} options={options} />
-        </div>
+        </ChartFrame>
     );
 };

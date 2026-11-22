@@ -42,6 +42,10 @@ export const TableRowGroupsEditor: React.FC<Props> = ({ rowGroups, datasources, 
                 <span>Row Groups ({countAll(rowGroups)})</span>
                 <Button layout="outlined" size="xs" onClick={addTopLevelGroup} ariaLabel="Add row group" label="+ Group" />
             </div>
+            <div className="eui-rb-prop-hint" style={{ marginBottom: 8 }}>
+                A parent group shows a header for each of its keys and repeats its nested groups inside it. A details group lists the rows. Read a group in
+                expressions with RowGroup('name'), for example Sum(RowGroup('name').values, 'hours').
+            </div>
             {rowGroups.length === 0 && (
                 <div
                     style={{
@@ -137,22 +141,24 @@ const RowGroupNodeEditor: React.FC<{
                 background: 'var(--eui-bg)',
             }}
         >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
                 <TextInput
                     value={group.name}
                     onChange={(e) => update({ name: e.value })}
                     placeholder="Group name (used in RowGroup('name'))"
                     size="sm"
-                    style={{ flex: 1 }}
+                    style={{ flex: '1 1 120px', minWidth: 120 }}
                     aria-label="Row group name"
                 />
-                <Dropdown
-                    options={groupKindOptions}
-                    value={group.groupKind}
-                    onChange={(e) => update({ groupKind: e.value as TableRowGroupKind })}
-                    size="sm"
-                    aria-label="Group kind"
-                />
+                <div style={{ flex: '1 1 150px', minWidth: 150 }}>
+                    <Dropdown
+                        options={groupKindOptions}
+                        value={group.groupKind}
+                        onChange={(e) => update({ groupKind: e.value as TableRowGroupKind })}
+                        size="sm"
+                        ariaLabel="Group kind"
+                    />
+                </div>
                 <Button
                     layout="plain"
                     size="xs"
@@ -169,6 +175,7 @@ const RowGroupNodeEditor: React.FC<{
                     options={dsOptions}
                     value={group.datasetId ?? ''}
                     onChange={(e) => update({ datasetId: e.value || undefined })}
+                    ariaLabel="Group dataset"
                     size="sm"
                 />
                 {group.datasetId === '__expression__' && (
@@ -239,12 +246,14 @@ const RowGroupNodeEditor: React.FC<{
             <div style={{ marginTop: 6 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: 10, color: 'var(--eui-text-muted)' }}>Group Keys ({(group.keys ?? []).length})</span>
-                    <Button layout="plain" size="xs" onClick={addKey} label="+ Key" />
+                    <Button layout="plain" size="xs" onClick={addKey} label="+ Key" ariaLabel="Add group key" />
                 </div>
+                <div className="eui-rb-prop-hint">Each distinct key value makes one group. Without keys every row is in one group.</div>
                 {(group.keys ?? []).map((k, i) => (
                     <div key={i} style={{ display: 'flex', gap: 4, marginTop: 4 }}>
                         <ExpressionField
                             label=""
+                            ariaLabel={`Group key ${i + 1}`}
                             value={k}
                             onChange={(v) => updateKey(i, v)}
                             placeholder="Field.category"
@@ -266,8 +275,9 @@ const RowGroupNodeEditor: React.FC<{
             <div style={{ marginTop: 6 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span style={{ fontSize: 10, color: 'var(--eui-text-muted)' }}>Variables ({(group.variables ?? []).length})</span>
-                    <Button layout="plain" size="xs" onClick={addVariable} label="+ Variable" />
+                    <Button layout="plain" size="xs" onClick={addVariable} label="+ Variable" ariaLabel="Add group variable" />
                 </div>
+                <div className="eui-rb-prop-hint">Worked out once for each group and read in its rows and footer as Variables.name.</div>
                 {(group.variables ?? []).map((v, i) => (
                     <div key={i} style={{ display: 'flex', gap: 4, marginTop: 4, alignItems: 'flex-start' }}>
                         <TextInput
@@ -275,10 +285,12 @@ const RowGroupNodeEditor: React.FC<{
                             onChange={(e) => updateVariable(i, { key: e.value })}
                             placeholder="varName"
                             size="sm"
+                            aria-label={`Group variable ${i + 1} name`}
                             style={{ maxWidth: 120 }}
                         />
                         <ExpressionField
                             label=""
+                            ariaLabel={`Group variable ${i + 1} value`}
                             value={v.expression}
                             onChange={(val) => updateVariable(i, { expression: val })}
                             placeholder="Sum(Field.amount)"

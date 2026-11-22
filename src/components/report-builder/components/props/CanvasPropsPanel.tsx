@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { Checkbox } from '../../../Checkbox';
 import { TextInput } from '../../../TextInput';
 import { NumericInput } from '../../../NumericInput';
-import { useReportBuilderContext, useRBStore } from '../../report-builder-context';
-import { updateComponentInTree, findComponent } from '../../report-component-helpers';
+import { useReportBuilderContext } from '../../report-builder-context';
+import { updateComponentInTree } from '../../report-component-helpers';
 import type { ReportBuilderState } from '../../report-builder-types';
-import type { ReportComponent, CanvasComponentProps, CanvasItemLayout } from '../../report-definition-types';
+import type { ReportComponent, CanvasComponentProps } from '../../report-definition-types';
 
 interface Props { component: ReportComponent; }
 
@@ -27,32 +27,6 @@ export const CanvasPropsPanel: React.FC<Props> = ({ component }) => {
             },
         }));
     }, [store, component.id]);
-
-    const selectedId = useRBStore((s) => s.selectedItemId);
-    const selectedChild = selectedId ? findComponent(children, selectedId) : null;
-    const selectedLayout = selectedChild
-        ? (selectedChild.props.canvasLayout as CanvasItemLayout | undefined) ?? { x: 0, y: 0, width: 200, height: 100 }
-        : null;
-
-    const updateChildLayout = useCallback((childId: string, layout: Partial<CanvasItemLayout>) => {
-        store.setState((prev: ReportBuilderState) => ({
-            ...prev,
-            definition: {
-                ...prev.definition,
-                components: updateComponentInTree(prev.definition.components, childId, (c) => ({
-                    ...c,
-                    props: {
-                        ...c.props,
-                        canvasLayout: {
-                            ...((c.props.canvasLayout as CanvasItemLayout) ?? { x: 0, y: 0, width: 200, height: 100 }),
-                            ...layout,
-                        },
-                    },
-                })),
-                metadata: { ...prev.definition.metadata, updatedAt: new Date().toISOString() },
-            },
-        }));
-    }, [store]);
 
     return (
         <div className="eui-rb-props-section">
@@ -106,53 +80,6 @@ export const CanvasPropsPanel: React.FC<Props> = ({ component }) => {
                 {children.length} item{children.length !== 1 ? 's' : ''} placed
             </div>
 
-            {selectedChild && selectedLayout && (
-                <div style={{ borderTop: '1px solid var(--eui-border-subtle)', paddingTop: 8, marginTop: 4 }}>
-                    <div className="eui-rb-props-section-title">Selected Item Position</div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-                        <div className="eui-rb-prop-field">
-                            <label className="eui-rb-prop-field-label">X</label>
-                            <NumericInput
-                                value={selectedLayout.x}
-                                onChange={(e) => updateChildLayout(selectedChild.id, { x: e.value ?? 0 })}
-                                min={0}
-                                aria-label="X position"
-                                size="sm"
-                            />
-                        </div>
-                        <div className="eui-rb-prop-field">
-                            <label className="eui-rb-prop-field-label">Y</label>
-                            <NumericInput
-                                value={selectedLayout.y}
-                                onChange={(e) => updateChildLayout(selectedChild.id, { y: e.value ?? 0 })}
-                                min={0}
-                                aria-label="Y position"
-                                size="sm"
-                            />
-                        </div>
-                        <div className="eui-rb-prop-field">
-                            <label className="eui-rb-prop-field-label">Width</label>
-                            <NumericInput
-                                value={selectedLayout.width}
-                                onChange={(e) => updateChildLayout(selectedChild.id, { width: Math.max(60, e.value ?? 60) })}
-                                min={60}
-                                aria-label="Item width"
-                                size="sm"
-                            />
-                        </div>
-                        <div className="eui-rb-prop-field">
-                            <label className="eui-rb-prop-field-label">Height</label>
-                            <NumericInput
-                                value={selectedLayout.height}
-                                onChange={(e) => updateChildLayout(selectedChild.id, { height: Math.max(40, e.value ?? 40) })}
-                                min={40}
-                                aria-label="Item height"
-                                size="sm"
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

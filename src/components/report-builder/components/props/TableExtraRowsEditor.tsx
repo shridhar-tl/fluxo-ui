@@ -40,6 +40,12 @@ export const TableExtraRowsEditor: React.FC<Props> = ({ title, rows, totalLeafCo
                 <span>{title} ({rows.length})</span>
                 <Button layout="outlined" size="xs" onClick={addRow} label="+ Row" ariaLabel={`Add ${title} row`} />
             </div>
+            {rows.length === 0 && (
+                <div className="eui-rb-prop-hint">
+                    Extra rows such as totals or notes. Each cell spans one or more columns and shows text, or an expression starting with =, for example
+                    =Sum(Datasources.Issues, 'hours').
+                </div>
+            )}
             {rows.map((row, rIdx) => (
                 <ExtraRowEditor
                     key={row.id}
@@ -91,7 +97,7 @@ const ExtraRowEditor: React.FC<{
                     Cells ({row.cells.length}) — total leaf columns: {totalLeafColumns}
                 </span>
                 <div style={{ display: 'flex', gap: 4 }}>
-                    <Button layout="plain" size="xs" onClick={addCell} label="+ Cell" />
+                    <Button layout="plain" size="xs" onClick={addCell} label="+ Cell" ariaLabel="Add cell" />
                     <Button
                         layout="plain"
                         size="xs"
@@ -121,6 +127,7 @@ const ExtraRowEditor: React.FC<{
                                 onChange={(e: ComponentEvent<number | undefined>) => updateCell(i, { colSpan: e.value ?? 1 })}
                                 min={1}
                                 max={Math.max(1, totalLeafColumns)}
+                                aria-label={`Cell ${i + 1} column span`}
                                 size="sm"
                             />
                         </div>
@@ -130,6 +137,7 @@ const ExtraRowEditor: React.FC<{
                                 options={alignOptions}
                                 value={cell.align ?? 'left'}
                                 onChange={(e) => updateCell(i, { align: e.value as TableExtraRowCell['align'] })}
+                                ariaLabel={`Cell ${i + 1} align`}
                                 size="sm"
                             />
                         </div>
@@ -144,6 +152,7 @@ const ExtraRowEditor: React.FC<{
                     </div>
                     <ExpressionField
                         label=""
+                        ariaLabel={`Cell ${i + 1} text`}
                         value={cell.textExpression ?? ''}
                         onChange={(v) => updateCell(i, { textExpression: v || undefined })}
                         placeholder="=Concat('Total: ', Sum(Field.amount))"

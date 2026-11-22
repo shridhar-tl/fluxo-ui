@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import { useRBStore } from '../report-builder-context';
-import { findComponent } from '../report-component-helpers';
+import { findComponent, findParentComponent } from '../report-component-helpers';
 import { DatasourceConfigPanel } from './DatasourceConfigPanel';
 import { ParameterDesigner } from './ParameterDesigner';
 import { ParametersListPanel } from './ParametersListPanel';
@@ -9,6 +9,7 @@ import { ReportSettingsPanel } from './ReportSettingsPanel';
 import { StylesPallet } from './StylesPallet';
 import { VariableDesigner } from './VariableDesigner';
 import { VariablesListPanel } from './VariablesListPanel';
+import { CanvasItemPositionPanel } from './props/CanvasItemPositionPanel';
 import { CanvasPropsPanel } from './props/CanvasPropsPanel';
 import { HeaderPropsPanel } from './props/HeaderPropsPanel';
 import { TextPropsPanel } from './props/TextPropsPanel';
@@ -71,7 +72,13 @@ export const PropertiesPallet: React.FC = () => {
                 if (!selectedItemId) return <ReportSettingsPanel />;
                 const comp = findComponent(components, selectedItemId);
                 if (!comp) return <ReportSettingsPanel />;
-                return <ComponentPropsPanel type={comp.type} component={comp} />;
+                const onCanvas = findParentComponent(components, comp.id)?.type === 'canvas';
+                return (
+                    <>
+                        <ComponentPropsPanel type={comp.type} component={comp} />
+                        {onCanvas && <CanvasItemPositionPanel item={comp} />}
+                    </>
+                );
             }
 
             default:

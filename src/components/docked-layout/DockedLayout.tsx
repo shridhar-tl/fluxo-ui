@@ -670,6 +670,7 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                 className={classNames('eui-dl-panel-area', `eui-dl-panel-${position}`, {
                     'eui-dl-panel-overlay': isOverlay,
                 })}
+                id={`eui-dl-panel-${panelId}`}
                 style={{ ...sizeStyle, ...overlayStyle }}
                 role="complementary"
                 aria-label={config.title}
@@ -681,6 +682,17 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                 >
                     <span className="eui-dl-panel-title">{config.title}</span>
                     <div className="eui-dl-panel-actions">
+                        {actions?.canMove && (
+                            <button
+                                className="eui-dl-panel-action-btn"
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onClick={() => movePanel(panelId, position === 'left' ? 'right' : 'left')}
+                                title={position === 'left' ? 'Move to the right side' : 'Move to the left side'}
+                                aria-label={position === 'left' ? 'Move to the right side' : 'Move to the left side'}
+                            >
+                                {position === 'left' ? <PanelRightIcon aria-hidden="true" /> : <PanelLeftIcon aria-hidden="true" />}
+                            </button>
+                        )}
                         {actions?.canPin && (
                             <button
                                 className={classNames('eui-dl-panel-action-btn', {
@@ -720,7 +732,7 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                         aria-valuenow={Math.round(state.panels[panelId]?.size ?? 0)}
                         aria-valuemin={panelConfigs.find((c) => c.id === panelId)?.minSize ?? 100}
                         aria-valuemax={800}
-                        aria-controls={panelId}
+                        aria-controls={`eui-dl-panel-${panelId}`}
                         tabIndex={0}
                     />
                 )}
@@ -737,7 +749,7 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                         aria-valuenow={Math.round(state.panels[panelId]?.size ?? 0)}
                         aria-valuemin={panelConfigs.find((c) => c.id === panelId)?.minSize ?? 100}
                         aria-valuemax={800}
-                        aria-controls={panelId}
+                        aria-controls={`eui-dl-panel-${panelId}`}
                         tabIndex={0}
                     />
                 )}
@@ -936,7 +948,7 @@ export const DockedLayout: React.FC<DockedLayoutProps> = ({
                         aria-valuenow={Math.round(state.panels[activeBottomId]?.size ?? 0)}
                         aria-valuemin={panelConfigs.find((c) => c.id === activeBottomId)?.minSize ?? 100}
                         aria-valuemax={800}
-                        aria-controls={activeBottomId}
+                        aria-controls={`eui-dl-panel-${activeBottomId}`}
                         tabIndex={0}
                     />
                 )}

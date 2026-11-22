@@ -7,7 +7,7 @@ import { useBuilderDatasources, useDatasourceFields } from '../builder-hooks';
 import { derivedDatasourceType, withCorePlugins } from '../data/core-plugins';
 import { resolveDatasources } from '../data/datasource-engine';
 import { findDependents } from '../data/datasource-naming';
-import { inferFieldsFromRows } from '../dataset-schema';
+import { inferFieldsFromRows, mergeFields } from '../dataset-schema';
 import { useReportBuilderContext, useRBStore } from '../report-builder-context';
 import type { DatasourcePlugin, ReportBuilderState } from '../report-builder-types';
 import type { DatasourceConfig } from '../report-definition-types';
@@ -114,7 +114,7 @@ export const DatasourceConfigPanel: React.FC<DatasourceConfigPanelProps> = ({ da
             setSampleState({ loading: false, message: null, error: message });
             return;
         }
-        const sampled = dataset.fields.length > 0 ? dataset.fields : inferFieldsFromRows(dataset.rows);
+        const sampled = mergeFields(dataset.fields, inferFieldsFromRows(dataset.rows));
         updateDs({ cachedSchema: sampled });
         setSampleState({
             loading: false,

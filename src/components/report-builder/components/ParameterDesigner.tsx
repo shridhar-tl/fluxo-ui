@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Button } from '../../Button';
 import { Checkbox } from '../../Checkbox';
 import { Chips } from '../../Chips';
+import { default as DateRangePicker } from '../../date-range';
 import { Dropdown } from '../../Dropdown';
 import { Multiselect } from '../../Multiselect';
 import { NumericInput } from '../../NumericInput';
@@ -14,6 +15,7 @@ import { useBuilderDatasources } from '../builder-hooks';
 import type { CustomParameterPlugin, ReportBuilderState } from '../report-builder-types';
 import type { ParameterConfig, ParameterType, ParameterValidation, SelectOption } from '../report-definition-types';
 import { getIdentifierError } from '../identifier-validation';
+import { parseLocalDateText, toDateRangeValue, toLocalDateText } from '../plugins/local-dates';
 
 const parameterTypes: Array<{ type: ParameterType; label: string }> = [
     { type: 'text', label: 'Text' },
@@ -95,6 +97,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
     const value = param.defaultValue;
     const tc = param.typeConfig ?? {};
     const listItems: ListItem[] = options.map((o) => ({ label: o.label, value: String(o.value) }));
+    const ariaLabel = `Default value of ${param.label}`;
 
     if (plugin) {
         const RuntimeUI = plugin.RuntimeUI;
@@ -115,6 +118,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
             if (param.allowMultiple) {
                 return (
                     <Chips
+                        ariaLabel={ariaLabel}
                         value={(value as string[]) ?? []}
                         onChange={(e: ComponentEvent<string[]>) => onChange(e.value.length ? e.value : undefined)}
                         placeholder="Add value and press Enter"
@@ -124,6 +128,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
             if (tc.multiline) {
                 return (
                     <TextArea
+                        aria-label={ariaLabel}
                         value={(value as string) ?? ''}
                         onChange={(e) => onChange(e.value || undefined)}
                         rows={2}
@@ -133,6 +138,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
             }
             return (
                 <TextInput
+                    aria-label={ariaLabel}
                     value={(value as string) ?? ''}
                     onChange={(e) => onChange(e.value || undefined)}
                     placeholder="Default text"
@@ -142,6 +148,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
         case 'masked-edit':
             return (
                 <TextInput
+                    aria-label={ariaLabel}
                     value={(value as string) ?? ''}
                     onChange={(e) => onChange(e.value || undefined)}
                     placeholder="Default value"
@@ -152,6 +159,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
             if (param.allowMultiple) {
                 return (
                     <Chips
+                        ariaLabel={ariaLabel}
                         value={((value as number[]) ?? []).map(String)}
                         onChange={(e: ComponentEvent<string[]>) => {
                             const nums = e.value.map(Number).filter((n) => !Number.isNaN(n));
@@ -163,6 +171,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
             }
             return (
                 <NumericInput
+                    aria-label={ariaLabel}
                     value={(value as number | undefined) ?? undefined}
                     onChange={(e: ComponentEvent<number | undefined>) => onChange(e.value ?? undefined)}
                     min={tc.min as number | undefined}
@@ -175,41 +184,26 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
         case 'date-picker':
             return (
                 <TextInput
+                    aria-label={ariaLabel}
                     type="date"
                     value={(value as string) ?? ''}
                     onChange={(e) => onChange(e.value || undefined)}
                 />
             );
 
-        case 'date-range-picker': {
-            const range = (value as { fromDate?: string; toDate?: string } | null | undefined) ?? null;
+        case 'date-range-picker':
             return (
-                <div style={{ display: 'flex', gap: 8 }}>
-                    <TextInput
-                        type="date"
-                        value={range?.fromDate ?? ''}
-                        onChange={(e) => {
-                            const from = e.value || undefined;
-                            const to = range?.toDate;
-                            if (!from && !to) onChange(undefined);
-                            else onChange({ fromDate: from, toDate: to });
-                        }}
-                        placeholder="From"
-                    />
-                    <TextInput
-                        type="date"
-                        value={range?.toDate ?? ''}
-                        onChange={(e) => {
-                            const to = e.value || undefined;
-                            const from = range?.fromDate;
-                            if (!from && !to) onChange(undefined);
-                            else onChange({ fromDate: from, toDate: to });
-                        }}
-                        placeholder="To"
-                    />
-                </div>
+                <DateRangePicker
+                    id={`rb-param-default-${param.id}`}
+                    value={toDateRangeValue(value) ?? undefined}
+                    onChange={(selection) => onChange(selection.value.map(toLocalDateText))}
+                    minDate={parseLocalDateText(tc.minDate) ?? undefined}
+                    maxDate={parseLocalDateText(tc.maxDate) ?? undefined}
+                    dateFormat={(tc.format as string | undefined) || undefined}
+                    placeholder="No default dates"
+                    ariaLabel={`Default value of ${param.label}`}
+                />
             );
-        }
 
         case 'dropdown':
         case 'autocomplete':
@@ -217,6 +211,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
             const items: ListItem[] = [{ value: '', label: '— None —' }, ...listItems];
             return (
                 <Dropdown
+                    ariaLabel={ariaLabel}
                     options={items}
                     value={(value as string) ?? ''}
                     onChange={(e: ComponentEvent<string>) => onChange(e.value || undefined)}
@@ -228,6 +223,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
         case 'multi-select':
             return (
                 <Multiselect
+                    ariaLabel={ariaLabel}
                     options={listItems}
                     value={(value as string[]) ?? []}
                     onChange={(e: ComponentEvent<string[]>) => onChange(e.value.length ? e.value : undefined)}
@@ -237,6 +233,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
         case 'chips':
             return (
                 <Chips
+                    ariaLabel={ariaLabel}
                     value={(value as string[]) ?? []}
                     onChange={(e: ComponentEvent<string[]>) => onChange(e.value.length ? e.value : undefined)}
                     placeholder="Add value and press Enter"
@@ -262,6 +259,7 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
         default:
             return (
                 <TextInput
+                    aria-label={ariaLabel}
                     value={(value as string) ?? ''}
                     onChange={(e) => onChange(e.value || undefined)}
                     placeholder="Default value"
@@ -478,8 +476,13 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             />
                         )}
                     </div>
+                    <div className="eui-rb-prop-hint">
+                        Mandatory: the report waits until a value is given. Read Only: the value is shown but cannot be changed. Hidden: the parameter is not
+                        shown and its default value is used. Allow Multiple: several values can be chosen.
+                    </div>
                     <div className="eui-rb-param-designer-field">
                         <label>Default Value</label>
+                        <div className="eui-rb-prop-hint">Filled in when the report opens. A hidden or read-only parameter always uses it.</div>
                         <DefaultValueEditor
                             param={param}
                             plugin={plugin}
@@ -508,6 +511,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div className="eui-rb-param-designer-field">
                                 <label>Placeholder</label>
                                 <TextInput
+                                    aria-label="Placeholder"
                                     value={(tc.placeholder as string) ?? ''}
                                     onChange={(e) => updateTypeConfig({ placeholder: e.value })}
                                     placeholder="Hint text..."
@@ -527,10 +531,12 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div className="eui-rb-param-designer-field">
                                 <label>Mask Pattern</label>
                                 <TextInput
+                                    aria-label="Mask Pattern"
                                     value={(tc.mask as string) ?? ''}
                                     onChange={(e) => updateTypeConfig({ mask: e.value })}
                                     placeholder="e.g. 999-999-9999"
                                 />
+                                <div className="eui-rb-prop-hint">9 is a digit, a is a letter and * is a letter or digit. Any other character is shown as typed.</div>
                             </div>
                         </div>
                     )}
@@ -543,6 +549,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <div key={key} className="eui-rb-param-designer-field" style={{ flex: '1 1 80px' }}>
                                         <label style={{ textTransform: 'capitalize' }}>{key}</label>
                                         <NumericInput
+                                            aria-label={`${key.charAt(0).toUpperCase()}${key.slice(1)}`}
                                             value={(tc[key] as number) ?? undefined}
                                             onChange={(e: ComponentEvent<number | undefined>) => updateTypeConfig({ [key]: e.value })}
                                         />
@@ -551,6 +558,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: '1 1 80px' }}>
                                     <label>Decimal Places</label>
                                     <NumericInput
+                                        aria-label="Decimal Places"
                                         value={(tc.decimalPlaces as number) ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateTypeConfig({ decimalPlaces: e.value })}
                                         min={0}
@@ -568,6 +576,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Min Date</label>
                                     <TextInput
+                                        aria-label="Min Date"
                                         type="date"
                                         value={(tc.minDate as string) ?? ''}
                                         onChange={(e) => updateTypeConfig({ minDate: e.value })}
@@ -576,20 +585,26 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Max Date</label>
                                     <TextInput
+                                        aria-label="Max Date"
                                         type="date"
                                         value={(tc.maxDate as string) ?? ''}
                                         onChange={(e) => updateTypeConfig({ maxDate: e.value })}
                                     />
                                 </div>
                             </div>
-                            <div className="eui-rb-param-designer-field">
-                                <label>Format</label>
-                                <TextInput
-                                    value={(tc.format as string) ?? ''}
-                                    onChange={(e) => updateTypeConfig({ format: e.value })}
-                                    placeholder="e.g. MM/dd/yyyy"
-                                />
-                            </div>
+                            {param.type === 'date-range-picker' && (
+                                <div className="eui-rb-param-designer-field">
+                                    <label>Format</label>
+                                    <TextInput
+                                        aria-label="Format"
+                                        value={(tc.format as string) ?? ''}
+                                        onChange={(e) => updateTypeConfig({ format: e.value || undefined })}
+                                        placeholder="e.g. dd MMM yyyy"
+                                    />
+                                    <div className="eui-rb-prop-hint">How the chosen dates are shown, such as dd MMM yyyy or MM/dd/yyyy. Leave empty for the default.</div>
+                                </div>
+                            )}
+                            <div className="eui-rb-prop-hint">Dates before the min date or after the max date cannot be chosen.</div>
                         </div>
                     )}
 
@@ -599,6 +614,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div className="eui-rb-param-designer-field">
                                 <label>Dataset</label>
                                 <Dropdown
+                                    ariaLabel="Dataset"
                                     options={datasetOptions}
                                     value={param.datasetId ?? ''}
                                     onChange={(e: ComponentEvent<string>) => updateParam({ datasetId: e.value || undefined })}
@@ -610,6 +626,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <div className="eui-rb-param-designer-field">
                                         <label>Display field</label>
                                         <TextInput
+                                            aria-label="Display field"
                                             value={param.displayField ?? ''}
                                             onChange={(e) => updateParam({ displayField: e.value })}
                                             placeholder="fieldName"
@@ -618,6 +635,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                     <div className="eui-rb-param-designer-field">
                                         <label>Value field</label>
                                         <TextInput
+                                            aria-label="Value field"
                                             value={param.valueField ?? ''}
                                             onChange={(e) => updateParam({ valueField: e.value })}
                                             placeholder="fieldName (defaults to display field)"
@@ -657,6 +675,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Min Query Length</label>
                                     <NumericInput
+                                        aria-label="Min Query Length"
                                         value={(tc.minQueryLength as number) ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateTypeConfig({ minQueryLength: e.value })}
                                         min={0}
@@ -665,6 +684,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Max Suggestions</label>
                                     <NumericInput
+                                        aria-label="Max Suggestions"
                                         value={(tc.maxSuggestions as number) ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateTypeConfig({ maxSuggestions: e.value })}
                                         min={1}
@@ -685,6 +705,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Min Length</label>
                                     <NumericInput
+                                        aria-label="Min Length"
                                         value={validation.minLength ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ minLength: e.value })}
                                         min={0}
@@ -693,6 +714,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Max Length</label>
                                     <NumericInput
+                                        aria-label="Max Length"
                                         value={validation.maxLength ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ maxLength: e.value })}
                                         min={0}
@@ -702,6 +724,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div className="eui-rb-param-designer-field">
                                 <label>Regex Pattern</label>
                                 <TextInput
+                                    aria-label="Regex Pattern"
                                     value={validation.regex ?? ''}
                                     onChange={(e) => updateValidation({ regex: e.value || undefined })}
                                     placeholder="e.g. ^[A-Z]{3}\d+$"
@@ -710,6 +733,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div className="eui-rb-param-designer-field">
                                 <label>Regex Error Message</label>
                                 <TextInput
+                                    aria-label="Regex Error Message"
                                     value={validation.regexMessage ?? ''}
                                     onChange={(e) => updateValidation({ regexMessage: e.value || undefined })}
                                     placeholder="Must match expected format"
@@ -718,6 +742,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div className="eui-rb-param-designer-field">
                                 <label>Key Filter Regex (blocks disallowed keys while typing)</label>
                                 <TextInput
+                                    aria-label="Key Filter Regex (blocks disallowed keys while typing)"
                                     value={validation.keyfilter ?? ''}
                                     onChange={(e) => updateValidation({ keyfilter: e.value || undefined })}
                                     placeholder="e.g. [A-Za-z0-9]"
@@ -733,6 +758,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Min Value</label>
                                     <NumericInput
+                                        aria-label="Min Value"
                                         value={validation.minValue ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ minValue: e.value })}
                                     />
@@ -740,6 +766,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Max Value</label>
                                     <NumericInput
+                                        aria-label="Max Value"
                                         value={validation.maxValue ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ maxValue: e.value })}
                                     />
@@ -755,6 +782,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Min Items</label>
                                     <NumericInput
+                                        aria-label="Min Items"
                                         value={validation.minItems ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ minItems: e.value })}
                                         min={0}
@@ -763,6 +791,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Max Items</label>
                                     <NumericInput
+                                        aria-label="Max Items"
                                         value={validation.maxItems ?? undefined}
                                         onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ maxItems: e.value })}
                                         min={0}
@@ -778,6 +807,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div className="eui-rb-param-designer-field">
                                 <label>Allowed File Types (comma-separated)</label>
                                 <TextInput
+                                    aria-label="Allowed File Types (comma-separated)"
                                     value={validation.allowedFileTypes ?? ''}
                                     onChange={(e) => updateValidation({ allowedFileTypes: e.value || undefined })}
                                     placeholder=".pdf,.csv,image/*"
@@ -786,6 +816,7 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div className="eui-rb-param-designer-field">
                                 <label>Max File Size (bytes)</label>
                                 <NumericInput
+                                    aria-label="Max File Size (bytes)"
                                     value={validation.maxFileSize ?? undefined}
                                     onChange={(e: ComponentEvent<number | undefined>) => updateValidation({ maxFileSize: e.value })}
                                     min={0}

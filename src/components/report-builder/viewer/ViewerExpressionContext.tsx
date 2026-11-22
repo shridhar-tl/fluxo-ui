@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Dataset, DatasourcePlugin, ReportComponentPlugin, SubReportDefinition } from '../report-builder-types';
-import type { DatasourceConfig, ReportDefinition } from '../report-definition-types';
+import type { DatasourceConfig, GlobalStyles, ReportDefinition } from '../report-definition-types';
 
 export interface VariableScopeFrame {
     componentId: string;
@@ -46,6 +46,8 @@ export interface ViewerContext {
     onCellEdit?: (componentId: string, rowIndex: number, field: string, value: unknown) => void;
     /** True while the report is rendered for PDF export or printing: every row and tab is rendered and nothing scrolls. */
     exportMode?: boolean;
+    /** Report-wide fonts, colours, heading and table styles from Report Settings. */
+    globalStyles?: GlobalStyles;
 }
 
 export const ViewerContext = React.createContext<ViewerContext>({
