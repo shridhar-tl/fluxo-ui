@@ -6,6 +6,12 @@ export interface TimeValue {
 
 export const pad = (n: number) => n.toString().padStart(2, '0');
 
+export const limitHours = (value: TimeValue, minHour: number, maxHour: number): TimeValue => {
+    if (value.hours < minHour) return { hours: minHour, minutes: 0, seconds: 0 };
+    if (value.hours > maxHour) return { hours: maxHour, minutes: 0, seconds: 0 };
+    return value;
+};
+
 export const parseTimeString = (input: string): TimeValue | null => {
     const trimmed = input.trim();
     if (!trimmed) return null;

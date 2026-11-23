@@ -7,6 +7,8 @@ interface TimePanelProps {
     format12: boolean;
     showSeconds: boolean;
     hourStep: number;
+    minHour: number;
+    maxHour: number;
     minuteStep: number;
     secondStep: number;
     onChange: (next: TimeValue) => void;
@@ -54,6 +56,8 @@ const TimePanel: React.FC<TimePanelProps> = ({
     format12,
     showSeconds,
     hourStep,
+    minHour,
+    maxHour,
     minuteStep,
     secondStep,
     onChange,
@@ -61,14 +65,15 @@ const TimePanel: React.FC<TimePanelProps> = ({
     onNow,
     showFooter = true,
 }) => {
+    const isPm = value.hours >= 12;
+    const inRange = (hours24: number) => hours24 >= minHour && hours24 <= maxHour;
     const hourValues = format12
-        ? buildRange(1, 12, hourStep).filter((n) => n <= 12)
-        : buildRange(0, 23, hourStep);
+        ? buildRange(1, 12, hourStep).filter((n) => n <= 12 && inRange((n % 12) + (isPm ? 12 : 0)))
+        : buildRange(0, 23, hourStep).filter(inRange);
     const minuteValues = buildRange(0, 59, minuteStep);
     const secondValues = buildRange(0, 59, secondStep);
 
     const currentHour12 = value.hours % 12 === 0 ? 12 : value.hours % 12;
-    const isPm = value.hours >= 12;
 
     const handleHour = (h: number) => {
         if (format12) {

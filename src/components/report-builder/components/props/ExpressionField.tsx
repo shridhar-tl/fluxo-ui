@@ -1,9 +1,20 @@
 import classNames from 'classnames';
 import React, { useContext, useMemo, useState } from 'react';
+import { ColorPicker } from '../../../color-picker';
+import { NumericInput } from '../../../NumericInput';
+import { TextArea } from '../../../TextArea';
+import { TextInput } from '../../../TextInput';
 import { ExpressionEditor } from '../../expression/ExpressionEditor';
 import type { ExpressionTypeContext, ExpressionReturnType } from '../../expression/expression-types';
 import { ReportBuilderContext } from '../../report-builder-context';
 import type { ReportComponent, ReportDefinition } from '../../report-definition-types';
+import { isHexColor } from './color-value';
+
+function parseNumber(value: string): number | undefined {
+    if (!value.trim()) return undefined;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+}
 
 function collectComponentVariableNames(components: ReportComponent[], out: string[] = []): string[] {
     for (const c of components) {
@@ -137,58 +148,47 @@ export const ExpressionField: React.FC<ExpressionFieldProps> = ({
                     aria-label={label || ariaLabel}
                 />
             ) : inputType === 'color' ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <input
-                        id={fieldId}
-                        type="color"
-                        value={value || '#000000'}
-                        onChange={(e) => onChange(e.target.value)}
-                        style={{ width: 32, height: 28, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-bg)' }}
-                        aria-label={label}
-                    />
-                    <input
-                        type="text"
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        placeholder={placeholder ?? '#000000'}
-                        className="eui-rb-prop-input"
-                        style={{ flex: 1 }}
-                        aria-label={`${label} hex`}
-                    />
-                </div>
+                <ColorPicker
+                    variant="input"
+                    editable
+                    size="sm"
+                    showAlpha={false}
+                    value={isHexColor(value) ? value : '#000000'}
+                    onChange={(color) => onChange(color)}
+                    placeholder={placeholder ?? '#000000'}
+                    ariaLabel={label || ariaLabel}
+                />
             ) : inputType === 'number' ? (
-                <input
+                <NumericInput
                     id={fieldId}
-                    type="number"
-                    value={value}
+                    size="sm"
+                    value={parseNumber(value)}
                     min={min}
                     max={max}
                     step={step}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder={placeholder}
-                    className="eui-rb-prop-input"
-                />
-            ) : multiline ? (
-                <textarea
-                    id={fieldId}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
+                    onChange={(e) => onChange(e.value === undefined ? '' : String(e.value))}
                     placeholder={placeholder}
                     aria-label={label ? undefined : ariaLabel}
-                    className="eui-rb-prop-input"
+                />
+            ) : multiline ? (
+                <TextArea
+                    id={fieldId}
+                    size="sm"
+                    value={value}
+                    onChange={(e) => onChange(e.value)}
+                    placeholder={placeholder}
+                    aria-label={label ? undefined : ariaLabel}
                     rows={3}
-                    style={{ resize: 'vertical' }}
                 />
             ) : (
                 <>
-                    <input
+                    <TextInput
                         id={fieldId}
-                        type="text"
+                        size="sm"
                         value={value}
-                        onChange={(e) => onChange(e.target.value)}
+                        onChange={(e) => onChange(e.value)}
                         placeholder={placeholder}
                         aria-label={label ? undefined : ariaLabel}
-                        className="eui-rb-prop-input"
                         list={listId}
                     />
                     {listId && suggestions && (

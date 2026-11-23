@@ -1,5 +1,8 @@
 import React from 'react';
-import { TextInput } from '../../../TextInput';
+import { TimesIcon } from '../../../../assets/icons';
+import { Button } from '../../../Button';
+import { ColorPicker } from '../../../color-picker';
+import { isHexColor } from './color-value';
 
 interface ColorInputProps {
     value: string | undefined;
@@ -10,20 +13,18 @@ interface ColorInputProps {
 
 export const ColorInput: React.FC<ColorInputProps> = ({ value, onChange, 'aria-label': ariaLabel, placeholder = 'inherit' }) => (
     <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-        <input
-            type="color"
-            value={value && /^#[0-9a-f]{6}$/i.test(value) ? value : '#000000'}
-            onChange={(e) => onChange(e.target.value)}
-            style={{ width: 32, height: 28, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-bg)' }}
-            aria-label={ariaLabel ?? 'Color picker'}
-        />
-        <TextInput
-            value={value ?? ''}
-            onChange={(e) => onChange(e.value || undefined)}
-            placeholder={placeholder}
+        <ColorPicker
+            variant="input"
+            editable
             size="sm"
-            style={{ flex: 1 }}
-            aria-label={`${ariaLabel ?? 'Color'} hex`}
+            showAlpha={false}
+            value={isHexColor(value) ? value : '#000000'}
+            onChange={(color) => onChange(color)}
+            placeholder={placeholder}
+            ariaLabel={ariaLabel ?? 'Color'}
         />
+        {value && (
+            <Button layout="plain" size="xs" onClick={() => onChange(undefined)} ariaLabel={`Clear ${ariaLabel ?? 'color'}`} leftIcon={<TimesIcon aria-hidden="true" />} />
+        )}
     </div>
 );

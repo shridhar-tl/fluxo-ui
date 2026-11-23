@@ -8,7 +8,7 @@ import MobileTimePanel from './MobileTimePanel';
 import '../eui-base.scss';
 import './time-picker.scss';
 import TimePanel from './TimePanel';
-import { dateToTime, formatTime, normalizeValue, parseTimeString, TimeValue, timeToDate } from './utils';
+import { dateToTime, formatTime, limitHours, normalizeValue, parseTimeString, TimeValue, timeToDate } from './utils';
 
 type TimePickerSize = 'sm' | 'md' | 'lg';
 type TimePickerVariant = 'input' | 'inline';
@@ -22,6 +22,8 @@ interface TimePickerProps {
     format12?: boolean;
     showSeconds?: boolean;
     hourStep?: number;
+    minHour?: number;
+    maxHour?: number;
     minuteStep?: number;
     secondStep?: number;
     valueType?: TimePickerValueType;
@@ -48,6 +50,8 @@ const TimePicker: React.FC<TimePickerProps> = ({
     format12 = false,
     showSeconds = false,
     hourStep = 1,
+    minHour = 0,
+    maxHour = 23,
     minuteStep = 1,
     secondStep = 1,
     valueType = 'string',
@@ -87,7 +91,8 @@ const TimePicker: React.FC<TimePickerProps> = ({
     }, [current, format12, showSeconds]);
 
     const emit = useCallback(
-        (next: TimeValue | null) => {
+        (value: TimeValue | null) => {
+            const next = value && limitHours(value, minHour, maxHour);
             if (controlledValue === undefined) setInternal(next);
             if (!onChange) return;
             if (next === null) {
@@ -98,7 +103,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
             else if (valueType === 'object') onChange(next);
             else onChange(formatTime(next, format12, showSeconds));
         },
-        [controlledValue, onChange, valueType, format12, showSeconds],
+        [controlledValue, onChange, valueType, format12, showSeconds, minHour, maxHour],
     );
 
     const computePosition = useCallback(() => {
@@ -195,7 +200,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
     const openPopover = () => {
         if (!interactive || isOpen) return;
         previousFocusRef.current = document.activeElement as HTMLElement | null;
-        setDraft(current ?? DEFAULT_TIME);
+        setDraft(limitHours(current ?? DEFAULT_TIME, minHour, maxHour));
         setIsOpen(true);
         onOpenChange?.(true);
     };
@@ -208,7 +213,8 @@ const TimePicker: React.FC<TimePickerProps> = ({
         previousFocusRef.current?.focus?.();
     };
 
-    const handlePanelChange = (next: TimeValue) => {
+    const handlePanelChange = (value: TimeValue) => {
+        const next = limitHours(value, minHour, maxHour);
         setDraft(next);
         if (effectiveAutoClose && !showConfirm) {
             emit(next);
@@ -253,6 +259,8 @@ const TimePicker: React.FC<TimePickerProps> = ({
                     format12={format12}
                     showSeconds={showSeconds}
                     hourStep={hourStep}
+                    minHour={minHour}
+                    maxHour={maxHour}
                     minuteStep={minuteStep}
                     secondStep={secondStep}
                     onChange={(next) => emit(next)}
@@ -363,6 +371,8 @@ const TimePicker: React.FC<TimePickerProps> = ({
                                 format12={format12}
                                 showSeconds={showSeconds}
                                 hourStep={hourStep}
+                                minHour={minHour}
+                                maxHour={maxHour}
                                 minuteStep={minuteStep}
                                 secondStep={secondStep}
                                 onChange={handlePanelChange}

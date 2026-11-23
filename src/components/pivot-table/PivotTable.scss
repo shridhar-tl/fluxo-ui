@@ -329,21 +329,9 @@
 }
 
 .eui-pivot-config-chip-agg {
-    appearance: none;
-    background-color: var(--eui-bg);
-    border: 1px solid var(--eui-border);
-    border-radius: var(--eui-radius-sm);
-    padding: 0.0625rem 0.25rem;
-    font-size: 0.6rem;
-    color: var(--eui-primary);
-    font-family: inherit;
-    cursor: pointer;
-    font-weight: 600;
-
-    &:focus {
-        border-color: var(--eui-primary);
-        outline: none;
-    }
+    display: inline-flex;
+    flex-shrink: 0;
+    min-width: 5.5rem;
 }
 
 .eui-pivot-config-chip-remove {
@@ -672,41 +660,21 @@
 .eui-pivot-cell-editor-input {
     width: 100%;
     min-width: 0;
-    padding: 0.25rem 0.5rem;
-    border: 2px solid var(--eui-primary);
-    border-radius: 2px;
-    background-color: var(--eui-bg);
-    color: var(--eui-text);
-    font-family: inherit;
-    font-size: 0.8125rem;
-    outline: none;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    box-sizing: border-box;
-}
 
-.eui-pivot-cell-editor-number {
-    -moz-appearance: textfield;
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+    input {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
     }
 }
 
 .eui-pivot-cell-editor-textarea {
     width: 100%;
     min-width: 0;
-    padding: 0.25rem 0.5rem;
-    border: 2px solid var(--eui-primary);
-    border-radius: 2px;
-    background-color: var(--eui-bg);
-    color: var(--eui-text);
-    font-family: monospace;
-    font-size: 0.7rem;
-    outline: none;
-    resize: vertical;
+
+    textarea {
+        font-family: monospace;
+        font-size: 0.7rem;
+    }
 }
 
 .eui-pivot-cell-editor-toggle {

@@ -23,6 +23,7 @@ interface PropsBase {
     maxDate?: Date;
     onChange: (selection: DateSelectedCallbackArg) => void;
     onClose?: () => void;
+    onClear?: () => void;
     customLabel?: string;
     showTodayButton?: boolean;
     dateFormat?: string;

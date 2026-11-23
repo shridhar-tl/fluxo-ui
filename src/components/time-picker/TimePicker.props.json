@@ -23,6 +23,16 @@
       "default": "1",
       "description": "Step between available hour values."
     },
+    "minHour": {
+      "type": "number",
+      "default": "0",
+      "description": "Earliest hour (0-23) that can be chosen; earlier times are raised to it"
+    },
+    "maxHour": {
+      "type": "number",
+      "default": "23",
+      "description": "Latest hour (0-23) that can be chosen; later times are lowered to it"
+    },
     "minuteStep": {
       "type": "number",
       "default": "1",

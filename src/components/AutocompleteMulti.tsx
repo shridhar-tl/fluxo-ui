@@ -79,6 +79,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         const [maxReachedAnnouncement, setMaxReachedAnnouncement] = useState('');
         const containerRef = useRef<HTMLDivElement>(null);
         const inputRef = useRef<HTMLInputElement>(null);
+        const selectSearchOnClickRef = useRef(false);
         const knownSelectedItemsRef = useRef<ListItem[]>([]);
         const onFilterRef = useRef(onFilter);
         onFilterRef.current = onFilter;
@@ -126,6 +127,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
         }, [isFocused, inputValue.length, minLength, items.length]);
 
         const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            selectSearchOnClickRef.current = false;
             setInputValue(e.target.value);
             setIsFocused(true);
         };
@@ -140,6 +142,9 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             }
 
             const newValue = isAlreadySelected ? value.filter((v) => !compare(v, item.value)) : [...value, item.value];
+            // The search text stays after a pick so related items remain listed; the next click selects it so that typing
+            // replaces it with a new search.
+            selectSearchOnClickRef.current = true;
 
             if (onChange) {
                 onChange({
@@ -169,8 +174,18 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             }
         };
 
-        const handleFocus = () => {
+        const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
             setIsFocused(true);
+            if (e.target.value) {
+                e.target.select();
+            }
+        };
+
+        const handleInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
+            if (selectSearchOnClickRef.current && e.currentTarget.value) {
+                e.currentTarget.select();
+            }
+            selectSearchOnClickRef.current = false;
         };
 
         const handleClose = () => {
@@ -301,6 +316,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                                 value={inputValue}
                                 onChange={handleInputChange}
                                 onFocus={handleFocus}
+                                onClick={handleInputClick}
                                 onKeyDown={handleKeyDown}
                                 placeholder={
                                     selectedItems.length === 0 ? placeholder : isMaxReached ? `Max ${maxSelectedItems} reached` : ''

@@ -1,5 +1,6 @@
 import cn from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
+import { Dropdown } from '../Dropdown';
 import { Sortable } from '../drag-drop';
 import type { DragItem, DropResult } from '../drag-drop';
 import { detectFieldType, getAllFields, getAvailableAggregateFunctions } from './pivot-engine';
@@ -128,6 +129,8 @@ const PivotConfigPanel: React.FC<PivotConfigPanelProps> = ({
         () => getAvailableAggregateFunctions(plugins, disabledFunctions),
         [plugins, disabledFunctions],
     );
+
+    const aggregateOptions = useMemo(() => aggregateFunctions.map((fn) => ({ label: fn.label, value: fn.name })), [aggregateFunctions]);
 
     const emitConfig = useCallback(
         (next: PivotConfig) => {
@@ -335,19 +338,20 @@ const PivotConfigPanel: React.FC<PivotConfigPanelProps> = ({
                 <span className="eui-pivot-config-chip-label">{label}</span>
                 <span className="eui-pivot-config-chip-type">{type}</span>
                 {zone === 'values' && permissions.allowChangeAggregation && (
-                    <select
+                    <span
                         className="eui-pivot-config-chip-agg"
-                        value={aggFn || 'sum'}
-                        onChange={(e) => handleAggregationChange(field, e.target.value)}
                         onClick={(e) => e.stopPropagation()}
                         onPointerDown={(e) => e.stopPropagation()}
                         onMouseDown={(e) => e.stopPropagation()}
-                        aria-label={`Aggregation for ${label}`}
                     >
-                        {aggregateFunctions.map((fn) => (
-                            <option key={fn.name} value={fn.name}>{fn.label}</option>
-                        ))}
-                    </select>
+                        <Dropdown
+                            size="xs"
+                            options={aggregateOptions}
+                            value={aggFn || 'sum'}
+                            onChange={(e) => handleAggregationChange(field, e.value as string)}
+                            ariaLabel={`Aggregation for ${label}`}
+                        />
+                    </span>
                 )}
                 {permissions.allowRemoveFields && zone !== 'available' && (
                     <button

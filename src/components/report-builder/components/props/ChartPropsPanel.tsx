@@ -2,6 +2,7 @@ import React, { useCallback, useId, useMemo } from 'react';
 import { TimesIcon, TrashIcon } from '../../../../assets/icons';
 import { Button } from '../../../Button';
 import { Checkbox } from '../../../Checkbox';
+import { ColorPicker } from '../../../color-picker';
 import { Dropdown } from '../../../Dropdown';
 import { TextInput } from '../../../TextInput';
 import type { ListItem } from '../../../../types';
@@ -20,6 +21,7 @@ import type {
     TitleAlign,
     VariableConfig,
 } from '../../report-definition-types';
+import { isHexColor } from './color-value';
 import { ComponentVariablesEditor } from './ComponentVariablesEditor';
 import { ExpressionField } from './ExpressionField';
 import { FieldPathInput } from './FieldPathInput';
@@ -522,14 +524,15 @@ const SeriesTab: React.FC<{
                     )}
                     {colors.map((color, idx) => (
                         <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-                            <input
-                                type="color"
-                                value={color}
-                                onChange={(e) => updateColor(idx, e.target.value)}
-                                style={{ width: 28, height: 24, border: '1px solid var(--eui-border-subtle)', borderRadius: 3, cursor: 'pointer', padding: 1, background: 'var(--eui-bg)' }}
-                                aria-label={`Color ${idx + 1}`}
+                            <ColorPicker
+                                variant="input"
+                                editable
+                                size="sm"
+                                showAlpha={false}
+                                value={isHexColor(color) ? color : '#000000'}
+                                onChange={(next) => updateColor(idx, next)}
+                                ariaLabel={`Color ${idx + 1}`}
                             />
-                            <TextInput value={color} onChange={(e) => updateColor(idx, e.value)} size="sm" style={{ flex: 1 }} />
                             <Button
                                 layout="plain"
                                 size="xs"

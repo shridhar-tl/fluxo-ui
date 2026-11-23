@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { Checkbox } from '../../../Checkbox';
 import { Dropdown } from '../../../Dropdown';
+import { NumericInput } from '../../../NumericInput';
 import type { ListItem } from '../../../../types';
 import { useReportBuilderContext } from '../../report-builder-context';
 import { useBuilderDatasources } from '../../builder-hooks';
@@ -194,33 +195,27 @@ export const RepeaterPropsPanel: React.FC<Props> = ({ component }) => {
             {layout === 'grid' && (
                 <div className="eui-rb-prop-field">
                     <label className="eui-rb-prop-field-label">Grid columns</label>
-                    <input
+                    <NumericInput
                         aria-label="Grid columns"
-                        type="number"
+                        size="sm"
                         min={1}
                         max={12}
+                        maxDecimals={0}
                         value={p.gridColumns ?? 2}
-                        onChange={(e) => {
-                            const n = parseInt(e.target.value, 10);
-                            update({ gridColumns: Number.isFinite(n) && n >= 1 ? Math.min(12, n) : 2 });
-                        }}
-                        className="eui-rb-prop-input"
+                        onChange={(e) => update({ gridColumns: e.value !== undefined && e.value >= 1 ? Math.min(12, e.value) : 2 })}
                     />
                 </div>
             )}
 
             <div className="eui-rb-prop-field">
                 <label className="eui-rb-prop-field-label">Gap (px)</label>
-                <input
+                <NumericInput
                     aria-label="Gap between iterations"
-                    type="number"
+                    size="sm"
                     min={0}
+                    maxDecimals={0}
                     value={p.gap ?? 8}
-                    onChange={(e) => {
-                        const n = parseInt(e.target.value, 10);
-                        update({ gap: Number.isFinite(n) && n >= 0 ? n : 0 });
-                    }}
-                    className="eui-rb-prop-input"
+                    onChange={(e) => update({ gap: e.value !== undefined && e.value >= 0 ? e.value : 0 })}
                 />
             </div>
 

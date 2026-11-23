@@ -22,6 +22,7 @@ import {
     UndoIcon,
     WrenchIcon,
 } from '../../assets/icons';
+import { TextInput } from '../TextInput';
 import { DockedLayout } from '../docked-layout';
 import type { DockedLayoutState, PanelConfig, ContentTab } from '../docked-layout';
 import DragDropProvider from '../drag-drop/DragDropProvider';
@@ -685,23 +686,12 @@ const ReportBuilderToolbar: React.FC<{ previewing: boolean; onTogglePreview: () 
                                 >
                                     {templates.length > 5 && (
                                         <div style={{ padding: '8px 8px 4px', borderBottom: '1px solid var(--eui-border-subtle)', flexShrink: 0 }}>
-                                            <input
-                                                type="text"
+                                            <TextInput
+                                                size="sm"
                                                 value={templateFilter}
-                                                onChange={(e) => setTemplateFilter(e.target.value)}
+                                                onChange={(e) => setTemplateFilter(e.value)}
                                                 placeholder="Search templates..."
-                                                style={{
-                                                    width: '100%',
-                                                    height: 28,
-                                                    padding: '0 8px',
-                                                    border: '1px solid var(--eui-border-subtle)',
-                                                    borderRadius: 4,
-                                                    background: 'var(--eui-bg)',
-                                                    color: 'var(--eui-text)',
-                                                    fontSize: 12,
-                                                    outline: 'none',
-                                                    boxSizing: 'border-box',
-                                                }}
+                                                style={{ width: '100%' }}
                                                 aria-label="Search templates"
                                             />
                                         </div>

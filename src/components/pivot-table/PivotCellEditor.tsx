@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { NumericInput } from '../NumericInput';
+import { TextArea } from '../TextArea';
+import { TextInput } from '../TextInput';
 import type { CellEditorProps, FieldDefinition } from './pivot-table-types';
 
 interface PivotCellEditorProps {
@@ -24,11 +27,12 @@ const StringEditor: React.FC<CellEditorProps> = ({ value, onCommit, onCancel, on
     };
 
     return (
-        <input
+        <TextInput
             ref={ref}
+            size="sm"
             className="eui-pivot-cell-editor-input"
             value={val}
-            onChange={(e) => { setVal(e.target.value); onChange(e.target.value); }}
+            onChange={(e) => { setVal(e.value); onChange(e.value); }}
             onKeyDown={handleKeyDown}
             onBlur={() => { onChange(val); onCommit(); }}
         />
@@ -36,25 +40,25 @@ const StringEditor: React.FC<CellEditorProps> = ({ value, onCommit, onCancel, on
 };
 
 const NumberEditor: React.FC<CellEditorProps> = ({ value, onCommit, onCancel, onChange }) => {
-    const [val, setVal] = useState(String(value ?? ''));
+    const [val, setVal] = useState<number | undefined>(typeof value === 'number' ? value : Number(value) || undefined);
     const ref = useRef<HTMLInputElement>(null);
 
     useEffect(() => { ref.current?.focus(); ref.current?.select(); }, []);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') { onChange(Number(val)); onCommit(); }
+        if (e.key === 'Enter') { onChange(val ?? 0); onCommit(); }
         if (e.key === 'Escape') onCancel();
     };
 
     return (
-        <input
+        <NumericInput
             ref={ref}
-            type="number"
+            size="sm"
             className="eui-pivot-cell-editor-input eui-pivot-cell-editor-number"
             value={val}
-            onChange={(e) => { setVal(e.target.value); onChange(Number(e.target.value)); }}
+            onChange={(e) => { setVal(e.value); onChange(e.value ?? 0); }}
             onKeyDown={handleKeyDown}
-            onBlur={() => { onChange(Number(val)); onCommit(); }}
+            onBlur={() => { onChange(val ?? 0); onCommit(); }}
         />
     );
 };
@@ -97,11 +101,12 @@ const ObjectEditor: React.FC<CellEditorProps> = ({ value, onCommit, onCancel, on
     };
 
     return (
-        <textarea
+        <TextArea
             ref={ref}
+            size="sm"
             className="eui-pivot-cell-editor-textarea"
             value={val}
-            onChange={(e) => setVal(e.target.value)}
+            onChange={(e) => setVal(e.value)}
             onKeyDown={handleKeyDown}
             onBlur={() => {
                 try { onChange(JSON.parse(val)); onCommit(); } catch { onCancel(); }

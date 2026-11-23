@@ -1,7 +1,7 @@
 {
   "dateRangePickerProps": {
     "value": {
-      "type": "DateRangeValue | string | number",
+      "type": "DateRangeValue | string | number | Date",
       "description": "Selected date range [Date, Date] or range option key"
     },
     "ranges": {
@@ -15,6 +15,10 @@
     "onClose": {
       "type": "() => void",
       "description": "Callback fired when date picker closes"
+    },
+    "onClear": {
+      "type": "() => void",
+      "description": "Shows a clear button while a value is selected, and is called when it is clicked"
     },
     "dateFormat": {
       "type": "string",

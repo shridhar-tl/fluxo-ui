@@ -1,16 +1,22 @@
 import classNames from 'classnames';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { CalendarIcon } from '../../assets/icons';
+import { CalendarIcon, TimesIcon } from '../../assets/icons';
 import '../eui-base.scss';
 import './date-range.scss';
 import DatePopover from './DatePopover';
 import { ContextType, DatePickerPropsContext, DateRangePickerProps, DateRangeValue, RangeOption, StateProvider } from './types';
 import { formatDisplayDate } from './utils';
 
+function toCustomRange(value: DateRangePickerProps['value']): DateRangeValue | undefined {
+    if (value instanceof Date) return [value, value];
+    if (Array.isArray(value) && value.length === 2) return value;
+    return undefined;
+}
+
 function DateRangePicker(props: DateRangePickerProps) {
     const $props = useRef(props);
     $props.current = props;
-    const { id, value, ranges, className, onChange, onClose, dateFormat, styles, disabled, iconOnly } = props;
+    const { id, value, ranges, className, onChange, onClose, onClear, dateFormat, styles, disabled, iconOnly } = props;
 
     const [isOpen, setIsOpen] = useState(false);
     const [activeView, setActiveView] = useState<'quick' | 'custom'>(
@@ -25,14 +31,17 @@ function DateRangePicker(props: DateRangePickerProps) {
         if (typeof value === 'string' && ranges?.length) {
             setSelectedRange(value);
             setActiveView('quick');
-        } else if (ranges?.length && Array.isArray(value) && value.length === 2) {
-            setCustomRange(value);
+            return;
+        }
+        const range = toCustomRange(value);
+        if (range) {
+            setCustomRange(range);
             setSelectedRange('custom');
             setActiveView('custom');
         }
     }, [value]);
 
-    const [customRange, setCustomRange] = useState<DateRangeValue>(Array.isArray(value) ? value : [new Date(), new Date()]);
+    const [customRange, setCustomRange] = useState<DateRangeValue>(() => toCustomRange(value) ?? [new Date(), new Date()]);
 
     const controlRef = useRef<HTMLButtonElement>(null!);
     const generatedId = useId();
@@ -43,7 +52,9 @@ function DateRangePicker(props: DateRangePickerProps) {
         onClose?.();
     }, [onClose]);
 
-    const hasValue = Array.isArray(value) || (typeof value === 'string' && !!value);
+    const hasValue = Array.isArray(value) || value instanceof Date || (typeof value === 'string' && !!value);
+
+    const showClear = !!onClear && hasValue && !disabled && !iconOnly;
 
     const displayLabel = () => {
         if (!hasValue && props.placeholder) {
@@ -104,7 +115,11 @@ function DateRangePicker(props: DateRangePickerProps) {
     return (
         <DatePickerPropsContext value={props as any}>
             <StateProvider value={contextValue}>
-                <div id={id} className={classNames('eui-date-range-picker', className, props.classNames?.container)} style={styles}>
+                <div
+                    id={id}
+                    className={classNames('eui-date-range-picker', { 'eui-drp-clearable': showClear }, className, props.classNames?.container)}
+                    style={styles}
+                >
                     <button
                         ref={controlRef}
                         type="button"
@@ -119,6 +134,17 @@ function DateRangePicker(props: DateRangePickerProps) {
                         {!iconOnly && <span className="eui-drp-control-label">{displayLabel()}</span>}
                         <CalendarIcon className="eui-drp-control-icon" aria-hidden="true" />
                     </button>
+                    {showClear && (
+                        <button
+                            type="button"
+                            className="eui-drp-clear"
+                            onClick={onClear}
+                            aria-label={`Clear ${props.ariaLabel ?? (props.range === false ? 'date' : 'date range')}`}
+                            title="Clear"
+                        >
+                            <TimesIcon className="eui-drp-clear-icon" aria-hidden="true" />
+                        </button>
+                    )}
                     {isOpen && <DatePopover controlRef={controlRef} popoverId={popoverId} />}
                 </div>
             </StateProvider>

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-11-22T08:03:07.480Z",
+  "generatedAt": "2026-11-23T04:46:48.010Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -2411,6 +2411,7 @@
           "drag-drop",
           "dropdown",
           "numeric-input",
+          "text-area",
           "text-input"
         ],
         "hooks": [],
@@ -2716,6 +2717,7 @@
         "components/props/TablePropsPanel.tsx",
         "components/props/TableRowGroupsEditor.tsx",
         "components/props/TextPropsPanel.tsx",
+        "components/props/color-value.ts",
         "components/subreport/SubReportEditorModal.tsx",
         "components/subreport/useSubReportDefinition.ts",
         "data/core-plugins.ts",
@@ -2785,6 +2787,7 @@
           "button",
           "checkbox",
           "chips",
+          "color-picker",
           "date-range",
           "docked-layout",
           "drag-drop",

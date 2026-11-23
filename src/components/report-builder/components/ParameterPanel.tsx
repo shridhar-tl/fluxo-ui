@@ -20,7 +20,7 @@ import type { ComponentEvent, ListItem } from '../../../types';
 import { validateAllParameters } from '../parameter-validation';
 import { isKeyFilterAllowed } from '../parameter-validation';
 import type { CustomParameterPlugin } from '../report-builder-types';
-import { parseLocalDateText, toDateRangeValue } from '../plugins/local-dates';
+import { parseLocalDateText, toDateRangeValue, toLocalDateText } from '../plugins/local-dates';
 import type { ParameterConfig, SelectOption } from '../report-definition-types';
 import { useParameterOptionsContext } from './ParameterOptionsContext';
 
@@ -200,15 +200,18 @@ function ParameterField({ param, plugin, value, onChange, errors }: FieldRenderP
 
         case 'date-picker':
             input = (
-                <TextInput
+                <DateRangePicker
                     id={`rb-runtime-param-${param.id}`}
-                    type="date"
-                    value={(value as string) ?? ''}
-                    onChange={(e) => onChange(e.value)}
-                    min={(tc.minDate as string) ?? undefined}
-                    max={(tc.maxDate as string) ?? undefined}
+                    range={false}
+                    value={parseLocalDateText(value) ?? undefined}
+                    onChange={(selection) => onChange(toLocalDateText(selection.value[0]))}
+                    onClear={() => onChange(undefined)}
+                    minDate={parseLocalDateText(tc.minDate) ?? undefined}
+                    maxDate={parseLocalDateText(tc.maxDate) ?? undefined}
+                    dateFormat={(tc.format as string | undefined) || undefined}
+                    placeholder="Choose a date"
+                    ariaLabel={param.label}
                     disabled={disabled}
-                    {...commonAria}
                 />
             );
             break;

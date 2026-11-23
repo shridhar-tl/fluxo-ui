@@ -183,11 +183,17 @@ const DefaultValueEditor: React.FC<DefaultValueEditorProps> = ({ param, plugin, 
 
         case 'date-picker':
             return (
-                <TextInput
-                    aria-label={ariaLabel}
-                    type="date"
-                    value={(value as string) ?? ''}
-                    onChange={(e) => onChange(e.value || undefined)}
+                <DateRangePicker
+                    id={`rb-param-default-${param.id}`}
+                    range={false}
+                    value={parseLocalDateText(value) ?? undefined}
+                    onChange={(selection) => onChange(toLocalDateText(selection.value[0]))}
+                    onClear={() => onChange(undefined)}
+                    minDate={parseLocalDateText(tc.minDate) ?? undefined}
+                    maxDate={parseLocalDateText(tc.maxDate) ?? undefined}
+                    dateFormat={(tc.format as string | undefined) || undefined}
+                    placeholder="No default date"
+                    ariaLabel={ariaLabel}
                 />
             );
 
@@ -575,24 +581,32 @@ export const ParameterDesigner: React.FC<ParameterDesignerProps> = ({ parameterI
                             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Min Date</label>
-                                    <TextInput
-                                        aria-label="Min Date"
-                                        type="date"
-                                        value={(tc.minDate as string) ?? ''}
-                                        onChange={(e) => updateTypeConfig({ minDate: e.value })}
+                                    <DateRangePicker
+                                        id={`rb-param-minDate-${param.id}`}
+                                        range={false}
+                                        value={parseLocalDateText(tc.minDate) ?? undefined}
+                                        onChange={(selection) => updateTypeConfig({ minDate: toLocalDateText(selection.value[0]) })}
+                                        onClear={() => updateTypeConfig({ minDate: undefined })}
+                                        dateFormat={(tc.format as string | undefined) || undefined}
+                                        placeholder="No limit"
+                                        ariaLabel="Min Date"
                                     />
                                 </div>
                                 <div className="eui-rb-param-designer-field" style={{ flex: 1 }}>
                                     <label>Max Date</label>
-                                    <TextInput
-                                        aria-label="Max Date"
-                                        type="date"
-                                        value={(tc.maxDate as string) ?? ''}
-                                        onChange={(e) => updateTypeConfig({ maxDate: e.value })}
+                                    <DateRangePicker
+                                        id={`rb-param-maxDate-${param.id}`}
+                                        range={false}
+                                        value={parseLocalDateText(tc.maxDate) ?? undefined}
+                                        onChange={(selection) => updateTypeConfig({ maxDate: toLocalDateText(selection.value[0]) })}
+                                        onClear={() => updateTypeConfig({ maxDate: undefined })}
+                                        dateFormat={(tc.format as string | undefined) || undefined}
+                                        placeholder="No limit"
+                                        ariaLabel="Max Date"
                                     />
                                 </div>
                             </div>
-                            {param.type === 'date-range-picker' && (
+                            {(param.type === 'date-picker' || param.type === 'date-range-picker') && (
                                 <div className="eui-rb-param-designer-field">
                                     <label>Format</label>
                                     <TextInput

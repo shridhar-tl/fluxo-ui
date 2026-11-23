@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { TextInput } from '../../TextInput';
 import { getValue, toDisplayText } from '../data/value-utils';
 import { evaluateExpression } from '../expression/expression-parser';
 import type { ExpressionContext, GroupFrame } from '../expression/expression-types';
@@ -1152,27 +1153,17 @@ const CellRenderer: React.FC<{
             onDoubleClick={handleDoubleClick}
         >
             {editing ? (
-                <input
+                <TextInput
                     ref={inputRef}
+                    size="sm"
                     value={editValue}
-                    onChange={(e) => setEditValue(e.target.value)}
+                    onChange={(e) => setEditValue(e.value)}
                     onBlur={commitEdit}
                     onKeyDown={(e) => {
                         if (e.key === 'Enter') commitEdit();
                         if (e.key === 'Escape') cancelEdit();
                     }}
-                    style={{
-                        width: '100%',
-                        padding: '3px 6px',
-                        border: '1px solid var(--eui-primary)',
-                        borderRadius: 3,
-                        background: 'var(--eui-bg)',
-                        color: 'var(--eui-text)',
-                        fontSize: 'inherit',
-                        fontFamily: 'inherit',
-                        outline: 'none',
-                        boxSizing: 'border-box',
-                    }}
+                    style={{ width: '100%' }}
                     aria-label={`Edit ${col.label}`}
                 />
             ) : hasCellItems ? (

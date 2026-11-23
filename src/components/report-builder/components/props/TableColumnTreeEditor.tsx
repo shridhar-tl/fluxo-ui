@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon, TrashIcon } from '../../../../assets/icons';
 import { Button } from '../../../Button';
 import { Checkbox } from '../../../Checkbox';
+import { ColorPicker } from '../../../color-picker';
 import { Dropdown } from '../../../Dropdown';
 import { TextInput } from '../../../TextInput';
 import type { ListItem } from '../../../../types';
@@ -371,22 +372,30 @@ const ConditionalFormatsEditor: React.FC<{
                         multiline={false}
                     />
                     <div className="eui-rb-prop-row">
-                        <label className="eui-rb-cond-format-color">
+                        <div className="eui-rb-cond-format-color">
                             <span>Background</span>
-                            <input
-                                type="color"
+                            <ColorPicker
+                                variant="input"
+                                editable
+                                size="sm"
+                                showAlpha={false}
                                 value={fmt.backgroundColor || '#fef3c7'}
-                                onChange={(e) => updateOne(fmt.id, { backgroundColor: e.target.value })}
+                                onChange={(color) => updateOne(fmt.id, { backgroundColor: color })}
+                                ariaLabel="Background color"
                             />
-                        </label>
-                        <label className="eui-rb-cond-format-color">
+                        </div>
+                        <div className="eui-rb-cond-format-color">
                             <span>Text</span>
-                            <input
-                                type="color"
+                            <ColorPicker
+                                variant="input"
+                                editable
+                                size="sm"
+                                showAlpha={false}
                                 value={fmt.textColor || '#000000'}
-                                onChange={(e) => updateOne(fmt.id, { textColor: e.target.value })}
+                                onChange={(color) => updateOne(fmt.id, { textColor: color })}
+                                ariaLabel="Text color"
                             />
-                        </label>
+                        </div>
                     </div>
                     <div className="eui-rb-prop-row">
                         <Checkbox
