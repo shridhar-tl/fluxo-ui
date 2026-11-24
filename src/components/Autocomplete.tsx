@@ -72,6 +72,7 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         const [internalValue, setInternalValue] = useState('');
         const [activeOptionId, setActiveOptionId] = useState<string | null>(null);
         const inputRef = useRef<HTMLInputElement>(null);
+        const blurTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
         const onFilterRef = useRef(onFilter);
         onFilterRef.current = onFilter;
         const combinedRef = (ref as React.RefObject<HTMLInputElement>) || inputRef;
@@ -108,6 +109,8 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
                 onFilterRef.current(debouncedValue);
             }
         }, [debouncedValue, minLength]);
+
+        useEffect(() => () => clearTimeout(blurTimerRef.current), []);
 
         const isOpen = isFocused && !isDismissed && (openOnFocus || currentValue.length >= minLength) && (flatItems.length > 0 || loading);
 
@@ -147,13 +150,15 @@ export const Autocomplete = forwardRef<HTMLInputElement, AutocompleteProps>(
         };
 
         const handleFocus = () => {
+            clearTimeout(blurTimerRef.current);
             setIsFocused(true);
             setIsDismissed(false);
         };
 
         const handleBlur = () => {
             if (isCompact) return;
-            setTimeout(() => setIsFocused(false), 200);
+            clearTimeout(blurTimerRef.current);
+            blurTimerRef.current = setTimeout(() => setIsFocused(false), 200);
         };
 
         const handleClose = () => {

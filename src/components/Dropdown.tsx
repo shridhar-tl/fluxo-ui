@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDownIcon } from '../assets/icons';
+import { ChevronDownIcon, TimesIcon } from '../assets/icons';
 import { BaseComponentProps, ComponentEvent, ListItem, ListItemGroup } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, getResolvedSize, splitBaseAndNativeProps } from '../utils';
 import './eui-base.scss';
@@ -72,6 +72,7 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
             renderItem,
             renderValue,
             id,
+            showClear = false,
             disabled = false,
             className,
             name,
@@ -146,6 +147,25 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
             requestAnimationFrame(() => combinedRef.current?.focus());
         };
 
+        const canClear = showClear && !disabled && !readonly && currentValue !== undefined && currentValue !== null;
+
+        const handleClear = (e: React.SyntheticEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!isControlled) {
+                setInternalValue(undefined);
+            }
+            onChange?.({
+                event: e,
+                value: null,
+                name,
+                args,
+            });
+            setIsOpen(false);
+            setFilterValue('');
+            requestAnimationFrame(() => combinedRef.current?.focus());
+        };
+
         const openDropdown = () => {
             if (!disabled && !readonly && !isOpen) {
                 setIsOpen(true);
@@ -173,6 +193,10 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
 
         const handleTriggerKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
             if (disabled || readonly) return;
+            if (canClear && !isOpen && (e.key === 'Delete' || e.key === 'Backspace')) {
+                handleClear(e);
+                return;
+            }
             if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
                 e.preventDefault();
                 openDropdown();
@@ -200,6 +224,7 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
                 'eui-dropdown-readonly': readonly,
                 'eui-dropdown-disabled': disabled,
                 'eui-dropdown-open': isOpen,
+                'eui-dropdown-clearable': canClear,
             }),
         );
 
@@ -242,6 +267,18 @@ export const Dropdown = forwardRef<HTMLButtonElement, DropdownProps>(
                     aria-labelledby={ariaLabelledBy}
                 >
                     <div className="eui-dropdown-value">{renderValue ? renderValue(selectedItem) : defaultRenderValue(selectedItem)}</div>
+                    {canClear && (
+                        <span
+                            className="eui-dropdown-clear"
+                            role="button"
+                            tabIndex={-1}
+                            aria-label="Clear selection"
+                            onClick={handleClear}
+                            onMouseDown={(e) => e.stopPropagation()}
+                        >
+                            <TimesIcon aria-hidden="true" />
+                        </span>
+                    )}
                     <ChevronDownIcon className={classNames('eui-dropdown-chevron', { 'eui-dropdown-chevron-open': isOpen })} aria-hidden="true" />
                 </button>
 
