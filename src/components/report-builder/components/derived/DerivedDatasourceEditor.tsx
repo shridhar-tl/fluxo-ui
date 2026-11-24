@@ -5,12 +5,14 @@ import { ChevronDownIcon, ChevronRightIcon, ChevronUpIcon, TrashIcon, WarningIco
 import { Button } from '../../../Button';
 import { Dropdown } from '../../../Dropdown';
 import type { ListItem } from '../../../../types';
+import { useDebounce } from '../../../../hooks';
 import { useSchemaResolver } from '../../builder-hooks';
 import { derivedDatasourceType, getDerivedDependencies } from '../../data/core-plugins';
 import { inferTransformSchema } from '../../data/derived-schema';
 import { flattenFieldPaths } from '../../data/value-utils';
 import type { DatasourceConfigUIProps } from '../../report-builder-types';
 import type { DatasetField, DatasourceConfig, DerivedDatasourceConfig, DerivedTransform, DerivedTransformType } from '../../report-definition-types';
+import { expressionValidationDelayMs } from '../../expression/expression-parser';
 import { useBuilderTypeContext } from '../props/ExpressionField';
 import {
     GroupEditor,
@@ -98,10 +100,12 @@ const StepCard: React.FC<StepCardProps> = ({ index, count, transform, inputField
     const typeOverride = useMemo(() => ({ availableFields: fieldPaths }), [fieldPaths]);
     const typeContext = useBuilderTypeContext(typeOverride) ?? typeOverride;
     const bodyId = `${idPrefix}-body`;
-    const issues = useMemo(() => validateTransform(transform), [transform]);
+    const settledTransform = useDebounce(transform, expressionValidationDelayMs);
+    const validating = settledTransform !== transform;
+    const issues = useMemo(() => (validating ? [] : validateTransform(transform)), [validating, transform]);
 
     return (
-        <div className={classNames('eui-rb-derived-step', { invalid: issues.length > 0 })}>
+        <div className={classNames('eui-rb-derived-step', { invalid: issues.length > 0 })} aria-busy={validating || undefined}>
             <div className="eui-rb-derived-step-header">
                 <button
                     type="button"

@@ -5,9 +5,11 @@ import classNames from 'classnames';
 import '../../eui-base.scss';
 import './expression-editor.scss';
 import { BookOpenIcon } from '../../../assets/icons';
+import { useAutoResize, useDebounce } from '../../../hooks';
 import { OverlayPanel } from '../../overlay-panel/OverlayPanel';
 import { expressionFunctions } from './builtin-functions';
 import {
+    expressionValidationDelayMs,
     getAutocompleteSuggestions,
     highlightExpression,
     validateExpression,
@@ -15,6 +17,8 @@ import {
 import type { AutocompleteSuggestion, BuiltinFunction, ExpressionReturnType, ExpressionTypeContext } from './expression-types';
 import { FunctionReference } from './FunctionReference';
 import { FunctionSignature } from './FunctionSignature';
+
+const maxEditorHeight = 240;
 
 const kindLabels: Record<string, string> = {
     function: 'fn',
@@ -85,6 +89,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
     const inputId = externalId ?? generatedId;
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const highlightRef = useRef<HTMLDivElement>(null);
     const [cursorPos, setCursorPos] = useState(0);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [selectedIdx, setSelectedIdx] = useState(0);
@@ -97,12 +102,21 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
         expectedReturnType: expectedReturnType ?? typeContext?.expectedReturnType,
     }), [typeContext, expectedReturnType]);
 
+    const settledValue = useDebounce(value, expressionValidationDelayMs);
+    const isTyping = focused && settledValue !== value;
+
     const errors = useMemo(() => {
-        if (!value.trim()) return [];
+        if (isTyping || !value.trim()) return [];
         return validateExpression(value, effectiveTypeCtx);
-    }, [value, effectiveTypeCtx]);
+    }, [isTyping, value, effectiveTypeCtx]);
 
     const highlighted = useMemo(() => highlightExpression(value), [value]);
+
+    useAutoResize(inputRef, value, { maxHeight: maxEditorHeight });
+
+    const syncHighlightScroll = useCallback((e: React.UIEvent<HTMLTextAreaElement>) => {
+        if (highlightRef.current) highlightRef.current.scrollTop = e.currentTarget.scrollTop;
+    }, []);
 
     const functions = useMemo(() => expressionFunctions(effectiveTypeCtx.customFunctions), [effectiveTypeCtx.customFunctions]);
 
@@ -238,7 +252,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
     const hasError = errors.length > 0;
 
     return (
-        <div className={classNames('eui-expr-editor', className)}>
+        <div className={classNames('eui-expr-editor', className)} aria-busy={isTyping || undefined}>
             <div
                 className={classNames('eui-expr-editor-container', {
                     'has-error': hasError,
@@ -247,9 +261,9 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
                 })}
             >
                 <div
+                    ref={highlightRef}
                     className="eui-expr-editor-highlight"
                     aria-hidden="true"
-                    style={multiline ? undefined : { whiteSpace: 'pre', overflowX: 'hidden' }}
                 >
                     {highlighted.map((part, i) => (
                         <span key={i} className={part.className}>{part.text}</span>
@@ -266,6 +280,7 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
                     onSelect={handleSelect}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
+                    onScroll={syncHighlightScroll}
                     placeholder={placeholder}
                     readOnly={readOnly}
                     rows={multiline ? 4 : 1}
@@ -283,7 +298,6 @@ export const ExpressionEditor: React.FC<ExpressionEditorProps> = ({
                     style={{
                         caretColor: 'var(--eui-text)',
                         color: 'transparent',
-                        height: multiline ? undefined : 34,
                         minHeight: multiline ? 80 : 34,
                     }}
                 />

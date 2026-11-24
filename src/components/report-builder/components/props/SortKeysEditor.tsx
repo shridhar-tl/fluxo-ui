@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronDownIcon, ChevronUpIcon, PlusIcon, TrashIcon } from '../../../../assets/icons';
 import { Button } from '../../../Button';
-import { Dropdown } from '../../../Dropdown';
+import { SelectButton } from '../../../SelectButton';
 import type { ListItem } from '../../../../types';
 import { ExpressionEditor } from '../../expression/ExpressionEditor';
 import type { ExpressionTypeContext } from '../../expression/expression-types';
@@ -16,8 +16,8 @@ interface SortKeysEditorProps {
 }
 
 const directionOptions: ListItem[] = [
-    { value: 'asc', label: 'Ascending' },
-    { value: 'desc', label: 'Descending' },
+    { value: 'asc', label: 'Asc', title: 'Ascending' },
+    { value: 'desc', label: 'Desc', title: 'Descending' },
 ];
 
 function move<T>(list: T[], from: number, to: number): T[] {
@@ -35,17 +35,18 @@ export const SortKeysEditor: React.FC<SortKeysEditorProps> = ({ keys, onChange, 
         <div className="eui-rb-list-editor">
             {keys.map((key, i) => (
                 <div key={i} className="eui-rb-list-editor-card">
-                    <div className="eui-rb-list-editor-row">
+                    <div className="eui-rb-list-editor-row eui-rb-sort-key-row">
                         <span className="eui-rb-list-editor-index">{i === 0 ? 'Sort by' : 'Then by'}</span>
-                        <div className="eui-rb-list-editor-grow eui-rb-sort-direction">
-                            <Dropdown
-                                options={directionOptions}
-                                value={key.direction}
-                                onChange={(e) => update(i, { direction: e.value as SortDirection })}
-                                size="sm"
-                                ariaLabel={`Direction of sort key ${i + 1}`}
-                            />
-                        </div>
+                        <SelectButton
+                            items={directionOptions}
+                            value={key.direction}
+                            onChange={(e) => update(i, { direction: e.value as SortDirection })}
+                            variant="segmented"
+                            size="xs"
+                            required
+                            ariaLabel={`Direction of sort key ${i + 1}`}
+                        />
+                        <span className="eui-rb-list-editor-grow" />
                         <Button layout="plain" size="xs" onClick={() => onChange(move(keys, i, i - 1))} disabled={i === 0} ariaLabel={`Move sort key ${i + 1} up`} leftIcon={<ChevronUpIcon aria-hidden="true" />} />
                         <Button layout="plain" size="xs" onClick={() => onChange(move(keys, i, i + 1))} disabled={i === keys.length - 1} ariaLabel={`Move sort key ${i + 1} down`} leftIcon={<ChevronDownIcon aria-hidden="true" />} />
                         <Button layout="plain" size="xs" onClick={() => onChange(keys.filter((_, idx) => idx !== i))} ariaLabel={`Remove sort key ${i + 1}`} leftIcon={<TrashIcon aria-hidden="true" />} />

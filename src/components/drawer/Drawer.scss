@@ -142,8 +142,8 @@
     }
 
     @media (max-width: $bp-md) {
-        &.eui-drawer-left,
-        &.eui-drawer-right {
+        &.eui-drawer-mobile-full.eui-drawer-left,
+        &.eui-drawer-mobile-full.eui-drawer-right {
             width: 100% !important;
         }
     }

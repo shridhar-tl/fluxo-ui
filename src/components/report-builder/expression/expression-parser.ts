@@ -980,6 +980,8 @@ export async function evaluateExpression(
     }
 }
 
+export const expressionValidationDelayMs = 800;
+
 export function validateExpression(
     input: string,
     typeCtx: ExpressionTypeContext = {},

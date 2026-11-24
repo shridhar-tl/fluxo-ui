@@ -26,6 +26,7 @@ interface DrawerProps {
     backdrop?: boolean;
     pushContent?: boolean;
     pushContentSelector?: string;
+    fullWidthOnMobile?: boolean;
     closeOnEscape?: boolean;
     closeOnBackdropClick?: boolean;
     className?: string;
@@ -90,6 +91,7 @@ const Drawer: React.FC<DrawerProps> = ({
     backdrop = true,
     pushContent = false,
     pushContentSelector,
+    fullWidthOnMobile = true,
     closeOnEscape = true,
     closeOnBackdropClick = true,
     className,
@@ -397,6 +399,7 @@ const Drawer: React.FC<DrawerProps> = ({
                         'eui-drawer-sheet': isSheetVariant,
                         'eui-drawer-rounded': isRounded,
                         'eui-drawer-dragging': isDragging,
+                        'eui-drawer-mobile-full': fullWidthOnMobile,
                     },
                     className,
                 )}

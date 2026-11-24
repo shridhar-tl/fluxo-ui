@@ -54,6 +54,11 @@
       "default": "true",
       "description": "Show a dark backdrop behind the drawer."
     },
+    "fullWidthOnMobile": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Stretch left/right drawers to the full viewport width on screens narrower than 768px. Set to false to keep the given size, e.g. for navigation drawers."
+    },
     "pushContent": {
       "type": "boolean",
       "default": "false",

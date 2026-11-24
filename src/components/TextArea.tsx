@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import React, { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, ReactNode, useRef, useState } from 'react';
+import { useAutoResize } from '../hooks';
 import { BaseComponentProps, ComponentEvent } from '../types';
 import { generateId, getComponentClasses, getComponentStyles, splitBaseAndNativeProps } from '../utils';
 import './eui-base.scss';
@@ -82,22 +83,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             }
         };
 
-        const adjustHeight = () => {
-            if (autoResize && combinedRef.current) {
-                const textarea = combinedRef.current;
-                textarea.style.height = 'auto';
-
-                const maxHeightValue = parseInt(maxHeight.replace('px', ''));
-                const newHeight = Math.min(textarea.scrollHeight, maxHeightValue);
-
-                textarea.style.height = `${newHeight}px`;
-                textarea.style.overflowY = textarea.scrollHeight > maxHeightValue ? 'auto' : 'hidden';
-            }
-        };
-
-        useEffect(() => {
-            adjustHeight();
-        }, [displayValue, autoResize]);
+        useAutoResize(combinedRef, displayValue, { enabled: autoResize, maxHeight: parseInt(maxHeight, 10) });
 
         const errorMessage = typeof error === 'string' ? error : undefined;
         const hasError = invalid === true || error === true || (typeof error === 'string' && error.length > 0);
@@ -145,10 +131,6 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
                     aria-required={required}
                     aria-describedby={describedBy}
                     aria-errormessage={errorId}
-                    onInput={(e) => {
-                        adjustHeight();
-                        nativeProps.onInput?.(e);
-                    }}
                 />
                 {maxLength && (
                     <div className="eui-textarea-count">

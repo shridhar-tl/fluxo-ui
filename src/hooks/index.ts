@@ -1,3 +1,4 @@
+export { useAutoResize } from './useAutoResize';
 export { useClickOutside } from './useClickOutside';
 export { useDebounce } from './useDebounce';
 export { useEscapeLayer } from './useEscapeLayer';

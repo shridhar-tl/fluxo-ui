@@ -235,6 +235,7 @@ export const SelectButton = forwardRef<HTMLDivElement, SelectButtonProps>(
                             disabled={isItemDisabled}
                             tabIndex={itemTabIndex}
                             className={getButtonClasses(item, index)}
+                            title={item.title}
                             {...ariaProps}
                         >
                             {ItemIcon && (React.isValidElement(ItemIcon) ? ItemIcon : <ItemIcon className="eui-select-button-item-icon" />)}
