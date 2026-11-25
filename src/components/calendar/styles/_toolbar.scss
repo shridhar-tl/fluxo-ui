@@ -14,6 +14,23 @@
 
   &.eui-cal-toolbar-compact {
     padding: 0.375rem 0.5rem;
+
+    .eui-cal-toolbar-title {
+      font-size: 0.9375rem;
+    }
+
+    .eui-cal-toolbar-btn,
+    .eui-cal-toolbar-picker .eui-date-range-picker .eui-drp-control.eui-drp-control-icon-only {
+      height: 28px;
+      padding: 0 0.625rem;
+    }
+
+    .eui-cal-toolbar-btn-icon,
+    .eui-cal-toolbar-picker .eui-date-range-picker .eui-drp-control.eui-drp-control-icon-only {
+      padding: 0;
+      min-width: 28px;
+      width: 28px;
+    }
   }
 
   @media (max-width: $bp-sm) {
@@ -67,6 +84,38 @@
   .eui-drp-control-label {
     display: block !important;
     font-size: 0.8125rem;
+  }
+
+  .eui-date-range-picker .eui-drp-control.eui-drp-control-icon-only {
+    position: relative;
+    padding: 0.375rem;
+    min-width: 32px;
+    justify-content: center;
+    border: 1px solid var(--eui-border);
+    background: var(--eui-bg);
+    color: var(--eui-primary);
+    line-height: 1;
+
+    .eui-drp-control-icon {
+      width: 1rem;
+      height: 1rem;
+      color: var(--eui-primary);
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      right: 2px;
+      bottom: 2px;
+      border-left: 4px solid transparent;
+      border-bottom: 4px solid currentColor;
+      opacity: 0.7;
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--eui-primary-subtle);
+      border-color: var(--eui-primary);
+    }
   }
 
   &.eui-cal-toolbar-picker-header {

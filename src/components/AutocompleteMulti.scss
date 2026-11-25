@@ -82,6 +82,12 @@
         background-color: var(--eui-primary-subtle);
         color: var(--eui-primary);
 
+        .eui-autocomplete-multi-tag-prefix {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 0.375rem;
+        }
+
         .eui-autocomplete-multi-tag-label {
             overflow: hidden;
             text-overflow: ellipsis;

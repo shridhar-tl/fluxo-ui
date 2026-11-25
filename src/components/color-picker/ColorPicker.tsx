@@ -8,7 +8,7 @@ import '../eui-base.scss';
 import './color-picker.scss';
 import { hexToRgb } from './utils';
 
-type ColorPickerSize = 'sm' | 'md' | 'lg';
+type ColorPickerSize = 'xs' | 'sm' | 'md' | 'lg';
 type ColorPickerVariant = 'button' | 'swatch' | 'input';
 type ColorFormat = 'hex' | 'rgb' | 'rgba' | 'hsl';
 
@@ -30,7 +30,9 @@ interface ColorPickerProps {
     placeholder?: string;
     className?: string;
     ariaLabel?: string;
+    clearLabel?: string;
     onChange?: (value: string, alpha: number) => void;
+    onClear?: () => void;
     onOpenChange?: (open: boolean) => void;
 }
 
@@ -52,7 +54,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     placeholder = 'Pick a color',
     className,
     ariaLabel,
+    clearLabel = 'Clear',
     onChange,
+    onClear,
     onOpenChange,
 }) => {
     const [internalValue, setInternalValue] = useState(defaultValue);
@@ -180,6 +184,32 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             onChange?.(hex, a);
         },
         [controlledValue, controlledAlpha, onChange],
+    );
+
+    const handleClear = () => {
+        onClear?.();
+        setIsOpen(false);
+        onOpenChange?.(false);
+        previousFocusRef.current?.focus?.();
+    };
+
+    const renderPanel = () => (
+        <>
+            <ColorPanel
+                value={currentValue}
+                alpha={currentAlpha}
+                showAlpha={showAlpha}
+                showInputs={showInputs}
+                showSwatches={showSwatches}
+                swatches={swatches}
+                onChange={handleChange}
+            />
+            {onClear && (
+                <button type="button" className="eui-color-picker-clear" onClick={handleClear}>
+                    {clearLabel}
+                </button>
+            )}
+        </>
     );
 
     const handleToggle = () => {
@@ -357,15 +387,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
                                 onMouseDown={(e) => e.stopPropagation()}
                                 onMouseUp={(e) => e.stopPropagation()}
                             >
-                                <ColorPanel
-                                    value={currentValue}
-                                    alpha={currentAlpha}
-                                    showAlpha={showAlpha}
-                                    showInputs={showInputs}
-                                    showSwatches={showSwatches}
-                                    swatches={swatches}
-                                    onChange={handleChange}
-                                />
+                                {renderPanel()}
                             </div>
                         </div>
                     ) : (
@@ -378,15 +400,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
                             aria-label={ariaLabel ?? 'Color picker'}
                             tabIndex={-1}
                         >
-                            <ColorPanel
-                                value={currentValue}
-                                alpha={currentAlpha}
-                                showAlpha={showAlpha}
-                                showInputs={showInputs}
-                                showSwatches={showSwatches}
-                                swatches={swatches}
-                                onChange={handleChange}
-                            />
+                            {renderPanel()}
                         </div>
                     ),
                     document.body,

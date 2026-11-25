@@ -27,6 +27,23 @@
 
   &.eui-calendar-compact {
     border-radius: var(--eui-radius-sm);
+
+    .eui-cal-time-header-cell {
+      padding: 0.25rem 0;
+
+      &.eui-cal-time-header-cell-inline {
+        padding: 0.1875rem 0;
+      }
+    }
+
+    .eui-cal-time-header-inline {
+      font-size: 0.75rem;
+    }
+
+    .eui-cal-month-header-cell {
+      padding: 0.3125rem;
+      font-size: 0.6875rem;
+    }
   }
 }
 

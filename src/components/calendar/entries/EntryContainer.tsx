@@ -33,6 +33,7 @@ const EntryContainer: React.FC<EntryContainerProps> = ({
   const { config, dragState } = useCalendarContext();
   const isDragging = dragState?.entryId === entry.id;
   const isEditable = entry.editable ?? config.editable;
+  const isGlass = (entry.appearance ?? config.entryAppearance) === 'glass';
 
   const entryStyle = useMemo<React.CSSProperties>(() => {
     const base: React.CSSProperties = { ...style };
@@ -120,6 +121,7 @@ const EntryContainer: React.FC<EntryContainerProps> = ({
           'eui-cal-entry-allday': isAllDay,
           'eui-cal-entry-dragging': isDragging,
           'eui-cal-entry-editable': isEditable,
+          'eui-cal-entry-glass': isGlass,
         },
         entry.className,
         className,
@@ -148,6 +150,7 @@ const EntryContainer: React.FC<EntryContainerProps> = ({
           tabIndex={-1}
         />
       )}
+      {isGlass && <span className="eui-cal-entry-marker" aria-hidden="true" />}
       {children}
       {showResizeHandles && isEditable && !isAllDay && (
         <div

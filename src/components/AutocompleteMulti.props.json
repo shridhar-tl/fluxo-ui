@@ -77,6 +77,10 @@
       "type": "function",
       "description": "Custom render function for selected items: (selectedItems: ListItem[], onRemove: (value: T) => void) => React.ReactNode"
     },
+    "renderTagPrefix": {
+      "type": "function",
+      "description": "Renders content before the label of each selected tag, such as an icon or a color picker: (item: ListItem, index: number) => React.ReactNode"
+    },
     "showCount": {
       "type": "boolean",
       "default": false,

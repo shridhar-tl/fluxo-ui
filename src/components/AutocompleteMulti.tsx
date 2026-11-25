@@ -26,6 +26,7 @@ interface AutocompleteMultiProps<T = any> extends BaseComponentProps, Omit<React
     emptyMessage?: string;
     renderItem?: (item: ListItem, index: number, isSelected: boolean, isHighlighted: boolean) => React.ReactNode;
     renderSelectedTemplate?: (selectedItems: ListItem[], onRemove: (value: T) => void) => React.ReactNode;
+    renderTagPrefix?: (item: ListItem, index: number) => React.ReactNode;
     showCount?: boolean;
     autoFocus?: boolean;
     id?: string;
@@ -54,6 +55,7 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
             emptyMessage = 'No results found',
             renderItem,
             renderSelectedTemplate,
+            renderTagPrefix,
             showCount = false,
             autoFocus = false,
             id,
@@ -252,6 +254,11 @@ export const AutocompleteMulti = forwardRef<HTMLDivElement, AutocompleteMultiPro
                 <>
                     {items.map((item, index) => (
                         <span key={index} className="eui-autocomplete-multi-tag">
+                            {renderTagPrefix && (
+                                <span className="eui-autocomplete-multi-tag-prefix" onClick={(e) => e.stopPropagation()}>
+                                    {renderTagPrefix(item, index)}
+                                </span>
+                            )}
                             <span className="eui-autocomplete-multi-tag-label">{item.label}</span>
                             {!readonly && !disabled && (
                                 <button

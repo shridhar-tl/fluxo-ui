@@ -277,12 +277,17 @@
     "compact": {
       "type": "boolean",
       "default": "false",
-      "description": "Compact/embedded mode"
+      "description": "Compact/embedded mode: tighter toolbar, smaller toolbar title and buttons, and smaller day column headers"
     },
     "rowBanding": {
       "type": "boolean",
       "default": "false",
       "description": "Alternate row colors on time grid"
+    },
+    "entryAppearance": {
+      "type": "'solid' | 'glass'",
+      "default": "'solid'",
+      "description": "Look of all entries. 'glass' shows a clear glass pane without fill color, with theme text color and a dot marker in the entry's borderColor (or color). An entry's own appearance field overrides it."
     },
     "showNavigationPicker": {
       "type": "boolean",

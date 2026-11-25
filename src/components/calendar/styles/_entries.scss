@@ -57,6 +57,85 @@
       cursor: grabbing;
     }
   }
+
+  &.eui-cal-entry-glass {
+    --eui-cal-entry-text: var(--eui-text);
+    --eui-cal-entry-border: var(--eui-cal-entry-bg);
+    --eui-cal-glass-body: rgb(255 255 255 / 0.14);
+    --eui-cal-glass-rim-strong: rgb(255 255 255 / 0.95);
+    --eui-cal-glass-rim-soft: rgb(255 255 255 / 0.2);
+    --eui-cal-glass-rim-shade: rgb(15 23 42 / 0.12);
+    --eui-cal-glass-shine: rgb(255 255 255 / 0.45);
+    --eui-cal-glass-glow: rgb(255 255 255 / 0.35);
+    --eui-cal-glass-shadow: rgb(15 23 42 / 0.14);
+
+    position: relative;
+    padding-right: 14px;
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--eui-cal-glass-body), var(--eui-cal-glass-body)) padding-box,
+      linear-gradient(
+        135deg,
+        var(--eui-cal-glass-rim-strong) 0%,
+        var(--eui-cal-glass-rim-soft) 35%,
+        var(--eui-cal-glass-rim-shade) 65%,
+        var(--eui-cal-glass-rim-strong) 100%
+      ) border-box;
+    backdrop-filter: blur(2.5px) saturate(1.6) brightness(1.04);
+    -webkit-backdrop-filter: blur(2.5px) saturate(1.6) brightness(1.04);
+    box-shadow:
+      inset 0 1px 1px var(--eui-cal-glass-rim-strong),
+      inset 0 -1px 2px var(--eui-cal-glass-glow),
+      inset 0 0 14px var(--eui-cal-glass-glow),
+      0 6px 16px var(--eui-cal-glass-shadow),
+      0 1px 3px var(--eui-cal-glass-shadow);
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background:
+        radial-gradient(120% 70% at 0% 0%, var(--eui-cal-glass-shine), transparent 55%),
+        linear-gradient(115deg, transparent 30%, var(--eui-cal-glass-glow) 38%, transparent 48%);
+    }
+
+    > :not(.eui-cal-entry-resize-handle):not(.eui-cal-entry-marker) {
+      position: relative;
+      z-index: 1;
+    }
+
+    &:hover {
+      box-shadow:
+        inset 0 1px 1px var(--eui-cal-glass-rim-strong),
+        inset 0 -1px 2px var(--eui-cal-glass-glow),
+        inset 0 0 18px var(--eui-cal-glass-glow),
+        0 10px 24px var(--eui-cal-glass-shadow),
+        0 2px 5px var(--eui-cal-glass-shadow);
+    }
+
+    .eui-cal-entry-marker {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--eui-cal-entry-border);
+      box-shadow: 0 0 0 2px var(--eui-cal-glass-rim-soft), 0 0 6px var(--eui-cal-entry-border);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .eui-cal-entry-resize-handle::after {
+      background: var(--eui-cal-glass-rim-shade);
+    }
+
+    .eui-cal-entry-resize-handle:hover::after {
+      background: var(--eui-text-muted);
+    }
+  }
 }
 
 .eui-cal-entry-content {
@@ -119,4 +198,14 @@
   &:hover::after {
     background: rgba(255, 255, 255, 0.7);
   }
+}
+
+body.mode-dark .eui-cal-entry.eui-cal-entry-glass {
+  --eui-cal-glass-body: rgb(255 255 255 / 0.05);
+  --eui-cal-glass-rim-strong: rgb(255 255 255 / 0.38);
+  --eui-cal-glass-rim-soft: rgb(255 255 255 / 0.08);
+  --eui-cal-glass-rim-shade: rgb(0 0 0 / 0.3);
+  --eui-cal-glass-shine: rgb(255 255 255 / 0.14);
+  --eui-cal-glass-glow: rgb(255 255 255 / 0.08);
+  --eui-cal-glass-shadow: rgb(0 0 0 / 0.45);
 }

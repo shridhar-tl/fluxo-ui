@@ -35,6 +35,8 @@ export type TimeFormat = '12h' | '24h';
 export type EntryId = string | number;
 export type EntryType = string | number;
 
+export type CalendarEntryAppearance = 'solid' | 'glass';
+
 export interface CalendarEntry {
   id: EntryId;
   start: Date | string;
@@ -44,6 +46,7 @@ export interface CalendarEntry {
   color?: string;
   textColor?: string;
   borderColor?: string;
+  appearance?: CalendarEntryAppearance;
   className?: string;
   editable?: boolean;
   resizable?: boolean;
@@ -228,6 +231,7 @@ export interface CalendarConfig {
   timeFormat: TimeFormat;
   dateFormat: string;
   rowBanding: boolean;
+  entryAppearance: CalendarEntryAppearance;
   minEntryHeight: number;
   editable: boolean;
   selectable: boolean;
@@ -307,6 +311,7 @@ export interface CalendarProps {
   timeFormat?: TimeFormat;
   dateFormat?: string;
   rowBanding?: boolean;
+  entryAppearance?: CalendarEntryAppearance;
   minEntryHeight?: number;
   editable?: boolean;
   selectable?: boolean;

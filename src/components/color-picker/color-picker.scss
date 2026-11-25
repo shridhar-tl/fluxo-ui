@@ -43,6 +43,7 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
     background-color: var(--eui-bg-subtle);
     font-size: 0.85rem;
 
+    &.eui-color-picker-xs { min-height: 1.5rem; padding: 0.125rem 0.375rem; gap: 0.375rem; font-size: 0.7rem; }
     &.eui-color-picker-sm { min-height: var(--eui-control-h-sm); padding: 0.25rem 0.5rem; font-size: 0.75rem; }
     &.eui-color-picker-lg { min-height: var(--eui-control-h-lg); padding: 0.5rem 0.75rem; font-size: 0.95rem; }
 }
@@ -82,6 +83,12 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
     &.eui-color-picker-editable-disabled {
         opacity: 0.6;
         pointer-events: none;
+    }
+
+    &.eui-color-picker-xs {
+        min-height: 1.5rem;
+        min-width: 7.5rem;
+        padding: 0.0625rem 0.125rem 0.0625rem 0.25rem;
     }
 
     &.eui-color-picker-sm {
@@ -128,6 +135,7 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
 
 .eui-color-picker-editable-input {
     flex: 1;
+    width: 0;
     min-width: 0;
     background: transparent;
     border: none;
@@ -154,6 +162,7 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
     border-radius: var(--eui-radius-md);
     overflow: hidden;
 
+    &.eui-color-picker-xs { width: 1rem; height: 1rem; border-radius: var(--eui-radius-sm); }
     &.eui-color-picker-sm { width: var(--eui-control-h-sm); height: var(--eui-control-h-sm); }
     &.eui-color-picker-lg { width: var(--eui-control-h-lg); height: var(--eui-control-h-lg); }
 
@@ -453,6 +462,20 @@ $checker: repeating-conic-gradient(#d1d5db 0% 25%, #ffffff 0% 50%) 50% / 10px 10
     &.eui-color-input-hex input {
         text-align: left;
     }
+}
+
+.eui-color-picker-clear {
+    @include picker-reset;
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.375rem 0.5rem;
+    border-radius: var(--eui-radius-sm);
+    font-size: 0.8rem;
+    color: var(--eui-text);
+    background-color: var(--eui-bg-subtle);
+
+    &:hover { background-color: var(--eui-bg-hover); }
+    &:focus-visible { outline: 2px solid var(--eui-primary); outline-offset: 1px; }
 }
 
 .eui-color-swatches {

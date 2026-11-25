@@ -10,6 +10,7 @@ export { ViewMode } from './calendar-types';
 export type {
   CalendarProps,
   CalendarEntry,
+  CalendarEntryAppearance,
   ResolvedCalendarEntry,
   CalendarViewMode,
   CalendarViewDefinition,

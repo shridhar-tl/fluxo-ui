@@ -24,7 +24,7 @@
       "description": "Format used for the displayed trigger text."
     },
     "size": {
-      "type": "'sm' | 'md' | 'lg'",
+      "type": "'xs' | 'sm' | 'md' | 'lg'",
       "default": "'md'",
       "description": "Trigger size."
     },
@@ -75,6 +75,15 @@
     "onChange": {
       "type": "(value: string, alpha: number) => void",
       "description": "Called when the color or alpha changes."
+    },
+    "clearLabel": {
+      "type": "string",
+      "default": "'Clear'",
+      "description": "Label of the clear button shown in the panel when onClear is set."
+    },
+    "onClear": {
+      "type": "() => void",
+      "description": "Shows a clear button in the panel and is called when it is clicked."
     },
     "onOpenChange": {
       "type": "(open: boolean) => void",

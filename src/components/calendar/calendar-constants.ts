@@ -15,6 +15,7 @@ export const defaultConfig: CalendarConfig = {
   timeFormat: '12h',
   dateFormat: 'MMM d, yyyy',
   rowBanding: false,
+  entryAppearance: 'solid',
   minEntryHeight: 20,
   editable: false,
   selectable: true,
