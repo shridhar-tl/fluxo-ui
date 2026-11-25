@@ -1,0 +1,252 @@
+@use '../eui-vars' as *;
+@use '../eui-tones' as *;
+
+.eui-sparkline {
+    @include eui-tone-palette('eui-sparkline');
+
+    --eui-sparkline-negative: #dc2626;
+    --eui-sparkline-min: #dc2626;
+    --eui-sparkline-max: #15803d;
+    --eui-sparkline-duration: 700ms;
+
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+    line-height: 0;
+    color: var(--eui-tone-base);
+    border-radius: var(--eui-radius-sm);
+
+    &.eui-sparkline-tone-default {
+        color: var(--eui-text-muted);
+    }
+
+    &.eui-sparkline-interactive {
+        cursor: crosshair;
+
+        &:focus-visible {
+            outline: 2px solid var(--eui-primary);
+            outline-offset: 2px;
+        }
+    }
+
+    &.eui-sparkline-interactive.eui-sparkline-clickable,
+    &.eui-sparkline-interactive.eui-sparkline-pie,
+    &.eui-sparkline-interactive.eui-sparkline-bullet {
+        cursor: pointer;
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.eui-sparkline-svg {
+    display: block;
+    overflow: visible;
+    touch-action: pan-y;
+}
+
+.eui-sparkline-dot {
+    fill: currentColor;
+    stroke: var(--eui-bg);
+    stroke-width: 1;
+
+    &.eui-sparkline-dot-min {
+        fill: var(--eui-sparkline-min);
+    }
+
+    &.eui-sparkline-dot-max {
+        fill: var(--eui-sparkline-max);
+    }
+}
+
+.eui-sparkline-active-dot {
+    fill: currentColor;
+    stroke: var(--eui-bg);
+    stroke-width: 2;
+    pointer-events: none;
+}
+
+.eui-sparkline-bar,
+.eui-sparkline-tick,
+.eui-sparkline-bullet-bar {
+    fill: currentColor;
+    transition: opacity 0.15s ease;
+}
+
+.eui-sparkline-bar-negative,
+.eui-sparkline-loss {
+    fill: var(--eui-sparkline-negative);
+}
+
+.eui-sparkline-draw {
+    fill: var(--eui-text-muted);
+}
+
+.eui-sparkline-bar-dim,
+.eui-sparkline-slice-dim {
+    opacity: 0.45;
+}
+
+.eui-sparkline-slice {
+    stroke: var(--eui-bg);
+    stroke-width: 1;
+    transition: opacity 0.15s ease;
+}
+
+.eui-sparkline-pie-empty {
+    fill: var(--eui-border-subtle);
+}
+
+.eui-sparkline-range {
+    fill: var(--eui-text-muted);
+}
+
+.eui-sparkline-target {
+    fill: var(--eui-text);
+}
+
+.eui-sparkline-band {
+    fill: currentColor;
+    fill-opacity: 0.1;
+}
+
+.eui-sparkline-reference {
+    stroke: var(--eui-text-muted);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+    opacity: 0.8;
+
+    &.eui-sparkline-reference-solid {
+        stroke-dasharray: none;
+    }
+}
+
+.eui-sparkline-cursor {
+    stroke: var(--eui-text-muted);
+    stroke-width: 1;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.eui-sparkline-animate {
+    .eui-sparkline-line {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        animation: euiSparklineDraw var(--eui-sparkline-duration) ease-out forwards;
+    }
+
+    .eui-sparkline-area,
+    .eui-sparkline-dot {
+        opacity: 0;
+        animation: euiSparklineFade calc(var(--eui-sparkline-duration) * 0.6) ease-out calc(var(--eui-sparkline-duration) * 0.4) forwards;
+    }
+
+    .eui-sparkline-bar,
+    .eui-sparkline-tick,
+    .eui-sparkline-bullet-bar {
+        transform-box: fill-box;
+        transform-origin: center bottom;
+        animation: euiSparklineGrow var(--eui-sparkline-duration) cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .eui-sparkline-bar-down {
+        transform-origin: center top;
+    }
+
+    .eui-sparkline-bullet-bar {
+        transform-origin: left center;
+        animation-name: euiSparklineGrowX;
+    }
+
+    .eui-sparkline-slice {
+        transform-box: view-box;
+        transform-origin: center;
+        animation: euiSparklinePie var(--eui-sparkline-duration) cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+}
+
+.eui-sparkline-tooltip {
+    position: absolute;
+    z-index: 10050;
+    transform: translate(-50%, calc(-100% - 8px));
+    padding: 0.3125rem 0.5rem;
+    border-radius: var(--eui-radius-md);
+    background-color: var(--eui-text);
+    color: var(--eui-bg);
+    font-family: var(--eui-font-family);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.35;
+    white-space: nowrap;
+    box-shadow: var(--eui-shadow);
+    pointer-events: none;
+
+    &.eui-sparkline-tooltip-below {
+        transform: translate(-50%, 12px);
+    }
+}
+
+@keyframes euiSparklineDraw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes euiSparklineFade {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes euiSparklineGrow {
+    from {
+        transform: scaleY(0);
+    }
+    to {
+        transform: scaleY(1);
+    }
+}
+
+@keyframes euiSparklineGrowX {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes euiSparklinePie {
+    from {
+        opacity: 0;
+        transform: scale(0.6) rotate(-30deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-sparkline-animate {
+        .eui-sparkline-line,
+        .eui-sparkline-area,
+        .eui-sparkline-dot,
+        .eui-sparkline-bar,
+        .eui-sparkline-tick,
+        .eui-sparkline-bullet-bar,
+        .eui-sparkline-slice {
+            animation: none;
+            opacity: 1;
+            stroke-dashoffset: 0;
+            stroke-dasharray: none;
+        }
+    }
+
+    .eui-sparkline-bar,
+    .eui-sparkline-slice {
+        transition: none;
+    }
+}

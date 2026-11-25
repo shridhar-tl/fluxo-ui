@@ -1,0 +1,135 @@
+{
+  "alertProps": {
+    "type": {
+      "type": "'info' | 'success' | 'warning' | 'error' | 'neutral'",
+      "default": "'info'",
+      "description": "Semantic type; sets the color, icon and ARIA role."
+    },
+    "variant": {
+      "type": "'soft' | 'solid' | 'outline' | 'left-accent' | 'top-accent' | 'minimal'",
+      "default": "'soft'",
+      "description": "Visual style."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Density and font size."
+    },
+    "title": {
+      "type": "ReactNode",
+      "description": "Heading text."
+    },
+    "description": {
+      "type": "ReactNode",
+      "description": "Body content (children work too)."
+    },
+    "children": {
+      "type": "ReactNode",
+      "description": "Body content."
+    },
+    "icon": {
+      "type": "ReactNode | ComponentType<SVGProps> | false",
+      "description": "Custom icon, or false to hide it."
+    },
+    "color": {
+      "type": "string",
+      "description": "Custom CSS color that replaces the type color."
+    },
+    "closable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Shows a dismiss button."
+    },
+    "closeLabel": {
+      "type": "string",
+      "description": "Accessible label for the dismiss button."
+    },
+    "onClose": {
+      "type": "() => void",
+      "description": "Called when the alert is dismissed or auto-closes."
+    },
+    "onClosed": {
+      "type": "() => void",
+      "description": "Called after the exit animation finishes."
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled visibility."
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Initial visibility when uncontrolled."
+    },
+    "actions": {
+      "type": "ReactNode",
+      "description": "Action buttons or links."
+    },
+    "actionsPlacement": {
+      "type": "'inline' | 'bottom'",
+      "default": "'bottom'",
+      "description": "Where the actions render."
+    },
+    "details": {
+      "type": "ReactNode",
+      "description": "Expandable extra content behind a toggle."
+    },
+    "detailsLabel": {
+      "type": "string",
+      "default": "'Show details'",
+      "description": "Toggle label to show details."
+    },
+    "hideDetailsLabel": {
+      "type": "string",
+      "default": "'Hide details'",
+      "description": "Toggle label to hide details."
+    },
+    "defaultExpanded": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Details initially expanded."
+    },
+    "autoClose": {
+      "type": "number",
+      "description": "Auto-dismiss after this many milliseconds."
+    },
+    "pauseOnHover": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Pause the auto-close timer on hover or focus."
+    },
+    "showProgress": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the auto-close progress bar."
+    },
+    "banner": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Full-width banner without rounded corners."
+    },
+    "elevated": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Adds a shadow."
+    },
+    "role": {
+      "type": "'alert' | 'status' | 'none'",
+      "description": "ARIA live role. Errors and warnings default to 'alert', others to 'status'."
+    },
+    "headingLevel": {
+      "type": "2 | 3 | 4 | 5 | 6",
+      "default": "3",
+      "description": "Heading element used for the title."
+    },
+    "restoreFocus": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Return focus to the previously focused element on dismiss."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  }
+}

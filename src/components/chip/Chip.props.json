@@ -1,0 +1,197 @@
+{
+  "chipProps": {
+    "children": {
+      "type": "ReactNode",
+      "description": "Chip content."
+    },
+    "label": {
+      "type": "ReactNode",
+      "description": "Alternative to children."
+    },
+    "value": {
+      "type": "string | number",
+      "description": "Value used inside a ChipGroup."
+    },
+    "color": {
+      "type": "'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | string",
+      "default": "'primary'",
+      "description": "Tone used for the selected state and colored variants."
+    },
+    "textColor": {
+      "type": "string",
+      "description": "Text color override for custom colors."
+    },
+    "variant": {
+      "type": "'filled' | 'soft' | 'outlined' | 'elevated'",
+      "default": "'outlined'",
+      "description": "Visual style."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Chip size."
+    },
+    "shape": {
+      "type": "'pill' | 'rounded'",
+      "default": "'pill'",
+      "description": "Corner shape."
+    },
+    "icon": {
+      "type": "ReactNode | ComponentType<SVGProps>",
+      "description": "Leading icon."
+    },
+    "trailingIcon": {
+      "type": "ReactNode | ComponentType<SVGProps>",
+      "description": "Trailing icon."
+    },
+    "avatar": {
+      "type": "ReactNode | string",
+      "description": "Leading avatar; a string is treated as an image URL."
+    },
+    "selectable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Makes the chip a toggle (filter chip)."
+    },
+    "selected": {
+      "type": "boolean",
+      "description": "Controlled selected state."
+    },
+    "defaultSelected": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Initial selected state when uncontrolled."
+    },
+    "onSelectedChange": {
+      "type": "(selected: boolean, event) => void",
+      "description": "Called when a selectable chip toggles."
+    },
+    "showCheckmark": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Animated checkmark on selected chips."
+    },
+    "onClick": {
+      "type": "(event) => void",
+      "description": "Action chip click handler."
+    },
+    "href": {
+      "type": "string",
+      "description": "Renders the chip as a link."
+    },
+    "target": {
+      "type": "string",
+      "description": "Link target."
+    },
+    "removable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Shows a remove button (input chip)."
+    },
+    "onRemove": {
+      "type": "(event) => void",
+      "description": "Called when the remove button or Backspace/Delete is used."
+    },
+    "removeIcon": {
+      "type": "ReactNode",
+      "description": "Custom remove icon."
+    },
+    "removeLabel": {
+      "type": "string",
+      "default": "'Remove {text}'",
+      "description": "Accessible label for the remove button."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disables the chip."
+    },
+    "maxWidth": {
+      "type": "number | string",
+      "description": "Truncate the label with an ellipsis."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  },
+  "chipGroupProps": {
+    "children": {
+      "type": "ReactNode",
+      "description": "Chip elements with a value prop."
+    },
+    "options": {
+      "type": "ChipOption[]",
+      "description": "Chips generated from data: { value, label, icon?, avatar?, disabled?, color? }."
+    },
+    "multiple": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Allow multiple selection (checkbox group); otherwise single (radio group)."
+    },
+    "value": {
+      "type": "ChipValue | ChipValue[] | null",
+      "description": "Controlled selection."
+    },
+    "defaultValue": {
+      "type": "ChipValue | ChipValue[] | null",
+      "description": "Initial selection when uncontrolled."
+    },
+    "onChange": {
+      "type": "(value) => void",
+      "description": "Called with the new selection."
+    },
+    "required": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Prevents clearing the last selected chip."
+    },
+    "maxSelected": {
+      "type": "number",
+      "description": "Maximum selections in multiple mode."
+    },
+    "size": {
+      "type": "ChipSize",
+      "description": "Default size for chips."
+    },
+    "variant": {
+      "type": "ChipVariant",
+      "description": "Default variant for chips."
+    },
+    "shape": {
+      "type": "ChipShape",
+      "description": "Default shape for chips."
+    },
+    "color": {
+      "type": "'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | string",
+      "description": "Default color for chips."
+    },
+    "disabled": {
+      "type": "boolean",
+      "description": "Disable every chip."
+    },
+    "showCheckmark": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show checkmarks on selected chips."
+    },
+    "wrap": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Wrap chips; false scrolls horizontally."
+    },
+    "gap": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | number",
+      "default": "'sm'",
+      "description": "Spacing between chips."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible group label."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  }
+}

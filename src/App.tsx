@@ -77,6 +77,7 @@ const MultiStateCheckboxPage = React.lazy(() => import('./story/pages/multi-stat
 const DemoShowcasePage = React.lazy(() => import('./story/pages/demo-showcase/DemoShowcasePage'));
 
 const TreeViewPage = React.lazy(() => import('./story/pages/tree-view/TreeViewPage'));
+const TreeTablePage = React.lazy(() => import('./story/pages/tree-table/TreeTablePage'));
 const TimelinePage = React.lazy(() => import('./story/pages/timeline/TimelinePage'));
 const FileUploadPage = React.lazy(() => import('./story/pages/file-upload/FileUploadPage'));
 const CarouselPage = React.lazy(() => import('./story/pages/carousel/CarouselPage'));
@@ -103,6 +104,13 @@ const WeekDaySelectorPage = React.lazy(() => import('./story/pages/week-day-sele
 const CardPage = React.lazy(() => import('./story/pages/card/CardPage'));
 const AccordionPage = React.lazy(() => import('./story/pages/accordion/AccordionPage'));
 const SignaturePadPage = React.lazy(() => import('./story/pages/signature-pad/SignaturePadPage'));
+const TagPage = React.lazy(() => import('./story/pages/tag/TagPage'));
+const BadgePage = React.lazy(() => import('./story/pages/badge/BadgePage'));
+const ChipPage = React.lazy(() => import('./story/pages/chip/ChipPage'));
+const AlertPage = React.lazy(() => import('./story/pages/alert/AlertPage'));
+const SparklinePage = React.lazy(() => import('./story/pages/sparkline/SparklinePage'));
+const DatePickerPage = React.lazy(() => import('./story/pages/date-picker/DatePickerPage'));
+const AppShellPage = React.lazy(() => import('./story/pages/app-shell/AppShellPage'));
 const DiffViewerPage = React.lazy(() => import('./story/pages/diff-viewer/DiffViewerPage'));
 const DockedLayoutPage = React.lazy(() => import('./story/pages/docked-layout/DockedLayoutPage'));
 const ReportBuilderPlaygroundPage = React.lazy(() => import('./story/pages/report-builder/ReportBuilderPlaygroundPage'));
@@ -636,6 +644,7 @@ const App: React.FC = () => {
                         }
                     />
                     <Route path="/components/tree-view" element={<LayoutWrapper><TreeViewPage /></LayoutWrapper>} />
+                    <Route path="/components/tree-table" element={<LayoutWrapper><TreeTablePage /></LayoutWrapper>} />
                     <Route path="/components/timeline" element={<LayoutWrapper><TimelinePage /></LayoutWrapper>} />
                     <Route path="/components/file-upload" element={<LayoutWrapper><FileUploadPage /></LayoutWrapper>} />
                     <Route path="/components/carousel" element={<LayoutWrapper><CarouselPage /></LayoutWrapper>} />
@@ -663,6 +672,13 @@ const App: React.FC = () => {
                     <Route path="/components/card" element={<LayoutWrapper><CardPage /></LayoutWrapper>} />
                     <Route path="/components/accordion" element={<LayoutWrapper><AccordionPage /></LayoutWrapper>} />
                     <Route path="/components/signature-pad" element={<LayoutWrapper><SignaturePadPage /></LayoutWrapper>} />
+                    <Route path="/components/tag" element={<LayoutWrapper><TagPage /></LayoutWrapper>} />
+                    <Route path="/components/badge" element={<LayoutWrapper><BadgePage /></LayoutWrapper>} />
+                    <Route path="/components/chip" element={<LayoutWrapper><ChipPage /></LayoutWrapper>} />
+                    <Route path="/components/alert" element={<LayoutWrapper><AlertPage /></LayoutWrapper>} />
+                    <Route path="/components/sparkline" element={<LayoutWrapper><SparklinePage /></LayoutWrapper>} />
+                    <Route path="/components/date-picker" element={<LayoutWrapper><DatePickerPage /></LayoutWrapper>} />
+                    <Route path="/components/app-shell" element={<LayoutWrapper><AppShellPage /></LayoutWrapper>} />
                     <Route path="/components/diff-viewer" element={<LayoutWrapper><DiffViewerPage /></LayoutWrapper>} />
                     <Route path="/components/docked-layout" element={<LayoutWrapper><DockedLayoutPage /></LayoutWrapper>} />
                     <Route path="/components/report-builder" element={<LayoutWrapper><ReportBuilderPage /></LayoutWrapper>} />

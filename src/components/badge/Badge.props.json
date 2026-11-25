@@ -1,0 +1,112 @@
+{
+  "badgeProps": {
+    "children": {
+      "type": "ReactNode",
+      "description": "Element the badge is anchored to. Without children the badge renders standalone."
+    },
+    "content": {
+      "type": "ReactNode",
+      "description": "Badge content (text or node)."
+    },
+    "count": {
+      "type": "number",
+      "description": "Numeric count; values above max show as 'max+'."
+    },
+    "max": {
+      "type": "number",
+      "default": "99",
+      "description": "Overflow threshold for count."
+    },
+    "showZero": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show the badge when count is 0."
+    },
+    "dot": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Render as a small dot without content."
+    },
+    "color": {
+      "type": "'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | string",
+      "default": "'danger'",
+      "description": "Semantic tone or any CSS color."
+    },
+    "textColor": {
+      "type": "string",
+      "description": "Text color override."
+    },
+    "variant": {
+      "type": "'solid' | 'soft' | 'outline'",
+      "default": "'solid'",
+      "description": "Visual style."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Badge size."
+    },
+    "shape": {
+      "type": "'pill' | 'rounded' | 'square'",
+      "default": "'pill'",
+      "description": "Corner shape."
+    },
+    "placement": {
+      "type": "'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'",
+      "default": "'top-right'",
+      "description": "Corner placement when anchored."
+    },
+    "offset": {
+      "type": "[number, number]",
+      "description": "Pixel offset [x, y] from the placement corner."
+    },
+    "overlap": {
+      "type": "'rectangular' | 'circular'",
+      "default": "'rectangular'",
+      "description": "Use 'circular' for round anchors like avatars."
+    },
+    "invisible": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Hide the badge with a scale animation."
+    },
+    "pulse": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Animated attention ring."
+    },
+    "bordered": {
+      "type": "boolean",
+      "description": "Ring in the surface color around the badge. Defaults to true when anchored."
+    },
+    "icon": {
+      "type": "ReactNode | ComponentType<SVGProps>",
+      "description": "Icon shown inside the badge."
+    },
+    "status": {
+      "type": "'default' | 'success' | 'processing' | 'warning' | 'error'",
+      "description": "Status-dot mode (used without children)."
+    },
+    "text": {
+      "type": "ReactNode",
+      "description": "Text shown next to the status dot."
+    },
+    "animateChanges": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Pop animation whenever the content changes."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Screen-reader text, e.g. '5 unread messages'."
+    },
+    "badgeClassName": {
+      "type": "string",
+      "description": "Class for the badge element when anchored."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  }
+}

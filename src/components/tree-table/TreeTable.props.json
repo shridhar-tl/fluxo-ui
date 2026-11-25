@@ -1,0 +1,600 @@
+{
+  "treeTableProps": {
+    "data": {
+      "type": "T[]",
+      "required": true,
+      "description": "Rows to display. Nested rows live in the children field; with parentKey set, pass one flat list instead."
+    },
+    "columns": {
+      "type": "TreeTableColumn<T>[]",
+      "required": true,
+      "description": "Column definitions. See columnProps."
+    },
+    "rowKey": {
+      "type": "string | (row: T) => string | number",
+      "default": "'id'",
+      "description": "Field path or function returning a unique, stable key for each row."
+    },
+    "childrenField": {
+      "type": "string",
+      "default": "'children'",
+      "description": "Field path holding child rows in nested data."
+    },
+    "getChildren": {
+      "type": "(row: T) => T[] | null | undefined",
+      "description": "Returns a row's children. Takes precedence over childrenField. Pass a stable (memoized) function."
+    },
+    "parentKey": {
+      "type": "string | (row: T) => string | number | null",
+      "description": "Builds the tree from a flat list: field path or function returning each row's parent key. Rows without a known parent become roots."
+    },
+    "hasChildren": {
+      "type": "(row: T) => boolean",
+      "description": "Declares whether a row can have children. Return false to hide the toggle on rows that loadChildren should not fetch."
+    },
+    "loadChildren": {
+      "type": "(row: T, ctx: { offset: number; signal: AbortSignal }) => Promise<T[] | { rows: T[]; hasMore?: boolean }>",
+      "description": "Lazily loads a row's children when it is first expanded. Return { rows, hasMore: true } to page large child lists; the next page loads automatically as it scrolls into view. Requests are aborted on unmount."
+    },
+    "expandedKeys": {
+      "type": "ReadonlySet<string | number>",
+      "description": "Controlled set of expanded row keys."
+    },
+    "defaultExpandedKeys": {
+      "type": "Iterable<string | number>",
+      "description": "Initially expanded row keys (uncontrolled)."
+    },
+    "defaultExpandAll": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Expand every row that has children on first render."
+    },
+    "defaultExpandLevel": {
+      "type": "number",
+      "description": "Expand rows up to this depth on first render (1 expands the roots)."
+    },
+    "onExpandedChange": {
+      "type": "(keys: Set<Key>, event: { row: T | null; rowKey: Key | null; expanded: boolean }) => void",
+      "description": "Called when rows expand or collapse. row is null for bulk operations."
+    },
+    "expandOnRowClick": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Toggle a parent row when the row is clicked."
+    },
+    "expanderColumn": {
+      "type": "string",
+      "default": "first visible column",
+      "description": "Key of the column that shows indentation and the expand toggle."
+    },
+    "selectionMode": {
+      "type": "'none' | 'single' | 'multiple' | 'checkbox'",
+      "default": "'none'",
+      "description": "Row selection behavior. multiple supports Ctrl/Cmd and Shift clicks; checkbox renders tri-state checkboxes."
+    },
+    "selectedKeys": {
+      "type": "ReadonlySet<string | number>",
+      "description": "Controlled set of selected row keys."
+    },
+    "defaultSelectedKeys": {
+      "type": "Iterable<string | number>",
+      "description": "Initially selected row keys (uncontrolled)."
+    },
+    "onSelectionChange": {
+      "type": "(keys: Set<Key>, event: { row: T | null; rowKey: Key | null; selected: boolean }) => void",
+      "description": "Called when the selection changes."
+    },
+    "propagateSelection": {
+      "type": "boolean",
+      "default": "true",
+      "description": "In checkbox mode, checking a row checks its descendants and parents show a mixed state."
+    },
+    "showSelectAll": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show a select-all checkbox in the expander column header for multiple and checkbox modes."
+    },
+    "isRowSelectable": {
+      "type": "(row: T) => boolean",
+      "description": "Return false to prevent selecting a row."
+    },
+    "isRowDisabled": {
+      "type": "(row: T) => boolean",
+      "description": "Return true to disable a row: not selectable, editable or draggable."
+    },
+    "sort": {
+      "type": "TreeTableSort[]",
+      "description": "Controlled sort state: [{ key, direction: 'asc' | 'desc' }]. Siblings are sorted within their parent."
+    },
+    "defaultSort": {
+      "type": "TreeTableSort[]",
+      "description": "Initial sort state (uncontrolled)."
+    },
+    "onSortChange": {
+      "type": "(sort: TreeTableSort[]) => void",
+      "description": "Called when a sortable header is activated."
+    },
+    "multiSort": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Shift, Ctrl or Cmd + click adds a column to the sort."
+    },
+    "manualSort": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Skip client-side sorting; sort the data yourself in onSortChange."
+    },
+    "filterText": {
+      "type": "string",
+      "description": "Global search text matched against every column with globalFilter not set to false."
+    },
+    "filters": {
+      "type": "Record<string, string>",
+      "description": "Controlled per-column filter values, keyed by column key."
+    },
+    "defaultFilters": {
+      "type": "Record<string, string>",
+      "description": "Initial per-column filter values (uncontrolled)."
+    },
+    "onFiltersChange": {
+      "type": "(filters: Record<string, string>) => void",
+      "description": "Called when a filter row value changes."
+    },
+    "showFilterRow": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Render a filter input under each filterable column header."
+    },
+    "filterMode": {
+      "type": "'lenient' | 'strict'",
+      "default": "'lenient'",
+      "description": "lenient keeps all descendants of a matching row; strict shows only matching rows. Ancestors of matches are always shown and expanded."
+    },
+    "filterDebounce": {
+      "type": "number",
+      "default": "250",
+      "description": "Delay in ms before a filter row input applies."
+    },
+    "manualFilter": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Skip client-side filtering; filter the data yourself."
+    },
+    "highlightMatches": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Highlight filter matches in default-rendered cells."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Row density: 32, 40 or 48px rows. Touch devices use at least 44px."
+    },
+    "rowHeight": {
+      "type": "number | (row: T, level: number) => number",
+      "description": "Fixed row height in px, or a function for variable heights."
+    },
+    "height": {
+      "type": "number | string",
+      "default": "480",
+      "description": "Height of the scroll viewport. Rows are virtualized inside it."
+    },
+    "overscan": {
+      "type": "number",
+      "default": "6",
+      "description": "Extra rows rendered above and below the viewport."
+    },
+    "indent": {
+      "type": "number",
+      "default": "20",
+      "description": "Indentation per level in px."
+    },
+    "showGuides": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Draw tree guide lines connecting parents and children."
+    },
+    "gridLines": {
+      "type": "'none' | 'horizontal' | 'vertical' | 'both'",
+      "default": "'horizontal'",
+      "description": "Cell borders."
+    },
+    "striped": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Alternate row backgrounds."
+    },
+    "hoverable": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Highlight rows on hover."
+    },
+    "resizableColumns": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Allow column resizing by dragging or with arrow keys on the header handle."
+    },
+    "onColumnResize": {
+      "type": "(key: string, width: number) => void",
+      "description": "Called when a resize finishes."
+    },
+    "reorderableColumns": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Allow reordering non-frozen columns by dragging headers or Alt + Shift + Arrow keys."
+    },
+    "columnOrder": {
+      "type": "string[]",
+      "description": "Controlled column order, as column keys."
+    },
+    "onColumnOrderChange": {
+      "type": "(order: string[]) => void",
+      "description": "Called when columns are reordered."
+    },
+    "rowReorder": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Allow moving rows by drag and drop or Alt + Arrow keys. Update data in onRowMove."
+    },
+    "canMoveRow": {
+      "type": "(event: TreeTableRowMoveEvent<T>) => boolean",
+      "description": "Return false to reject a move."
+    },
+    "onRowMove": {
+      "type": "(event: { row; rowKey; target; targetKey; position: 'before' | 'after' | 'inside' }) => void",
+      "description": "Called when a row is dropped or moved with the keyboard."
+    },
+    "onCellEdit": {
+      "type": "(event: { row; rowKey; column; field; value; previousValue }) => void",
+      "description": "Called when an editable cell commits a new value. Required for editing."
+    },
+    "rowIcon": {
+      "type": "(row: T, ctx: { expanded; hasChildren; level }) => ReactNode",
+      "description": "Icon shown before the expander column content."
+    },
+    "expandIcon": {
+      "type": "ReactNode",
+      "description": "Custom icon for collapsed rows."
+    },
+    "collapseIcon": {
+      "type": "ReactNode",
+      "description": "Custom icon for expanded rows."
+    },
+    "rowClassName": {
+      "type": "(row: T, ctx: TreeTableRowContext<T>) => string | undefined",
+      "description": "Extra class names per row."
+    },
+    "rowLabel": {
+      "type": "(row: T) => string",
+      "default": "expander column text",
+      "description": "Accessible name used in toggle and checkbox labels."
+    },
+    "onRowClick": {
+      "type": "(row: T, event: MouseEvent) => void",
+      "description": "Row click handler."
+    },
+    "onRowDoubleClick": {
+      "type": "(row: T, event: MouseEvent) => void",
+      "description": "Row double-click handler."
+    },
+    "onRowContextMenu": {
+      "type": "(row: T, event: MouseEvent) => void",
+      "description": "Row context-menu handler."
+    },
+    "onCellClick": {
+      "type": "(event: { row; rowKey; column; value }, nativeEvent: MouseEvent) => void",
+      "description": "Cell click handler."
+    },
+    "onEndReached": {
+      "type": "() => void",
+      "description": "Called when the user scrolls near the last row and hasMore is true. Append the next page of root rows to data."
+    },
+    "hasMore": {
+      "type": "boolean",
+      "default": "false",
+      "description": "More root rows are available for onEndReached."
+    },
+    "loadingMore": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Shows a loading row after the last row while the next page loads."
+    },
+    "endReachedThreshold": {
+      "type": "number",
+      "default": "10",
+      "description": "How many rows before the end onEndReached fires."
+    },
+    "loading": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show skeleton rows instead of data."
+    },
+    "skeletonRows": {
+      "type": "number",
+      "default": "8",
+      "description": "Number of skeleton rows while loading."
+    },
+    "emptyMessage": {
+      "type": "ReactNode",
+      "default": "'No rows to display'",
+      "description": "Content shown when there are no rows."
+    },
+    "showFooter": {
+      "type": "boolean",
+      "default": "true when any column defines footer",
+      "description": "Show the footer row."
+    },
+    "caption": {
+      "type": "ReactNode",
+      "description": "Visible caption; also labels the grid."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label when there is no caption."
+    },
+    "ariaLabelledBy": {
+      "type": "string",
+      "description": "ID of an element that labels the grid."
+    },
+    "ariaDescribedBy": {
+      "type": "string",
+      "description": "ID of an element that describes the grid."
+    },
+    "labels": {
+      "type": "Partial<TreeTableLabels>",
+      "description": "Override any built-in text for localization."
+    },
+    "id": {
+      "type": "string",
+      "description": "Root element id."
+    },
+    "className": {
+      "type": "string",
+      "description": "Extra class names for the root element."
+    },
+    "style": {
+      "type": "CSSProperties",
+      "description": "Inline styles for the root element."
+    }
+  },
+  "columnProps": {
+    "key": {
+      "type": "string",
+      "required": true,
+      "description": "Unique column key. Also the default field path."
+    },
+    "field": {
+      "type": "string",
+      "default": "key",
+      "description": "Dot path of the value to display, e.g. 'owner.name'."
+    },
+    "title": {
+      "type": "ReactNode",
+      "description": "Header content."
+    },
+    "headerAriaLabel": {
+      "type": "string",
+      "description": "Accessible header name when title is not plain text."
+    },
+    "group": {
+      "type": "string",
+      "description": "Group header label. Adjacent columns with the same group share one header cell."
+    },
+    "width": {
+      "type": "number | string",
+      "description": "Width in px, or a CSS track such as '2fr' or '25%'. Flexible by default."
+    },
+    "minWidth": {
+      "type": "number",
+      "default": "120",
+      "description": "Minimum width in px."
+    },
+    "maxWidth": {
+      "type": "number",
+      "description": "Maximum width in px."
+    },
+    "align": {
+      "type": "'left' | 'center' | 'right'",
+      "default": "'left'",
+      "description": "Cell alignment."
+    },
+    "headerAlign": {
+      "type": "'left' | 'center' | 'right'",
+      "default": "align",
+      "description": "Header alignment."
+    },
+    "frozen": {
+      "type": "'left' | 'right'",
+      "description": "Pin the column while scrolling horizontally."
+    },
+    "hidden": {
+      "type": "boolean",
+      "description": "Hide the column."
+    },
+    "hideBelow": {
+      "type": "'sm' | 'md' | 'lg' | 'xl' | '2xl'",
+      "description": "Hide the column when the table is narrower than the breakpoint."
+    },
+    "sortable": {
+      "type": "boolean",
+      "description": "Allow sorting by this column."
+    },
+    "sortFn": {
+      "type": "(a: T, b: T) => number",
+      "description": "Custom ascending comparator."
+    },
+    "resizable": {
+      "type": "boolean",
+      "description": "Set false to lock this column's width when resizableColumns is on."
+    },
+    "reorderable": {
+      "type": "boolean",
+      "description": "Set false to lock this column's position when reorderableColumns is on."
+    },
+    "filterable": {
+      "type": "boolean",
+      "description": "Show a text filter in the filter row."
+    },
+    "filterFn": {
+      "type": "(value, row: T, filterValue: string) => boolean",
+      "description": "Custom filter test for this column."
+    },
+    "filterPlaceholder": {
+      "type": "string",
+      "description": "Placeholder for the filter input."
+    },
+    "globalFilter": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Set false to exclude this column from filterText matching."
+    },
+    "wrap": {
+      "type": "boolean",
+      "description": "Wrap text instead of truncating with an ellipsis. Pair with a taller rowHeight."
+    },
+    "showTitle": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Set false to omit the native tooltip with the full cell text."
+    },
+    "valueGetter": {
+      "type": "(row: T) => unknown",
+      "description": "Computes the cell value. Used for display, sorting, filtering and export."
+    },
+    "format": {
+      "type": "(value, row: T) => string",
+      "description": "Formats the value as text for display, filtering and export."
+    },
+    "aggregate": {
+      "type": "'sum' | 'avg' | 'min' | 'max' | 'count' | (rows: T[], values: unknown[]) => number | null",
+      "description": "Rolls up leaf values into parent rows and the footer."
+    },
+    "aggregateParents": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Set false to keep parent rows' own values and only aggregate in the footer."
+    },
+    "editable": {
+      "type": "boolean | (row: T) => boolean",
+      "description": "Allow inline editing with double-click, Enter or F2."
+    },
+    "validate": {
+      "type": "(value, row: T) => string | null",
+      "description": "Return an error message to block the edit."
+    },
+    "parseValue": {
+      "type": "(input: string, row: T) => unknown",
+      "description": "Converts the default editor's text to a value."
+    },
+    "className": {
+      "type": "string",
+      "description": "Class for every cell in the column."
+    },
+    "headerClassName": {
+      "type": "string",
+      "description": "Class for the header cell."
+    },
+    "cellClassName": {
+      "type": "string | (row: T) => string | undefined",
+      "description": "Class per cell."
+    },
+    "cell": {
+      "type": "(ctx: TreeTableCellContext<T>) => ReactNode",
+      "description": "Cell template. ctx has row, value, level, expanded, selected, aggregated, toggle() and more."
+    },
+    "header": {
+      "type": "(ctx: { column; sortDirection; sortIndex }) => ReactNode",
+      "description": "Header template."
+    },
+    "footer": {
+      "type": "ReactNode | (ctx: { column; rows; aggregate }) => ReactNode",
+      "description": "Footer content or template."
+    },
+    "filter": {
+      "type": "(ctx: { column; value; onChange; placeholder; ariaLabel }) => ReactNode",
+      "description": "Custom filter control for the filter row."
+    },
+    "editor": {
+      "type": "(ctx: { row; value; error; commit; cancel; ariaLabel }) => ReactNode",
+      "description": "Custom inline editor."
+    }
+  },
+  "handleMethods": {
+    "expandAll": {
+      "type": "() => void",
+      "description": "Expand every row whose children are loaded."
+    },
+    "collapseAll": {
+      "type": "() => void",
+      "description": "Collapse every row."
+    },
+    "expandToLevel": {
+      "type": "(level: number) => void",
+      "description": "Expand rows above the given depth."
+    },
+    "expandRow": {
+      "type": "(key) => void",
+      "description": "Expand one row."
+    },
+    "collapseRow": {
+      "type": "(key) => void",
+      "description": "Collapse one row."
+    },
+    "toggleRow": {
+      "type": "(key) => void",
+      "description": "Toggle one row."
+    },
+    "revealRow": {
+      "type": "(key) => void",
+      "description": "Expand all ancestors of a row so it becomes visible."
+    },
+    "scrollToRow": {
+      "type": "(key, align?: 'start' | 'center' | 'end' | 'auto') => void",
+      "description": "Scroll a visible row into view."
+    },
+    "scrollToIndex": {
+      "type": "(index: number, align?) => void",
+      "description": "Scroll to a visible row index."
+    },
+    "scrollToTop": {
+      "type": "() => void",
+      "description": "Scroll to the first row."
+    },
+    "focusRow": {
+      "type": "(key) => void",
+      "description": "Move keyboard focus to a visible row."
+    },
+    "reloadChildren": {
+      "type": "(key) => void",
+      "description": "Discard and reload a row's lazily loaded children."
+    },
+    "getRow": {
+      "type": "(key) => T | undefined",
+      "description": "Find a loaded row by key."
+    },
+    "getVisibleRows": {
+      "type": "() => T[]",
+      "description": "Rows currently in the expanded, filtered, sorted order."
+    },
+    "getSelectedRows": {
+      "type": "() => T[]",
+      "description": "Selected rows among loaded data."
+    },
+    "selectAll": {
+      "type": "() => void",
+      "description": "Select every selectable row that matches the filter."
+    },
+    "clearSelection": {
+      "type": "() => void",
+      "description": "Clear the selection."
+    },
+    "clearFilters": {
+      "type": "() => void",
+      "description": "Clear per-column filters."
+    },
+    "toCsv": {
+      "type": "(options?: { allRows?; onlySelected?; includeHidden?; includeLevel?; levelHeader?; delimiter? }) => string",
+      "description": "Export rows as CSV text. Cells that could run as spreadsheet formulas are escaped."
+    }
+  }
+}

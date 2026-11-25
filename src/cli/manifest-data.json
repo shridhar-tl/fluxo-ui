@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-11-24T01:19:57.355Z",
+  "generatedAt": "2026-11-25T15:06:34.840Z",
   "sourceRoot": "src",
   "components": [
     {
@@ -96,6 +96,40 @@
       }
     },
     {
+      "id": "alert",
+      "name": "Alert",
+      "kind": "directory",
+      "sourcePath": "components/alert",
+      "entryFile": "components/alert/index.ts",
+      "files": [
+        "Alert.scss",
+        "Alert.tsx",
+        "index.ts"
+      ],
+      "category": "Feedback",
+      "label": "Alert",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useReducedMotion"
+        ],
+        "utils": [
+          "color-tone",
+          "render-icon"
+        ],
+        "shared": [
+          "styles"
+        ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "animate-on-view",
       "name": "AnimateOnView",
       "kind": "directory",
@@ -119,6 +153,43 @@
         "shared": [
           "styles"
         ],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "app-shell",
+      "name": "AppShell",
+      "kind": "directory",
+      "sourcePath": "components/app-shell",
+      "entryFile": "components/app-shell/index.ts",
+      "files": [
+        "AppShell.scss",
+        "AppShell.tsx",
+        "AppShellResizeHandle.tsx",
+        "AppShellSidebar.tsx",
+        "AppShellToggle.scss",
+        "AppShellToggle.tsx",
+        "app-shell-context.ts",
+        "app-shell-storage.ts",
+        "app-shell-types.ts",
+        "index.ts"
+      ],
+      "category": "Layout",
+      "label": "App Shell",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [
+          "body-scroll-lock",
+          "layer-stack"
+        ],
+        "shared": [],
         "external": [
           "classnames",
           "react"
@@ -218,6 +289,38 @@
           "classnames",
           "react",
           "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "badge",
+      "name": "Badge",
+      "kind": "directory",
+      "sourcePath": "components/badge",
+      "entryFile": "components/badge/index.ts",
+      "files": [
+        "Badge.scss",
+        "Badge.tsx",
+        "index.ts"
+      ],
+      "category": "Data Display",
+      "label": "Badge",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [
+          "color-tone",
+          "render-icon"
+        ],
+        "shared": [
+          "styles"
+        ],
+        "external": [
+          "classnames",
+          "react"
         ],
         "optionalPeers": []
       }
@@ -642,6 +745,41 @@
       }
     },
     {
+      "id": "chip",
+      "name": "Chip",
+      "kind": "directory",
+      "sourcePath": "components/chip",
+      "entryFile": "components/chip/index.ts",
+      "files": [
+        "Chip.scss",
+        "Chip.tsx",
+        "ChipGroup.scss",
+        "ChipGroup.tsx",
+        "chip-context.ts",
+        "chip-types.ts",
+        "index.ts"
+      ],
+      "category": "Data Display",
+      "label": "Chip",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [
+          "color-tone",
+          "focus-after-removal",
+          "render-icon"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "chips",
       "name": "Chips",
       "kind": "flat",
@@ -926,6 +1064,46 @@
         "shared": [],
         "external": [
           "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "date-picker",
+      "name": "DatePicker",
+      "kind": "directory",
+      "sourcePath": "components/date-picker",
+      "entryFile": "components/date-picker/index.ts",
+      "files": [
+        "DatePicker.scss",
+        "DatePicker.tsx",
+        "DatePickerCalendar.tsx",
+        "date-picker-types.ts",
+        "date-picker-utils.ts",
+        "index.ts"
+      ],
+      "category": "Date, Time & Color",
+      "label": "Date Picker",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [
+          "useAnchoredPosition",
+          "useMobile"
+        ],
+        "utils": [
+          "body-scroll-lock",
+          "color-tone",
+          "layer-stack",
+          "render-icon"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "date-fns",
           "react",
           "react-dom"
         ],
@@ -2799,6 +2977,7 @@
           "numeric-input",
           "overlay-panel",
           "radio-button",
+          "select-button",
           "text-area",
           "text-input"
         ],
@@ -3104,6 +3283,39 @@
       }
     },
     {
+      "id": "sparkline",
+      "name": "Sparkline",
+      "kind": "directory",
+      "sourcePath": "components/sparkline",
+      "entryFile": "components/sparkline/index.ts",
+      "files": [
+        "Sparkline.scss",
+        "Sparkline.tsx",
+        "SparklineTooltip.tsx",
+        "index.ts",
+        "sparkline-geometry.ts",
+        "sparkline-types.ts"
+      ],
+      "category": "Charts & Boards",
+      "label": "Sparkline",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [
+          "color-tone"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react",
+          "react-dom"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "speed-dial",
       "name": "SpeedDial",
       "kind": "flat",
@@ -3387,6 +3599,41 @@
       }
     },
     {
+      "id": "tag",
+      "name": "Tag",
+      "kind": "directory",
+      "sourcePath": "components/tag",
+      "entryFile": "components/tag/index.ts",
+      "files": [
+        "Tag.scss",
+        "Tag.tsx",
+        "TagGroup.scss",
+        "TagGroup.tsx",
+        "index.ts",
+        "tag-context.ts",
+        "tag-types.ts"
+      ],
+      "category": "Data Display",
+      "label": "Tag",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [
+          "color-tone",
+          "focus-after-removal",
+          "render-icon"
+        ],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "text-area",
       "name": "TextArea",
       "kind": "flat",
@@ -3640,6 +3887,52 @@
       }
     },
     {
+      "id": "tree-table",
+      "name": "TreeTable",
+      "kind": "directory",
+      "sourcePath": "components/tree-table",
+      "entryFile": "components/tree-table/index.ts",
+      "files": [
+        "TreeTable.scss",
+        "TreeTable.tsx",
+        "TreeTableCellEditor.tsx",
+        "TreeTableFooter.tsx",
+        "TreeTableHeader.tsx",
+        "TreeTableRow.tsx",
+        "TreeTableStatusRow.tsx",
+        "index.ts",
+        "tree-table-data.ts",
+        "tree-table-internal.ts",
+        "tree-table-types.ts",
+        "tree-table-utils.ts",
+        "useTreeTableColumns.ts",
+        "useTreeTableKeyboard.ts",
+        "useTreeTableSelection.ts",
+        "useTreeTableState.ts",
+        "useTreeTableVirtual.ts"
+      ],
+      "category": "Data & Reports",
+      "label": "Tree Table",
+      "description": "",
+      "private": false,
+      "dependencies": {
+        "components": [
+          "button",
+          "checkbox",
+          "shimmer",
+          "text-input"
+        ],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "classnames",
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "tree-view",
       "name": "TreeView",
       "kind": "directory",
@@ -3734,6 +4027,24 @@
       "sourcePath": "hooks/useAnchoredPosition.ts",
       "files": [
         "useAnchoredPosition.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "useAutoResize",
+      "name": "useAutoResize",
+      "sourcePath": "hooks/useAutoResize.ts",
+      "files": [
+        "useAutoResize.ts"
       ],
       "dependencies": {
         "components": [],
@@ -3893,6 +4204,24 @@
       }
     },
     {
+      "id": "color-tone",
+      "name": "color-tone",
+      "sourcePath": "utils/color-tone.ts",
+      "files": [
+        "color-tone.ts"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
+        "optionalPeers": []
+      }
+    },
+    {
       "id": "common-fns",
       "name": "common-fns",
       "sourcePath": "utils/common-fns.ts",
@@ -3914,6 +4243,22 @@
       "sourcePath": "utils/field-label.tsx",
       "files": [
         "field-label.tsx"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "focus-after-removal",
+      "name": "focus-after-removal",
+      "sourcePath": "utils/focus-after-removal.ts",
+      "files": [
+        "focus-after-removal.ts"
       ],
       "dependencies": {
         "components": [],
@@ -3969,6 +4314,24 @@
         "utils": [],
         "shared": [],
         "external": [],
+        "optionalPeers": []
+      }
+    },
+    {
+      "id": "render-icon",
+      "name": "render-icon",
+      "sourcePath": "utils/render-icon.tsx",
+      "files": [
+        "render-icon.tsx"
+      ],
+      "dependencies": {
+        "components": [],
+        "hooks": [],
+        "utils": [],
+        "shared": [],
+        "external": [
+          "react"
+        ],
         "optionalPeers": []
       }
     },

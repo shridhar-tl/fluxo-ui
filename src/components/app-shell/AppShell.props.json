@@ -1,0 +1,249 @@
+{
+  "appShellProps": {
+    "children": {
+      "type": "ReactNode",
+      "description": "Main content."
+    },
+    "header": {
+      "type": "ReactNode | (state) => ReactNode",
+      "description": "Top bar content."
+    },
+    "sidebar": {
+      "type": "ReactNode | (state) => ReactNode",
+      "description": "Sidebar navigation. A function receives { collapsed, isMobile, mobileOpen, closeMobile }."
+    },
+    "sidebarHeader": {
+      "type": "ReactNode | (state) => ReactNode",
+      "description": "Pinned content above the sidebar navigation (logo, workspace switcher)."
+    },
+    "sidebarFooter": {
+      "type": "ReactNode | (state) => ReactNode",
+      "description": "Pinned content below the sidebar navigation (user menu)."
+    },
+    "footer": {
+      "type": "ReactNode | (state) => ReactNode",
+      "description": "Footer below the main content."
+    },
+    "aside": {
+      "type": "ReactNode | (state) => ReactNode",
+      "description": "Secondary panel on the opposite side."
+    },
+    "layout": {
+      "type": "'header-first' | 'sidebar-first'",
+      "default": "'header-first'",
+      "description": "Header spans the full width, or the sidebar spans the full height."
+    },
+    "sidebarPosition": {
+      "type": "'left' | 'right'",
+      "default": "'left'",
+      "description": "Sidebar side."
+    },
+    "sidebarVariant": {
+      "type": "'default' | 'floating' | 'inset'",
+      "default": "'default'",
+      "description": "Sidebar look."
+    },
+    "sidebarWidth": {
+      "type": "number",
+      "default": "260",
+      "description": "Expanded sidebar width in px."
+    },
+    "collapsedWidth": {
+      "type": "number",
+      "default": "68",
+      "description": "Collapsed (icon rail) width in px."
+    },
+    "collapsible": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow collapsing to an icon rail."
+    },
+    "collapsed": {
+      "type": "boolean",
+      "description": "Controlled collapsed state."
+    },
+    "defaultCollapsed": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Initial collapsed state."
+    },
+    "onCollapsedChange": {
+      "type": "(collapsed: boolean) => void",
+      "description": "Called when the collapsed state changes."
+    },
+    "expandOnHover": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Temporarily expand a collapsed sidebar over the content on hover."
+    },
+    "showCollapseButton": {
+      "type": "boolean",
+      "description": "Built-in collapse button in the sidebar footer. Defaults to collapsible."
+    },
+    "mobileBreakpoint": {
+      "type": "'sm' | 'md' | 'lg' | 'xl' | number",
+      "default": "'lg'",
+      "description": "Below this width the sidebar becomes an off-canvas drawer."
+    },
+    "responsiveMode": {
+      "type": "'container' | 'viewport'",
+      "default": "'container'",
+      "description": "Measure the shell's own width or the viewport."
+    },
+    "mobileOpen": {
+      "type": "boolean",
+      "description": "Controlled drawer state on mobile."
+    },
+    "onMobileOpenChange": {
+      "type": "(open: boolean) => void",
+      "description": "Called when the mobile drawer opens or closes."
+    },
+    "mobileSidebarWidth": {
+      "type": "number | string",
+      "default": "'min(85%, 300px)'",
+      "description": "Drawer width on mobile."
+    },
+    "closeOnNavigate": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Close the drawer when a link or menu item inside it is clicked."
+    },
+    "swipeToClose": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Swipe the drawer toward its edge to close it on touch devices."
+    },
+    "resizable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Drag (or arrow keys) to resize the expanded sidebar."
+    },
+    "minSidebarWidth": {
+      "type": "number",
+      "default": "200",
+      "description": "Minimum width when resizing."
+    },
+    "maxSidebarWidth": {
+      "type": "number",
+      "default": "420",
+      "description": "Maximum width when resizing."
+    },
+    "onSidebarWidthChange": {
+      "type": "(width: number) => void",
+      "description": "Called while resizing."
+    },
+    "asideWidth": {
+      "type": "number",
+      "default": "300",
+      "description": "Aside panel width in px."
+    },
+    "asideOpen": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show the aside panel."
+    },
+    "hideAsideOnMobile": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Hide the aside below the mobile breakpoint."
+    },
+    "headerHeight": {
+      "type": "number",
+      "default": "56",
+      "description": "Header height in px."
+    },
+    "stickyHeader": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Keep the header pinned while content scrolls (sidebar-first layout)."
+    },
+    "fullHeight": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Fill the viewport height (100dvh)."
+    },
+    "height": {
+      "type": "number | string",
+      "description": "Explicit height, e.g. for an embedded shell."
+    },
+    "contentMaxWidth": {
+      "type": "number | string",
+      "description": "Max width of the centered main content."
+    },
+    "mainPadding": {
+      "type": "number | string",
+      "default": "'1.5rem'",
+      "description": "Padding around the main content."
+    },
+    "storageKey": {
+      "type": "string",
+      "description": "Persist collapsed state and width in localStorage under this key."
+    },
+    "skipLinkLabel": {
+      "type": "string",
+      "default": "'Skip to main content'",
+      "description": "Label of the skip-to-content link."
+    },
+    "sidebarLabel": {
+      "type": "string",
+      "default": "'Primary'",
+      "description": "Accessible name of the sidebar navigation."
+    },
+    "collapseLabel": {
+      "type": "string",
+      "default": "'Collapse sidebar'",
+      "description": "Collapse button label."
+    },
+    "expandLabel": {
+      "type": "string",
+      "default": "'Expand sidebar'",
+      "description": "Expand button label."
+    },
+    "openNavigationLabel": {
+      "type": "string",
+      "default": "'Open navigation'",
+      "description": "AppShellToggle label when it opens the mobile drawer."
+    },
+    "closeNavigationLabel": {
+      "type": "string",
+      "default": "'Close navigation'",
+      "description": "AppShellToggle label when it closes the mobile drawer."
+    },
+    "mainId": {
+      "type": "string",
+      "description": "Id of the main element (skip link target)."
+    },
+    "classNames": {
+      "type": "{ header?, sidebar?, main?, footer?, aside? }",
+      "description": "Classes for each region."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  },
+  "appShellToggleProps": {
+    "mode": {
+      "type": "'auto' | 'mobile' | 'collapse'",
+      "default": "'auto'",
+      "description": "'auto' opens the drawer on mobile and collapses on desktop."
+    },
+    "hideOnDesktop": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Only show the toggle below the mobile breakpoint."
+    },
+    "label": {
+      "type": "string",
+      "description": "Accessible label; defaults to the current action."
+    },
+    "children": {
+      "type": "ReactNode",
+      "description": "Custom icon; defaults to a menu icon."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  }
+}

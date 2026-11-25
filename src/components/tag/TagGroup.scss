@@ -1,0 +1,44 @@
+@use '../eui-vars' as *;
+
+.eui-tag-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--eui-tag-group-gap, 0.375rem);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &.eui-tag-group-nowrap {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        padding-bottom: 0.125rem;
+    }
+
+    &.eui-tag-group-gap-xs {
+        --eui-tag-group-gap: 0.25rem;
+    }
+
+    &.eui-tag-group-gap-md {
+        --eui-tag-group-gap: 0.5rem;
+    }
+
+    &.eui-tag-group-gap-lg {
+        --eui-tag-group-gap: 0.75rem;
+    }
+}
+
+.eui-tag-group-item {
+    display: inline-flex;
+    flex-shrink: 0;
+    max-width: 100%;
+
+    &:empty {
+        display: none;
+    }
+}
+
+.eui-tag-group-toggle {
+    cursor: pointer;
+}

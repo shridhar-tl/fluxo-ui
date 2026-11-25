@@ -1,0 +1,36 @@
+@use '../eui-vars' as *;
+
+.eui-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--eui-chip-group-gap, 0.5rem);
+
+    &.eui-chip-group-nowrap {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        padding: 0.125rem 0.125rem 0.25rem;
+        -webkit-overflow-scrolling: touch;
+
+        > * {
+            flex-shrink: 0;
+        }
+    }
+
+    &.eui-chip-group-gap-xs {
+        --eui-chip-group-gap: 0.25rem;
+    }
+
+    &.eui-chip-group-gap-sm {
+        --eui-chip-group-gap: 0.5rem;
+    }
+
+    &.eui-chip-group-gap-md {
+        --eui-chip-group-gap: 0.75rem;
+    }
+
+    &.eui-chip-group-gap-lg {
+        --eui-chip-group-gap: 1rem;
+    }
+}

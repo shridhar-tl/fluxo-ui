@@ -1,0 +1,185 @@
+{
+  "tagProps": {
+    "children": {
+      "type": "ReactNode",
+      "description": "Tag content."
+    },
+    "label": {
+      "type": "ReactNode",
+      "description": "Alternative to children for the tag content."
+    },
+    "color": {
+      "type": "'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | string",
+      "default": "'default'",
+      "description": "Semantic tone or any CSS color (hex/rgb) for a custom tone."
+    },
+    "textColor": {
+      "type": "string",
+      "description": "Text color override; auto-computed for readable contrast on custom colors."
+    },
+    "variant": {
+      "type": "'solid' | 'soft' | 'outline' | 'dashed' | 'dot' | 'gradient' | 'ghost'",
+      "default": "'soft'",
+      "description": "Visual style."
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Tag size."
+    },
+    "shape": {
+      "type": "'rounded' | 'pill' | 'square'",
+      "default": "'rounded'",
+      "description": "Corner shape."
+    },
+    "icon": {
+      "type": "ReactNode | ComponentType<SVGProps>",
+      "description": "Icon element or icon component."
+    },
+    "iconPosition": {
+      "type": "'start' | 'end'",
+      "default": "'start'",
+      "description": "Icon placement."
+    },
+    "avatar": {
+      "type": "ReactNode | string",
+      "description": "Leading avatar; a string is treated as an image URL."
+    },
+    "count": {
+      "type": "ReactNode",
+      "description": "Trailing counter pill inside the tag."
+    },
+    "closable": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Shows a remove button. Backspace/Delete on a focused interactive tag also removes it."
+    },
+    "closeIcon": {
+      "type": "ReactNode",
+      "description": "Custom remove icon."
+    },
+    "closeLabel": {
+      "type": "string",
+      "default": "'Remove {text}'",
+      "description": "Accessible label for the remove button."
+    },
+    "onClose": {
+      "type": "(event) => void",
+      "description": "Called on remove. Call event.preventDefault() to keep an uncontrolled tag visible."
+    },
+    "visible": {
+      "type": "boolean",
+      "description": "Controlled visibility."
+    },
+    "href": {
+      "type": "string",
+      "description": "Renders the tag content as a link."
+    },
+    "target": {
+      "type": "string",
+      "description": "Link target."
+    },
+    "rel": {
+      "type": "string",
+      "description": "Link rel. Defaults to 'noopener noreferrer' for _blank targets."
+    },
+    "onClick": {
+      "type": "(event) => void",
+      "description": "Makes the tag an interactive button."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disables interaction."
+    },
+    "selected": {
+      "type": "boolean",
+      "description": "Selected state (adds a ring and aria-pressed on clickable tags)."
+    },
+    "uppercase": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Uppercase label with letter spacing."
+    },
+    "bordered": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Adds a tone border to the soft variant."
+    },
+    "elevated": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Adds a subtle shadow."
+    },
+    "maxWidth": {
+      "type": "number | string",
+      "description": "Truncates long text with an ellipsis and shows a title tooltip."
+    },
+    "gradient": {
+      "type": "{ from: string; to: string; deg?: number }",
+      "description": "Custom gradient for the gradient variant."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  },
+  "tagGroupProps": {
+    "children": {
+      "type": "ReactNode",
+      "description": "Tags to render."
+    },
+    "max": {
+      "type": "number",
+      "description": "Maximum visible tags; the rest collapse into a '+N' tag."
+    },
+    "expandable": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Clicking '+N' reveals the hidden tags."
+    },
+    "renderOverflow": {
+      "type": "(hiddenCount: number, expanded: boolean) => ReactNode",
+      "description": "Custom content for the overflow and collapse tags."
+    },
+    "collapseLabel": {
+      "type": "string",
+      "default": "'Show less'",
+      "description": "Label of the collapse tag shown after expanding."
+    },
+    "gap": {
+      "type": "'xs' | 'sm' | 'md' | 'lg' | number",
+      "default": "'sm'",
+      "description": "Spacing between tags."
+    },
+    "wrap": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Wrap to new lines; false scrolls horizontally."
+    },
+    "size": {
+      "type": "'xs' | 'sm' | 'md' | 'lg'",
+      "description": "Default size for child tags."
+    },
+    "variant": {
+      "type": "TagVariant",
+      "description": "Default variant for child tags."
+    },
+    "shape": {
+      "type": "TagShape",
+      "description": "Default shape for child tags."
+    },
+    "color": {
+      "type": "'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | string",
+      "description": "Default color for child tags."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label for the list."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  }
+}

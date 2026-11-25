@@ -1,0 +1,486 @@
+@use '../eui-vars' as *;
+
+.eui-app-shell {
+    --eui-shell-sidebar-w: 260px;
+    --eui-shell-collapsed-w: 68px;
+    --eui-shell-mobile-w: 300px;
+    --eui-shell-aside-w: 300px;
+    --eui-shell-header-h: 56px;
+    --eui-shell-main-pad: 1.5rem;
+    --eui-shell-content-max: none;
+    --eui-shell-ease: cubic-bezier(0.32, 0.72, 0, 1);
+    --eui-shell-backdrop: color-mix(in srgb, var(--color-gray-900, #111827) 50%, transparent);
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    isolation: isolate;
+    background-color: var(--eui-bg-subtle);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+
+    &.eui-app-shell-full {
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    &.eui-app-shell-unmeasured {
+        .eui-app-shell-sidebar,
+        .eui-app-shell-backdrop {
+            transition: none;
+        }
+    }
+
+    &.eui-app-shell-resizing {
+        cursor: col-resize;
+        user-select: none;
+
+        .eui-app-shell-sidebar {
+            transition: none;
+        }
+    }
+}
+
+.eui-app-shell-skip {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 100;
+    padding: 0.5rem 0.875rem;
+    border-radius: var(--eui-radius-md);
+    background-color: var(--eui-primary);
+    color: var(--eui-text-on-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(-200%);
+    transition: transform 0.15s ease;
+
+    &:focus {
+        transform: translateY(0);
+        outline: 2px solid var(--eui-text-on-primary);
+        outline-offset: -4px;
+    }
+}
+
+.eui-app-shell-header {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    min-height: var(--eui-shell-header-h);
+    padding: 0 1rem;
+    background-color: var(--eui-bg);
+    border-bottom: 1px solid var(--eui-border-subtle);
+}
+
+.eui-app-shell-body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.eui-app-shell-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    order: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.eui-app-shell-sidebar-first .eui-app-shell-header-sticky {
+    position: sticky;
+    top: 0;
+}
+
+.eui-app-shell-main {
+    flex: 1 0 auto;
+    min-width: 0;
+    padding: var(--eui-shell-main-pad);
+
+    &:focus {
+        outline: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: -2px;
+    }
+}
+
+.eui-app-shell-main-inner {
+    width: 100%;
+    max-width: var(--eui-shell-content-max);
+    margin: 0 auto;
+}
+
+.eui-app-shell-footer {
+    flex-shrink: 0;
+    padding: 0.75rem var(--eui-shell-main-pad);
+    border-top: 1px solid var(--eui-border-subtle);
+    background-color: var(--eui-bg);
+    color: var(--eui-text-muted);
+    font-size: 0.8125rem;
+}
+
+.eui-app-shell-aside {
+    order: 2;
+    flex: 0 0 var(--eui-shell-aside-w);
+    width: var(--eui-shell-aside-w);
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: var(--eui-bg);
+    border-left: 1px solid var(--eui-border-subtle);
+}
+
+.eui-app-shell-sidebar {
+    position: relative;
+    z-index: 25;
+    order: 0;
+    flex: 0 0 auto;
+    width: var(--eui-shell-sidebar-w);
+    min-height: 0;
+    transition: width 0.25s var(--eui-shell-ease);
+
+    &.eui-app-shell-sidebar-collapsed,
+    &.eui-app-shell-sidebar-hover-expanded {
+        width: var(--eui-shell-collapsed-w);
+    }
+
+    &.eui-app-shell-sidebar-right {
+        order: 3;
+
+        .eui-app-shell-sidebar-panel {
+            border-right: none;
+            border-left: 1px solid var(--eui-border-subtle);
+        }
+
+        .eui-app-shell-resizer {
+            right: auto;
+            left: -3px;
+        }
+    }
+}
+
+.eui-app-shell-sidebar-pos-right .eui-app-shell-aside {
+    order: 0;
+    border-left: none;
+    border-right: 1px solid var(--eui-border-subtle);
+}
+
+.eui-app-shell-sidebar-panel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--eui-bg);
+    border-right: 1px solid var(--eui-border-subtle);
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.eui-app-shell-sidebar-hover-expanded .eui-app-shell-sidebar-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--eui-shell-sidebar-w);
+    box-shadow: var(--eui-shadow);
+    animation: euiShellHoverExpand 0.2s var(--eui-shell-ease);
+}
+
+.eui-app-shell-sidebar-right.eui-app-shell-sidebar-hover-expanded .eui-app-shell-sidebar-panel {
+    left: auto;
+    right: 0;
+}
+
+.eui-app-shell-sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-shrink: 0;
+    min-height: var(--eui-shell-header-h);
+    padding: 0.5rem 1rem;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.eui-app-shell-sidebar-body {
+    flex: 1;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0.5rem;
+    overscroll-behavior: contain;
+}
+
+.eui-app-shell-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex-shrink: 0;
+    padding: 0.5rem;
+    border-top: 1px solid var(--eui-border-subtle);
+    overflow: hidden;
+}
+
+.eui-app-shell-collapse-btn {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 2.5rem;
+    padding: 0 0.75rem;
+    border: none;
+    border-radius: var(--eui-radius-md);
+    background: none;
+    color: var(--eui-text-muted);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    svg {
+        flex-shrink: 0;
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+
+    &:hover {
+        background-color: var(--eui-bg-hover);
+        color: var(--eui-text);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: -2px;
+    }
+}
+
+.eui-app-shell-sidebar-collapsed {
+    .eui-app-shell-collapse-btn {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .eui-app-shell-collapse-text,
+    .eui-app-shell-hide-collapsed {
+        display: none;
+    }
+
+    .eui-app-shell-sidebar-header {
+        justify-content: center;
+        padding-inline: 0.5rem;
+    }
+}
+
+.eui-app-shell-sidebar:not(.eui-app-shell-sidebar-collapsed) .eui-app-shell-show-collapsed {
+    display: none;
+}
+
+.eui-app-shell-resizer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -3px;
+    z-index: 2;
+    width: 6px;
+    cursor: col-resize;
+    touch-action: none;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 2px;
+        width: 2px;
+        background-color: transparent;
+        transition: background-color 0.15s ease;
+    }
+
+    &:hover::after,
+    &:focus-visible::after,
+    .eui-app-shell-resizing &::after {
+        background-color: var(--eui-primary);
+    }
+
+    &:focus-visible {
+        outline: none;
+    }
+}
+
+.eui-app-shell-variant-floating:not(.eui-app-shell-mobile) {
+    .eui-app-shell-sidebar {
+        padding: 0.75rem 0 0.75rem 0.75rem;
+
+        &.eui-app-shell-sidebar-right {
+            padding: 0.75rem 0.75rem 0.75rem 0;
+        }
+    }
+
+    .eui-app-shell-sidebar-panel {
+        border: 1px solid var(--eui-border-subtle);
+        border-radius: 0.875rem;
+        box-shadow: var(--eui-shadow);
+    }
+
+    .eui-app-shell-sidebar-hover-expanded .eui-app-shell-sidebar-panel {
+        top: 0.75rem;
+        bottom: 0.75rem;
+        left: 0.75rem;
+        box-shadow: var(--eui-shadow);
+    }
+
+    .eui-app-shell-sidebar-collapsed,
+    .eui-app-shell-sidebar-hover-expanded {
+        width: calc(var(--eui-shell-collapsed-w) + 0.75rem);
+    }
+
+    .eui-app-shell-sidebar:not(.eui-app-shell-sidebar-collapsed):not(.eui-app-shell-sidebar-hover-expanded) {
+        width: calc(var(--eui-shell-sidebar-w) + 0.75rem);
+    }
+}
+
+.eui-app-shell-variant-inset:not(.eui-app-shell-mobile) {
+    .eui-app-shell-sidebar-panel {
+        background-color: transparent;
+        border: none;
+    }
+
+    .eui-app-shell-sidebar-hover-expanded .eui-app-shell-sidebar-panel {
+        background-color: var(--eui-bg-subtle);
+    }
+
+    .eui-app-shell-content {
+        margin: 0.5rem 0.5rem 0.5rem 0;
+        border: 1px solid var(--eui-border-subtle);
+        border-radius: 0.875rem;
+        background-color: var(--eui-bg);
+    }
+
+    &.eui-app-shell-sidebar-pos-right .eui-app-shell-content {
+        margin: 0.5rem 0 0.5rem 0.5rem;
+    }
+
+    &.eui-app-shell-header-first .eui-app-shell-header {
+        background-color: transparent;
+        border-bottom-color: transparent;
+    }
+
+    .eui-app-shell-footer {
+        background-color: transparent;
+    }
+}
+
+.eui-app-shell-no-sidebar.eui-app-shell-variant-inset .eui-app-shell-content {
+    margin-left: 0.5rem;
+}
+
+.eui-app-shell-mobile {
+    --eui-shell-main-pad: 1rem;
+
+    .eui-app-shell-sidebar {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 40;
+        width: var(--eui-shell-mobile-w);
+        max-width: 100%;
+        transform: translateX(-100%);
+        visibility: hidden;
+        transition: transform 0.3s var(--eui-shell-ease), visibility 0s linear 0.3s;
+
+        &.eui-app-shell-sidebar-right {
+            left: auto;
+            right: 0;
+            transform: translateX(100%);
+        }
+
+        &.eui-app-shell-sidebar-open {
+            transform: translateX(0);
+            visibility: visible;
+            transition: transform 0.3s var(--eui-shell-ease), visibility 0s;
+        }
+    }
+
+    .eui-app-shell-sidebar-panel {
+        box-shadow: var(--eui-shadow);
+        touch-action: pan-y;
+    }
+
+    .eui-app-shell-header {
+        padding: 0 0.5rem;
+    }
+}
+
+.eui-app-shell-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 39;
+    background-color: var(--eui-shell-backdrop);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+
+    &.eui-app-shell-backdrop-open {
+        opacity: 1;
+        pointer-events: auto;
+        cursor: pointer;
+    }
+}
+
+@media (pointer: coarse) {
+    .eui-app-shell-collapse-btn {
+        min-height: 2.75rem;
+    }
+}
+
+@keyframes euiShellHoverExpand {
+    from {
+        width: var(--eui-shell-collapsed-w);
+    }
+    to {
+        width: var(--eui-shell-sidebar-w);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-app-shell-sidebar,
+    .eui-app-shell-mobile .eui-app-shell-sidebar,
+    .eui-app-shell-mobile .eui-app-shell-sidebar.eui-app-shell-sidebar-open,
+    .eui-app-shell-backdrop,
+    .eui-app-shell-skip,
+    .eui-app-shell-collapse-btn,
+    .eui-app-shell-resizer::after {
+        transition: none;
+    }
+
+    .eui-app-shell-sidebar-hover-expanded .eui-app-shell-sidebar-panel {
+        animation: none;
+    }
+}

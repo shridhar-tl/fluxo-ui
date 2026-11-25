@@ -1,0 +1,241 @@
+{
+  "datePickerProps": {
+    "value": {
+      "type": "Date | null",
+      "description": "Controlled value."
+    },
+    "defaultValue": {
+      "type": "Date | null",
+      "default": "null",
+      "description": "Initial value when uncontrolled."
+    },
+    "onChange": {
+      "type": "(date: Date | null) => void",
+      "description": "Called with the selected date."
+    },
+    "format": {
+      "type": "string",
+      "default": "'MMM d, yyyy'",
+      "description": "date-fns format pattern for display and typed input."
+    },
+    "formatDate": {
+      "type": "(date: Date) => string",
+      "description": "Custom display formatter."
+    },
+    "parseDate": {
+      "type": "(text: string) => Date | null",
+      "description": "Custom parser for typed input."
+    },
+    "locale": {
+      "type": "string",
+      "description": "BCP 47 locale for month/weekday names, and for display and typed input when no format is set."
+    },
+    "firstDayOfWeek": {
+      "type": "0 | 1 | 2 | 3 | 4 | 5 | 6",
+      "default": "0",
+      "description": "First day of the week (0 = Sunday)."
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "'Select date'",
+      "description": "Input placeholder."
+    },
+    "size": {
+      "type": "'sm' | 'md' | 'lg'",
+      "default": "'md'",
+      "description": "Control size."
+    },
+    "variant": {
+      "type": "'input' | 'inline'",
+      "default": "'input'",
+      "description": "Input with popover, or an always-visible calendar."
+    },
+    "granularity": {
+      "type": "'day' | 'month' | 'year'",
+      "default": "'day'",
+      "description": "Pick a day, a month or a year."
+    },
+    "minDate": {
+      "type": "Date",
+      "description": "Earliest selectable date."
+    },
+    "maxDate": {
+      "type": "Date",
+      "description": "Latest selectable date."
+    },
+    "disabledDates": {
+      "type": "Date[] | ((date: Date) => boolean)",
+      "description": "Specific dates or a predicate to disable."
+    },
+    "disabledDaysOfWeek": {
+      "type": "number[]",
+      "description": "Weekdays to disable (0 = Sunday)."
+    },
+    "highlightedDates": {
+      "type": "Array<{ date: Date; color?: string; label?: string }>",
+      "description": "Dates marked with colored dots (labels are announced)."
+    },
+    "showWeekNumbers": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Show ISO week numbers."
+    },
+    "showOutsideDays": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show days from adjacent months."
+    },
+    "fixedWeeks": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Always render 6 weeks so the height never changes."
+    },
+    "numberOfMonths": {
+      "type": "1 | 2",
+      "default": "1",
+      "description": "Months shown side by side (1 on small screens)."
+    },
+    "yearRange": {
+      "type": "[number, number]",
+      "description": "Selectable year range in the year view."
+    },
+    "presets": {
+      "type": "Array<{ label: string; value: Date | (() => Date) }>",
+      "description": "Quick-select shortcuts."
+    },
+    "showTodayButton": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Footer button that selects today."
+    },
+    "todayLabel": {
+      "type": "string",
+      "default": "'Today'",
+      "description": "Today button label."
+    },
+    "clearable": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Show a clear button."
+    },
+    "clearLabel": {
+      "type": "string",
+      "default": "'Clear date'",
+      "description": "Clear button label."
+    },
+    "closeOnSelect": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Close the popover after selecting."
+    },
+    "editable": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Allow typing a date into the input."
+    },
+    "readOnly": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Read-only state."
+    },
+    "disabled": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Disabled state."
+    },
+    "required": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Marks the input as required."
+    },
+    "status": {
+      "type": "'error' | 'warning' | 'success'",
+      "description": "Validation status styling."
+    },
+    "fullWidth": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Stretch to the container width."
+    },
+    "icon": {
+      "type": "ReactNode | ComponentType<SVGProps> | false",
+      "description": "Custom icon, or false to hide it."
+    },
+    "iconPosition": {
+      "type": "'start' | 'end'",
+      "default": "'start'",
+      "description": "Icon placement; 'end' makes it a toggle button."
+    },
+    "placement": {
+      "type": "'bottom-start' | 'bottom-end' | 'top-start' | 'top-end'",
+      "default": "'bottom-start'",
+      "description": "Preferred popover placement; flips when there is no room."
+    },
+    "responsive": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Use a bottom sheet on phones and tablets."
+    },
+    "open": {
+      "type": "boolean",
+      "description": "Controlled open state."
+    },
+    "defaultOpen": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Initial open state."
+    },
+    "onOpenChange": {
+      "type": "(open: boolean) => void",
+      "description": "Called when the popover opens or closes."
+    },
+    "renderDay": {
+      "type": "(date: Date, state) => ReactNode",
+      "description": "Custom day cell content."
+    },
+    "dayClassName": {
+      "type": "(date: Date) => string | undefined",
+      "description": "Extra class per day."
+    },
+    "name": {
+      "type": "string",
+      "description": "Form field name; submits an ISO yyyy-MM-dd value."
+    },
+    "id": {
+      "type": "string",
+      "description": "Input id."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label."
+    },
+    "ariaDescribedBy": {
+      "type": "string",
+      "description": "Id of the element describing the input."
+    },
+    "autoFocus": {
+      "type": "boolean",
+      "description": "Focus the input on mount."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    },
+    "popoverClassName": {
+      "type": "string",
+      "description": "Class for the popover."
+    },
+    "style": {
+      "type": "CSSProperties",
+      "description": "Inline styles."
+    },
+    "onFocus": {
+      "type": "(event) => void",
+      "description": "Input focus handler."
+    },
+    "onBlur": {
+      "type": "(event) => void",
+      "description": "Input blur handler."
+    }
+  }
+}

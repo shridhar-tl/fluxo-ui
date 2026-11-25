@@ -191,6 +191,7 @@ function Counter() {
 
 | Component         | Description                                 |
 | ----------------- | ------------------------------------------- |
+| Date Picker       | Single date picker with presets, constraints, highlights, locales and month/year modes |
 | Date Range Picker | Date range selection with presets           |
 | Time Picker       | 12/24 hour time picker with step increments |
 | Color Picker      | HSV canvas with hex/RGB inputs and swatches |
@@ -198,14 +199,15 @@ function Counter() {
 
 ### Data & Reports
 
-| Component      | Description                                                                        |
-| -------------- | ---------------------------------------------------------------------------------- |
-| Table          | Data grid with sort, filter, pagination                                            |
-| Pivot Table    | Aggregation, pivoting, expand/collapse                                             |
-| TreeView       | Hierarchical tree with expand/collapse                                             |
-| PDF Toolkit    | Generate PDF documents from code or from an existing HTML table                    |
-| Report Builder | Visual report designer with datasource plugins, parameters, and JSON export        |
-| Report Viewer  | Renders report definitions with sorting, drill-through, PDF export, and parameters |
+| Component      | Description                                                                              |
+| -------------- | ---------------------------------------------------------------------------------------- |
+| Table          | Data grid with sort, filter, pagination                                                  |
+| Pivot Table    | Aggregation, pivoting, expand/collapse                                                   |
+| TreeView       | Hierarchical tree with expand/collapse                                                   |
+| Tree Table     | Virtualized hierarchical data grid with lazy loading, selection, editing and aggregation |
+| PDF Toolkit    | Generate PDF documents from code or from an existing HTML table                          |
+| Report Builder | Visual report designer with datasource plugins, parameters, and JSON export              |
+| Report Viewer  | Renders report definitions with sorting, drill-through, PDF export, and parameters       |
 
 ### Editors
 
@@ -228,6 +230,7 @@ function Counter() {
 | Countdown Timer | Progress-aware countdown with circular, linear, segmented, and numeric variants |
 | Knob            | Circular value indicator with optional drag editing                             |
 | Activity Gauge  | Concentric multi-series ring chart                                              |
+| Sparkline       | Mini inline trend charts for KPI cards and table cells — line, area, bar, win/loss, bullet, pie |
 
 ### Codes
 
@@ -248,6 +251,14 @@ function Counter() {
 | Canvas Draw  | Drawing and annotation overlay                                       |
 | File Upload  | Drag-and-drop file upload zone                                       |
 
+### Data Display
+
+| Component | Description                                                                      |
+| --------- | -------------------------------------------------------------------------------- |
+| Tag       | Labels with seven variants, icons, avatars, counts, closable and grouped overflow |
+| Badge     | Counts, dots and status indicators anchored to any element                       |
+| Chip      | Filter, choice, input and action chips with keyboard-navigable groups            |
+
 ### Navigation
 
 | Component  | Description                           |
@@ -262,6 +273,7 @@ function Counter() {
 
 | Component           | Description                                                       |
 | ------------------- | ----------------------------------------------------------------- |
+| Alert               | Contextual messages with six variants, actions, details, dismiss and auto-close |
 | Snackbar            | Toast notifications                                               |
 | Notification Center | Dropdown notification panel                                       |
 | Page Banner         | Page-level message banners                                        |
@@ -284,6 +296,7 @@ function Counter() {
 
 | Component         | Description                                                                          |
 | ----------------- | ------------------------------------------------------------------------------------ |
+| App Shell         | Responsive app frame with collapsible, resizable sidebar, mobile drawer, aside and footer |
 | Splitter          | Resizable split panels                                                               |
 | Collapsible Panel | Expand/collapse sections & accordion                                                 |
 | Accordion         | Multi-item collapsible panel group with single/multi expand and five visual variants |

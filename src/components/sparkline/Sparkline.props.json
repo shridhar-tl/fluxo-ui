@@ -1,0 +1,177 @@
+{
+  "sparklineProps": {
+    "data": {
+      "type": "Array<number | null | { value: number | null; label?: string; color?: string }>",
+      "description": "Data points. null creates a gap."
+    },
+    "type": {
+      "type": "'line' | 'area' | 'bar' | 'winloss' | 'discrete' | 'bullet' | 'pie'",
+      "default": "'line'",
+      "description": "Chart type."
+    },
+    "width": {
+      "type": "number | string",
+      "default": "120",
+      "description": "Pixel width, or a CSS width such as '100%' to fill the container."
+    },
+    "height": {
+      "type": "number",
+      "default": "32",
+      "description": "Pixel height."
+    },
+    "color": {
+      "type": "'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' | string",
+      "default": "'primary'",
+      "description": "Series color: a tone or any CSS color."
+    },
+    "negativeColor": {
+      "type": "string",
+      "default": "'#dc2626'",
+      "description": "Color for values below threshold (bar, discrete) and losses (winloss)."
+    },
+    "trendColors": {
+      "type": "boolean | { up?, down?, flat? }",
+      "description": "Color the series by trend direction (last vs first value)."
+    },
+    "strokeWidth": {
+      "type": "number",
+      "default": "1.75",
+      "description": "Line width."
+    },
+    "curve": {
+      "type": "'linear' | 'smooth' | 'step'",
+      "default": "'smooth'",
+      "description": "Line interpolation. 'smooth' never overshoots the data."
+    },
+    "fill": {
+      "type": "'gradient' | 'solid' | 'none'",
+      "default": "'gradient' for area, 'none' for line",
+      "description": "Area fill under the line."
+    },
+    "fillOpacity": {
+      "type": "number",
+      "description": "Fill opacity."
+    },
+    "dots": {
+      "type": "'none' | 'all' | 'last' | 'first-last' | 'min-max' | 'extremes'",
+      "default": "'last'",
+      "description": "Which points get markers."
+    },
+    "dotRadius": {
+      "type": "number",
+      "default": "2.5",
+      "description": "Marker radius."
+    },
+    "minColor": {
+      "type": "string",
+      "default": "'#dc2626'",
+      "description": "Color of the minimum marker."
+    },
+    "maxColor": {
+      "type": "string",
+      "default": "'#15803d'",
+      "description": "Color of the maximum marker."
+    },
+    "referenceLine": {
+      "type": "'mean' | 'median' | 'zero' | 'min' | 'max' | number | { value, label?, color?, dashed? }",
+      "description": "Horizontal reference line."
+    },
+    "band": {
+      "type": "{ from: number; to: number; color?: string }",
+      "description": "Shaded normal range."
+    },
+    "min": {
+      "type": "number",
+      "description": "Fixed lower bound of the value axis."
+    },
+    "max": {
+      "type": "number",
+      "description": "Fixed upper bound of the value axis (also the bullet scale)."
+    },
+    "threshold": {
+      "type": "number",
+      "default": "0",
+      "description": "Values below this use negativeColor."
+    },
+    "barGap": {
+      "type": "number",
+      "default": "0.25",
+      "description": "Gap between bars as a fraction of the slot (0-0.9)."
+    },
+    "barRadius": {
+      "type": "number",
+      "default": "1",
+      "description": "Bar corner radius."
+    },
+    "connectNulls": {
+      "type": "boolean",
+      "default": "false",
+      "description": "Draw through null values instead of breaking the line."
+    },
+    "target": {
+      "type": "number",
+      "description": "Bullet chart target marker."
+    },
+    "ranges": {
+      "type": "number[]",
+      "description": "Bullet chart qualitative ranges."
+    },
+    "colors": {
+      "type": "string[]",
+      "description": "Pie slice palette."
+    },
+    "innerRadius": {
+      "type": "number",
+      "default": "0",
+      "description": "Pie inner radius as a fraction (0 = pie, 0.6 = donut)."
+    },
+    "animate": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Animate on mount (respects reduced motion)."
+    },
+    "animationDuration": {
+      "type": "number",
+      "default": "700",
+      "description": "Animation duration in ms."
+    },
+    "interactive": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Hover/touch tooltips and keyboard exploration with arrow keys."
+    },
+    "showCursor": {
+      "type": "boolean",
+      "default": "true",
+      "description": "Vertical cursor line on hover."
+    },
+    "formatValue": {
+      "type": "(value: number, index: number) => string",
+      "description": "Value formatter for tooltips and the accessible summary."
+    },
+    "renderTooltip": {
+      "type": "(point: { index, value, label }) => ReactNode",
+      "description": "Custom tooltip content."
+    },
+    "onPointHover": {
+      "type": "(point | null) => void",
+      "description": "Called when the active point changes."
+    },
+    "onPointClick": {
+      "type": "(point) => void",
+      "description": "Called when the active point is clicked or Enter is pressed."
+    },
+    "ariaLabel": {
+      "type": "string",
+      "description": "Accessible label; a summary is generated when omitted."
+    },
+    "valueLabel": {
+      "type": "string",
+      "description": "Name of the metric used in the generated summary, e.g. 'Revenue'."
+    },
+    "className": {
+      "type": "string",
+      "description": "Additional CSS class."
+    }
+  }
+}

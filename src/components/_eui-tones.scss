@@ -1,0 +1,43 @@
+@mixin eui-tone-palette($prefix) {
+    --eui-tone-base: var(--eui-btn-default-bg);
+    --eui-tone-on: #ffffff;
+    --eui-tone-soft-bg: color-mix(in srgb, var(--eui-tone-base) 14%, transparent);
+    --eui-tone-soft-hover: color-mix(in srgb, var(--eui-tone-base) 22%, transparent);
+    --eui-tone-soft-fg: color-mix(in srgb, var(--eui-tone-base) 62%, var(--eui-text));
+    --eui-tone-border: color-mix(in srgb, var(--eui-tone-base) 45%, transparent);
+    --eui-tone-ring: color-mix(in srgb, var(--eui-tone-base) 35%, transparent);
+
+    &.#{$prefix}-tone-default {
+        --eui-tone-base: var(--eui-btn-default-bg);
+        --eui-tone-soft-bg: color-mix(in srgb, var(--eui-text-muted) 14%, transparent);
+        --eui-tone-soft-hover: color-mix(in srgb, var(--eui-text-muted) 24%, transparent);
+        --eui-tone-soft-fg: var(--eui-text);
+        --eui-tone-border: var(--eui-border);
+    }
+
+    &.#{$prefix}-tone-primary {
+        --eui-tone-base: var(--eui-primary);
+        --eui-tone-on: var(--eui-text-on-primary);
+    }
+
+    &.#{$prefix}-tone-secondary {
+        --eui-tone-base: var(--eui-text-muted);
+        --eui-tone-on: var(--eui-bg);
+    }
+
+    &.#{$prefix}-tone-success {
+        --eui-tone-base: #15803d;
+    }
+
+    &.#{$prefix}-tone-warning {
+        --eui-tone-base: #b45309;
+    }
+
+    &.#{$prefix}-tone-danger {
+        --eui-tone-base: #dc2626;
+    }
+
+    &.#{$prefix}-tone-info {
+        --eui-tone-base: #0e7490;
+    }
+}

@@ -23,6 +23,7 @@ const largeComponents = new Set([
     'Calendar',
     'Pivot Table',
     'TreeView',
+    'Tree Table',
     'Canvas Draw',
     'Image Editor',
     'JSON Editor',
@@ -45,6 +46,7 @@ const largeComponents = new Set([
     'Skeleton List',
     'Dashboard Layout',
     'File Browser',
+    'App Shell',
 ]);
 
 const heavyComponents = new Set([
@@ -106,6 +108,7 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/stepper': () => import('./stepper/BasicUsage'),
     '/components/shimmer': () => import('./shimmer/ProfileCard'),
     '/components/tree-view': () => import('./tree-view/BasicUsage'),
+    '/components/tree-table': () => import('./tree-table/BasicUsage'),
     '/components/timeline': () => import('./timeline/BasicUsage'),
     '/components/carousel': () => import('./carousel/BasicUsage'),
     '/components/pivot-table': () => import('./pivot-table/BasicUsage'),
@@ -167,6 +170,13 @@ const previewMap: Record<string, () => Promise<{ default: React.ComponentType }>
     '/components/resizable': () => import('./resizable/BasicUsage'),
     '/components/moveable': () => import('./moveable/BasicUsage'),
     '/components/dashboard-layout': () => import('./dashboard-layout/BasicUsage'),
+    '/components/tag': () => import('./tag/BasicUsage'),
+    '/components/badge': () => import('./badge/BasicUsage'),
+    '/components/chip': () => import('./chip/BasicUsage'),
+    '/components/alert': () => import('./alert/BasicUsage'),
+    '/components/sparkline': () => import('./sparkline/BasicUsage'),
+    '/components/date-picker': () => import('./date-picker/BasicUsage'),
+    '/components/app-shell': () => import('./app-shell/BasicUsage'),
 };
 
 const LazyPreview: React.FC<{ path: string }> = ({ path }) => {
@@ -387,6 +397,12 @@ const selectionComponents: Omit<ComponentCardProps, 'isDark'>[] = [
 ];
 
 const pickerComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    {
+        title: 'Date Picker',
+        description: 'Single date picker with presets, constraints, highlights, locales and month/year modes',
+        path: '/components/date-picker',
+        badge: 'New',
+    },
     { title: 'Date Range Picker', description: 'Date range selection with presets', path: '/components/daterangepicker' },
     { title: 'Time Picker', description: '12/24 hour time picker with step increments', path: '/components/time-picker', badge: 'New' },
     { title: 'Color Picker', description: 'HSV canvas with hex/RGB inputs and swatches', path: '/components/color-picker', badge: 'New' },
@@ -397,6 +413,12 @@ const dataReportComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Table', description: 'Data grid with sort, filter, pagination', path: '/components/table' },
     { title: 'Pivot Table', description: 'Aggregation, pivoting, expand/collapse', path: '/components/pivot-table' },
     { title: 'TreeView', description: 'Hierarchical tree with expand/collapse', path: '/components/tree-view' },
+    {
+        title: 'Tree Table',
+        description: 'Virtualized hierarchical data grid with lazy loading, selection, editing and aggregation',
+        path: '/components/tree-table',
+        badge: 'New',
+    },
     {
         title: 'PDF Toolkit',
         description: 'Generate PDF documents from code or from an existing HTML table',
@@ -455,6 +477,12 @@ const chartBoardComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     },
     { title: 'Knob', description: 'Circular value indicator with optional drag editing', path: '/components/knob', badge: 'New' },
     { title: 'Activity Gauge', description: 'Concentric multi-series ring chart', path: '/components/activity-gauge', badge: 'New' },
+    {
+        title: 'Sparkline',
+        description: 'Mini inline trend charts for KPI cards and table cells — line, area, bar, win/loss, bullet, pie',
+        path: '/components/sparkline',
+        badge: 'New',
+    },
 ];
 
 const codeComponents: Omit<ComponentCardProps, 'isDark'>[] = [
@@ -482,6 +510,12 @@ const mediaComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'File Upload', description: 'Drag-and-drop file upload zone', path: '/components/file-upload' },
 ];
 
+const dataDisplayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    { title: 'Tag', description: 'Labels with seven variants, icons, avatars, counts, closable and grouped overflow', path: '/components/tag', badge: 'New' },
+    { title: 'Badge', description: 'Counts, dots and status indicators anchored to any element', path: '/components/badge', badge: 'New' },
+    { title: 'Chip', description: 'Filter, choice, input and action chips with keyboard-navigable groups', path: '/components/chip', badge: 'New' },
+];
+
 const navigationComponents: Omit<ComponentCardProps, 'isDark'>[] = [
     { title: 'Tab View', description: 'Tabbed content with multiple variants', path: '/components/tab-view' },
     { title: 'Stepper', description: 'Multi-step wizard navigation', path: '/components/stepper' },
@@ -491,6 +525,12 @@ const navigationComponents: Omit<ComponentCardProps, 'isDark'>[] = [
 ];
 
 const feedbackComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    {
+        title: 'Alert',
+        description: 'Contextual messages with six variants, actions, details, dismiss and auto-close',
+        path: '/components/alert',
+        badge: 'New',
+    },
     { title: 'Snackbar', description: 'Toast notifications', path: '/components/snackbar' },
     { title: 'Notification Center', description: 'Dropdown notification panel', path: '/components/notification-center' },
     { title: 'Page Banner', description: 'Page-level message banners', path: '/components/page-banner' },
@@ -514,6 +554,12 @@ const overlayComponents: Omit<ComponentCardProps, 'isDark'>[] = [
 ];
 
 const layoutComponents: Omit<ComponentCardProps, 'isDark'>[] = [
+    {
+        title: 'App Shell',
+        description: 'Responsive app frame with collapsible, resizable sidebar, mobile drawer, aside and footer',
+        path: '/components/app-shell',
+        badge: 'New',
+    },
     { title: 'Splitter', description: 'Resizable split panels', path: '/components/splitter' },
     { title: 'Collapsible Panel', description: 'Expand/collapse sections & accordion', path: '/components/collapsible-panel' },
     {
@@ -808,6 +854,12 @@ const HomePage: React.FC = () => {
                     />
                     <CategorySection title="Codes" icon="&#9647;" items={codeComponents.map((i) => ({ ...i, isDark }))} isDark={isDark} />
                     <CategorySection title="Media" icon="&#9634;" items={mediaComponents.map((i) => ({ ...i, isDark }))} isDark={isDark} />
+                    <CategorySection
+                        title="Data Display"
+                        icon="&#9873;"
+                        items={dataDisplayComponents.map((i) => ({ ...i, isDark }))}
+                        isDark={isDark}
+                    />
                     <CategorySection
                         title="Navigation"
                         icon="&#9776;"

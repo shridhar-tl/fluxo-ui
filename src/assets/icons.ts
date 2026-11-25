@@ -76,6 +76,8 @@ export { default as SearchIcon } from './icons/search.svg?react';
 export { default as SettingsIcon } from './icons/settings.svg?react';
 export { default as ShareIcon } from './icons/share.svg?react';
 export { default as SortIcon } from './icons/sort.svg?react';
+export { default as SortBothIcon } from './icons/sort-both.svg?react';
+export { default as GripVerticalIcon } from './icons/grip-vertical.svg?react';
 export { default as StarIcon } from './icons/star.svg?react';
 export { default as StarFilledIcon } from './icons/star-filled.svg?react';
 export { default as HeartIcon } from './icons/heart.svg?react';

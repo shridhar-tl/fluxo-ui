@@ -68,6 +68,7 @@ const navSections: NavSection[] = [
         title: 'Date, Time & Color',
         key: 'pickers',
         items: [
+            { label: 'Date Picker', path: '/components/date-picker' },
             { label: 'Date Range Picker', path: '/components/daterangepicker' },
             { label: 'Time Picker', path: '/components/time-picker' },
             { label: 'Color Picker', path: '/components/color-picker' },
@@ -81,6 +82,7 @@ const navSections: NavSection[] = [
             { label: 'Table', path: '/components/table' },
             { label: 'Pivot Table', path: '/components/pivot-table' },
             { label: 'TreeView', path: '/components/tree-view' },
+            { label: 'Tree Table', path: '/components/tree-table' },
             { label: 'PDF Toolkit', path: '/components/pdf-toolkit' },
         ],
     },
@@ -124,6 +126,7 @@ const navSections: NavSection[] = [
             { label: 'Countdown Timer', path: '/components/countdown-timer' },
             { label: 'Knob', path: '/components/knob' },
             { label: 'Activity Gauge', path: '/components/activity-gauge' },
+            { label: 'Sparkline', path: '/components/sparkline' },
         ],
     },
     {
@@ -148,6 +151,15 @@ const navSections: NavSection[] = [
         ],
     },
     {
+        title: 'Data Display',
+        key: 'data-display',
+        items: [
+            { label: 'Tag', path: '/components/tag' },
+            { label: 'Badge', path: '/components/badge' },
+            { label: 'Chip', path: '/components/chip' },
+        ],
+    },
+    {
         title: 'Navigation',
         key: 'navigation',
         items: [
@@ -162,6 +174,7 @@ const navSections: NavSection[] = [
         title: 'Feedback',
         key: 'feedback',
         items: [
+            { label: 'Alert', path: '/components/alert' },
             { label: 'Snackbar', path: '/components/snackbar' },
             { label: 'Notification Center', path: '/components/notification-center' },
             { label: 'Page Banner', path: '/components/page-banner' },
@@ -186,6 +199,7 @@ const navSections: NavSection[] = [
         title: 'Layout',
         key: 'layout',
         items: [
+            { label: 'App Shell', path: '/components/app-shell' },
             { label: 'Splitter', path: '/components/splitter' },
             { label: 'Collapsible Panel', path: '/components/collapsible-panel' },
             { label: 'Accordion', path: '/components/accordion' },

@@ -1,0 +1,779 @@
+@use '../eui-vars' as *;
+@use '../eui-tones' as *;
+
+.eui-date-picker {
+    --eui-dp-h: var(--eui-control-h-md);
+    --eui-dp-fs: 0.8125rem;
+    --eui-dp-px: 0.625rem;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-sizing: border-box;
+    width: 15rem;
+    max-width: 100%;
+    min-height: var(--eui-dp-h);
+    padding: 0 var(--eui-dp-px);
+    border: 1px solid var(--eui-border);
+    border-radius: var(--eui-radius-sm);
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    font-family: var(--eui-font-family);
+    font-size: var(--eui-dp-fs);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &.eui-date-picker-sm {
+        --eui-dp-h: var(--eui-control-h-sm);
+        --eui-dp-fs: 0.75rem;
+        --eui-dp-px: 0.5rem;
+        width: 13rem;
+    }
+
+    &.eui-date-picker-lg {
+        --eui-dp-h: var(--eui-control-h-lg);
+        --eui-dp-fs: 0.875rem;
+        --eui-dp-px: 0.75rem;
+        width: 17rem;
+    }
+
+    &.eui-date-picker-full {
+        width: 100%;
+    }
+
+    &:hover:not(.eui-date-picker-disabled) {
+        border-color: var(--eui-text-muted);
+    }
+
+    &:focus-within,
+    &.eui-date-picker-open {
+        border-color: transparent;
+        box-shadow: 0 0 0 2px var(--eui-primary);
+    }
+
+    &.eui-date-picker-error {
+        border-color: #dc2626;
+
+        &:focus-within,
+        &.eui-date-picker-open {
+            box-shadow: 0 0 0 2px #dc2626;
+        }
+    }
+
+    &.eui-date-picker-warning {
+        border-color: #d97706;
+
+        &:focus-within,
+        &.eui-date-picker-open {
+            box-shadow: 0 0 0 2px #d97706;
+        }
+    }
+
+    &.eui-date-picker-success {
+        border-color: #16a34a;
+
+        &:focus-within,
+        &.eui-date-picker-open {
+            box-shadow: 0 0 0 2px #16a34a;
+        }
+    }
+
+    &.eui-date-picker-readonly {
+        background-color: var(--eui-bg-subtle);
+    }
+
+    &.eui-date-picker-disabled {
+        background-color: var(--eui-bg-subtle);
+        color: var(--eui-text-disabled);
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    &.eui-date-picker-icon-end {
+        padding-inline-end: 0.125rem;
+    }
+}
+
+.eui-date-picker-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--eui-text-muted);
+
+    svg {
+        width: 1rem;
+        height: 1rem;
+    }
+}
+
+.eui-date-picker-input {
+    flex: 1;
+    min-width: 0;
+    height: calc(var(--eui-dp-h) - 2px);
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+
+    &:not([readonly]) {
+        cursor: text;
+    }
+
+    &::placeholder {
+        color: var(--eui-text-muted);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+.eui-date-picker-clear,
+.eui-date-picker-toggle {
+    position: relative;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: none;
+    border-radius: var(--eui-radius-sm);
+    background: none;
+    color: var(--eui-text-muted);
+    cursor: pointer;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: -0.375rem;
+    }
+
+    svg {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+
+    &:hover:not(:disabled) {
+        color: var(--eui-text);
+        background-color: var(--eui-bg-hover);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+.eui-date-picker-toggle {
+    width: 2rem;
+    height: calc(var(--eui-dp-h) - 0.375rem);
+
+    .eui-date-picker-icon svg {
+        width: 1rem;
+        height: 1rem;
+    }
+}
+
+.eui-date-picker-inline {
+    display: inline-block;
+    max-width: 100%;
+    border: 1px solid var(--eui-border-subtle);
+    border-radius: 0.75rem;
+    background-color: var(--eui-bg);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    font-family: var(--eui-font-family);
+    color: var(--eui-text);
+
+    &.eui-date-picker-disabled {
+        opacity: 0.6;
+    }
+}
+
+.eui-dp-popover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10050;
+    max-width: calc(100vw - 16px);
+    border: 1px solid var(--eui-border-subtle);
+    border-radius: 0.75rem;
+    background-color: var(--eui-bg);
+    color: var(--eui-text);
+    box-shadow: var(--eui-shadow);
+    font-family: var(--eui-font-family);
+    animation: euiDpIn 0.16s ease-out;
+
+    &.eui-dp-popover-hidden {
+        visibility: hidden;
+    }
+}
+
+.eui-dp-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background-color: rgba(15, 23, 42, 0.55);
+    animation: euiDpFade 0.18s ease-out;
+
+    @media (min-width: $bp-md) {
+        align-items: center;
+    }
+}
+
+.eui-dp-sheet {
+    position: relative;
+    width: 100%;
+    max-width: 26rem;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: 1rem 1rem 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    animation: euiDpSheet 0.22s ease-out;
+
+    @media (min-width: $bp-md) {
+        border-radius: 1rem;
+    }
+
+    .eui-dp-panel {
+        flex-direction: column-reverse;
+    }
+
+    .eui-dp-presets {
+        flex-direction: row;
+        flex-wrap: wrap;
+        border-right: none;
+        border-top: 1px solid var(--eui-border-subtle);
+        min-width: 0;
+    }
+
+    .eui-dp-calendar {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .eui-dp-day {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        max-height: 3rem;
+        font-size: 0.9375rem;
+    }
+}
+
+.eui-dp-panel {
+    display: flex;
+    max-width: 100%;
+}
+
+.eui-dp-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.eui-dp-presets {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 8.5rem;
+    padding: 0.5rem;
+    border-right: 1px solid var(--eui-border-subtle);
+}
+
+.eui-dp-preset {
+    appearance: none;
+    padding: 0.4375rem 0.625rem;
+    border: none;
+    border-radius: var(--eui-radius-md);
+    background: none;
+    color: var(--eui-text);
+    font: inherit;
+    font-size: 0.8125rem;
+    text-align: start;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background-color: var(--eui-bg-hover);
+    }
+
+    &.eui-dp-preset-active {
+        background-color: var(--eui-primary-subtle);
+        color: var(--eui-btn-primary-tone, var(--eui-primary));
+        font-weight: 600;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: -2px;
+    }
+
+    &:disabled {
+        color: var(--eui-text-disabled);
+        cursor: not-allowed;
+    }
+}
+
+.eui-dp-calendar {
+    padding: 0.75rem;
+    user-select: none;
+}
+
+.eui-dp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.eui-dp-nav {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: none;
+    border-radius: var(--eui-radius-md);
+    background: none;
+    color: var(--eui-text-muted);
+    cursor: pointer;
+
+    svg {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    &:hover:not(:disabled) {
+        background-color: var(--eui-bg-hover);
+        color: var(--eui-text);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
+    }
+
+    &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+}
+
+.eui-dp-title {
+    flex: 1;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--eui-text);
+    white-space: nowrap;
+}
+
+.eui-dp-title-button {
+    appearance: none;
+    border: none;
+    border-radius: var(--eui-radius-md);
+    background: none;
+    font-family: inherit;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--eui-bg-hover);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
+    }
+}
+
+.eui-dp-months {
+    display: flex;
+    gap: 1.25rem;
+}
+
+.eui-dp-month {
+    flex: 1;
+    min-width: 0;
+}
+
+.eui-dp-month-caption {
+    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--eui-text-muted);
+}
+
+.eui-dp-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.eui-dp-row {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.125rem;
+}
+
+.eui-dp-grid-weeks .eui-dp-row {
+    grid-template-columns: 1.75rem repeat(7, minmax(0, 1fr));
+}
+
+.eui-dp-weekday {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--eui-text-muted);
+
+    abbr {
+        text-decoration: none;
+    }
+}
+
+.eui-dp-weeknum {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6875rem;
+    color: var(--eui-text-muted);
+    border-right: 1px solid var(--eui-border-subtle);
+}
+
+.eui-dp-cell {
+    display: flex;
+    justify-content: center;
+}
+
+.eui-dp-day {
+    position: relative;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: none;
+    border-radius: 0.5rem;
+    background: none;
+    color: var(--eui-text);
+    font-family: inherit;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease;
+
+    &:hover:not(.eui-dp-day-disabled):not(.eui-dp-day-selected) {
+        background-color: var(--eui-bg-hover);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
+        z-index: 1;
+    }
+
+    &.eui-dp-day-outside {
+        color: var(--eui-text-muted);
+        opacity: 0.7;
+    }
+
+    &.eui-dp-day-today {
+        font-weight: 700;
+        color: var(--eui-btn-primary-tone, var(--eui-primary));
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            border: 1px solid var(--eui-primary-border);
+            border-radius: 0.4375rem;
+            pointer-events: none;
+        }
+    }
+
+    &.eui-dp-day-selected {
+        background-color: var(--eui-primary);
+        color: var(--eui-text-on-primary);
+        font-weight: 600;
+        box-shadow: 0 2px 6px color-mix(in srgb, var(--eui-primary) 40%, transparent);
+
+        &::after {
+            display: none;
+        }
+
+        .eui-dp-marker {
+            background-color: var(--eui-text-on-primary);
+        }
+    }
+
+    &.eui-dp-day-disabled {
+        color: var(--eui-text-disabled);
+        text-decoration: line-through;
+        text-decoration-color: color-mix(in srgb, var(--eui-text-disabled) 60%, transparent);
+        cursor: not-allowed;
+        opacity: 0.65;
+    }
+}
+
+.eui-dp-markers {
+    position: absolute;
+    bottom: 0.25rem;
+    left: 50%;
+    display: flex;
+    gap: 2px;
+    transform: translateX(-50%);
+}
+
+.eui-dp-marker {
+    @include eui-tone-palette('eui-dp-marker');
+
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--eui-tone-base);
+}
+
+.eui-dp-picker-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    width: 16rem;
+    max-width: 100%;
+    padding: 0.25rem 0;
+}
+
+.eui-dp-picker-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.375rem;
+
+    > span {
+        display: flex;
+    }
+}
+
+.eui-dp-picker-item {
+    appearance: none;
+    flex: 1;
+    height: 2.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: none;
+    color: var(--eui-text);
+    font-family: inherit;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+
+    &:hover:not(.eui-dp-picker-disabled):not(.eui-dp-picker-selected) {
+        background-color: var(--eui-bg-hover);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
+    }
+
+    &.eui-dp-picker-current {
+        font-weight: 700;
+        color: var(--eui-btn-primary-tone, var(--eui-primary));
+    }
+
+    &.eui-dp-picker-selected {
+        background-color: var(--eui-primary);
+        color: var(--eui-text-on-primary);
+        font-weight: 600;
+    }
+
+    &.eui-dp-picker-disabled {
+        color: var(--eui-text-disabled);
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}
+
+.eui-dp-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-top: 1px solid var(--eui-border-subtle);
+}
+
+.eui-dp-footer-btn {
+    appearance: none;
+    min-height: 2rem;
+    padding: 0 0.75rem;
+    border: none;
+    border-radius: var(--eui-radius-md);
+    background: none;
+    color: var(--eui-text-muted);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background-color: var(--eui-bg-hover);
+        color: var(--eui-text);
+    }
+
+    &.eui-dp-footer-primary {
+        color: var(--eui-btn-primary-tone, var(--eui-primary));
+        font-weight: 600;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--eui-primary);
+        outline-offset: 1px;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &:only-child {
+        margin-inline-start: auto;
+    }
+}
+
+@keyframes euiDpIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes euiDpFade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes euiDpSheet {
+    from {
+        transform: translateY(24px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .eui-date-picker-input {
+        font-size: 16px;
+    }
+}
+
+@media (pointer: coarse) {
+    .eui-date-picker {
+        gap: 0.75rem;
+    }
+
+    .eui-date-picker-clear::before {
+        inset: -0.625rem;
+    }
+
+    .eui-date-picker-toggle {
+        width: 2.75rem;
+
+        &::before {
+            inset: -0.625rem 0;
+        }
+    }
+
+    .eui-dp-nav {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    .eui-dp-title {
+        min-height: 2.75rem;
+    }
+
+    .eui-dp-day {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+
+    .eui-dp-sheet .eui-dp-day {
+        min-height: 2.75rem;
+        max-height: none;
+    }
+
+    .eui-dp-grid-weeks .eui-dp-row {
+        grid-template-columns: 1.5rem repeat(7, minmax(0, 1fr));
+    }
+
+    .eui-dp-preset,
+    .eui-dp-footer-btn {
+        min-height: 2.75rem;
+    }
+}
+
+@media (max-width: $bp-sm) {
+    .eui-date-picker-inline {
+        .eui-dp-panel {
+            flex-direction: column-reverse;
+        }
+
+        .eui-dp-presets {
+            flex-direction: row;
+            flex-wrap: wrap;
+            border-right: none;
+            border-top: 1px solid var(--eui-border-subtle);
+        }
+
+        .eui-dp-months {
+            flex-direction: column;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-dp-popover,
+    .eui-dp-backdrop,
+    .eui-dp-sheet {
+        animation: none;
+    }
+
+    .eui-date-picker,
+    .eui-dp-day,
+    .eui-dp-picker-item {
+        transition: none;
+    }
+}

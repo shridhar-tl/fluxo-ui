@@ -1,0 +1,235 @@
+@use '../eui-vars' as *;
+@use '../eui-tones' as *;
+
+.eui-badge-wrapper {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.eui-badge {
+    @include eui-tone-palette('eui-badge');
+
+    --eui-badge-h: 1.25rem;
+    --eui-badge-fs: 0.6875rem;
+    --eui-badge-px: 0.375rem;
+    --eui-badge-dot: 0.5rem;
+    --eui-badge-offset-x: 0px;
+    --eui-badge-offset-y: 0px;
+    --eui-badge-inset: 0px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1875rem;
+    box-sizing: border-box;
+    min-width: var(--eui-badge-h);
+    height: var(--eui-badge-h);
+    padding: 0 var(--eui-badge-px);
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-family: var(--eui-font-family);
+    font-size: var(--eui-badge-fs);
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    vertical-align: middle;
+    transition: scale 0.2s ease, opacity 0.2s ease;
+
+    &.eui-badge-sm {
+        --eui-badge-h: 1rem;
+        --eui-badge-fs: 0.625rem;
+        --eui-badge-px: 0.25rem;
+        --eui-badge-dot: 0.375rem;
+    }
+
+    &.eui-badge-lg {
+        --eui-badge-h: 1.5rem;
+        --eui-badge-fs: 0.8125rem;
+        --eui-badge-px: 0.5rem;
+        --eui-badge-dot: 0.625rem;
+    }
+
+    &.eui-badge-shape-rounded {
+        border-radius: var(--eui-radius-sm);
+    }
+
+    &.eui-badge-shape-square {
+        border-radius: 0;
+    }
+
+    &.eui-badge-solid {
+        background-color: var(--eui-tone-base);
+        color: var(--eui-tone-on);
+    }
+
+    &.eui-badge-soft {
+        background-color: color-mix(in srgb, var(--eui-tone-base) 16%, var(--eui-bg));
+        color: var(--eui-tone-soft-fg);
+    }
+
+    &.eui-badge-outline {
+        background-color: var(--eui-bg);
+        border-color: var(--eui-tone-base);
+        color: var(--eui-tone-soft-fg);
+    }
+
+    &.eui-badge-bordered {
+        box-shadow: 0 0 0 2px var(--eui-bg);
+    }
+
+    &.eui-badge-dot {
+        min-width: 0;
+        width: var(--eui-badge-dot);
+        height: var(--eui-badge-dot);
+        padding: 0;
+        border-radius: 50%;
+    }
+
+    &.eui-badge-icon-only {
+        padding: 0;
+        width: var(--eui-badge-h);
+    }
+
+    &.eui-badge-anchored {
+        position: absolute;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    &.eui-badge-overlap-circular {
+        --eui-badge-inset: 14%;
+    }
+
+    &.eui-badge-top-right {
+        top: var(--eui-badge-inset);
+        right: var(--eui-badge-inset);
+        transform: translate(calc(50% + var(--eui-badge-offset-x)), calc(-50% + var(--eui-badge-offset-y)));
+        transform-origin: 100% 0;
+    }
+
+    &.eui-badge-top-left {
+        top: var(--eui-badge-inset);
+        left: var(--eui-badge-inset);
+        transform: translate(calc(-50% + var(--eui-badge-offset-x)), calc(-50% + var(--eui-badge-offset-y)));
+        transform-origin: 0 0;
+    }
+
+    &.eui-badge-bottom-right {
+        bottom: var(--eui-badge-inset);
+        right: var(--eui-badge-inset);
+        transform: translate(calc(50% + var(--eui-badge-offset-x)), calc(50% + var(--eui-badge-offset-y)));
+        transform-origin: 100% 100%;
+    }
+
+    &.eui-badge-bottom-left {
+        bottom: var(--eui-badge-inset);
+        left: var(--eui-badge-inset);
+        transform: translate(calc(-50% + var(--eui-badge-offset-x)), calc(50% + var(--eui-badge-offset-y)));
+        transform-origin: 0 100%;
+    }
+
+    &.eui-badge-hidden {
+        opacity: 0;
+        scale: 0;
+    }
+
+    &.eui-badge-hidden:not(.eui-badge-anchored) {
+        display: none;
+    }
+
+    &.eui-badge-pulse::after {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        border: 2px solid var(--eui-tone-base);
+        animation: euiBadgePulse 1.6s ease-out infinite;
+        pointer-events: none;
+    }
+
+    &.eui-badge-pulse:not(.eui-badge-anchored) {
+        position: relative;
+    }
+
+    &.eui-badge-animate:not(.eui-badge-hidden) {
+        animation: euiBadgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+}
+
+.eui-badge-icon {
+    display: inline-flex;
+
+    svg {
+        width: calc(var(--eui-badge-h) * 0.6);
+        height: calc(var(--eui-badge-h) * 0.6);
+    }
+}
+
+.eui-badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--eui-font-family);
+    font-size: 0.8125rem;
+    color: var(--eui-text);
+    line-height: 1.4;
+    vertical-align: middle;
+}
+
+.eui-badge-status-dot {
+    @include eui-tone-palette('eui-badge-status-dot');
+
+    position: relative;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: var(--eui-tone-base);
+    flex-shrink: 0;
+
+    &.eui-badge-status-processing::after {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: 50%;
+        border: 1px solid var(--eui-tone-base);
+        animation: euiBadgePulse 1.4s ease-in-out infinite;
+    }
+}
+
+@keyframes euiBadgePulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2.4);
+        opacity: 0;
+    }
+}
+
+@keyframes euiBadgePop {
+    0% {
+        scale: 0.4;
+    }
+    100% {
+        scale: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .eui-badge,
+    .eui-badge.eui-badge-animate:not(.eui-badge-hidden) {
+        transition: none;
+        animation: none;
+    }
+
+    .eui-badge.eui-badge-pulse::after,
+    .eui-badge-status-dot.eui-badge-status-processing::after {
+        animation: none;
+        opacity: 0.4;
+    }
+}
