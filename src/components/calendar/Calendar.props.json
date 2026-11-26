@@ -131,7 +131,7 @@
     },
     "entryOrder": {
       "type": "(a, b) => number",
-      "description": "Custom sort function for ordering overlapping entries."
+      "description": "Custom sort function for ordering entries within a day. Applied in month, day-grid, list and time-grid views, including the all-day row."
     },
     "selectMinDistance": {
       "type": "number",

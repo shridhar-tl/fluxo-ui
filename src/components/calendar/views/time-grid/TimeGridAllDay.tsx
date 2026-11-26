@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ViewMode } from '../../calendar-types';
-import type { ResolvedCalendarEntry, EntryRenderer } from '../../calendar-types';
+import type { ResolvedCalendarEntry, EntryRenderer, EntryOrderFn } from '../../calendar-types';
 import { getAllDayEntries, getMultiDayEntries, isSameDay } from '../../calendar-utils';
 import { CalendarEntry } from '../../entries';
 import OverflowPopover from '../../entries/OverflowPopover';
@@ -17,23 +17,22 @@ interface SpannedEntry {
   row: number;
 }
 
+function defaultSpanOrder(a: ResolvedCalendarEntry, b: ResolvedCalendarEntry): number {
+  const startDiff = startOfDay(a.start).getTime() - startOfDay(b.start).getTime();
+  if (startDiff) return startDiff;
+  return startOfDay(b.end).getTime() - startOfDay(a.end).getTime();
+}
+
 function layoutSpannedEntries(
   allDayEntries: ResolvedCalendarEntry[],
-  days: Date[]
+  days: Date[],
+  entryOrder?: EntryOrderFn
 ): SpannedEntry[] {
   const dayStarts = days.map(d => startOfDay(d).getTime());
-
-  const sorted = [...allDayEntries].sort((a, b) => {
-    const aStart = startOfDay(a.start).getTime();
-    const bStart = startOfDay(b.start).getTime();
-    if (aStart !== bStart) return aStart - bStart;
-    const aEnd = startOfDay(a.end).getTime();
-    const bEnd = startOfDay(b.end).getTime();
-    return bEnd - aEnd;
-  });
+  const sorted = [...allDayEntries].sort(entryOrder || defaultSpanOrder);
 
   const result: SpannedEntry[] = [];
-  const rowEndCols: number[] = [];
+  const occupiedRows: boolean[][] = [];
 
   for (const entry of sorted) {
     const entryStart = startOfDay(entry.start).getTime();
@@ -43,24 +42,14 @@ function layoutSpannedEntries(
     const endCol = dayStarts.filter(d => d <= entryEnd).length - 1;
     if (startCol === -1 || endCol < startCol) continue;
 
-    const colSpan = endCol - startCol + 1;
-
-    let row = 0;
-    for (let r = 0; r < rowEndCols.length; r++) {
-      if (rowEndCols[r] <= startCol) {
-        row = r;
-        break;
-      }
-      row = r + 1;
+    let row = occupiedRows.findIndex(cells => !cells.slice(startCol, endCol + 1).some(Boolean));
+    if (row === -1) {
+      row = occupiedRows.length;
+      occupiedRows.push(new Array<boolean>(days.length).fill(false));
     }
+    occupiedRows[row].fill(true, startCol, endCol + 1);
 
-    if (row >= rowEndCols.length) {
-      rowEndCols.push(startCol + colSpan);
-    } else {
-      rowEndCols[row] = startCol + colSpan;
-    }
-
-    result.push({ entry, startCol, colSpan, row });
+    result.push({ entry, startCol, colSpan: endCol - startCol + 1, row });
   }
 
   return result;
@@ -76,10 +65,11 @@ interface TimeGridAllDayProps {
   maxHeight?: number;
   allDayText?: string;
   showAllDayRow?: 'auto' | 'always';
+  entryOrder?: EntryOrderFn;
 }
 
 const TimeGridAllDay: React.FC<TimeGridAllDayProps> = ({
-  days, entries, renderEntry, onEntryClick, onEntryContextMenu, onSlotClick, maxHeight, allDayText, showAllDayRow,
+  days, entries, renderEntry, onEntryClick, onEntryContextMenu, onSlotClick, maxHeight, allDayText, showAllDayRow, entryOrder,
 }) => {
   const allDayEntries = useMemo(
     () => [...getAllDayEntries(entries), ...getMultiDayEntries(entries)],
@@ -87,8 +77,8 @@ const TimeGridAllDay: React.FC<TimeGridAllDayProps> = ({
   );
 
   const spanned = useMemo(
-    () => layoutSpannedEntries(allDayEntries, days),
-    [allDayEntries, days]
+    () => layoutSpannedEntries(allDayEntries, days, entryOrder),
+    [allDayEntries, days, entryOrder]
   );
 
   const maxRow = useMemo(() => {

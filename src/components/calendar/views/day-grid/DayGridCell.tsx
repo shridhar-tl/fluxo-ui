@@ -26,7 +26,7 @@ const DayGridCell: React.FC<DayGridCellProps> = ({
   const { api, config } = useCalendarContext();
   const today = isToday(date);
   const isNonBusinessDay = businessHours ? !businessHours.daysOfWeek.includes(getDay(date)) : false;
-  const dayEntries = useMemo(() => getEntriesForDay(entries, date), [entries, date]);
+  const dayEntries = useMemo(() => getEntriesForDay(entries, date, config.entryOrder), [entries, date, config.entryOrder]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     onDateClick?.(date, e);

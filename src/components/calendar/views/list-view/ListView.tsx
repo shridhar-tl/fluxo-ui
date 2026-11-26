@@ -1,12 +1,16 @@
 import React, { useMemo } from 'react';
 import { ViewMode } from '../../calendar-types';
-import type { ViewProps, CalendarViewDefinition } from '../../calendar-types';
+import type { ViewProps, CalendarViewDefinition, ResolvedCalendarEntry } from '../../calendar-types';
 import {
   getDaysInRange, getEntriesForDay,
   getMonthRange, getWeekRange, getDayRange,
   format, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays,
   isSameMonth, isSameYear,
 } from '../../calendar-utils';
+
+function byStartTime(a: ResolvedCalendarEntry, b: ResolvedCalendarEntry): number {
+  return a.start.getTime() - b.start.getTime();
+}
 
 function monthTitle(range: { start: Date; end: Date }): string {
   return format(addDays(range.start, 7), 'MMMM yyyy');
@@ -26,12 +30,10 @@ const ListView: React.FC<ViewProps> = ({
   const dayData = useMemo(() => {
     const all = days.map(day => ({
       date: day,
-      entries: getEntriesForDay(entries, day).sort(
-        (a, b) => a.start.getTime() - b.start.getTime()
-      ),
+      entries: getEntriesForDay(entries, day).sort(config.entryOrder || byStartTime),
     }));
     return config.hideEmptyDays ? all.filter(d => d.entries.length > 0) : all;
-  }, [days, entries, config.hideEmptyDays]);
+  }, [days, entries, config.hideEmptyDays, config.entryOrder]);
 
   if (dayData.length === 0) {
     return (
