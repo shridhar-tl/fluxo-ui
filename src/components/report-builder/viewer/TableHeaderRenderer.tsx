@@ -59,7 +59,10 @@ interface Props {
     headerColor: string;
     cellBorder: string;
     renderLeafHeader: (columnId: string, label: string, align?: 'left' | 'center' | 'right') => React.ReactNode;
+    sticky?: boolean;
 }
+
+const stickyHeadStyle: React.CSSProperties = { position: 'sticky', top: 0, zIndex: 3 };
 
 export const NestedTableHeader: React.FC<Props> = ({
     tree,
@@ -67,6 +70,7 @@ export const NestedTableHeader: React.FC<Props> = ({
     headerColor,
     cellBorder,
     renderLeafHeader,
+    sticky,
 }) => {
     const matrix = React.useMemo(() => buildHeaderMatrix(tree), [tree]);
     const leafColumns = React.useMemo(() => flattenColumns(tree), [tree]);
@@ -74,7 +78,7 @@ export const NestedTableHeader: React.FC<Props> = ({
     if (leafColumns.length === 0) return null;
 
     return (
-        <thead>
+        <thead style={sticky ? stickyHeadStyle : undefined}>
             {matrix.map((row, ri) => (
                 <tr key={ri}>
                     {row.map((cell) => {

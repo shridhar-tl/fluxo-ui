@@ -409,6 +409,9 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
 
     const [copyFeedback, setCopyFeedback] = useState(false);
 
+    const useVirtual = !viewerCtx.exportMode && !groups && !resolvedRowGroups && rows.length > virtualThreshold;
+    const virtualWindow = useVirtualWindow(rows.length, useVirtual);
+
     if (p.pivotMode && p.pivotRowField && p.pivotColumnField && p.pivotValueField) {
         return (
             <PivotTable
@@ -467,8 +470,6 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
         );
     };
 
-    const useVirtual = !viewerCtx.exportMode && !groups && !resolvedRowGroups && rows.length > virtualThreshold;
-
     const tableElement = (
         <table
             style={{
@@ -482,6 +483,7 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
             aria-label="Data table"
         >
             <NestedTableHeader
+                sticky={useVirtual}
                 tree={effectiveColumnTreeForHeader}
                 headerBg={headerBg}
                 headerColor={headerColor}
@@ -545,26 +547,38 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
                                 onCellEdit={handleCellEdit}
                             />
                         ))
-                        : !useVirtual
-                            ? rows.map((row, idx) => (
-                                <DataRow
-                                    key={idx}
-                                    row={row}
-                                    rowIndex={idx}
-                                    columns={columns}
-                                    altRowColor={altRowColor}
-                                    cellBorder={cellBorder}
-                                    exprCtx={exprCtx}
-                                    frozenOffsets={frozenOffsets}
-                                    hasFrozen={hasFrozen}
-                                    runtimeWidths={runtimeWidths}
-                                    drillThroughVariable={drillThroughVariable}
-                                    onDrillThrough={viewerCtx.onDrillThrough}
-                                    enableCellEdit={p.enableCellEdit}
-                                    onCellEdit={handleCellEdit}
-                                />
-                            ))
-                            : null
+                        : (
+                            <>
+                                {virtualWindow.startIdx > 0 && (
+                                    <tr style={{ height: virtualWindow.startIdx * virtualRowHeight }} aria-hidden="true">
+                                        <td colSpan={columns.length} />
+                                    </tr>
+                                )}
+                                {rows.slice(virtualWindow.startIdx, virtualWindow.endIdx).map((row, idx) => (
+                                    <DataRow
+                                        key={virtualWindow.startIdx + idx}
+                                        row={row}
+                                        rowIndex={virtualWindow.startIdx + idx}
+                                        columns={columns}
+                                        altRowColor={altRowColor}
+                                        cellBorder={cellBorder}
+                                        exprCtx={exprCtx}
+                                        frozenOffsets={frozenOffsets}
+                                        hasFrozen={hasFrozen}
+                                        runtimeWidths={runtimeWidths}
+                                        drillThroughVariable={drillThroughVariable}
+                                        onDrillThrough={viewerCtx.onDrillThrough}
+                                        enableCellEdit={p.enableCellEdit}
+                                        onCellEdit={handleCellEdit}
+                                    />
+                                ))}
+                                {virtualWindow.endIdx < rows.length && (
+                                    <tr style={{ height: (rows.length - virtualWindow.endIdx) * virtualRowHeight }} aria-hidden="true">
+                                        <td colSpan={columns.length} />
+                                    </tr>
+                                )}
+                            </>
+                        )
                 }
                 {!resolvedRowGroups && !groups && rows.length === 0 && (
                     <tr>
@@ -630,22 +644,15 @@ export const TableRenderer: React.FC<Props> = ({ component, styleCss }) => {
                     </button>
                 </div>
             )}
-            {tableElement}
-            {useVirtual && (
-                <VirtualTableBody
-                    rows={rows}
-                    columns={columns}
-                    altRowColor={altRowColor}
-                    cellBorder={cellBorder}
-                    exprCtx={exprCtx}
-                    frozenOffsets={frozenOffsets}
-                    hasFrozen={hasFrozen}
-                    runtimeWidths={runtimeWidths}
-                    drillThroughVariable={drillThroughVariable}
-                    onDrillThrough={viewerCtx.onDrillThrough}
-                    enableCellEdit={p.enableCellEdit}
-                    onCellEdit={handleCellEdit}
-                />
+            {useVirtual ? (
+                <div ref={virtualWindow.containerRef} style={{ maxHeight: virtualMaxHeight, overflowY: 'auto' }} onScroll={virtualWindow.onScroll}>
+                    {tableElement}
+                    <div aria-live="polite" className="sr-only" style={srOnlyStyle}>
+                        Showing rows {virtualWindow.startIdx + 1} to {virtualWindow.endIdx} of {rows.length}
+                    </div>
+                </div>
+            ) : (
+                tableElement
             )}
         </div>
     );
@@ -1208,6 +1215,7 @@ function formatRaw(value: unknown): string {
 
 const virtualRowHeight = 33;
 const virtualThreshold = 100;
+const virtualMaxHeight = 600;
 const overscan = 10;
 
 const ExtraRow: React.FC<{
@@ -1279,95 +1287,33 @@ const ExtraRow: React.FC<{
     );
 };
 
-const VirtualTableBody: React.FC<{
-    rows: Row[];
-    columns: TableColumnDef[];
-    altRowColor?: string;
-    cellBorder: string;
-    exprCtx: ExpressionContext;
-    frozenOffsets: Map<string, number>;
-    hasFrozen: boolean;
-    runtimeWidths: Record<string, number>;
-    drillThroughVariable?: string;
-    onDrillThrough?: (variableName: string, value: unknown) => void;
-    enableCellEdit?: boolean;
-    onCellEdit?: (rowIndex: number, field: string, value: unknown) => void;
-}> = ({ rows, columns, altRowColor, cellBorder, exprCtx, frozenOffsets, hasFrozen, runtimeWidths, drillThroughVariable, onDrillThrough, enableCellEdit, onCellEdit }) => {
+const srOnlyStyle: React.CSSProperties = { position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' };
+
+function useVirtualWindow(rowCount: number, enabled: boolean) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scrollTop, setScrollTop] = useState(0);
-    const [containerHeight, setContainerHeight] = useState(400);
+    const [containerHeight, setContainerHeight] = useState(virtualMaxHeight);
 
     useEffect(() => {
         const container = containerRef.current;
-        if (!container) return;
-        const observer = new ResizeObserver((entries) => {
-            for (const entry of entries) {
-                setContainerHeight(entry.contentRect.height);
-            }
-        });
+        if (!enabled || !container) return;
+        const observer = new ResizeObserver(([entry]) => setContainerHeight(entry.contentRect.height));
         observer.observe(container);
         return () => observer.disconnect();
-    }, []);
+    }, [enabled]);
 
-    const startIdx = Math.max(0, Math.floor(scrollTop / virtualRowHeight) - overscan);
-    const endIdx = Math.min(rows.length, Math.ceil((scrollTop + containerHeight) / virtualRowHeight) + overscan);
-    const visibleRows = rows.slice(startIdx, endIdx);
+    const onScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => setScrollTop(e.currentTarget.scrollTop), []);
 
-    const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-        setScrollTop(e.currentTarget.scrollTop);
-    }, []);
-
-    return (
-        <div
-            ref={containerRef}
-            style={{ maxHeight: 600, overflowY: 'auto' }}
-            onScroll={handleScroll}
-        >
-            <table
-                style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    fontSize: 13,
-                }}
-                role="table"
-            >
-                <tbody>
-                    {startIdx > 0 && (
-                        <tr style={{ height: startIdx * virtualRowHeight }} aria-hidden="true">
-                            <td colSpan={columns.length} />
-                        </tr>
-                    )}
-                    {visibleRows.map((row, idx) => (
-                        <DataRow
-                            key={startIdx + idx}
-                            row={row}
-                            rowIndex={startIdx + idx}
-                            columns={columns}
-                            altRowColor={altRowColor}
-                            cellBorder={cellBorder}
-                            exprCtx={exprCtx}
-                            frozenOffsets={frozenOffsets}
-                            hasFrozen={hasFrozen}
-                            runtimeWidths={runtimeWidths}
-                            drillThroughVariable={drillThroughVariable}
-                            onDrillThrough={onDrillThrough}
-                            enableCellEdit={enableCellEdit}
-                            onCellEdit={onCellEdit}
-                        />
-                    ))}
-                    {endIdx < rows.length && (
-                        <tr style={{ height: (rows.length - endIdx) * virtualRowHeight }} aria-hidden="true">
-                            <td colSpan={columns.length} />
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-            <div aria-live="polite" className="sr-only" style={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0,0,0,0)' }}>
-                Showing rows {startIdx + 1} to {endIdx} of {rows.length}
-            </div>
-        </div>
-    );
-};
+    if (!enabled) {
+        return { containerRef, onScroll, startIdx: 0, endIdx: rowCount };
+    }
+    return {
+        containerRef,
+        onScroll,
+        startIdx: Math.max(0, Math.floor(scrollTop / virtualRowHeight) - overscan),
+        endIdx: Math.min(rowCount, Math.ceil((scrollTop + containerHeight) / virtualRowHeight) + overscan),
+    };
+}
 
 const ResizableHeader: React.FC<{
     colId: string;
