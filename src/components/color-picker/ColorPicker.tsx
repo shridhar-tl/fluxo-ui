@@ -6,7 +6,7 @@ import { pushLayer } from '../../utils/layer-stack';
 import ColorPanel from './ColorPanel';
 import '../eui-base.scss';
 import './color-picker.scss';
-import { hexToRgb } from './utils';
+import { hexToRgb, isFullHex, isSameHexColor, rgbToHex } from './utils';
 
 type ColorPickerSize = 'xs' | 'sm' | 'md' | 'lg';
 type ColorPickerVariant = 'button' | 'swatch' | 'input';
@@ -67,6 +67,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     const popRef = useRef<HTMLDivElement>(null);
     const previousFocusRef = useRef<HTMLElement | null>(null);
     const mouseDownTargetRef = useRef<EventTarget | null>(null);
+    const onOpenChangeRef = useRef(onOpenChange);
     const { isCompact, isMobile, isTablet } = useViewport();
 
     const currentValue = controlledValue ?? internalValue;
@@ -75,7 +76,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
 
     const [hexText, setHexText] = useState(currentValue);
     useEffect(() => {
-        setHexText(currentValue);
+        setHexText((typed) => (isSameHexColor(typed, currentValue) ? typed : currentValue));
     }, [currentValue]);
 
     const computePosition = useCallback(() => {
@@ -101,11 +102,15 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     }, [isOpen, computePosition, isCompact]);
 
     useEffect(() => {
+        onOpenChangeRef.current = onOpenChange;
+    }, [onOpenChange]);
+
+    useEffect(() => {
         if (!isOpen) return;
         const focusableSelector = 'button:not([disabled]), [href]:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
         const closeAll = () => {
             setIsOpen(false);
-            onOpenChange?.(false);
+            onOpenChangeRef.current?.(false);
             previousFocusRef.current?.focus?.();
         };
         const focusFrame = requestAnimationFrame(() => {
@@ -175,7 +180,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
             document.removeEventListener('keydown', onKey);
             releaseLayer();
         };
-    }, [isOpen, computePosition, onOpenChange, isCompact]);
+    }, [isOpen, computePosition, isCompact]);
 
     const handleChange = useCallback(
         (hex: string, a: number) => {
@@ -256,18 +261,19 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
                 const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     const raw = e.target.value;
                     setHexText(raw);
-                    const normalized = raw.startsWith('#') ? raw : `#${raw}`;
-                    if (hexToRgb(normalized)) {
-                        handleChange(normalized.toLowerCase(), currentAlpha);
+                    if (isFullHex(raw)) {
+                        handleChange(`#${raw.trim().replace('#', '')}`.toLowerCase(), currentAlpha);
                     }
                 };
                 const handleHexBlur = () => {
-                    const normalized = hexText.startsWith('#') ? hexText : `#${hexText}`;
-                    if (hexToRgb(normalized)) {
-                        setHexText(normalized.toLowerCase());
-                    } else {
+                    const rgb = hexToRgb(hexText);
+                    if (!rgb) {
                         setHexText(currentValue);
+                        return;
                     }
+                    const hex = rgbToHex(rgb);
+                    setHexText(hex);
+                    if (!isSameHexColor(hex, currentValue)) handleChange(hex, currentAlpha);
                 };
                 return (
                     <div

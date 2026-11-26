@@ -6,6 +6,7 @@ import {
     HSV,
     hexToHsv,
     hsvToHex,
+    isSameHexColor,
     hsvToRgb,
     rgbaToString,
     rgbToHex,
@@ -21,6 +22,8 @@ interface ColorPanelProps {
     swatches?: string[];
     onChange: (hex: string, alpha: number) => void;
 }
+
+const toHashedHex = (text: string) => (text.startsWith('#') ? text : `#${text}`);
 
 const ColorPanel: React.FC<ColorPanelProps> = ({
     value,
@@ -42,7 +45,7 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
         const next = hexToHsv(value);
         if (next) {
             setHsv(next);
-            setHexInput(value);
+            setHexInput((typed) => (isSameHexColor(toHashedHex(typed), value) ? typed : value));
         }
     }, [value]);
 
@@ -116,10 +119,10 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
     const handleHexInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const v = e.target.value;
         setHexInput(v);
-        const next = hexToHsv(v.startsWith('#') ? v : `#${v}`);
+        const next = hexToHsv(toHashedHex(v));
         if (next) {
             setHsv(next);
-            commit(next, alpha);
+            onChange(hsvToHex(next), alpha);
         }
     };
 

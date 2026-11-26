@@ -57,6 +57,14 @@ export const rgbToHex = ({ r, g, b }: RGB): string => {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 };
 
+export const isFullHex = (text: string): boolean => /^#?[0-9a-fA-F]{6}$/.test(text.trim());
+
+export const isSameHexColor = (a: string, b: string): boolean => {
+    const first = hexToRgb(a);
+    const second = hexToRgb(b);
+    return !!first && !!second && rgbToHex(first) === rgbToHex(second);
+};
+
 export const hexToRgb = (hex: string): RGB | null => {
     let clean = hex.trim().replace('#', '');
     if (clean.length === 3) {
